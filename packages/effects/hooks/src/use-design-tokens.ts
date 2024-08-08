@@ -1,7 +1,7 @@
 import { reactive, watch } from 'vue';
 
 import { preferences } from '@vben/preferences';
-import { updateCSSVariables } from '@vben/utils';
+import { convertToRgb, updateCSSVariables } from '@vben/utils';
 
 /**
  * 用于适配各个框架的设计系统
@@ -102,7 +102,7 @@ export function useNaiveDesignTokens() {
 
   const getCssVariableValue = (variable: string, isColor: boolean = true) => {
     const value = rootStyles.getPropertyValue(variable);
-    return isColor ? `hsl(${value})` : value;
+    return isColor ? convertToRgb(`hsl(${value})`) : value;
   };
 
   watch(
@@ -145,12 +145,9 @@ export function useNaiveDesignTokens() {
       commonTokens.invertedColor = getCssVariableValue('--background-deep');
 
       commonTokens.borderRadius = getCssVariableValue('--radius', false);
-
-      // antDesignTokens.colorBgMask = getCssVariableValue('--overlay');
     },
     { immediate: true },
   );
-
   return {
     commonTokens,
   };
@@ -161,7 +158,7 @@ export function useElementPlusDesignTokens() {
 
   const getCssVariableValue = (variable: string, isColor: boolean = true) => {
     const value = rootStyles.getPropertyValue(variable);
-    return isColor ? `hsl(${value})` : value;
+    return isColor ? convertToRgb(`hsl(${value})`) : value;
   };
   watch(
     () => preferences.theme,
@@ -183,6 +180,9 @@ export function useElementPlusDesignTokens() {
         '--el-color-danger-light-7': getCssVariableValue('--destructive-800'),
         '--el-color-error-light-8': border,
         '--el-color-error-light-9': background,
+
+        '--el-color-info-light-8': border,
+        '--el-color-info-light-9': background,
 
         '--el-color-primary': getCssVariableValue('--primary'),
         '--el-color-primary-light-3': getCssVariableValue('--primary-600'),
