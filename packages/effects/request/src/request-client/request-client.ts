@@ -99,7 +99,9 @@ class RequestClient {
         const authorization = this.makeAuthorization?.(config);
         if (authorization) {
           const { token } = authorization.tokenHandler?.() ?? {};
-          config.headers[authorization.key || 'Authorization'] = token;
+          if (token) {
+            config.headers[authorization.key || 'Authorization'] = token;
+          }
         }
 
         const requestHeader = this.makeRequestHeaders?.(config);

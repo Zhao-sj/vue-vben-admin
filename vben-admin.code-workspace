@@ -17,6 +17,10 @@
       "path": "apps/web-naive",
     },
     {
+      "name": "zen-vision",
+      "path": "apps/zen-vison",
+    },
+    {
       "name": "@vben/docs",
       "path": "docs",
     },

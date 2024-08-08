@@ -1,0 +1,41 @@
+{
+  "page": {
+    "demos": {
+      "title": "Demos",
+      "element-plus": "Element Plus"
+    }
+  },
+  "zen": {
+    "core": {
+      "login": "Login",
+      "register": "Register",
+      "codeLogin": "Code Login",
+      "qrcodeLogin": "Qr Code Login",
+      "forgetPassword": "Forget Password"
+    },
+    "request": {
+      "requestError": "Request error, please try again later"
+    },
+    "common": {
+      "successTitle": "Success Tips",
+      "errorTitle": "Error Tips",
+      "successTip": "Operation Successful",
+      "errorTip": "Operation Failed",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "submit": "Submit",
+      "reset": "Reset",
+      "search": "Search",
+      "add": "Add",
+      "edit": "Edit",
+      "delete": "Delete",
+      "detail": "Details",
+      "import": "Import",
+      "export": "Export",
+      "back": "Back",
+      "close": "Close",
+      "save": "Save",
+      "next": "Next"
+    }
+  }
+}

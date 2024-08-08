@@ -1,0 +1,41 @@
+{
+  "page": {
+    "demos": {
+      "title": "演示",
+      "element-plus": "Element Plus"
+    }
+  },
+  "zen": {
+    "core": {
+      "login": "登录",
+      "register": "注册",
+      "codeLogin": "验证码登录",
+      "qrcodeLogin": "二维码登录",
+      "forgetPassword": "忘记密码"
+    },
+    "request": {
+      "requestError": "请求出错，请稍后重试"
+    },
+    "common": {
+      "successTitle": "成功提示",
+      "errorTitle": "错误提示",
+      "successTip": "操作成功",
+      "errorTip": "操作失败",
+      "confirm": "确定",
+      "cancel": "取消",
+      "submit": "提交",
+      "reset": "重置",
+      "search": "搜索",
+      "add": "新增",
+      "edit": "编辑",
+      "delete": "删除",
+      "detail": "详情",
+      "import": "导入",
+      "export": "导出",
+      "back": "返回",
+      "close": "关闭",
+      "save": "保存",
+      "next": "下一步"
+    }
+  }
+}
