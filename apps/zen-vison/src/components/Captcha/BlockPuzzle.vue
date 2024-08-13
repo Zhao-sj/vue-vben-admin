@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { Nullable } from '@vben/types';
+
 import { useNamespace } from '@vben/hooks';
 import { Icon } from '@vben/icons';
-import { Nullable } from '@vben/types';
 
 import { useDraggable } from '@vueuse/core';
 

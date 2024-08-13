@@ -1,29 +1,34 @@
 <script lang="ts" setup>
+import type { Nullable } from '@vben/types';
+
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { AuthenticationLoginExpiredModal } from '@vben/common-ui';
+import {
+  AuthenticationLoginExpiredModal,
+  type LoginAndRegisterParams,
+} from '@vben/common-ui';
 import { LOGIN_PATH, VBEN_DOC_URL, VBEN_GITHUB_URL } from '@vben/constants';
 import { BookOpenText, CircleHelp, MdiGithub } from '@vben/icons';
 import {
   BasicLayout,
   LockScreen,
   Notification,
-  NotificationItem,
+  type NotificationItem,
   UserDropdown,
 } from '@vben/layouts';
 import { preferences } from '@vben/preferences';
-import {
-  resetAllStores,
-  storeToRefs,
-  useAccessStore,
-  useUserStore,
-} from '@vben/stores';
+import { resetAllStores, storeToRefs, useAccessStore } from '@vben/stores';
 import { openWindow } from '@vben/utils';
 
+import { useDebounceFn } from '@vueuse/core';
+
+import { type AuthApi, userLogoutApi } from '#/api';
+import { Captcha } from '#/components';
 import { $t } from '#/locales';
 import { resetRoutes } from '#/router';
-import { useAuthStore } from '#/store';
+import { useAuthStore, useUserStore } from '#/store';
+import { encryptBySha256 } from '#/utils';
 
 const notifications = ref<NotificationItem[]>([
   {
@@ -56,9 +61,15 @@ const notifications = ref<NotificationItem[]>([
   },
 ]);
 
+const router = useRouter();
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const accessStore = useAccessStore();
+const { loginLoading } = storeToRefs(authStore);
+const showCaptcha = ref(false);
+let loginState: Nullable<AuthApi.LoginParams> = null;
+let loginSuccessCallback: Nullable<() => Promise<void> | void> = null;
+
 const showDot = computed(() =>
   notifications.value.some((item) => !item.isRead),
 );
@@ -93,18 +104,44 @@ const menus = computed(() => [
   },
 ]);
 
-const { loginLoading } = storeToRefs(authStore);
-
 const avatar = computed(() => {
   return userStore.userInfo?.avatar ?? preferences.app.defaultAvatar;
 });
 
-const router = useRouter();
+const handleLogin = useDebounceFn(
+  (params: LoginAndRegisterParams, onSuccess: () => Promise<void> | void) => {
+    loginState = params;
+    loginSuccessCallback = onSuccess;
+
+    accessStore.setLoginExpired(false);
+    showCaptcha.value = true;
+  },
+);
+
+function handleValidateSuccess(captcah: string) {
+  if (!loginState) {
+    return;
+  }
+
+  loginState.password = encryptBySha256(loginState.password);
+  loginState.captcha = captcah;
+  authStore.authLogin(loginState, loginSuccessCallback!);
+}
 
 async function handleLogout() {
-  resetAllStores();
-  resetRoutes();
-  await router.replace(LOGIN_PATH);
+  try {
+    await userLogoutApi();
+  } finally {
+    resetAllStores();
+    resetRoutes();
+    await router.replace(LOGIN_PATH);
+  }
+}
+
+function handleCaptchaFail() {
+  if (!accessStore.loginExpired) {
+    accessStore.setLoginExpired(true);
+  }
 }
 
 function handleNoticeClear() {
@@ -121,9 +158,9 @@ function handleMakeAll() {
     <template #user-dropdown>
       <UserDropdown
         :avatar
+        :description="userStore.userInfo?.email"
         :menus
-        :text="userStore.userInfo?.realName"
-        description="ann.vben@gmail.com"
+        :text="userStore.userInfo?.nickname"
         tag-text="Pro"
         @logout="handleLogout"
       />
@@ -137,14 +174,25 @@ function handleMakeAll() {
       />
     </template>
     <template #extra>
-      <AuthenticationLoginExpiredModal
-        v-model:open="accessStore.loginExpired"
-        :avatar
-        :loading="loginLoading"
-        password-placeholder="123456"
-        username-placeholder="vben"
-        @submit="authStore.authLogin"
-      />
+      <div>
+        <AuthenticationLoginExpiredModal
+          v-model:open="accessStore.loginExpired"
+          :avatar
+          :loading="loginLoading"
+          :password-placeholder="$t('zen.login.passwordPlaceholder')"
+          :username-placeholder="$t('zen.login.usernamePlaceholder')"
+          @submit="handleLogin"
+        />
+
+        <Captcha
+          v-model="showCaptcha"
+          :show-close="false"
+          modal
+          random
+          @fail="handleCaptchaFail"
+          @success="handleValidateSuccess"
+        />
+      </div>
     </template>
     <template #lock-screen>
       <LockScreen :avatar @to-login="handleLogout" />

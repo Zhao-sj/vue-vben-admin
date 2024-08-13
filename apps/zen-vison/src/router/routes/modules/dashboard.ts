@@ -9,7 +9,7 @@ const routes: RouteRecordRaw[] = [
     meta: {
       icon: 'lucide:layout-dashboard',
       order: -1,
-      title: $t('page.dashboard.title'),
+      title: $t('zen.menu.dashboard.title'),
     },
     name: 'Dashboard',
     path: '/',
@@ -21,7 +21,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           affixTab: true,
           icon: 'lucide:area-chart',
-          title: $t('page.dashboard.analytics'),
+          title: $t('zen.menu.dashboard.analytics'),
         },
       },
       {
@@ -29,7 +29,7 @@ const routes: RouteRecordRaw[] = [
         path: '/workspace',
         component: () => import('#/views/dashboard/workspace/index.vue'),
         meta: {
-          title: $t('page.dashboard.workspace'),
+          title: $t('zen.menu.dashboard.workspace'),
         },
       },
     ],

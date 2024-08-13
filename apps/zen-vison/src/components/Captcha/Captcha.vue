@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Nullable } from '@vben/types';
+import type { Nullable } from '@vben/types';
 
 import { type AuthApi, checkCaptchaApi, getCaptchaApi } from '#/api';
 import { CaptchaEnum, ResultEnum } from '#/enums';
@@ -15,6 +15,7 @@ interface Props {
 
 interface Emits {
   (e: 'success', captcha: string): void;
+  (e: 'fail'): void;
 }
 
 defineOptions({ name: 'Captcha' });
@@ -23,7 +24,7 @@ const emit = defineEmits<Emits>();
 const dialogVisible = defineModel<boolean>('modelValue');
 
 const captchaTypes = [CaptchaEnum.BLOCK_PUZZLE, CaptchaEnum.CLICK_WORD];
-const captchaType = ref(props.type || captchaTypes[0]);
+const captchaType = ref(props.type || captchaTypes[0]!);
 const dialogRef =
   ref<Nullable<{ dialogContentRef: { $el: HTMLDivElement } }>>(null);
 const loading = ref(false);
@@ -39,7 +40,7 @@ function covert2DataUrl(base64: string) {
 async function getCaptcha() {
   if (props.random) {
     captchaType.value =
-      captchaTypes[Math.floor(Math.random() * captchaTypes.length)];
+      captchaTypes[Math.floor(Math.random() * captchaTypes.length)]!;
   }
 
   try {
@@ -56,6 +57,7 @@ async function getCaptcha() {
 
     captchaData.value = ret;
   } catch (error) {
+    emit('fail');
     dialogVisible.value = false;
     throw new Error(error as any);
   } finally {
@@ -121,6 +123,7 @@ watch(dialogVisible, (dialogVisible) => {
     append-to-body
     title="请完成安全验证"
     width="fit-content"
+    v-bind="$attrs"
   >
     <div v-loading="loading">
       <BlockPuzzle

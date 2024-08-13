@@ -2,14 +2,14 @@ import type { Router } from 'vue-router';
 
 import { LOGIN_PATH } from '@vben/constants';
 import { preferences } from '@vben/preferences';
-import { useAccessStore, useUserStore } from '@vben/stores';
+import { useAccessStore } from '@vben/stores';
 import { startProgress, stopProgress } from '@vben/utils';
 
 import { useTitle } from '@vueuse/core';
 
 import { $t } from '#/locales';
 import { coreRouteNames, dynamicRoutes } from '#/router/routes';
-import { useAuthStore } from '#/store';
+import { useAuthStore, useUserStore } from '#/store';
 
 import { generateAccess } from './access';
 
@@ -95,16 +95,18 @@ function setupAccessGuard(router: Router) {
 
     // 生成路由表
     // 当前登录用户拥有的角色标识列表
-    const userInfo = userStore.userInfo || (await authStore.fetchUserInfo());
-    const userRoles = userInfo.roles ?? [];
+    const resp = await authStore.fetchUserInfo();
 
     // 生成菜单和路由
-    const { accessibleMenus, accessibleRoutes } = await generateAccess({
-      roles: userRoles,
-      router,
-      // 则会在菜单中显示，但是访问会被重定向到403
-      routes: dynamicRoutes,
-    });
+    const { accessibleMenus, accessibleRoutes } = await generateAccess(
+      {
+        roles: userStore.roles,
+        router,
+        // 则会在菜单中显示，但是访问会被重定向到403
+        routes: dynamicRoutes,
+      },
+      resp?.menus,
+    );
 
     // 保存菜单信息和路由信息
     accessStore.setAccessMenus(accessibleMenus);

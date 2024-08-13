@@ -1,28 +1,38 @@
 <script lang="ts" setup>
+import type { Nullable } from '@vben/types';
+
+import type { AuthApi } from '#/api';
+
 import {
   AuthenticationLogin,
   type LoginAndRegisterParams,
 } from '@vben/common-ui';
-import { Nullable } from '@vben/types';
+
+import { useDebounceFn } from '@vueuse/core';
 
 import { Captcha } from '#/components';
 import { useAuthStore } from '#/store';
+import { encryptBySha256 } from '#/utils';
 
 defineOptions({ name: 'Login' });
 
 const authStore = useAuthStore();
 const showCaptcha = ref(false);
-let loginState: Nullable<LoginAndRegisterParams> = null;
+let loginState: Nullable<AuthApi.LoginParams> = null;
 
-function handleLogin(params: LoginAndRegisterParams) {
+const handleLogin = useDebounceFn((params: LoginAndRegisterParams) => {
   loginState = params;
   showCaptcha.value = true;
-}
+});
 
 function handleValidateSuccess(captcah: string) {
-  // eslint-disable-next-line no-console
-  console.log('登录验证码', captcah);
-  authStore.authLogin(loginState!);
+  if (!loginState) {
+    return;
+  }
+
+  loginState.password = encryptBySha256(loginState.password);
+  loginState.captcha = captcah;
+  authStore.authLogin(loginState);
 }
 </script>
 
@@ -30,8 +40,8 @@ function handleValidateSuccess(captcah: string) {
   <div>
     <AuthenticationLogin
       :loading="authStore.loginLoading"
-      password-placeholder="123456"
-      username-placeholder="vben"
+      :password-placeholder="$t('zen.login.passwordPlaceholder')"
+      :username-placeholder="$t('zen.login.usernamePlaceholder')"
       @submit="handleLogin"
     />
 

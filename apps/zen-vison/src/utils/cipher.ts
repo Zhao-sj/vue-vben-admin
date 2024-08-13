@@ -3,7 +3,8 @@ import Base64 from 'crypto-js/enc-base64';
 import UTF8, { parse } from 'crypto-js/enc-utf8';
 import md5 from 'crypto-js/md5';
 import ECB from 'crypto-js/mode-ecb';
-import pkcs7 from 'crypto-js/pad-pkcs7';
+import Pkcs7 from 'crypto-js/pad-pkcs7';
+import sha256 from 'crypto-js/sha256';
 
 export interface EncryptionParams {
   iv: string;
@@ -28,7 +29,7 @@ export class AesEncryption {
     return {
       iv: this.iv,
       mode: ECB,
-      padding: pkcs7,
+      padding: Pkcs7,
     };
   }
 
@@ -59,4 +60,8 @@ export function decodeByBase64(cipherText: string) {
 
 export function encryptByMd5(password: string) {
   return md5(password).toString();
+}
+
+export function encryptBySha256(password: string) {
+  return sha256(password).toString();
 }

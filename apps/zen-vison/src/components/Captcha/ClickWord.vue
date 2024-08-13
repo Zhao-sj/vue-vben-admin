@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { Nullable } from '@vben/types';
+
 import { useNamespace } from '@vben/hooks';
 import { Icon } from '@vben/icons';
-import { Nullable } from '@vben/types';
 
 import { useDebounceFn } from '@vueuse/core';
 
@@ -62,7 +63,7 @@ watch(
   <div :class="[ns.b()]" class="relative flex flex-col gap-1">
     <div
       :class="[{ 'default-size': !isLoaded }]"
-      class="relative flex"
+      class="relative flex overflow-hidden"
       @click="handleBaseMapClick"
     >
       <div

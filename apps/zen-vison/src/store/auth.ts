@@ -1,5 +1,6 @@
-import type { LoginAndRegisterParams } from '@vben/common-ui';
-import type { UserInfo } from '@vben/types';
+import type { Nullable, UserInfo } from '@vben/types';
+
+import type { AuthApi } from '#/api';
 
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -10,12 +11,14 @@ import { resetAllStores, useAccessStore, useUserStore } from '@vben/stores';
 import { ElNotification } from 'element-plus';
 import { defineStore } from 'pinia';
 
-import { getAccessCodes, getUserInfo, login } from '#/api';
+import { getUserPermissionApi, userLoginApi, userLogoutApi } from '#/api';
 import { $t } from '#/locales';
+import { useUserStore as useZenUserStore } from '#/store';
 
-export const useAuthStore = defineStore('auth', () => {
+export const useAuthStore = defineStore('zen-auth', () => {
   const accessStore = useAccessStore();
   const userStore = useUserStore();
+  const zenUserStore = useZenUserStore();
   const router = useRouter();
 
   const loginLoading = ref(false);
@@ -26,43 +29,37 @@ export const useAuthStore = defineStore('auth', () => {
    * @param params 登录表单数据
    */
   async function authLogin(
-    params: LoginAndRegisterParams,
+    params: AuthApi.LoginParams,
     onSuccess?: () => Promise<void> | void,
   ) {
     // 异步处理用户登录操作并获取 accessToken
-    let userInfo: null | UserInfo = null;
+    let userInfo: Nullable<AuthApi.User> = null;
     try {
       loginLoading.value = true;
-      const { accessToken, refreshToken } = await login(params);
+      const { accessToken } = await userLoginApi(params);
 
       // 如果成功获取到 accessToken
       if (accessToken) {
         // 将 accessToken 存储到 accessStore 中
         accessStore.setAccessToken(accessToken);
-        accessStore.setRefreshToken(refreshToken);
 
         // 获取用户信息并存储到 accessStore 中
-        const [fetchUserInfoResult, accessCodes] = await Promise.all([
-          fetchUserInfo(),
-          getAccessCodes(),
-        ]);
-
-        userInfo = fetchUserInfoResult;
-
-        userStore.setUserInfo(userInfo);
-        accessStore.setAccessCodes(accessCodes);
+        const { user } = (await fetchUserInfo()) || {};
+        if (user) {
+          userInfo = user;
+        }
 
         if (accessStore.loginExpired) {
           accessStore.setLoginExpired(false);
         } else {
           onSuccess
             ? await onSuccess?.()
-            : await router.push(userInfo.homePath || DEFAULT_HOME_PATH);
+            : await router.push(DEFAULT_HOME_PATH);
         }
 
-        if (userInfo?.realName) {
+        if (userInfo?.nickname) {
           ElNotification({
-            message: `${$t('authentication.loginSuccessDesc')}:${userInfo?.realName}`,
+            message: `${$t('authentication.loginSuccessDesc')}: ${userInfo?.nickname}`,
             title: $t('authentication.loginSuccess'),
             type: 'success',
           });
@@ -78,23 +75,43 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function logout() {
-    resetAllStores();
-    accessStore.setLoginExpired(false);
+    try {
+      await userLogoutApi();
+    } finally {
+      resetAllStores();
+      accessStore.setLoginExpired(false);
 
-    // 回登陆页带上当前路由地址
-    await router.replace({
-      path: LOGIN_PATH,
-      query: {
-        redirect: encodeURIComponent(router.currentRoute.value.fullPath),
-      },
-    });
+      // 回登陆页带上当前路由地址
+      await router.replace({
+        path: LOGIN_PATH,
+        query: {
+          redirect: encodeURIComponent(router.currentRoute.value.fullPath),
+        },
+      });
+    }
   }
 
   async function fetchUserInfo() {
-    let userInfo: null | UserInfo = null;
-    userInfo = await getUserInfo();
-    userStore.setUserInfo(userInfo);
-    return userInfo;
+    let userInfo: Nullable<AuthApi.PermissionResp> = null;
+    try {
+      const userPermission = await getUserPermissionApi();
+      const { permissions, roles, user } = userPermission;
+      userInfo = userPermission;
+      const vbenUserInfo = {
+        avatar: user.avatar,
+        realName: user.nickname,
+        roles,
+        userId: user.id,
+        username: user.username,
+      } as unknown as UserInfo;
+      userStore.setUserInfo(vbenUserInfo); // 适配 vben userStore
+      zenUserStore.setUserInfo(user);
+      zenUserStore.setRoles(roles);
+      accessStore.setAccessCodes(permissions);
+      return userInfo;
+    } catch {
+      return userInfo;
+    }
   }
 
   function $reset() {

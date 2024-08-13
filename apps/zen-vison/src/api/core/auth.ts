@@ -1,4 +1,4 @@
-import type { Nullable } from '@vben/types';
+import type { Nullable, RouteMeta } from '@vben/types';
 
 import type { HttpResponse } from '#/utils/request/types';
 
@@ -16,25 +16,46 @@ export namespace AuthApi {
   }
 
   export interface CheckCaptchaModel {
-    captchaType: string;
+    captchaType: CaptchaEnum;
     pointJson: string;
     token: string;
   }
 
-  /** 登录接口参数 */
   export interface LoginParams {
+    captcha?: string;
     password: string;
     username: string;
   }
 
-  /** 登录接口返回值 */
-  export interface LoginResult {
+  export interface LoginResp {
     accessToken: string;
-    desc: string;
-    realName: string;
-    refreshToken: string;
-    userId: string;
+  }
+
+  export interface Menu {
+    children: Nullable<Menu[]>;
+    component: Nullable<string>;
+    componentName: string;
+    id: number;
+    meta: Nullable<RouteMeta>;
+    name: string;
+    parentId: number;
+    path: string;
+  }
+
+  export interface User {
+    avatar: Nullable<string>;
+    deptId: Nullable<number>;
+    email: Nullable<string>;
+    id: number;
+    nickname: Nullable<number>;
     username: string;
+  }
+
+  export interface PermissionResp {
+    menus: Menu[];
+    permissions: string[];
+    roles: string[];
+    user: User;
   }
 }
 
@@ -63,16 +84,20 @@ export async function checkCaptchaApi(data: AuthApi.CheckCaptchaModel) {
 /**
  * 登录
  */
-export async function login(_: AuthApi.LoginParams) {
-  return {
-    accessToken: 'dmJlbg==',
-    refreshToken: 'dmJlbg==',
-  };
+export async function userLoginApi(data: AuthApi.LoginParams) {
+  return requestClient.post<AuthApi.LoginResp>(`${SYSTEM}/auth/login`, data);
 }
 
 /**
- * 获取用户权限码
+ * 登出
  */
-export async function getAccessCodes() {
-  return ['AC_100100', 'AC_100110', 'AC_100120', 'AC_100010'];
+export async function userLogoutApi() {
+  return requestClient.post<boolean>(`${SYSTEM}/auth/logout`);
+}
+
+/**
+ * 获取登录用户的权限信息
+ */
+export async function getUserPermissionApi() {
+  return requestClient.get<AuthApi.PermissionResp>(`${SYSTEM}/auth/permission`);
 }

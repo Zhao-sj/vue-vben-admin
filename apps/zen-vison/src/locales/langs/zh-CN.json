@@ -1,10 +1,4 @@
 {
-  "page": {
-    "demos": {
-      "title": "演示",
-      "element-plus": "Element Plus"
-    }
-  },
   "zen": {
     "core": {
       "login": "登录",
@@ -36,6 +30,34 @@
       "close": "关闭",
       "save": "保存",
       "next": "下一步"
+    },
+    "login": {
+      "usernamePlaceholder": "用户名",
+      "passwordPlaceholder": "密码"
+    },
+    "menu": {
+      "dashboard": {
+        "title": "概览",
+        "analytics": "分析页",
+        "workspace": "工作台"
+      },
+      "manage": {
+        "system": "系统管理",
+        "tenant": "租户管理",
+        "tenantList": "租户列表",
+        "tenantPackage": "租户套餐",
+        "user": "用户管理",
+        "role": "角色管理",
+        "menu": "菜单管理",
+        "dept": "部门管理",
+        "post": "岗位管理",
+        "log": "审计日志",
+        "loginLog": "登录日志",
+        "accessLog": "访问日志",
+        "errorLog": "错误日志",
+        "dict": "字典管理",
+        "notice": "通知通告"
+      }
     }
   }
 }

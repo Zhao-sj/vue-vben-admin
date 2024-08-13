@@ -10,7 +10,7 @@ import { useAppConfig } from '@vben/hooks';
 import { preferences } from '@vben/preferences';
 import { useAccessStore } from '@vben/stores';
 
-import { ResultEnum } from '#/enums';
+import { hasUnAuthentication, ResultEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useAuthStore } from '#/store';
 import { ZenRequestClient } from '#/utils';
@@ -52,11 +52,11 @@ function createRequestClient(baseURL: string) {
       return {
         // 为每个请求携带 Accept-Language
         'Accept-Language': preferences.app.locale,
-        // Tenant: '',
+        Tenant: 1, // TODO 登录时多租户选择暂不处理
       };
     },
   });
-  client.addResponseInterceptor<HttpResponse>((response) => {
+  client.addResponseInterceptor<HttpResponse>(async (response) => {
     const {
       errorMessageMode,
       isReturnNativeResponse,
@@ -94,6 +94,21 @@ function createRequestClient(baseURL: string) {
       }
 
       return data;
+    }
+
+    if (hasUnAuthentication(code)) {
+      const accessStore = useAccessStore();
+      const authStore = useAuthStore();
+      accessStore.setAccessToken(null);
+
+      if (preferences.app.loginExpiredMode === 'modal') {
+        accessStore.setLoginExpired(true);
+        code !== ResultEnum.UN_AUTHORIZED && ElMessage.error(msg);
+        return;
+      }
+
+      // 退出登录
+      await authStore.logout();
     }
 
     if (errorMessageMode === 'message') {

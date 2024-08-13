@@ -1,10 +1,4 @@
 {
-  "page": {
-    "demos": {
-      "title": "Demos",
-      "element-plus": "Element Plus"
-    }
-  },
   "zen": {
     "core": {
       "login": "Login",
@@ -36,6 +30,34 @@
       "close": "Close",
       "save": "Save",
       "next": "Next"
+    },
+    "login": {
+      "usernamePlaceholder": "username",
+      "passwordPlaceholder": "password"
+    },
+    "menu": {
+      "dashboard": {
+        "title": "Dashboard",
+        "analytics": "Analytics",
+        "workspace": "Workspace"
+      },
+      "manage": {
+        "system": "System Mange",
+        "tenant": "Tenant Manage",
+        "tenantList": "Tenant List",
+        "tenantPackage": "Tenant Package",
+        "user": "User Manage",
+        "role": "Role Manage",
+        "menu": "Menu Manage",
+        "dept": "Dept Manage",
+        "post": "Post Manage",
+        "log": "Log",
+        "loginLog": "Login Log",
+        "accessLog": "Access Log",
+        "errorLog": "Error Log",
+        "dict": "Dict Manage",
+        "notice": "Notice"
+      }
     }
   }
 }
