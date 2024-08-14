@@ -38,21 +38,25 @@ function menu2Route(
   menus: AuthApi.Menu[],
   path = '',
 ): RouteRecordStringComponent[] {
-  return menus.map(
-    (item) =>
-      ({
-        ...(item.component ? { component: item.component } : {}),
-        ...(item.children
-          ? { children: menu2Route(item.children, path + item.path) }
-          : {}),
-        meta: {
-          ...item.meta,
-          ...(item.meta?.title ? {} : { title: item.name }),
-        },
-        name: item.componentName,
-        path: `${path === '/' ? '' : path}${item.path}`,
-      }) as RouteRecordStringComponent,
-  );
+  return menus.map((item) => {
+    const fullPath = `${path === '/' ? '' : path}${item.path}`;
+    const isAddDefaultActivePath =
+      (!item.children || item.children.length <= 0) && !item.meta?.activePath;
+
+    return {
+      ...(item.component ? { component: item.component } : {}),
+      ...(item.children
+        ? { children: menu2Route(item.children, path + item.path) }
+        : {}),
+      meta: {
+        ...item.meta,
+        ...(item.meta?.title ? {} : { title: item.name }),
+        ...(isAddDefaultActivePath ? { activePath: fullPath } : {}),
+      },
+      name: item.componentName,
+      path: fullPath,
+    } as RouteRecordStringComponent;
+  });
 }
 
 export { generateAccess };
