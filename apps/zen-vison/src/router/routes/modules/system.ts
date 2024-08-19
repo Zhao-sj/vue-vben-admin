@@ -12,11 +12,11 @@ const routes: RouteRecordRaw[] = [
       title: $t('zen.menu.manage.system'),
     },
     name: 'SystemManage',
-    path: '/system',
+    path: '/sys',
     children: [
       {
         name: 'TenantManage',
-        path: '/system/tenant',
+        path: '/sys/tenant',
         meta: {
           icon: 'majesticons:users-line',
           title: $t('zen.menu.manage.tenant'),
@@ -24,8 +24,8 @@ const routes: RouteRecordRaw[] = [
         children: [
           {
             name: 'TenantList',
-            path: '/system/tenant/list',
-            component: () => import('#/views/system/tenant/list/index.vue'),
+            path: '/sys/tenant/list',
+            component: () => import('#/views/sys/tenant/list/index.vue'),
             meta: {
               icon: 'hugeicons:user-list',
               title: $t('zen.menu.manage.tenantList'),
@@ -33,8 +33,8 @@ const routes: RouteRecordRaw[] = [
           },
           {
             name: 'TenantPackage',
-            path: '/system/tenant/package',
-            component: () => import('#/views/system/tenant/package/index.vue'),
+            path: '/sys/tenant/package',
+            component: () => import('#/views/sys/tenant/package/index.vue'),
             meta: {
               icon: 'hugeicons:package',
               title: $t('zen.menu.manage.tenantPackage'),
@@ -44,8 +44,8 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'UserManage',
-        path: '/system/user',
-        component: () => import('#/views/system/user/index.vue'),
+        path: '/sys/user',
+        component: () => import('#/views/sys/user/index.vue'),
         meta: {
           icon: 'ep:user',
           title: $t('zen.menu.manage.user'),
@@ -53,8 +53,8 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'RoleManage',
-        path: '/system/role',
-        component: () => import('#/views/system/role/index.vue'),
+        path: '/sys/role',
+        component: () => import('#/views/sys/role/index.vue'),
         meta: {
           icon: 'icon-park-outline:user-positioning',
           title: $t('zen.menu.manage.role'),
@@ -62,8 +62,8 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'MenuManage',
-        path: '/system/menu',
-        component: () => import('#/views/system/menu/index.vue'),
+        path: '/sys/menu',
+        component: () => import('#/views/sys/menu/index.vue'),
         meta: {
           icon: 'ep:menu',
           title: $t('zen.menu.manage.menu'),
@@ -71,8 +71,8 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'DeptManage',
-        path: '/system/dept',
-        component: () => import('#/views/system/dept/index.vue'),
+        path: '/sys/dept',
+        component: () => import('#/views/sys/dept/index.vue'),
         meta: {
           icon: 'carbon:layers',
           title: $t('zen.menu.manage.dept'),
@@ -80,8 +80,8 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'PostManage',
-        path: '/system/post',
-        component: () => import('#/views/system/post/index.vue'),
+        path: '/sys/post',
+        component: () => import('#/views/sys/post/index.vue'),
         meta: {
           icon: 'mdi:account-tie',
           title: $t('zen.menu.manage.post'),
@@ -89,7 +89,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'LogManage',
-        path: '/system/log',
+        path: '/sys/log',
         meta: {
           icon: 'ph:read-cv-logo-bold',
           title: $t('zen.menu.manage.log'),
@@ -97,8 +97,8 @@ const routes: RouteRecordRaw[] = [
         children: [
           {
             name: 'LoginLog',
-            path: '/system/log/login',
-            component: () => import('#/views/system/log/login/index.vue'),
+            path: '/sys/log/login',
+            component: () => import('#/views/sys/log/login/index.vue'),
             meta: {
               icon: 'ri:login-box-line',
               title: $t('zen.menu.manage.loginLog'),
@@ -106,8 +106,8 @@ const routes: RouteRecordRaw[] = [
           },
           {
             name: 'AccessLog',
-            path: '/system/log/access',
-            component: () => import('#/views/system/log/access/index.vue'),
+            path: '/sys/log/access',
+            component: () => import('#/views/sys/log/access/index.vue'),
             meta: {
               icon: 'solar:clipboard-list-broken',
               title: $t('zen.menu.manage.accessLog'),
@@ -115,8 +115,8 @@ const routes: RouteRecordRaw[] = [
           },
           {
             name: 'ErrorLog',
-            path: '/system/log/error',
-            component: () => import('#/views/system/log/error/index.vue'),
+            path: '/sys/log/error',
+            component: () => import('#/views/sys/log/error/index.vue'),
             meta: {
               icon: 'ic:round-error-outline',
               title: $t('zen.menu.manage.errorLog'),
@@ -126,8 +126,8 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'DictManage',
-        path: '/system/dict',
-        component: () => import('#/views/system/dict/index.vue'),
+        path: '/sys/dict',
+        component: () => import('#/views/sys/dict/index.vue'),
         meta: {
           icon: 'streamline:dictionary-language-book',
           title: $t('zen.menu.manage.dict'),
@@ -135,8 +135,8 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'NoticeManage',
-        path: '/system/notice',
-        component: () => import('#/views/system/notice/index.vue'),
+        path: '/sys/notice',
+        component: () => import('#/views/sys/notice/index.vue'),
         meta: {
           icon: 'icon-park-outline:volume-notice',
           title: $t('zen.menu.manage.notice'),

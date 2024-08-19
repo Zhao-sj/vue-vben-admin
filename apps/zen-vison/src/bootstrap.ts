@@ -5,9 +5,12 @@ import { initStores } from '@vben/stores';
 import '@vben/styles';
 
 import { setupI18n } from '#/locales';
+import { registerVxeUI } from '#/utils';
 
 import App from './app.vue';
 import { router } from './router';
+
+import '#/styles/index.scss';
 
 async function bootstrap(namespace: string) {
   const app = createApp(App);
@@ -20,6 +23,9 @@ async function bootstrap(namespace: string) {
 
   // 安装权限指令
   registerAccessDirective(app);
+
+  // 安装 vxe-ui
+  registerVxeUI(app);
 
   // 配置路由及路由守卫
   app.use(router);

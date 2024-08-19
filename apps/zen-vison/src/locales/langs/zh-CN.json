@@ -15,21 +15,13 @@
       "errorTitle": "错误提示",
       "successTip": "操作成功",
       "errorTip": "操作失败",
-      "confirm": "确定",
-      "cancel": "取消",
-      "submit": "提交",
-      "reset": "重置",
-      "search": "搜索",
-      "add": "新增",
+      "statusNormal": "正常",
+      "statusDisabled": "禁用",
+      "opt": "操作",
       "edit": "编辑",
       "delete": "删除",
-      "detail": "详情",
-      "import": "导入",
-      "export": "导出",
-      "back": "返回",
-      "close": "关闭",
-      "save": "保存",
-      "next": "下一步"
+      "batchDelete": "批量删除",
+      "export": "数据导出"
     },
     "login": {
       "usernamePlaceholder": "用户名",
@@ -57,6 +49,24 @@
         "errorLog": "错误日志",
         "dict": "字典管理",
         "notice": "通知通告"
+      }
+    },
+    "service": {
+      "tenant": {
+        "code": "租户编号",
+        "name": "租户名称",
+        "package": "租户套餐",
+        "contact": "联系人",
+        "contactPhone": "联系方式",
+        "accountLimit": "账号额度",
+        "expireTime": "到期时间",
+        "website": "绑定域名",
+        "status": "租户状态",
+        "createTime": "创建时间",
+        "create": "创建租户",
+        "edit": "编辑租户",
+        "delete": "删除租户",
+        "systemTenant": "系统租户"
       }
     }
   }

@@ -2,9 +2,11 @@ import type { Nullable, RouteMeta } from '@vben/types';
 
 import type { HttpResponse } from '#/utils/request/types';
 
-import { SYSTEM } from '#/api/module';
+import { ModuleEnum } from '#/api/common';
 import { requestClient } from '#/api/request';
 import { CaptchaEnum } from '#/enums';
+
+const { SYSTEM } = ModuleEnum;
 
 export namespace AuthApi {
   export interface CaptchaResp {
@@ -21,7 +23,7 @@ export namespace AuthApi {
     token: string;
   }
 
-  export interface LoginParams {
+  export interface LoginModel {
     captcha?: string;
     password: string;
     username: string;
@@ -62,7 +64,7 @@ export namespace AuthApi {
 /**
  * 获取验证码
  */
-export async function getCaptchaApi(captchaType = CaptchaEnum.BLOCK_PUZZLE) {
+export function getCaptchaApi(captchaType = CaptchaEnum.BLOCK_PUZZLE) {
   return requestClient.post<AuthApi.CaptchaResp>(`${SYSTEM}/captcha/get`, {
     captchaType,
   });
@@ -71,7 +73,7 @@ export async function getCaptchaApi(captchaType = CaptchaEnum.BLOCK_PUZZLE) {
 /**
  * 校验验证码
  */
-export async function checkCaptchaApi(data: AuthApi.CheckCaptchaModel) {
+export function checkCaptchaApi(data: AuthApi.CheckCaptchaModel) {
   return requestClient.post<HttpResponse<AuthApi.CheckCaptchaModel>>(
     `${SYSTEM}/captcha/check`,
     data,
@@ -84,20 +86,20 @@ export async function checkCaptchaApi(data: AuthApi.CheckCaptchaModel) {
 /**
  * 登录
  */
-export async function userLoginApi(data: AuthApi.LoginParams) {
+export function userLoginApi(data: AuthApi.LoginModel) {
   return requestClient.post<AuthApi.LoginResp>(`${SYSTEM}/auth/login`, data);
 }
 
 /**
  * 登出
  */
-export async function userLogoutApi() {
+export function userLogoutApi() {
   return requestClient.post<boolean>(`${SYSTEM}/auth/logout`);
 }
 
 /**
  * 获取登录用户的权限信息
  */
-export async function getUserPermissionApi() {
+export function getUserPermissionApi() {
   return requestClient.get<AuthApi.PermissionResp>(`${SYSTEM}/auth/permission`);
 }

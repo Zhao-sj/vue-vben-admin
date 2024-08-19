@@ -31,12 +31,16 @@
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.12",
     "element-plus": "^2.7.8",
+    "lodash-es": "^4.17.21",
     "pinia": "2.2.0",
     "vue": "^3.4.35",
-    "vue-router": "^4.4.2"
+    "vue-router": "^4.4.2",
+    "vxe-pc-ui": "^4.0.94",
+    "vxe-table": "^4.7.65"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",
+    "@types/lodash-es": "^4.17.12",
     "unplugin-auto-import": "^0.18.2",
     "unplugin-element-plus": "^0.8.0",
     "unplugin-vue-components": "^0.27.3"

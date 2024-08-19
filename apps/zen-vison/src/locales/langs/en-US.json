@@ -15,21 +15,13 @@
       "errorTitle": "Error Tips",
       "successTip": "Operation Successful",
       "errorTip": "Operation Failed",
-      "confirm": "Confirm",
-      "cancel": "Cancel",
-      "submit": "Submit",
-      "reset": "Reset",
-      "search": "Search",
-      "add": "Add",
+      "statusNormal": "Normal",
+      "statusDisabled": "Disabled",
+      "opt": "Operation",
       "edit": "Edit",
       "delete": "Delete",
-      "detail": "Details",
-      "import": "Import",
-      "export": "Export",
-      "back": "Back",
-      "close": "Close",
-      "save": "Save",
-      "next": "Next"
+      "batchDelete": "Batch Delete",
+      "export": "Export"
     },
     "login": {
       "usernamePlaceholder": "username",
@@ -57,6 +49,24 @@
         "errorLog": "Error Log",
         "dict": "Dict Manage",
         "notice": "Notice"
+      }
+    },
+    "service": {
+      "tenant": {
+        "code": "NO",
+        "name": "Name",
+        "package": "Package",
+        "contact": "Contact",
+        "contactPhone": "ContactPhone",
+        "accountLimit": "AccountLimit",
+        "expireTime": "ExpireTime",
+        "website": "WebSite",
+        "status": "Status",
+        "createTime": "CreateTime",
+        "create": "Create",
+        "edit": "Edit",
+        "delete": "Delete",
+        "systemTenant": "System Tenant"
       }
     }
   }

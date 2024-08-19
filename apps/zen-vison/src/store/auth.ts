@@ -29,7 +29,7 @@ export const useAuthStore = defineStore('zen-auth', () => {
    * @param params 登录表单数据
    */
   async function authLogin(
-    params: AuthApi.LoginParams,
+    params: AuthApi.LoginModel,
     onSuccess?: () => Promise<void> | void,
   ) {
     // 异步处理用户登录操作并获取 accessToken
