@@ -8,20 +8,36 @@
       "forgetPassword": "Forget Password"
     },
     "request": {
-      "requestError": "Request error, please try again later"
+      "requestError": "Request error, please try again later",
+      "requestExpire": "Request has expired, please log in again"
     },
     "common": {
       "successTitle": "Success Tips",
       "errorTitle": "Error Tips",
       "successTip": "Operation Successful",
       "errorTip": "Operation Failed",
-      "statusNormal": "Normal",
-      "statusDisabled": "Disabled",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
       "opt": "Operation",
       "edit": "Edit",
       "delete": "Delete",
       "batchDelete": "Batch Delete",
-      "export": "Export"
+      "confirmDelete": "Are you sure to delete?",
+      "export": "Export",
+      "search": "Search",
+      "reset": "Reset",
+      "pleaseInput": "Input",
+      "pleaseSelect": "Select",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "notEmypt": " cannot be empty"
+    },
+    "export": {
+      "title": "Export",
+      "fileName": "Name",
+      "fileType": "Type",
+      "fileNameMsg": "File name cannot be empty",
+      "success": "Export Success"
     },
     "login": {
       "usernamePlaceholder": "username",
@@ -66,7 +82,9 @@
         "create": "Create",
         "edit": "Edit",
         "delete": "Delete",
-        "systemTenant": "System Tenant"
+        "systemTenant": "System Tenant",
+        "username": "Account",
+        "password": "Password"
       }
     }
   }

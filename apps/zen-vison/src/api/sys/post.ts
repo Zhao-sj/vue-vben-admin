@@ -1,6 +1,11 @@
 import type { Nullable } from '@vben/types';
 
-import { type BaseSimple, ModuleEnum, type PageResult } from '#/api/common';
+import {
+  type BaseSimple,
+  ModuleEnum,
+  type PageParam,
+  type PageResult,
+} from '#/api/common';
 import { requestClient } from '#/api/request';
 
 const { SYSTEM } = ModuleEnum;
@@ -71,7 +76,7 @@ export function getPostApi(id: number) {
 /**
  * 获取岗位分页列表
  */
-export function getPostPageListApi(params: PostApi.PageQuery) {
+export function getPostPageListApi(params: PageParam & PostApi.PageQuery) {
   return requestClient.get<PageResult<PostApi.Post>>(`${SYSTEM}/post`, {
     params,
   });

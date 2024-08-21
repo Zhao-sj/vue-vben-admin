@@ -11,7 +11,7 @@ import { requestClient } from '#/api/request';
 const { SYSTEM } = ModuleEnum;
 
 export namespace RoleApi {
-  export interface PageQuery extends PageParam {
+  export interface PageQuery {
     name?: string;
     code?: string;
     status?: number;
@@ -119,7 +119,7 @@ export function getRoleApi(id: number) {
 /**
  * 获取角色分页列表
  */
-export function getRolePageListApi(params: RoleApi.PageQuery) {
+export function getRolePageListApi(params: PageParam & RoleApi.PageQuery) {
   return requestClient.get<PageResult<RoleApi.Role>>(`${SYSTEM}/role`, {
     params,
   });

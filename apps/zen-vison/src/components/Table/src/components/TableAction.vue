@@ -6,6 +6,8 @@ import { Icon } from '@vben/icons';
 import { isString } from '@vben/utils';
 
 interface Props {
+  link?: boolean;
+  circle?: boolean;
   actions?: ActionItem[];
   dropdownActions?: ActionDropdownItem[];
 }
@@ -13,6 +15,7 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   actions: () => [],
   dropdownActions: () => [],
+  link: true,
 });
 
 const { hasAccessByCodes, hasAccessByRoles } = useAccess();
@@ -60,9 +63,13 @@ function hasDisabled(config?: Record<string, any>) {
                 :disabled="hasDisabled(item.tooltip)"
                 v-bind="item.tooltip || {}"
               >
-                <ElButton link v-bind="{ ...item, icon: undefined }">
-                  <Icon v-if="item.icon" :icon="item.icon" class="mr-1" />
-                  <span>{{ item.label }}</span>
+                <ElButton :circle :link v-bind="{ ...item, icon: undefined }">
+                  <Icon
+                    v-if="item.icon"
+                    :class="{ 'mr-1': item.label }"
+                    :icon="item.icon"
+                  />
+                  <span v-if="item.label" class="z-span">{{ item.label }}</span>
                 </ElButton>
               </ElTooltip>
             </div>
@@ -71,6 +78,8 @@ function hasDisabled(config?: Record<string, any>) {
 
         <ElDivider
           v-if="i < actions.length - 1 || dropdownActions.length > 0"
+          :border-style="link ? 'solid' : 'none'"
+          class="!mx-1.5"
           direction="vertical"
         />
       </template>

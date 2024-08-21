@@ -11,7 +11,7 @@ import { requestClient } from '#/api/request';
 const { SYSTEM } = ModuleEnum;
 
 export namespace TenantApi {
-  export interface PageQuery extends PageParam {
+  export interface PageQuery {
     name?: string;
     contactName?: string;
     contactMobile?: string;
@@ -39,7 +39,7 @@ export namespace TenantApi {
   export interface AddModel {
     name: string;
     contactName: string;
-    contactMobile?: string;
+    contactMobile: string;
     status: number;
     website?: string;
     packageId: number;
@@ -55,7 +55,7 @@ export namespace TenantApi {
     id: number;
   }
 
-  export interface PackagePageQuery extends PageParam {
+  export interface PackagePageQuery {
     name?: string;
     remark?: string;
     status?: number;
@@ -113,7 +113,7 @@ export function getTenantPackageApi(id: number) {
  * 获取租户套餐分页列表
  */
 export function getTenantPackagePageListApi(
-  params: TenantApi.PackagePageQuery,
+  params: PageParam & TenantApi.PackagePageQuery,
 ) {
   return requestClient.get<PageResult<TenantApi.Package>>(
     `${SYSTEM}/tenant/package`,
@@ -128,6 +128,13 @@ export function getTenantPackagePageListApi(
  */
 export function getTenantPackageSimpleListApi() {
   return requestClient.get<BaseSimple[]>(`${SYSTEM}/tenant/package/simple`);
+}
+
+/**
+ * 批量删除
+ */
+export function batchDeleteTenantApi(ids: number[]) {
+  return requestClient.delete<boolean>(`${SYSTEM}/tenant`, { data: { ids } });
 }
 
 /**
@@ -155,8 +162,9 @@ export function addTenantApi(data: TenantApi.AddModel) {
  * 导出租户
  */
 export function exportTenantApi(params: TenantApi.PageQuery) {
-  return requestClient.get<void>(`${SYSTEM}/tenant/export`, {
+  return requestClient.get<Blob>(`${SYSTEM}/tenant/export`, {
     params,
+    responseType: 'blob',
   });
 }
 
@@ -170,7 +178,7 @@ export function getTenantApi(id: number) {
 /**
  * 获取租户分页列表
  */
-export function getTenantPageListApi(params: TenantApi.PageQuery) {
+export function getTenantPageListApi(params: PageParam & TenantApi.PageQuery) {
   return requestClient.get<PageResult<TenantApi.Tenant>>(`${SYSTEM}/tenant`, {
     params,
   });

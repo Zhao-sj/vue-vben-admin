@@ -17,7 +17,7 @@ export namespace DictApi {
     type: string;
   }
 
-  export interface TypePageQuery extends PageParam {
+  export interface TypePageQuery {
     name?: string;
     type?: string;
     status?: number;
@@ -48,7 +48,7 @@ export namespace DictApi {
     color: DictApi.Color;
   }
 
-  export interface DataPageQuery extends PageParam {
+  export interface DataPageQuery {
     dictTypeId: number;
     label?: string;
     status?: number;
@@ -117,7 +117,9 @@ export function getDictDataApi(id: number) {
 /**
  * 获取字典数据分页列表
  */
-export function getDictDataPageListApi(params: DictApi.DataPageQuery) {
+export function getDictDataPageListApi(
+  params: DictApi.DataPageQuery & PageParam,
+) {
   return requestClient.get<PageResult<DictApi.Data>>(`${SYSTEM}/dict/data`, {
     params,
   });
@@ -172,7 +174,9 @@ export function getDictTypeApi(id: number) {
 /**
  * 获取字典类型分页列表
  */
-export function getDictTypePageListApi(params: DictApi.TypePageQuery) {
+export function getDictTypePageListApi(
+  params: DictApi.TypePageQuery & PageParam,
+) {
   return requestClient.get<PageResult<DictApi.Type>>(`${SYSTEM}/dict/type`, {
     params,
   });

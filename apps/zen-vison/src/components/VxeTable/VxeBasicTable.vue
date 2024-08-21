@@ -46,7 +46,7 @@ onMounted(fixedHeight);
 
 <template>
   <div ref="containerRef" :style="{ height: containerHeight }" class="p-5">
-    <div ref="cardRef" class="card-box p-2">
+    <div ref="cardRef" class="card-box p-5">
       <VxeGrid
         ref="vxeTableRef"
         v-bind="$attrs"

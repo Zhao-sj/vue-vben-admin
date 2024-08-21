@@ -4,7 +4,7 @@ import { requestClient } from '#/api/request';
 const { SYSTEM } = ModuleEnum;
 
 export namespace NoticeApi {
-  export interface PageQuery extends PageParam {
+  export interface PageQuery {
     title?: string;
     status?: number;
   }
@@ -68,7 +68,7 @@ export function getNoticeApi(id: number) {
 /**
  * 获取通知公告分页列表
  */
-export function getNoticePageListApi(params: NoticeApi.PageQuery) {
+export function getNoticePageListApi(params: NoticeApi.PageQuery & PageParam) {
   return requestClient.get<PageResult<NoticeApi.Notice>>(`${SYSTEM}/notice`, {
     params,
   });

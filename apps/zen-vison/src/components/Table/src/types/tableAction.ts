@@ -20,6 +20,7 @@ interface PopconfirmEmits {
 export interface ActionItem extends ActionAuth, Partial<ButtonProps> {
   label?: string;
   icon?: string;
+  title?: string;
   onClick?: () => void;
   popConfirm?: { on?: PopconfirmEmits } & Partial<PopconfirmProps>;
   tooltip?: Partial<ElTooltipProps>;

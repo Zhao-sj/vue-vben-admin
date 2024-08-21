@@ -13,7 +13,7 @@ export namespace UserApi {
     deptName: Nullable<string>;
   }
 
-  export interface PageQuery extends PageParam {
+  export interface PageQuery {
     username?: string;
     mobile?: string;
     deptId?: number;
@@ -162,7 +162,7 @@ export function getUserApi(id: number) {
 /**
  * 获取用户分页列表
  */
-export function getUserPageListApi(params: UserApi.PageQuery) {
+export function getUserPageListApi(params: PageParam & UserApi.PageQuery) {
   return requestClient.get<PageResult<UserApi.User>>(`${SYSTEM}/user`, {
     params,
   });

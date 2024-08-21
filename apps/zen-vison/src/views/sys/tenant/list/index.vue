@@ -1,26 +1,40 @@
 <script setup lang="ts">
-import type { VxeGridProps } from 'vxe-table';
-
-import { Icon } from '@vben/icons';
+import { type VxeGridProps } from 'vxe-table';
 
 import {
+  batchDeleteTenantApi,
+  deleteTenantApi,
+  exportTenantApi,
+  getTenantApi,
   getTenantPackageSimpleListApi,
   getTenantPageListApi,
   type TenantApi,
 } from '#/api';
-import { type ActionItem, TableAction, VxeBasicTable } from '#/components';
+import {
+  type ActionItem,
+  TableAction,
+  TableExport,
+  VxeBasicTable,
+} from '#/components';
 import { DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
-import { formatToDateTime, formatToThousand } from '#/utils';
+import { downloadExcel, formatToDateTime, formatToThousand } from '#/utils';
+
+import { TableAdd, TableEdit, TableQuery } from './components';
 
 type TenantColumns = VxeGridProps<TenantApi.Tenant>['columns'];
 
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.STATUS);
 
+let tenantQuery: TenantApi.PageQuery = {};
 const vxeBasicTableRef = ref<InstanceType<typeof VxeBasicTable>>();
+const tempData = ref<TenantApi.Tenant>();
+const showAddDialog = ref(false);
+const showEditDialog = ref(false);
+const showExportDialog = ref(false);
 
 const { data: packageList, runAsync: getPackageList } = useRequest(
   getTenantPackageSimpleListApi,
@@ -29,12 +43,20 @@ const { data: packageList, runAsync: getPackageList } = useRequest(
   },
 );
 
-const vxeTable = computed(() =>
-  vxeBasicTableRef.value?.getTableInstance<TenantApi.Tenant>(),
+const { loading: exportLoading, runAsync: exportTenant } = useRequest(
+  exportTenantApi,
+  {
+    manual: true,
+  },
 );
 
-const statusOpts = computed(() =>
-  dictStore.getDictDataList(DictTypeEnum.STATUS),
+const { loading, runAsync: getTenant } = useRequest(getTenantApi, {
+  loadingDelay: 200,
+  manual: true,
+});
+
+const vxeTable = computed(() =>
+  vxeBasicTableRef.value?.getTableInstance<TenantApi.Tenant>(),
 );
 
 const columns = computed<TenantColumns>(() => [
@@ -115,8 +137,39 @@ const columns = computed<TenantColumns>(() => [
   },
 ]);
 
+const toolbarActions = computed<ActionItem[]>(() => [
+  {
+    auth: 'system:tenant:delete',
+    icon: 'ep:delete',
+    onClick: () => {
+      vxeTable.value?.commitProxy('delete');
+    },
+    title: $t('zen.common.batchDelete'),
+    type: 'danger',
+  },
+  {
+    auth: 'system:tenant:create',
+    icon: 'ep:plus',
+    onClick: () => {
+      showAddDialog.value = true;
+    },
+    title: $t('zen.service.tenant.create'),
+    type: 'primary',
+  },
+  {
+    auth: 'system:tenant:export',
+    icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
+    onClick: () => {
+      showExportDialog.value = true;
+    },
+    title: $t('zen.common.export'),
+    type: 'warning',
+  },
+]);
+
 const tableOpts = reactive<VxeGridProps<TenantApi.Tenant>>({
   checkboxConfig: {
+    checkMethod: ({ row }) => row.packageId !== 0,
     highlight: true,
     range: true,
   },
@@ -124,15 +177,21 @@ const tableOpts = reactive<VxeGridProps<TenantApi.Tenant>>({
   pagerConfig: {
     pageSize: 20,
   },
+  printConfig: {},
   proxyConfig: {
     ajax: {
-      query: async ({ page }) => {
-        if (!packageList) {
+      delete: ({ body: { removeRecords } }) => {
+        const ids = removeRecords.map((item) => item.id);
+        return batchDeleteTenantApi(ids);
+      },
+      query: async ({ page: { currentPage, pageSize } }) => {
+        if (!packageList.value) {
           await getPackageList();
         }
         return getTenantPageListApi({
-          pageNum: page.currentPage,
-          pageSize: page.pageSize,
+          pageNum: currentPage,
+          pageSize,
+          ...tenantQuery,
         });
       },
     },
@@ -142,6 +201,7 @@ const tableOpts = reactive<VxeGridProps<TenantApi.Tenant>>({
     },
   },
   toolbarConfig: {
+    print: true,
     refresh: true,
     slots: {
       buttons: 'toolbar_left',
@@ -150,27 +210,39 @@ const tableOpts = reactive<VxeGridProps<TenantApi.Tenant>>({
 });
 
 function createActions(row: TenantApi.Tenant) {
+  const disabled = row.packageId === 0;
+
   const actions: ActionItem[] = [
     {
       auth: 'system:tenant:update',
+      disabled,
       icon: 'ep:edit',
-      label: '编辑',
+      label: $t('zen.common.edit'),
+      onClick: async () => {
+        const tenant = await getTenant(row.id);
+        tempData.value = tenant;
+        showEditDialog.value = true;
+      },
       type: 'primary',
     },
-  ];
-
-  if (row.packageId !== 0) {
-    actions.push({
+    {
       auth: 'system:tenant:delete',
-      disabled: row.packageId === 0,
+      disabled,
       icon: 'ep:delete',
-      label: '删除',
+      label: $t('zen.common.delete'),
       popConfirm: {
-        title: '确定要删除吗？',
+        on: {
+          confirm: async () => {
+            await deleteTenantApi(row.id);
+            ElMessage.success($t('zen.common.successTip'));
+            vxeTable.value?.commitProxy('reload');
+          },
+        },
+        title: $t('zen.common.confirmDelete'),
       },
       type: 'danger',
-    });
-  }
+    },
+  ];
 
   return actions;
 }
@@ -182,96 +254,51 @@ function getPackageNameById(id: number) {
 
   return packageList.value.find((item) => item.id === id)?.name || '-';
 }
+
+function handleQuery(query: TenantApi.PageQuery) {
+  tenantQuery = query;
+  vxeTable.value?.commitProxy('query');
+}
+
+async function handleExport(fileName: string) {
+  const data = await exportTenant(tenantQuery);
+  downloadExcel(data, fileName);
+  ElMessage.success($t('zen.export.success'));
+}
 </script>
 
 <template>
-  <VxeBasicTable ref="vxeBasicTableRef" :columns="columns" v-bind="tableOpts">
+  <VxeBasicTable
+    ref="vxeBasicTableRef"
+    :columns="columns"
+    v-loading="loading"
+    v-bind="tableOpts"
+  >
     <template #form>
-      <ElForm>
-        <ElRow :gutter="20">
-          <ElCol :lg="6" :xl="4" :xs="24">
-            <ElFormItem class="2xl:!mb-0" label="租户名称">
-              <ElInput />
-            </ElFormItem>
-          </ElCol>
-
-          <ElCol :lg="6" :xl="4" :xs="24">
-            <ElFormItem class="2xl:!mb-0" label="租户状态">
-              <ElSelect>
-                <ElOption
-                  v-for="item in statusOpts"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="+item.value"
-                />
-              </ElSelect>
-            </ElFormItem>
-          </ElCol>
-
-          <ElCol :lg="6" :xl="4" :xs="24">
-            <ElFormItem class="2xl:!mb-0" label="联系人">
-              <ElInput />
-            </ElFormItem>
-          </ElCol>
-
-          <ElCol :lg="6" :xl="4" :xs="24">
-            <ElFormItem class="2xl:!mb-0" label="联系方式">
-              <ElInput />
-            </ElFormItem>
-          </ElCol>
-
-          <ElCol :lg="8" :xl="5" :xs="24">
-            <ElFormItem class="2xl:!mb-0" label="创建时间">
-              <ElDatePicker type="daterange" />
-            </ElFormItem>
-          </ElCol>
-
-          <ElCol :lg="6" :xl="3" :xs="24">
-            <ElFormItem class="!mb-0">
-              <ElButton type="primary">
-                <Icon class="mr-1" icon="ep:search" />
-                <span>搜索</span>
-              </ElButton>
-
-              <ElButton>
-                <Icon class="mr-1" icon="ep:refresh" />
-                <span>重置</span>
-              </ElButton>
-            </ElFormItem>
-          </ElCol>
-        </ElRow>
-      </ElForm>
+      <TableQuery @query="handleQuery" />
     </template>
 
     <template #toolbar_left>
-      <div>
-        <ElButton
-          :title="$t('zen.common.batchDelete')"
-          circle
-          type="danger"
-          @click="vxeTable?.commitProxy('delete')"
-        >
-          <template #icon>
-            <Icon icon="ep:delete" />
-          </template>
-        </ElButton>
+      <TableAction :actions="toolbarActions" :link="false" circle />
 
-        <ElButton
-          :title="$t('zen.service.tenant.create')"
-          circle
-          type="primary"
-        >
-          <template #icon>
-            <Icon icon="ep:plus" />
-          </template>
-        </ElButton>
+      <TableAdd
+        v-model="showAddDialog"
+        :packages="packageList"
+        @success="vxeTable?.commitProxy('reload')"
+      />
 
-        <ElButton :title="$t('zen.common.export')" circle type="warning">
-          <template #icon>
-            <Icon icon="ep:download" />
-          </template>
-        </ElButton>
-      </div>
+      <TableEdit
+        v-model="showEditDialog"
+        :data="tempData"
+        :packages="packageList"
+        @success="vxeTable?.commitProxy('reload')"
+      />
+
+      <TableExport
+        v-model="showExportDialog"
+        :default-name="$t('zen.menu.manage.tenantList')"
+        @confirm="handleExport"
+      />
     </template>
 
     <template #package="{ row: { packageId } }">

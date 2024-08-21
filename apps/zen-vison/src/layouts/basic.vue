@@ -9,6 +9,7 @@ import {
   type LoginAndRegisterParams,
 } from '@vben/common-ui';
 import { LOGIN_PATH, VBEN_DOC_URL, VBEN_GITHUB_URL } from '@vben/constants';
+import { useRefresh } from '@vben/hooks';
 import { BookOpenText, CircleHelp, MdiGithub } from '@vben/icons';
 import {
   BasicLayout,
@@ -66,9 +67,9 @@ const userStore = useUserStore();
 const authStore = useAuthStore();
 const accessStore = useAccessStore();
 const { loginLoading } = storeToRefs(authStore);
+const { refresh } = useRefresh();
 const showCaptcha = ref(false);
-let loginState: Nullable<AuthApi.LoginParams> = null;
-let loginSuccessCallback: Nullable<() => Promise<void> | void> = null;
+let loginState: Nullable<AuthApi.LoginModel> = null;
 
 const showDot = computed(() =>
   notifications.value.some((item) => !item.isRead),
@@ -108,15 +109,11 @@ const avatar = computed(() => {
   return userStore.userInfo?.avatar ?? preferences.app.defaultAvatar;
 });
 
-const handleLogin = useDebounceFn(
-  (params: LoginAndRegisterParams, onSuccess: () => Promise<void> | void) => {
-    loginState = params;
-    loginSuccessCallback = onSuccess;
-
-    accessStore.setLoginExpired(false);
-    showCaptcha.value = true;
-  },
-);
+const handleLogin = useDebounceFn((params: LoginAndRegisterParams) => {
+  loginState = params;
+  accessStore.setLoginExpired(false);
+  showCaptcha.value = true;
+});
 
 function handleValidateSuccess(captcah: string) {
   if (!loginState) {
@@ -125,7 +122,7 @@ function handleValidateSuccess(captcah: string) {
 
   loginState.password = encryptBySha256(loginState.password);
   loginState.captcha = captcah;
-  authStore.authLogin(loginState, loginSuccessCallback!);
+  authStore.authLogin(loginState, refresh);
 }
 
 async function handleLogout() {

@@ -61,6 +61,7 @@ function createRequestClient(baseURL: string) {
       errorMessageMode,
       isReturnNativeResponse,
       isTransformResponse,
+      responseType,
       successMessageMode,
     } = response.config as InternalZenRequestConfig;
 
@@ -72,7 +73,16 @@ function createRequestClient(baseURL: string) {
       return response.data;
     }
 
-    const responseData = response.data;
+    let responseData = response.data;
+    if (responseType === 'blob') {
+      // 数据导出错误处理
+      const blobTypeData = response.data as unknown as Blob;
+      if (blobTypeData.type !== 'application/json') {
+        return blobTypeData;
+      }
+      responseData = await new Response(blobTypeData).json();
+    }
+
     const { code, data, msg } = responseData;
     const hasSuccess =
       responseData &&
@@ -104,7 +114,7 @@ function createRequestClient(baseURL: string) {
       if (preferences.app.loginExpiredMode === 'modal') {
         accessStore.setLoginExpired(true);
         code !== ResultEnum.UN_AUTHORIZED && ElMessage.error(msg);
-        return;
+        throw new Error(msg || $t('zen.request.requestExpire'));
       }
 
       // 退出登录

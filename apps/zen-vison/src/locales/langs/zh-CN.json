@@ -8,20 +8,36 @@
       "forgetPassword": "忘记密码"
     },
     "request": {
-      "requestError": "请求出错，请稍后重试"
+      "requestError": "请求出错，请稍后重试",
+      "requestExpire": "请求已过期，请重新登录"
     },
     "common": {
       "successTitle": "成功提示",
       "errorTitle": "错误提示",
       "successTip": "操作成功",
       "errorTip": "操作失败",
-      "statusNormal": "正常",
-      "statusDisabled": "禁用",
+      "confirm": "确认",
+      "cancel": "取消",
       "opt": "操作",
       "edit": "编辑",
       "delete": "删除",
       "batchDelete": "批量删除",
-      "export": "数据导出"
+      "confirmDelete": "确认删除吗？",
+      "export": "数据导出",
+      "search": "搜索",
+      "reset": "重置",
+      "pleaseInput": "请输入",
+      "pleaseSelect": "请选择",
+      "startDate": "开始日期",
+      "endDate": "结束日期",
+      "notEmypt": "不能为空"
+    },
+    "export": {
+      "title": "数据导出",
+      "fileName": "文件名",
+      "fileType": "文件类型",
+      "fileNameMsg": "文件名不能为空",
+      "success": "导出成功"
     },
     "login": {
       "usernamePlaceholder": "用户名",
@@ -56,7 +72,7 @@
         "code": "租户编号",
         "name": "租户名称",
         "package": "租户套餐",
-        "contact": "联系人",
+        "contact": "联系姓名",
         "contactPhone": "联系方式",
         "accountLimit": "账号额度",
         "expireTime": "到期时间",
@@ -66,7 +82,9 @@
         "create": "创建租户",
         "edit": "编辑租户",
         "delete": "删除租户",
-        "systemTenant": "系统租户"
+        "systemTenant": "系统租户",
+        "username": "用户账号",
+        "password": "用户密码"
       }
     }
   }

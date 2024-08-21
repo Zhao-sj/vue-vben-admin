@@ -6,7 +6,7 @@ import { requestClient } from '#/api/request';
 const { SYSTEM } = ModuleEnum;
 
 export namespace LogApi {
-  export interface LoginQuery extends PageParam {
+  export interface LoginQuery {
     username?: string;
     ip?: string;
     status?: string;
@@ -27,7 +27,7 @@ export namespace LogApi {
     createTime: number;
   }
 
-  export interface AccessQuery extends PageParam {
+  export interface AccessQuery {
     appName?: string;
     userId?: number;
     userType?: number;
@@ -61,7 +61,7 @@ export namespace LogApi {
     createTime: number;
   }
 
-  export interface ErrorQuery extends PageParam {
+  export interface ErrorQuery {
     appName?: string;
     userId?: number;
     userType?: number;
@@ -122,7 +122,7 @@ export function exporErrorLogApi(params: LogApi.ErrorQuery) {
 /**
  * 获取错误日志分页列表
  */
-export function getErrorLogPageListApi(params: LogApi.ErrorQuery) {
+export function getErrorLogPageListApi(params: LogApi.ErrorQuery & PageParam) {
   return requestClient.get<PageResult<LogApi.Error>>(`${SYSTEM}/log/error`, {
     params,
   });
@@ -140,7 +140,9 @@ export function exporAccessLogApi(params: LogApi.AccessQuery) {
 /**
  * 获取访问日志分页列表
  */
-export function getAccessLogPageListApi(params: LogApi.AccessQuery) {
+export function getAccessLogPageListApi(
+  params: LogApi.AccessQuery & PageParam,
+) {
   return requestClient.get<PageResult<LogApi.Access>>(`${SYSTEM}/log/access`, {
     params,
   });
@@ -158,7 +160,7 @@ export function exporLoginLogApi(params: LogApi.LoginQuery) {
 /**
  * 获取登录日志分页列表
  */
-export function getLoginLogPageListApi(params: LogApi.LoginQuery) {
+export function getLoginLogPageListApi(params: LogApi.LoginQuery & PageParam) {
   return requestClient.get<PageResult<LogApi.Login>>(`${SYSTEM}/log/login`, {
     params,
   });

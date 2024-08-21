@@ -18,7 +18,7 @@ defineOptions({ name: 'Login' });
 
 const authStore = useAuthStore();
 const showCaptcha = ref(false);
-let loginState: Nullable<AuthApi.LoginParams> = null;
+let loginState: Nullable<AuthApi.LoginModel> = null;
 
 const handleLogin = useDebounceFn((params: LoginAndRegisterParams) => {
   loginState = params;
