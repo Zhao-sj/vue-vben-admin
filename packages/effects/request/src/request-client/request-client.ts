@@ -3,17 +3,8 @@ import type {
   AxiosRequestConfig,
   AxiosResponse,
   CreateAxiosDefaults,
-  InternalAxiosRequestConfig,
 } from 'axios';
 
-import type {
-  MakeAuthorizationFn,
-  MakeErrorMessageFn,
-  MakeRequestHeadersFn,
-  RequestClientOptions,
-} from './types';
-
-import { $t } from '@vben/locales';
 import { merge } from '@vben/utils';
 
 import axios from 'axios';
@@ -21,16 +12,19 @@ import axios from 'axios';
 import { FileDownloader } from './modules/downloader';
 import { InterceptorManager } from './modules/interceptor';
 import { FileUploader } from './modules/uploader';
+import { type RequestClientOptions } from './types';
 
 class RequestClient {
-  private instance: AxiosInstance;
-  private makeAuthorization: MakeAuthorizationFn | undefined;
-  private makeErrorMessage: MakeErrorMessageFn | undefined;
-  private makeRequestHeaders: MakeRequestHeadersFn | undefined;
+  private readonly instance: AxiosInstance;
 
   public addRequestInterceptor: InterceptorManager['addRequestInterceptor'];
   public addResponseInterceptor: InterceptorManager['addResponseInterceptor'];
+
   public download: FileDownloader['download'];
+  // 是否正在刷新token
+  public isRefreshing = false;
+  // 刷新token队列
+  public refreshTokenQueue: ((token: string) => void)[] = [];
   public upload: FileUploader['upload'];
 
   /**
@@ -38,7 +32,6 @@ class RequestClient {
    * @param options - Axios请求配置，可选
    */
   constructor(options: RequestClientOptions = {}) {
-    this.bindMethods();
     // 合并默认配置和传入的配置
     const defaultConfig: CreateAxiosDefaults = {
       headers: {
@@ -47,18 +40,11 @@ class RequestClient {
       // 默认超时时间
       timeout: 10_000,
     };
-    const {
-      makeAuthorization,
-      makeErrorMessage,
-      makeRequestHeaders,
-      ...axiosConfig
-    } = options;
+    const { ...axiosConfig } = options;
     const requestConfig = merge(axiosConfig, defaultConfig);
-
     this.instance = axios.create(requestConfig);
-    this.makeAuthorization = makeAuthorization;
-    this.makeRequestHeaders = makeRequestHeaders;
-    this.makeErrorMessage = makeErrorMessage;
+
+    this.bindMethods();
 
     // 实例化拦截器管理器
     const interceptorManager = new InterceptorManager(this.instance);
@@ -73,9 +59,6 @@ class RequestClient {
     // 实例化文件下载器
     const fileDownloader = new FileDownloader(this);
     this.download = fileDownloader.download.bind(fileDownloader);
-
-    // 设置默认的拦截器
-    this.setupInterceptors();
   }
 
   private bindMethods() {
