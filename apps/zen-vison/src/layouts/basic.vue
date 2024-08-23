@@ -2,13 +2,12 @@
 import type { Nullable } from '@vben/types';
 
 import { computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 import {
   AuthenticationLoginExpiredModal,
   type LoginAndRegisterParams,
 } from '@vben/common-ui';
-import { LOGIN_PATH, VBEN_DOC_URL, VBEN_GITHUB_URL } from '@vben/constants';
+import { VBEN_DOC_URL, VBEN_GITHUB_URL } from '@vben/constants';
 import { useRefresh } from '@vben/hooks';
 import { BookOpenText, CircleHelp, MdiGithub } from '@vben/icons';
 import {
@@ -19,15 +18,14 @@ import {
   UserDropdown,
 } from '@vben/layouts';
 import { preferences } from '@vben/preferences';
-import { resetAllStores, storeToRefs, useAccessStore } from '@vben/stores';
+import { storeToRefs, useAccessStore } from '@vben/stores';
 import { openWindow } from '@vben/utils';
 
 import { useDebounceFn } from '@vueuse/core';
 
-import { type AuthApi, userLogoutApi } from '#/api';
+import { type AuthApi } from '#/api';
 import { Captcha } from '#/components';
 import { $t } from '#/locales';
-import { resetRoutes } from '#/router';
 import { useAuthStore, useUserStore } from '#/store';
 import { encryptBySha256 } from '#/utils';
 
@@ -62,7 +60,6 @@ const notifications = ref<NotificationItem[]>([
   },
 ]);
 
-const router = useRouter();
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const accessStore = useAccessStore();
@@ -126,13 +123,7 @@ function handleValidateSuccess(captcah: string) {
 }
 
 async function handleLogout() {
-  try {
-    await userLogoutApi();
-  } finally {
-    resetAllStores();
-    resetRoutes();
-    await router.replace(LOGIN_PATH);
-  }
+  await authStore.logout(false);
 }
 
 function handleCaptchaFail() {

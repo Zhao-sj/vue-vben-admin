@@ -74,7 +74,7 @@ export const useAuthStore = defineStore('zen-auth', () => {
     };
   }
 
-  async function logout() {
+  async function logout(redirect = true) {
     try {
       await userLogoutApi();
     } finally {
@@ -84,9 +84,11 @@ export const useAuthStore = defineStore('zen-auth', () => {
       // 回登陆页带上当前路由地址
       await router.replace({
         path: LOGIN_PATH,
-        query: {
-          redirect: encodeURIComponent(router.currentRoute.value.fullPath),
-        },
+        query: redirect
+          ? {
+              redirect: encodeURIComponent(router.currentRoute.value.fullPath),
+            }
+          : {},
       });
     }
   }
