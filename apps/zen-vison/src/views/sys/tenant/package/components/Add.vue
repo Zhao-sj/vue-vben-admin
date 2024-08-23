@@ -1,37 +1,40 @@
 <script setup lang="ts">
-import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash-es';
 
-import { addTenantApi, type BaseSimple, type TenantApi } from '#/api';
+import { addTenantPackageApi, type MenuApi, type TenantApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
-import { encryptBySha256 } from '#/utils';
 
 import OptForm from './OptForm.vue';
 
 interface Props {
-  packages?: BaseSimple[];
+  menus?: MenuApi.Simple[];
 }
 
 interface Emits {
   (e: 'success'): void;
 }
 
-defineProps<Props>();
+withDefaults(defineProps<Props>(), {
+  menus: () => [],
+});
 const emit = defineEmits<Emits>();
 
 const modelValue = defineModel<boolean>('modelValue');
 
 const defaultState = { status: 0 };
 const optFormRef = ref<InstanceType<typeof OptForm>>();
-const formState = ref<Partial<TenantApi.AddModel>>(cloneDeep(defaultState));
+const formState = ref<Partial<TenantApi.AddPackageModel>>(
+  cloneDeep(defaultState),
+);
 
-const { loading, runAsync } = useRequest(addTenantApi, {
+const { loading, runAsync } = useRequest(addTenantPackageApi, {
   loadingDelay: 200,
   manual: true,
 });
 
 const formInstance = computed(() => optFormRef.value?.getFormInstance());
+const treeInstance = computed(() => optFormRef.value?.getTreeInstance());
 
 function handleClose() {
   formState.value = cloneDeep(defaultState);
@@ -40,11 +43,10 @@ function handleClose() {
 function handleSubmit() {
   formInstance.value?.validate(async (valid) => {
     if (valid) {
-      const state = cloneDeep(formState.value as TenantApi.AddModel);
-      state.password = encryptBySha256(state.password);
-      state.expireTime = dayjs(state.expireTime).valueOf();
+      const keys = treeInstance.value!.getCheckedKeys() as number[];
+      formState.value.menuIds = keys;
 
-      await runAsync(state);
+      await runAsync(formState.value as TenantApi.AddPackageModel);
       ElMessage.success($t('zen.common.successTip'));
       modelValue.value = false;
       emit('success');
@@ -57,14 +59,14 @@ function handleSubmit() {
   <ElDialog
     v-model="modelValue"
     :close-on-click-modal="false"
-    :title="$t('zen.service.tenant.create')"
+    :title="$t('zen.service.package.create')"
     class="!w-11/12 md:!w-1/2 2xl:!w-1/3"
     destroy-on-close
     draggable
     width="auto"
     @close="handleClose"
   >
-    <OptForm ref="optFormRef" v-model="formState" :packages />
+    <OptForm ref="optFormRef" v-model="formState" :menus />
 
     <template #footer>
       <ElButton @click="modelValue = false">

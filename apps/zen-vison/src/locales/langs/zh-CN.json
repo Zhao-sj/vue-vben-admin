@@ -1,6 +1,8 @@
 {
   "zen": {
     "core": {
+      "pageTitle": "Zen Vision 后台管理系统",
+      "pageDesc": "高效直观的平台、简单的管理中心、易用的解决方案",
       "login": "登录",
       "register": "注册",
       "codeLogin": "验证码登录",
@@ -19,6 +21,7 @@
       "confirm": "确认",
       "cancel": "取消",
       "opt": "操作",
+      "create": "新增",
       "edit": "编辑",
       "delete": "删除",
       "batchDelete": "批量删除",
@@ -30,7 +33,12 @@
       "pleaseSelect": "请选择",
       "startDate": "开始日期",
       "endDate": "结束日期",
-      "notEmypt": "不能为空"
+      "notEmypt": "不能为空",
+      "createTime": "创建时间",
+      "status": "状态",
+      "remark": "备注",
+      "expand": "展开/折叠",
+      "choose": "全选/全不选"
     },
     "export": {
       "title": "数据导出",
@@ -78,13 +86,20 @@
         "expireTime": "到期时间",
         "website": "绑定域名",
         "status": "租户状态",
-        "createTime": "创建时间",
-        "create": "创建租户",
-        "edit": "编辑租户",
-        "delete": "删除租户",
         "systemTenant": "系统租户",
         "username": "用户账号",
-        "password": "用户密码"
+        "password": "用户密码",
+        "create": "新增租户",
+        "edit": "编辑租户"
+      },
+      "package": {
+        "code": "套餐编号",
+        "name": "套餐名称",
+        "status": "套餐状态",
+        "remark": "套餐备注",
+        "create": "新增租户套餐",
+        "edit": "编辑租户套餐",
+        "menu": "菜单权限"
       }
     }
   }

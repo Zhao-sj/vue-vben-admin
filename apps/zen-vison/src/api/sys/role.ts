@@ -104,7 +104,7 @@ export function addRoleApi(data: RoleApi.AddModel) {
  * 导出角色
  */
 export function exportRoleApi(params: RoleApi.PageQuery) {
-  return requestClient.get<void>(`${SYSTEM}/role/export`, {
+  return requestClient.download(`${SYSTEM}/role/export`, {
     params,
   });
 }

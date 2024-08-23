@@ -77,6 +77,17 @@ export namespace TenantApi {
     remark?: string;
     menuIds: number[];
   }
+
+  export type UpdatePackageModel = { id: number } & TenantApi.AddPackageModel;
+}
+
+/**
+ * 批量删除租户套餐
+ */
+export function batchDeleteTenantPackageApi(ids: number[]) {
+  return requestClient.delete<boolean>(`${SYSTEM}/tenant/package`, {
+    data: { ids },
+  });
 }
 
 /**
@@ -89,9 +100,7 @@ export function deleteTenantPackageApi(id: number) {
 /**
  * 更新租户套餐
  */
-export function updateTenantPackageApi(
-  data: { id: number } & TenantApi.AddPackageModel,
-) {
+export function updateTenantPackageApi(data: TenantApi.UpdatePackageModel) {
   return requestClient.put<boolean>(`${SYSTEM}/tenant/package`, data);
 }
 
@@ -131,7 +140,7 @@ export function getTenantPackageSimpleListApi() {
 }
 
 /**
- * 批量删除
+ * 批量删除租户
  */
 export function batchDeleteTenantApi(ids: number[]) {
   return requestClient.delete<boolean>(`${SYSTEM}/tenant`, { data: { ids } });
@@ -162,9 +171,8 @@ export function addTenantApi(data: TenantApi.AddModel) {
  * 导出租户
  */
 export function exportTenantApi(params: TenantApi.PageQuery) {
-  return requestClient.get<Blob>(`${SYSTEM}/tenant/export`, {
+  return requestClient.download(`${SYSTEM}/tenant/export`, {
     params,
-    responseType: 'blob',
   });
 }
 

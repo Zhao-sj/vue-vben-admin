@@ -1,6 +1,8 @@
 {
   "zen": {
     "core": {
+      "pageTitle": "Zen Vision Backend Management System",
+      "pageDesc": "Efficient and intuitive platform, simple management center, easy-to-use solutions",
       "login": "Login",
       "register": "Register",
       "codeLogin": "Code Login",
@@ -19,6 +21,7 @@
       "confirm": "Confirm",
       "cancel": "Cancel",
       "opt": "Operation",
+      "create": "Create",
       "edit": "Edit",
       "delete": "Delete",
       "batchDelete": "Batch Delete",
@@ -30,7 +33,12 @@
       "pleaseSelect": "Select",
       "startDate": "Start Date",
       "endDate": "End Date",
-      "notEmypt": " cannot be empty"
+      "notEmypt": " cannot be empty",
+      "createTime": "CreateTime",
+      "status": "Status",
+      "remark": "Remark",
+      "expand": "Expand/Collapse",
+      "choose": "Select All/Deselect All"
     },
     "export": {
       "title": "Export",
@@ -69,7 +77,7 @@
     },
     "service": {
       "tenant": {
-        "code": "NO",
+        "code": "ID",
         "name": "Name",
         "package": "Package",
         "contact": "Contact",
@@ -78,13 +86,20 @@
         "expireTime": "ExpireTime",
         "website": "WebSite",
         "status": "Status",
-        "createTime": "CreateTime",
-        "create": "Create",
-        "edit": "Edit",
-        "delete": "Delete",
         "systemTenant": "System Tenant",
         "username": "Account",
-        "password": "Password"
+        "password": "Password",
+        "create": "Create Tenant",
+        "edit": "Edit Tenant"
+      },
+      "package": {
+        "code": "ID",
+        "name": "Name",
+        "status": "Status",
+        "remark": "Remark",
+        "create": "Create Tenant Package",
+        "edit": "Edit Tenant Package",
+        "menu": "Menus"
       }
     }
   }

@@ -140,7 +140,7 @@ export function addUserApi(data: UserApi.AddModel) {
  * 导出用户
  */
 export function exportUserApi(params: UserApi.PageQuery) {
-  return requestClient.get<void>(`${SYSTEM}/user/export`, {
+  return requestClient.download(`${SYSTEM}/user/export`, {
     params,
   });
 }

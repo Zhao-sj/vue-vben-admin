@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import dayjs from 'dayjs';
 import { type VxeGridProps } from 'vxe-table';
 
 import {
@@ -60,7 +61,12 @@ const vxeTable = computed(() =>
 );
 
 const columns = computed<TenantColumns>(() => [
-  { align: 'center', type: 'checkbox', width: 50 },
+  {
+    align: 'center',
+    fixed: 'left',
+    type: 'checkbox',
+    width: 50,
+  },
   {
     align: 'center',
     field: 'id',
@@ -103,8 +109,8 @@ const columns = computed<TenantColumns>(() => [
   {
     align: 'center',
     field: 'expireTime',
-    formatter: ({ cellValue }) => formatToDateTime(cellValue),
     minWidth: 150,
+    slots: { default: 'expire' },
     sortable: true,
     title: $t('zen.service.tenant.expireTime'),
   },
@@ -127,13 +133,14 @@ const columns = computed<TenantColumns>(() => [
     field: 'createTime',
     formatter: ({ cellValue }) => formatToDateTime(cellValue),
     minWidth: 150,
-    title: $t('zen.service.tenant.createTime'),
+    title: $t('zen.common.createTime'),
   },
   {
     align: 'center',
+    fixed: 'right',
     slots: { default: 'opt' },
     title: $t('zen.common.opt'),
-    width: 200,
+    width: 120,
   },
 ]);
 
@@ -153,7 +160,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
     onClick: () => {
       showAddDialog.value = true;
     },
-    title: $t('zen.service.tenant.create'),
+    title: $t('zen.common.create'),
     type: 'primary',
   },
   {
@@ -217,11 +224,13 @@ function createActions(row: TenantApi.Tenant) {
       auth: 'system:tenant:update',
       disabled,
       icon: 'ep:edit',
-      label: $t('zen.common.edit'),
       onClick: async () => {
         const tenant = await getTenant(row.id);
         tempData.value = tenant;
         showEditDialog.value = true;
+      },
+      tooltip: {
+        content: $t('zen.common.edit'),
       },
       type: 'primary',
     },
@@ -229,22 +238,29 @@ function createActions(row: TenantApi.Tenant) {
       auth: 'system:tenant:delete',
       disabled,
       icon: 'ep:delete',
-      label: $t('zen.common.delete'),
       popConfirm: {
         on: {
-          confirm: async () => {
-            await deleteTenantApi(row.id);
-            ElMessage.success($t('zen.common.successTip'));
-            vxeTable.value?.commitProxy('reload');
+          confirm: () => {
+            deleteTenantApi(row.id).then(() => {
+              ElMessage.success($t('zen.common.successTip'));
+              vxeTable.value?.commitProxy('reload');
+            });
           },
         },
         title: $t('zen.common.confirmDelete'),
+      },
+      tooltip: {
+        content: $t('zen.common.delete'),
       },
       type: 'danger',
     },
   ];
 
   return actions;
+}
+
+function isExpire(expireTime: number) {
+  return dayjs(expireTime).isBefore();
 }
 
 function getPackageNameById(id: number) {
@@ -261,7 +277,7 @@ function handleQuery(query: TenantApi.PageQuery) {
 }
 
 async function handleExport(fileName: string) {
-  const data = await exportTenant(tenantQuery);
+  const { data } = await exportTenant(tenantQuery);
   downloadExcel(data, fileName);
   ElMessage.success($t('zen.export.success'));
 }
@@ -302,9 +318,18 @@ async function handleExport(fileName: string) {
     </template>
 
     <template #package="{ row: { packageId } }">
-      <ElTag :type="packageId === 0 ? 'danger' : 'primary'">
+      <ElTag :type="packageId === 0 ? 'danger' : 'success'">
         {{ getPackageNameById(packageId) }}
       </ElTag>
+    </template>
+
+    <template #expire="{ row: { expireTime } }">
+      <ElText
+        :class="{ 'line-through': isExpire(expireTime) }"
+        :type="isExpire(expireTime) ? 'info' : undefined"
+      >
+        {{ formatToDateTime(expireTime) }}
+      </ElText>
     </template>
 
     <template #website="{ row: { website } }">

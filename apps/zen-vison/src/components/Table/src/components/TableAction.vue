@@ -53,14 +53,14 @@ function hasDisabled(config?: Record<string, any>) {
     <template v-for="(item, i) in actions" :key="i">
       <template v-if="hasPermission(item.role, item.auth)">
         <ElPopconfirm
-          :disabled="hasDisabled(item.popConfirm)"
+          :disabled="item.disabled || hasDisabled(item.popConfirm)"
           v-bind="item.popConfirm || {}"
           v-on="item.popConfirm?.on || {}"
         >
           <template #reference>
             <div>
               <ElTooltip
-                :disabled="hasDisabled(item.tooltip)"
+                :disabled="item.disabled || hasDisabled(item.tooltip)"
                 v-bind="item.tooltip || {}"
               >
                 <ElButton :circle :link v-bind="{ ...item, icon: undefined }">

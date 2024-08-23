@@ -4,12 +4,14 @@ import AutoImport from 'unplugin-auto-import/vite';
 import ElementPlus from 'unplugin-element-plus/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import Components from 'unplugin-vue-components/vite';
+import Mkcert from 'vite-plugin-mkcert';
 
 export default defineConfig(async () => {
   return {
     application: {},
     vite: {
       plugins: [
+        Mkcert(),
         AutoImport({
           dts: './src/types/auto-imports.d.ts',
           imports: ['vue', 'vue-router'],

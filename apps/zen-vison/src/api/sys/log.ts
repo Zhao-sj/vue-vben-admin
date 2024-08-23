@@ -114,7 +114,7 @@ export function updateErrorLogStatusApi(data: LogApi.UpdateProcessStatusModel) {
  * 导出错误日志
  */
 export function exporErrorLogApi(params: LogApi.ErrorQuery) {
-  return requestClient.get<void>(`${SYSTEM}/log/error/export`, {
+  return requestClient.download(`${SYSTEM}/log/error/export`, {
     params,
   });
 }
@@ -132,7 +132,7 @@ export function getErrorLogPageListApi(params: LogApi.ErrorQuery & PageParam) {
  * 导出访问日志
  */
 export function exporAccessLogApi(params: LogApi.AccessQuery) {
-  return requestClient.get<void>(`${SYSTEM}/log/access/export`, {
+  return requestClient.download(`${SYSTEM}/log/access/export`, {
     params,
   });
 }
@@ -152,7 +152,7 @@ export function getAccessLogPageListApi(
  * 导出登录日志
  */
 export function exporLoginLogApi(params: LogApi.LoginQuery) {
-  return requestClient.get<void>(`${SYSTEM}/log/login/export`, {
+  return requestClient.download(`${SYSTEM}/log/login/export`, {
     params,
   });
 }

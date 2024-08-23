@@ -15,7 +15,7 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'query', data: TenantApi.PageQuery): void;
+  (e: 'query', data: TenantApi.PackagePageQuery): void;
 }
 
 withDefaults(defineProps<Props>(), { visible: true });
@@ -23,7 +23,7 @@ const emit = defineEmits<Emits>();
 
 const dictStore = useDictStore();
 
-const formState = ref<TenantApi.PageQuery>({});
+const formState = ref<TenantApi.PackagePageQuery>({});
 
 const statusOpts = computed(() =>
   dictStore.getDictDataList(DictTypeEnum.STATUS),
@@ -47,7 +47,7 @@ function handleReset() {
         <ElRow :gutter="12">
           <ElCol :lg="6" :xl="4" :xs="24">
             <ElFormItem
-              :label="$t('zen.service.tenant.name')"
+              :label="$t('zen.service.package.name')"
               class="2xl:!mb-0"
             >
               <ElInput
@@ -60,7 +60,7 @@ function handleReset() {
 
           <ElCol :lg="6" :xl="4" :xs="24">
             <ElFormItem
-              :label="$t('zen.service.tenant.status')"
+              :label="$t('zen.service.package.status')"
               class="2xl:!mb-0"
             >
               <ElSelect v-model="formState.status" clearable>
@@ -71,32 +71,6 @@ function handleReset() {
                   :value="+item.value"
                 />
               </ElSelect>
-            </ElFormItem>
-          </ElCol>
-
-          <ElCol :lg="6" :xl="4" :xs="24">
-            <ElFormItem
-              :label="$t('zen.service.tenant.contact')"
-              class="2xl:!mb-0"
-            >
-              <ElInput
-                v-model="formState.contactName"
-                :placeholder="$t('zen.common.pleaseInput')"
-                clearable
-              />
-            </ElFormItem>
-          </ElCol>
-
-          <ElCol :lg="6" :xl="4" :xs="24">
-            <ElFormItem
-              :label="$t('zen.service.tenant.contactPhone')"
-              class="2xl:!mb-0"
-            >
-              <ElInput
-                v-model="formState.contactMobile"
-                :placeholder="$t('zen.common.pleaseInput')"
-                clearable
-              />
             </ElFormItem>
           </ElCol>
 

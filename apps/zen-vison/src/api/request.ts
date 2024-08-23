@@ -32,6 +32,12 @@ function createRequestClient(baseURL: string) {
     },
   });
 
+  // 通用的错误处理,如果没有进入上面的错误处理逻辑，就会进入这里
+  client.addResponseInterceptor(
+    errorMessageResponseInterceptor((msg: string) => ElMessage.error(msg)),
+  );
+
+  // 响应结果处理
   client.addResponseInterceptor({
     fulfilled: async (response) => {
       const {
@@ -55,7 +61,7 @@ function createRequestClient(baseURL: string) {
         // 数据导出错误处理
         const blobTypeData = response.data as unknown as Blob;
         if (blobTypeData.type !== 'application/json') {
-          return blobTypeData;
+          return response;
         }
         responseData = await new Response(blobTypeData).json();
       }
@@ -107,11 +113,6 @@ function createRequestClient(baseURL: string) {
       throw new Error(msg || $t('zen.request.requestError'));
     },
   });
-
-  // 通用的错误处理,如果没有进入上面的错误处理逻辑，就会进入这里
-  client.addResponseInterceptor(
-    errorMessageResponseInterceptor((msg: string) => ElMessage.error(msg)),
-  );
 
   return client;
 }

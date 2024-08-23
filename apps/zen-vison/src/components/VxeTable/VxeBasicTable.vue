@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Nullable } from '@vben/types';
 
+import { useThrottleFn } from '@vueuse/core';
 import { VxeGrid, type VxeGridInstance } from 'vxe-table';
 
 defineOptions({ name: 'VxeBasicTable' });
-defineExpose({ getTableInstance });
 
 const containerRef = ref<Nullable<HTMLDivElement>>(null);
 const cardRef = ref<Nullable<HTMLDivElement>>(null);
@@ -21,7 +21,7 @@ function getTableInstance<T>() {
   return vxeTableRef.value as Nullable<VxeGridInstance<T>>;
 }
 
-function fixedHeight() {
+const fixedHeight = useThrottleFn(() => {
   if (!containerRef.value || !cardRef.value) {
     return;
   }
@@ -39,9 +39,18 @@ function fixedHeight() {
 
   containerHeight.value = `${height}px`;
   tableMaxHeight.value = height - space;
-}
+});
 
-onMounted(fixedHeight);
+defineExpose({ fixedHeight, getTableInstance });
+
+onMounted(() => {
+  fixedHeight();
+  window.addEventListener('resize', fixedHeight);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', fixedHeight);
+});
 </script>
 
 <template>
