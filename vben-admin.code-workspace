@@ -89,6 +89,10 @@
       "path": "packages/@core/ui-kit/menu-ui",
     },
     {
+      "name": "@vben-core/popup-ui",
+      "path": "packages/@core/ui-kit/popup-ui",
+    },
+    {
       "name": "@vben-core/shadcn-ui",
       "path": "packages/@core/ui-kit/shadcn-ui",
     },
@@ -105,10 +109,6 @@
       "path": "packages/effects/access",
     },
     {
-      "name": "@vben/chart-ui",
-      "path": "packages/effects/chart-ui",
-    },
-    {
       "name": "@vben/common-ui",
       "path": "packages/effects/common-ui",
     },
@@ -119,6 +119,10 @@
     {
       "name": "@vben/layouts",
       "path": "packages/effects/layouts",
+    },
+    {
+      "name": "@vben/plugins",
+      "path": "packages/effects/plugins",
     },
     {
       "name": "@vben/request",
