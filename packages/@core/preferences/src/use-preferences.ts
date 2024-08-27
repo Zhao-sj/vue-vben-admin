@@ -150,11 +150,42 @@ function usePreferences() {
   });
 
   /**
-   * @zh_CN 是否启用全局偏好设置快捷键
+   * @zh_CN 偏好设置按钮位置
    */
-  const globalPreferencesShortcutKey = computed(() => {
-    const { enable, globalPreferences } = shortcutKeysPreferences.value;
-    return enable && globalPreferences;
+  const preferencesButtonPosition = computed(() => {
+    const { enablePreferences, preferencesButtonPosition } = preferences.app;
+
+    // 如果没有启用偏好设置按钮
+    if (!enablePreferences) {
+      return {
+        fixed: false,
+        header: false,
+      };
+    }
+
+    const { header, sidebar } = preferences;
+    const headerHidden = header.hidden;
+    const sidebarHidden = sidebar.hidden;
+
+    const contentIsMaximize = headerHidden && sidebarHidden;
+
+    const isHeaderPosition = preferencesButtonPosition === 'header';
+
+    // 如果设置了固定位置
+    if (preferencesButtonPosition !== 'auto') {
+      return {
+        fixed: preferencesButtonPosition === 'fixed',
+        header: isHeaderPosition,
+      };
+    }
+
+    // 如果是全屏模式或者没有固定在顶部，
+    const fixed = contentIsMaximize || isFullContent.value || isMobile.value;
+
+    return {
+      fixed,
+      header: !fixed,
+    };
   });
 
   return {
@@ -165,7 +196,6 @@ function usePreferences() {
     diffPreference,
     globalLockScreenShortcutKey,
     globalLogoutShortcutKey,
-    globalPreferencesShortcutKey,
     globalSearchShortcutKey,
     isDark,
     isFullContent,
@@ -177,6 +207,7 @@ function usePreferences() {
     isSideNav,
     keepAlive,
     layout,
+    preferencesButtonPosition,
     sidebarCollapsed,
     theme,
   };

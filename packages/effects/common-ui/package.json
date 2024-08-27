@@ -1,6 +1,6 @@
 {
   "name": "@vben/common-ui",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "homepage": "https://github.com/vbenjs/vue-vben-admin",
   "bugs": "https://github.com/vbenjs/vue-vben-admin/issues",
   "repository": {
@@ -20,13 +20,14 @@
     }
   },
   "dependencies": {
+    "@vben-core/popup-ui": "workspace:*",
     "@vben-core/shadcn-ui": "workspace:*",
     "@vben/constants": "workspace:*",
     "@vben/hooks": "workspace:*",
     "@vben/icons": "workspace:*",
     "@vben/locales": "workspace:*",
     "@vben/types": "workspace:*",
-    "@vueuse/integrations": "^11.0.1",
+    "@vueuse/integrations": "^11.0.3",
     "qrcode": "^1.5.4",
     "vue": "^3.4.38",
     "vue-router": "^4.4.3"
