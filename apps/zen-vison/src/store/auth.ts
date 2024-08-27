@@ -76,7 +76,9 @@ export const useAuthStore = defineStore('zen-auth', () => {
 
   async function logout(redirect = true) {
     try {
-      await userLogoutApi();
+      if (accessStore.accessToken) {
+        await userLogoutApi();
+      }
     } finally {
       resetAllStores();
       accessStore.setLoginExpired(false);

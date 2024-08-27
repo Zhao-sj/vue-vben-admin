@@ -18,6 +18,11 @@ export const useUserStore = defineStore('zen-user', {
       this.userInfo = userInfo;
     },
   },
+  getters: {
+    userId(): number | undefined {
+      return this.userInfo?.id;
+    },
+  },
   state: (): UserState => ({
     roles: [],
     userInfo: null,

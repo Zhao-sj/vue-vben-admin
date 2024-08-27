@@ -89,7 +89,7 @@ const rules = computed<FormRules<TenantApi.AddModel>>(() => ({
 }));
 
 function t(prefix: string) {
-  return `${prefix}${$t('zen.common.notEmypt')}`;
+  return `${prefix}${$t('zen.common.joinNotEmypt')}`;
 }
 
 function getFormInstance() {

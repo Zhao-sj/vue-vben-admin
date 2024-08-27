@@ -10,15 +10,25 @@ interface Props {
   circle?: boolean;
   actions?: ActionItem[];
   dropdownActions?: ActionDropdownItem[];
+  showEmpty?: boolean;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   actions: () => [],
   dropdownActions: () => [],
   link: true,
+  showEmpty: true,
 });
 
 const { hasAccessByCodes, hasAccessByRoles } = useAccess();
+
+const showAction = computed(() =>
+  props.actions.some((item) => hasPermission(item.role, item.auth)),
+);
+
+const showDropdown = computed(() =>
+  props.dropdownActions.some((item) => hasPermission(item.role, item.auth)),
+);
 
 function hasPermission(
   roles: ActionItem['role'] = [],
@@ -85,7 +95,7 @@ function hasDisabled(config?: Record<string, any>) {
       </template>
     </template>
 
-    <ElDropdown v-if="dropdownActions.length > 0">
+    <ElDropdown v-if="showDropdown">
       <slot name="more">
         <ElButton link>
           <Icon icon="ep:more-filled" />
@@ -106,5 +116,9 @@ function hasDisabled(config?: Record<string, any>) {
         </ElDropdownMenu>
       </template>
     </ElDropdown>
+
+    <slot v-if="!showAction && !showDropdown && showEmpty" name="empty">
+      <div>-</div>
+    </slot>
   </div>
 </template>

@@ -8,6 +8,7 @@ export const overridesPreferences = defineOverridesPreferences({
   // overrides
   app: {
     accessMode: 'backend',
+    loginExpiredMode: 'modal',
     name: import.meta.env.VITE_APP_TITLE,
   },
   copyright: {
@@ -16,5 +17,8 @@ export const overridesPreferences = defineOverridesPreferences({
   },
   footer: {
     enable: false,
+  },
+  logo: {
+    source: 'https://unpkg.com/@vbenjs/static-source@0.1.6/source/logo-v1.webp',
   },
 });

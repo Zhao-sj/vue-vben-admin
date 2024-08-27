@@ -10,3 +10,13 @@ export enum DictTypeEnum {
   STATUS = 'system_status',
   USER_TYPE = 'user_type',
 }
+
+export enum DictStatus {
+  DISABLE = 1,
+  ENABLE = 0,
+}
+
+export enum DictSex {
+  FEMALE = 2,
+  MALE = 1,
+}

@@ -180,6 +180,7 @@ const tableOpts = reactive<VxeGridProps<TenantApi.Tenant>>({
     highlight: true,
     range: true,
   },
+  customConfig: {},
   id: 'tenant_list',
   pagerConfig: {
     pageSize: 20,
@@ -277,6 +278,9 @@ function handleQuery(query: TenantApi.PageQuery) {
 }
 
 async function handleExport(fileName: string) {
+  if (exportLoading.value) {
+    return;
+  }
   const { data } = await exportTenant(tenantQuery);
   downloadExcel(data, fileName);
   ElMessage.success($t('zen.export.success'));
@@ -295,7 +299,12 @@ async function handleExport(fileName: string) {
     </template>
 
     <template #toolbar_left>
-      <TableAction :actions="toolbarActions" :link="false" circle />
+      <TableAction
+        :actions="toolbarActions"
+        :link="false"
+        :show-empty="false"
+        circle
+      />
 
       <TableAdd
         v-model="showAddDialog"

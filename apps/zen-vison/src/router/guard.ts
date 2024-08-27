@@ -112,6 +112,12 @@ function setupAccessGuard(router: Router) {
       resp?.menus,
     );
 
+    // 没有可访问的菜单，则跳转到登录页面
+    if (accessibleMenus.length === 0) {
+      ElMessage.error($t('zen.request.requestExpire'));
+      accessStore.setAccessToken(null);
+    }
+
     // 保存菜单信息和路由信息
     accessStore.setAccessMenus(accessibleMenus);
     accessStore.setAccessRoutes(accessibleRoutes);

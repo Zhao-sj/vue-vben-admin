@@ -1,19 +1,14 @@
 <script setup lang="ts">
-import type { MenuApi, TenantApi } from '#/api';
-
 import { ElTree, type FormInstance, type FormRules } from 'element-plus';
 import { cloneDeep } from 'lodash-es';
 
+import { buildMenuTree, type MenuApi, type TenantApi } from '#/api';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 
 interface Props {
   menus?: MenuApi.Simple[];
-}
-
-interface TreeNode extends MenuApi.Simple {
-  children: TreeNode[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -52,27 +47,7 @@ const rules = computed<FormRules<TenantApi.AddModel>>(() => ({
 }));
 
 function t(prefix: string) {
-  return `${prefix}${$t('zen.common.notEmypt')}`;
-}
-
-function buildMenuTree(menus: MenuApi.Simple[]) {
-  const treeNodeMap = new Map<number, TreeNode>();
-  menus.forEach((menu) => {
-    const item = { ...menu, children: [] };
-    treeNodeMap.set(item.id, item);
-  });
-
-  treeNodeMap
-    .values()
-    .filter((item) => item.parentId !== 0)
-    .forEach((item) => {
-      const parentNode = treeNodeMap.get(item.parentId);
-      if (parentNode) {
-        parentNode.children.push(item);
-      }
-    });
-
-  return [...treeNodeMap.values()].filter((item) => item.parentId === 0);
+  return `${prefix}${$t('zen.common.joinNotEmypt')}`;
 }
 
 function handleExpand(checked: boolean | number | string) {
@@ -118,11 +93,11 @@ function getTreeInstance() {
           <div class="w-full">
             <div>
               <ElCheckbox
-                :label="$t('zen.common.expand')"
+                :label="`${$t('zen.common.expand')} / ${$t('zen.common.collapsed')}`"
                 @change="handleExpand"
               />
               <ElCheckbox
-                :label="$t('zen.common.choose')"
+                :label="`${$t('zen.common.selectAll')} / ${$t('zen.common.unselectAll')}`"
                 @change="handleChooseAll"
               />
             </div>

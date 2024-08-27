@@ -20,23 +20,27 @@ export const useDictStore = defineStore('zen-dict', {
       return this.dictData[type] || [];
     },
 
+    getSex(value: number | string) {
+      return this.getDictData(DictTypeEnum.SEX, value.toString());
+    },
+
     getStatus(value: number | string) {
       return this.getDictData(DictTypeEnum.STATUS, value.toString());
     },
 
-    initDictData(type: DictTypeEnum) {
-      if (Reflect.has(this.dictData, type)) {
-        return;
-      }
+    initDictData(...types: DictTypeEnum[]) {
+      const dictTypes = types.filter(
+        (item) => !Reflect.has(this.dictData, item),
+      );
 
-      const { run } = useRequest(getDictDataSimpleListApi, {
-        manual: true,
-        onSuccess: (data) => {
-          this.dictData[type] = data;
-        },
-      });
-
-      run(type);
+      dictTypes.forEach((type) =>
+        useRequest(getDictDataSimpleListApi, {
+          defaultParams: [type],
+          onSuccess: (data) => {
+            this.dictData[type] = data;
+          },
+        }),
+      );
     },
   },
   state: (): DictState => ({

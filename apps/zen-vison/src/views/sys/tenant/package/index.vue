@@ -18,7 +18,7 @@ import { formatToDateTime } from '#/utils';
 
 import { TableAdd, TableEdit, TableQuery } from './components';
 
-type TenantColumns = VxeGridProps<TenantApi.Package>['columns'];
+type PackageColumns = VxeGridProps<TenantApi.Package>['columns'];
 
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.STATUS);
@@ -46,10 +46,10 @@ const {
 } = useRequest(getMenuSimpleListApi, requestConfig);
 
 const vxeTable = computed(() =>
-  vxeBasicTableRef.value?.getTableInstance<TenantApi.Tenant>(),
+  vxeBasicTableRef.value?.getTableInstance<TenantApi.Package>(),
 );
 
-const columns = computed<TenantColumns>(() => [
+const columns = computed<PackageColumns>(() => [
   {
     align: 'center',
     fixed: 'left',
@@ -125,6 +125,7 @@ const tableOpts = reactive<VxeGridProps<TenantApi.Package>>({
     highlight: true,
     range: true,
   },
+  customConfig: {},
   id: 'tenant_package',
   pagerConfig: {
     pageSize: 20,
@@ -157,13 +158,10 @@ const tableOpts = reactive<VxeGridProps<TenantApi.Package>>({
   },
 });
 
-function createActions(row: TenantApi.Tenant) {
-  const disabled = row.packageId === 0;
-
+function createActions(row: TenantApi.Package) {
   const actions: ActionItem[] = [
     {
       auth: 'system:tenant-package:update',
-      disabled,
       icon: 'ep:edit',
       onClick: async () => {
         const [tentantPackage] = await Promise.all([
@@ -180,7 +178,6 @@ function createActions(row: TenantApi.Tenant) {
     },
     {
       auth: 'system:tenant-package:delete',
-      disabled,
       icon: 'ep:delete',
       popConfirm: {
         on: {
@@ -234,7 +231,12 @@ function handleQuery(query: TenantApi.PackagePageQuery) {
     </template>
 
     <template #toolbar_left>
-      <TableAction :actions="toolbarActions" :link="false" circle />
+      <TableAction
+        :actions="toolbarActions"
+        :link="false"
+        :show-empty="false"
+        circle
+      />
     </template>
 
     <template #status="{ row: { status } }">

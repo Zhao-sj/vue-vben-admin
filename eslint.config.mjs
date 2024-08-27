@@ -8,6 +8,7 @@ export default defineConfig([
     rules: {
       '@typescript-eslint/no-invalid-void-type': 'off',
       'no-undef': 'off',
+      'unicorn/no-array-callback-reference': 'off',
     },
   },
 ]);

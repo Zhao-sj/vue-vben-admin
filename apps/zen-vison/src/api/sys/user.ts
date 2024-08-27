@@ -102,6 +102,13 @@ export function getUserRoleListApi(userId: number) {
 }
 
 /**
+ * 批量删除用户
+ */
+export function batchDeleteUserApi(ids: number[]) {
+  return requestClient.delete<boolean>(`${SYSTEM}/user`, { data: { ids } });
+}
+
+/**
  * 删除用户
  */
 export function deleteUserApi(id: number) {
@@ -146,10 +153,23 @@ export function exportUserApi(params: UserApi.PageQuery) {
 }
 
 /**
+ * 导入用户
+ */
+export function importUserApi(file: Blob | File, updateSupport: boolean) {
+  return requestClient.upload<UserApi.ImportResp>(
+    `${SYSTEM}/user/import`,
+    file,
+    {
+      params: { updateSupport },
+    },
+  );
+}
+
+/**
  * 获取用户导入模板
  */
 export function getUserImportTemplateApi() {
-  return requestClient.get<void>(`${SYSTEM}/user/import/template`);
+  return requestClient.download(`${SYSTEM}/user/import/template`);
 }
 
 /**
