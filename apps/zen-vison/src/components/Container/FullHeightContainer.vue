@@ -43,6 +43,8 @@ const fixedHeight = useThrottleFn(() => {
   if (cardRef.value) {
     const cardStyle = getComputedStyle(cardRef.value);
     space +=
+      Number.parseFloat(cardStyle.borderTopWidth) +
+      Number.parseFloat(cardStyle.borderBottomWidth) +
       Number.parseFloat(cardStyle.paddingTop) +
       Number.parseFloat(cardStyle.paddingBottom);
   }

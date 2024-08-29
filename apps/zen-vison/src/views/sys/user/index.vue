@@ -510,7 +510,9 @@ function reloadTable() {
 
 @include b('user-manage') {
   &-table__container {
-    padding: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-left: 0;
   }
 }
 </style>
