@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { FormInstance } from 'element-plus';
 
+import { useVbenModal } from '@vben/common-ui';
+
 import { useDebounceFn } from '@vueuse/core';
 
 interface Props {
@@ -14,35 +16,49 @@ interface Emits {
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
-const modelValue = defineModel<boolean>('modelValue');
 const formRef = ref<FormInstance>();
+const loading = ref(false);
 
 const state = ref({
   fileName: props.defaultName || '',
   fileType: 'xlsx',
 });
 
-const handleConfirm = useDebounceFn(() => {
+const [Modal, modalApi] = useVbenModal({
+  onCancel,
+  onConfirm: useDebounceFn(onConfirm),
+  onOpenChange,
+});
+
+function onOpenChange(isOpen: boolean) {
+  if (!isOpen) {
+    loading.value = false;
+  }
+}
+
+function onCancel() {
+  formRef.value?.resetFields();
+  modalApi.close();
+}
+
+function onConfirm() {
   formRef.value?.validate((valid) => {
     if (valid) {
       const { fileName, fileType } = state.value;
-      modelValue.value = false;
       emit('confirm', `${fileName}.${fileType}`);
+      loading.value = true;
     }
   });
-});
+}
 </script>
 
 <template>
-  <ElDialog
-    v-model="modelValue"
-    :close-on-click-modal="false"
+  <Modal
+    :cancel-text="$t('zen.common.cancel')"
+    :confirm-loading="loading"
+    :confirm-text="$t('zen.common.confirm')"
     :title="$t('zen.export.title')"
-    class="!w-11/12 md:!w-1/2 lg:!w-1/3 xl:!w-1/4 2xl:!w-1/5"
-    draggable
-    width="auto"
-    v-bind="$attrs"
-    @close="formRef?.resetFields"
+    class="w-11/12 md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/5"
   >
     <ElForm ref="formRef" :label-width="80" :model="state">
       <ElFormItem
@@ -69,14 +85,5 @@ const handleConfirm = useDebounceFn(() => {
         </ElSelect>
       </ElFormItem>
     </ElForm>
-
-    <template #footer>
-      <ElButton @click="modelValue = false">
-        {{ $t('zen.common.cancel') }}
-      </ElButton>
-      <ElButton type="primary" @click="handleConfirm">
-        {{ $t('zen.common.confirm') }}
-      </ElButton>
-    </template>
-  </ElDialog>
+  </Modal>
 </template>

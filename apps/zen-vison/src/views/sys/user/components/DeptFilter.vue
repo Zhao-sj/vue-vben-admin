@@ -4,12 +4,9 @@ import { Icon } from '@vben/icons';
 import { useDebounceFn } from '@vueuse/core';
 import { ElTree } from 'element-plus';
 
-import { buildMenuTree, type DeptApi } from '#/api';
+import { buildMenuTree, getDeptSimpleListApi } from '#/api';
+import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
-
-interface Props {
-  data?: DeptApi.Simple[];
-}
 
 interface Emits {
   (e: 'query', deptId?: number): void;
@@ -19,9 +16,6 @@ interface Tree {
   [key: string]: any;
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  data: () => [],
-});
 const emit = defineEmits<Emits>();
 
 const treeMapConf = {
@@ -33,7 +27,9 @@ const treeRef = ref<InstanceType<typeof ElTree>>();
 const deptName = ref<string>();
 const currentNodeKey = ref<number>();
 
-const deptTree = computed(() => buildMenuTree(props.data));
+const { data: deptList, loading } = useRequest(getDeptSimpleListApi);
+
+const deptTree = computed(() => buildMenuTree(deptList.value || []));
 
 const filterDept = useDebounceFn((val: string) => treeRef.value!.filter(val));
 
@@ -51,7 +47,7 @@ function handleExpandAll(isExpand = true) {
     return;
   }
 
-  props.data.forEach((item) => {
+  deptList.value.forEach((item) => {
     treeRef.value!.store.nodesMap[item.id]!.expanded = isExpand;
   });
 }
@@ -67,7 +63,7 @@ function joinLabel(prefix: string) {
 </script>
 
 <template>
-  <div class="card-box flex h-full flex-col">
+  <div class="card-box flex h-full flex-col" v-loading="loading">
     <div class="flex items-center justify-between gap-3 border-b p-2">
       <label class="hidden whitespace-nowrap 2xl:block">
         {{ $t('zen.menu.manage.dept') }}

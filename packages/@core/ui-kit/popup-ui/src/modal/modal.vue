@@ -145,7 +145,7 @@ function pointerDownOutside(e: Event) {
           'left-0 right-0 top-[10vh] mx-auto flex max-h-[80%] w-[520px] flex-col p-0',
           props.class,
           {
-            'left-0 top-0 size-full max-h-full !translate-x-0 !translate-y-0':
+            'left-0 top-0 !size-full max-h-full !translate-x-0 !translate-y-0':
               shouldFullscreen,
             'top-1/2 -translate-y-1/2': centered && !shouldFullscreen,
             'duration-300': !dragging,

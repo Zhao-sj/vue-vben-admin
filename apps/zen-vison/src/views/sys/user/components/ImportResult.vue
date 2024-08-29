@@ -1,80 +1,107 @@
 <script setup lang="ts">
 import type { UserApi } from '#/api';
 
-import { useNamespace } from '@vben/hooks';
+import { useVbenModal } from '@vben/common-ui';
 
-interface Props {
-  data: UserApi.ImportResp;
+interface Emits {
+  (e: 'confirm'): void;
 }
 
-const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
 
-const ns = useNamespace('import-result');
+const data = ref<UserApi.ImportResp>({
+  createUserList: [],
+  failureUsers: {},
+  updateUserList: [],
+});
+
+const [Modal, modalApi] = useVbenModal({ onConfirm, onOpenChange });
 
 const failList = computed(() =>
-  Object.keys(props.data.failureUsers).map((item) => ({
+  Object.keys(data.value.failureUsers).map((item) => ({
     name: item,
-    reason: props.data.failureUsers[item]!,
+    reason: data.value.failureUsers[item]!,
   })),
 );
+
+function onOpenChange(isOpen: boolean) {
+  if (!isOpen) {
+    return;
+  }
+
+  const { data: resultData } = modalApi.getData();
+  if (resultData) {
+    data.value = resultData;
+  }
+}
+
+function onConfirm() {
+  const { createUserList, updateUserList } = data.value;
+  if (createUserList.length > 0 || updateUserList.length > 0) {
+    emit('confirm');
+  }
+  modalApi.close();
+}
 </script>
 
 <template>
-  <div :class="[ns.b()]" class="flex flex-col gap-2">
-    <div>
-      <ElDescriptions :column="1" border>
-        <ElDescriptionsItem label="创建成功数量" width="50%">
-          {{ data.createUserList.length }}
-        </ElDescriptionsItem>
-      </ElDescriptions>
-      <div
-        v-if="data.createUserList.length > 0"
-        class="flex max-h-20 flex-wrap gap-1 overflow-y-auto border border-t-0 p-2"
-      >
-        <ElTag v-for="(item, i) in data.createUserList" :key="i">
-          {{ item }}
-        </ElTag>
+  <Modal
+    :cancel-text="$t('zen.common.cancel')"
+    :confirm-text="$t('zen.common.confirm')"
+    :title="$t('zen.service.user.importResult')"
+  >
+    <div class="flex flex-col gap-2">
+      <div>
+        <ElDescriptions :column="1" border>
+          <ElDescriptionsItem label="创建成功数量" width="50%">
+            {{ data.createUserList.length }}
+          </ElDescriptionsItem>
+        </ElDescriptions>
+        <div
+          v-if="data.createUserList.length > 0"
+          class="flex max-h-20 flex-wrap gap-1 overflow-y-auto border border-t-0 p-2"
+        >
+          <ElTag v-for="(item, i) in data.createUserList" :key="i">
+            {{ item }}
+          </ElTag>
+        </div>
       </div>
-    </div>
 
-    <div>
-      <ElDescriptions :column="1" border>
-        <ElDescriptionsItem label="更新成功数量" width="50%">
-          {{ data.updateUserList.length }}
-        </ElDescriptionsItem>
-      </ElDescriptions>
-      <div
-        v-if="data.updateUserList.length > 0"
-        class="flex max-h-20 flex-wrap gap-1 overflow-y-auto border border-t-0 p-2"
-      >
-        <ElTag v-for="(item, i) in data.updateUserList" :key="i" type="success">
-          {{ item }}
-        </ElTag>
+      <div>
+        <ElDescriptions :column="1" border>
+          <ElDescriptionsItem label="更新成功数量" width="50%">
+            {{ data.updateUserList.length }}
+          </ElDescriptionsItem>
+        </ElDescriptions>
+        <div
+          v-if="data.updateUserList.length > 0"
+          class="flex max-h-20 flex-wrap gap-1 overflow-y-auto border border-t-0 p-2"
+        >
+          <ElTag
+            v-for="(item, i) in data.updateUserList"
+            :key="i"
+            type="success"
+          >
+            {{ item }}
+          </ElTag>
+        </div>
       </div>
-    </div>
 
-    <div>
-      <ElDescriptions :column="1" border>
-        <ElDescriptionsItem label="失败数量" width="50%">
-          {{ failList.length }}
-        </ElDescriptionsItem>
-      </ElDescriptions>
-      <div
-        v-if="failList.length > 0"
-        class="flex max-h-20 flex-wrap gap-1 overflow-y-auto border border-t-0 p-2"
-      >
-        <ElTag v-for="(item, i) in failList" :key="i" type="danger">
-          {{ item.name }}: {{ item.reason }}
-        </ElTag>
+      <div>
+        <ElDescriptions :column="1" border>
+          <ElDescriptionsItem label="失败数量" width="50%">
+            {{ failList.length }}
+          </ElDescriptionsItem>
+        </ElDescriptions>
+        <div
+          v-if="failList.length > 0"
+          class="flex max-h-20 flex-wrap gap-1 overflow-y-auto border border-t-0 p-2"
+        >
+          <ElTag v-for="(item, i) in failList" :key="i" type="danger">
+            {{ item.name }}: {{ item.reason }}
+          </ElTag>
+        </div>
       </div>
     </div>
-  </div>
+  </Modal>
 </template>
-
-<style lang="scss" scoped>
-@import '@vben/styles/global';
-
-:global(div:has(.#{$namespace}-import-result)) {
-  width: 100%;
-}
-</style>

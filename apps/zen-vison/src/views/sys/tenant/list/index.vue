@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { type ModalApiOptions, useVbenModal } from '@vben/common-ui';
+
 import dayjs from 'dayjs';
 import { type VxeGridProps } from 'vxe-table';
 
@@ -6,7 +8,6 @@ import {
   batchDeleteTenantApi,
   deleteTenantApi,
   exportTenantApi,
-  getTenantApi,
   getTenantPackageSimpleListApi,
   getTenantPageListApi,
   type TenantApi,
@@ -32,10 +33,26 @@ dictStore.initDictData(DictTypeEnum.STATUS);
 
 let tenantQuery: TenantApi.PageQuery = {};
 const vxeBasicTableRef = ref<InstanceType<typeof VxeBasicTable>>();
-const tempData = ref<TenantApi.Tenant>();
-const showAddDialog = ref(false);
-const showEditDialog = ref(false);
-const showExportDialog = ref(false);
+
+const modalOpts: ModalApiOptions = {
+  closeOnClickModal: false,
+  draggable: true,
+};
+
+const [TableAddModal, addModal] = useVbenModal({
+  connectedComponent: TableAdd,
+  ...modalOpts,
+});
+
+const [TableEditModal, editModal] = useVbenModal({
+  connectedComponent: TableEdit,
+  ...modalOpts,
+});
+
+const [TableExportModal, exportModal] = useVbenModal({
+  connectedComponent: TableExport,
+  ...modalOpts,
+});
 
 const { data: packageList, runAsync: getPackageList } = useRequest(
   getTenantPackageSimpleListApi,
@@ -50,11 +67,6 @@ const { loading: exportLoading, runAsync: exportTenant } = useRequest(
     manual: true,
   },
 );
-
-const { loading, runAsync: getTenant } = useRequest(getTenantApi, {
-  loadingDelay: 200,
-  manual: true,
-});
 
 const vxeTable = computed(() =>
   vxeBasicTableRef.value?.getTableInstance<TenantApi.Tenant>(),
@@ -157,18 +169,14 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:tenant:create',
     icon: 'ep:plus',
-    onClick: () => {
-      showAddDialog.value = true;
-    },
+    onClick: () => addModal.open(),
     title: $t('zen.common.create'),
     type: 'primary',
   },
   {
     auth: 'system:tenant:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
-    onClick: () => {
-      showExportDialog.value = true;
-    },
+    onClick: () => exportModal.open(),
     title: $t('zen.common.export'),
     type: 'warning',
   },
@@ -225,10 +233,9 @@ function createActions(row: TenantApi.Tenant) {
       auth: 'system:tenant:update',
       disabled,
       icon: 'ep:edit',
-      onClick: async () => {
-        const tenant = await getTenant(row.id);
-        tempData.value = tenant;
-        showEditDialog.value = true;
+      onClick: () => {
+        editModal.setData({ id: row.id });
+        editModal.open();
       },
       tooltip: {
         content: $t('zen.common.edit'),
@@ -244,7 +251,7 @@ function createActions(row: TenantApi.Tenant) {
           confirm: () => {
             deleteTenantApi(row.id).then(() => {
               ElMessage.success($t('zen.common.successTip'));
-              vxeTable.value?.commitProxy('reload');
+              reloadTable();
             });
           },
         },
@@ -283,17 +290,17 @@ async function handleExport(fileName: string) {
   }
   const { data } = await exportTenant(tenantQuery);
   downloadExcel(data, fileName);
+  exportModal.close();
   ElMessage.success($t('zen.export.success'));
+}
+
+function reloadTable() {
+  vxeTable.value?.commitProxy('reload');
 }
 </script>
 
 <template>
-  <VxeBasicTable
-    ref="vxeBasicTableRef"
-    :columns="columns"
-    v-loading="loading"
-    v-bind="tableOpts"
-  >
+  <VxeBasicTable ref="vxeBasicTableRef" :columns="columns" v-bind="tableOpts">
     <template #form>
       <TableQuery @query="handleQuery" />
     </template>
@@ -306,21 +313,10 @@ async function handleExport(fileName: string) {
         circle
       />
 
-      <TableAdd
-        v-model="showAddDialog"
-        :packages="packageList"
-        @success="vxeTable?.commitProxy('reload')"
-      />
+      <TableAddModal @success="reloadTable" />
+      <TableEditModal @success="reloadTable" />
 
-      <TableEdit
-        v-model="showEditDialog"
-        :data="tempData"
-        :packages="packageList"
-        @success="vxeTable?.commitProxy('reload')"
-      />
-
-      <TableExport
-        v-model="showExportDialog"
+      <TableExportModal
         :default-name="$t('zen.menu.manage.tenantList')"
         @confirm="handleExport"
       />

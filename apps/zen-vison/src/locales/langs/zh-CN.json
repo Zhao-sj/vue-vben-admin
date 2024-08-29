@@ -136,7 +136,8 @@
         "uploadLimitTitle": "仅允许导入xls、xlsx格式文件。",
         "dragEnterTitle": "将文件拖到此处，或",
         "joinUser": "用户",
-        "joinNewPassword": "的新密码"
+        "joinNewPassword": "的新密码",
+        "uploadFileTip": "请选择文件"
       }
     }
   }

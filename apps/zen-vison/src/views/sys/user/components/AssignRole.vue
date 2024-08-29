@@ -1,68 +1,94 @@
 <script setup lang="ts">
-import { assignUserRoleApi, type BaseSimple, type UserApi } from '#/api';
+import { useVbenModal } from '@vben/common-ui';
+
+import {
+  assignUserRoleApi,
+  getRoleSimpleListApi,
+  getUserApi,
+  getUserRoleListApi,
+  type UserApi,
+} from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 
-interface Props {
-  roleList?: BaseSimple[];
-  data?: UserApi.User;
-  roleIds?: number[];
-}
-
 type FormState = { roleIds: number[] } & Pick<
   UserApi.User,
-  'nickname' | 'username'
+  'id' | 'nickname' | 'username'
 >;
 
-const props = withDefaults(defineProps<Props>(), {
-  data: undefined,
-  roleIds: () => [],
-  roleList: () => [],
-});
-
-const modelValue = defineModel<boolean>('modelValue');
+const requestConf = {
+  loadingDelay: 200,
+  manual: true,
+};
 
 const formState = ref<Partial<FormState>>({});
 
-const { loading, runAsync } = useRequest(assignUserRoleApi, {
-  loadingDelay: 200,
-  manual: true,
-});
+const {
+  data: roleList,
+  loading: roleLoading,
+  runAsync: getRole,
+} = useRequest(getRoleSimpleListApi, requestConf);
 
-function handleOpen() {
-  const { data, roleIds } = props;
-  const state: Partial<FormState> = { roleIds };
-  if (data) {
-    state.nickname = data.nickname;
-    state.username = data.username;
-  }
-  formState.value = state;
-}
+const { loading: roleIdsLoading, runAsync: getRoleIds } = useRequest(
+  getUserRoleListApi,
+  requestConf,
+);
 
-async function handleSubmit() {
-  if (!props.data) {
+const { loading: userLoading, runAsync: getUser } = useRequest(
+  getUserApi,
+  requestConf,
+);
+
+const { loading, runAsync } = useRequest(assignUserRoleApi, requestConf);
+
+const [Modal, modalApi] = useVbenModal({ onConfirm, onOpenChange });
+
+async function onOpenChange(isOpen: boolean) {
+  if (!isOpen) {
+    formState.value = {};
     return;
   }
 
-  await runAsync({
-    roleIds: formState.value.roleIds!,
-    userId: props.data.id,
-  });
+  const { id } = modalApi.getData();
+  if (id) {
+    const [user, roleIds] = await Promise.all([
+      getUser(id),
+      getRoleIds(id),
+      getRole(),
+    ]);
+
+    const state: Partial<FormState> = {
+      id: user.id,
+      nickname: user.nickname,
+      roleIds,
+      username: user.username,
+    };
+
+    formState.value = state;
+  }
+}
+
+async function onConfirm() {
+  const { id, roleIds } = formState.value;
+  if (!id || !roleIds) {
+    return;
+  }
+
+  await runAsync({ roleIds, userId: id });
   ElMessage.success($t('zen.common.successTip'));
-  modelValue.value = false;
+  modalApi.close();
 }
 </script>
 
 <template>
-  <ElDialog
-    v-model="modelValue"
-    :close-on-click-modal="false"
+  <Modal
+    :cancel-text="$t('zen.common.cancel')"
+    :confirm-loading="loading"
+    :confirm-text="$t('zen.common.confirm')"
+    :loading="roleLoading || roleIdsLoading || userLoading"
     :title="$t('zen.service.user.assignRole')"
     class="!w-11/12 md:!w-1/3 2xl:!w-1/5"
-    destroy-on-close
     draggable
-    width="auto"
-    @open="handleOpen"
   >
     <ElForm :label-width="80" :model="formState">
       <ElRow :gutter="20">
@@ -92,14 +118,5 @@ async function handleSubmit() {
         </ElCol>
       </ElRow>
     </ElForm>
-
-    <template #footer>
-      <ElButton @click="modelValue = false">
-        {{ $t('zen.common.cancel') }}
-      </ElButton>
-      <ElButton :loading type="primary" @click="handleSubmit">
-        {{ $t('zen.common.confirm') }}
-      </ElButton>
-    </template>
-  </ElDialog>
+  </Modal>
 </template>

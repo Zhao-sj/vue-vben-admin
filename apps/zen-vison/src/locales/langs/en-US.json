@@ -136,7 +136,8 @@
         "uploadLimitTitle": "Only allowed import xls and xlsx file.",
         "dragEnterTitle": "Drag your files here, or ",
         "joinUser": " User",
-        "joinNewPassword": "new password"
+        "joinNewPassword": "new password",
+        "uploadFileTip": "Please select file"
       }
     }
   }

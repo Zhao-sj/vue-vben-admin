@@ -2,6 +2,7 @@
 import type { VxeGridProps } from 'vxe-table';
 
 import { useAccess } from '@vben/access';
+import { type ModalApiOptions, useVbenModal } from '@vben/common-ui';
 import { useNamespace } from '@vben/hooks';
 import { Icon } from '@vben/icons';
 
@@ -9,12 +10,7 @@ import {
   batchDeleteUserApi,
   deleteUserApi,
   exportUserApi,
-  getDeptSimpleListApi,
-  getPostSimpleListApi,
-  getRoleSimpleListApi,
-  getUserApi,
   getUserPageListApi,
-  getUserRoleListApi,
   importUserApi,
   resetUserPasswordApi,
   updateUserStatusApi,
@@ -54,41 +50,16 @@ dictStore.initDictData(DictTypeEnum.STATUS, DictTypeEnum.SEX);
 const ns = useNamespace('user-manage');
 let userQuery: UserApi.PageQuery = {};
 const vxeBasicTableRef = ref<InstanceType<typeof VxeBasicTable>>();
-const tempData = ref<UserApi.User>();
-const showAddDialog = ref(false);
-const showEditDialog = ref(false);
-const showExportDialog = ref(false);
-const showImportDialog = ref(false);
-const showAssignDialog = ref(false);
+
+const modalOpts: ModalApiOptions = {
+  closeOnClickModal: false,
+  draggable: true,
+};
 
 const requestConfig = {
   loadingDelay: 200,
   manual: true,
 };
-
-const {
-  data: deptList,
-  loading: deptLoading,
-  run: getDept,
-} = useRequest(getDeptSimpleListApi);
-
-const {
-  data: postList,
-  loading: postLoading,
-  runAsync: getPost,
-} = useRequest(getPostSimpleListApi, requestConfig);
-
-const {
-  data: roleList,
-  loading: roleLoading,
-  runAsync: getRole,
-} = useRequest(getRoleSimpleListApi, requestConfig);
-
-const {
-  data: roleIds,
-  loading: roleIdsLoading,
-  runAsync: getRoleIds,
-} = useRequest(getUserRoleListApi, requestConfig);
 
 const { loading: statusLoading, runAsync: updateStatus } = useRequest(
   updateUserStatusApi,
@@ -105,7 +76,35 @@ const { loading: importLoading, runAsync: importUser } = useRequest(
   requestConfig,
 );
 
-const { loading, runAsync: getUser } = useRequest(getUserApi, requestConfig);
+const [TableAddModal, addModal] = useVbenModal({
+  connectedComponent: TableAdd,
+  ...modalOpts,
+});
+
+const [TableEditModal, editModal] = useVbenModal({
+  connectedComponent: TableEdit,
+  ...modalOpts,
+});
+
+const [AssignRoleModal, assignRoleModal] = useVbenModal({
+  connectedComponent: AssignRole,
+  ...modalOpts,
+});
+
+const [TableExportModal, exportModal] = useVbenModal({
+  connectedComponent: TableExport,
+  ...modalOpts,
+});
+
+const [UserImportModal, importModal] = useVbenModal({
+  connectedComponent: UserImport,
+  ...modalOpts,
+});
+
+const [ImportResultModal, importResultModal] = useVbenModal({
+  connectedComponent: ImportResult,
+  ...modalOpts,
+});
 
 const vxeTable = computed(() =>
   vxeBasicTableRef.value?.getTableInstance<UserApi.User>(),
@@ -231,28 +230,21 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:tenant-package:create',
     icon: 'ep:plus',
-    onClick: async () => {
-      await Promise.all([getDept(), getPost()]);
-      showAddDialog.value = true;
-    },
+    onClick: () => addModal.open(),
     title: $t('zen.common.create'),
     type: 'primary',
   },
   {
     auth: 'system:user:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
-    onClick: () => {
-      showExportDialog.value = true;
-    },
+    onClick: () => exportModal.open(),
     title: $t('zen.common.export'),
     type: 'warning',
   },
   {
     auth: 'system:user:import',
-    icon: 'ep:upload',
-    onClick: () => {
-      showImportDialog.value = true;
-    },
+    icon: importLoading.value ? 'eos-icons:bubble-loading' : 'ep:upload',
+    onClick: () => importModal.open(),
     title: $t('zen.common.import'),
     type: 'info',
   },
@@ -302,14 +294,9 @@ function createActions(row: UserApi.User) {
     {
       auth: 'system:user:update',
       icon: 'ep:edit',
-      onClick: async () => {
-        const [user] = await Promise.all([
-          getUser(row.id),
-          getDept(),
-          getPost(),
-        ]);
-        tempData.value = user;
-        showEditDialog.value = true;
+      onClick: () => {
+        editModal.setData({ id: row.id });
+        editModal.open();
       },
       tooltip: {
         content: $t('zen.common.edit'),
@@ -348,14 +335,9 @@ function createActions(row: UserApi.User) {
       auth: 'system:permission:assign-user-role',
       icon: 'clarity:assign-user-line',
       label: $t('zen.service.user.assignRole'),
-      onClick: async () => {
-        const [user] = await Promise.all([
-          getUser(row.id),
-          getRoleIds(row.id),
-          getRole(),
-        ]);
-        tempData.value = user;
-        showAssignDialog.value = true;
+      onClick: () => {
+        assignRoleModal.setData({ id: row.id });
+        assignRoleModal.open();
       },
     },
   ];
@@ -417,7 +399,7 @@ function handleStatusChange(row: UserApi.User) {
 
 function requestAfter(reload = true) {
   ElMessage.success($t('zen.common.successTip'));
-  reload && vxeTable.value?.commitProxy('reload');
+  reload && reloadTable();
 }
 
 function handleQuery(query: UserApi.PageQuery) {
@@ -431,34 +413,30 @@ async function handleExport(fileName: string) {
   }
   const { data } = await exportUser(userQuery);
   downloadExcel(data, fileName);
+  exportModal.close();
   ElMessage.success($t('zen.export.success'));
 }
 
 async function handleImport(file: File, updateSupport: boolean) {
   const result = await importUser(file, updateSupport);
-  showImportDialog.value = false;
-  ElMessageBox({
-    callback: () => {
-      if (
-        result.createUserList.length > 0 ||
-        result.updateUserList.length > 0
-      ) {
-        vxeTable.value?.commitProxy('reload');
-      }
-    },
-    closeOnClickModal: false,
-    draggable: true,
-    message: () => h(ImportResult, { data: result }),
-    title: $t('zen.service.user.importResult'),
-  });
+  importModal.close();
+
+  setTimeout(() => {
+    importResultModal.setData({ data: result });
+    importResultModal.open();
+  }, 250);
+}
+
+function reloadTable() {
+  vxeTable.value?.commitProxy('reload');
 }
 </script>
 
 <template>
   <FullHeightContainer :card="false" :class="[ns.b()]">
     <div class="flex h-full gap-5">
-      <div class="hidden w-1/5 xl:block" v-loading="deptLoading">
-        <DeptFilter :data="deptList" @query="handleFilterDept" />
+      <div class="hidden w-1/5 xl:block">
+        <DeptFilter @query="handleFilterDept" />
       </div>
 
       <div class="w-full xl:w-4/5">
@@ -467,44 +445,9 @@ async function handleImport(file: File, updateSupport: boolean) {
           :class="[ns.be('table', 'container')]"
           :columns="columns"
           v-bind="tableOpts"
-          v-loading="loading || postLoading || roleLoading || roleIdsLoading"
         >
           <template #form>
             <TableQuery @query="handleQuery" />
-
-            <TableAdd
-              v-model="showAddDialog"
-              :dept-list
-              :post-list
-              @success="vxeTable?.commitProxy('reload')"
-            />
-
-            <TableEdit
-              v-model="showEditDialog"
-              :data="tempData"
-              :dept-list
-              :post-list
-              @success="vxeTable?.commitProxy('reload')"
-            />
-
-            <TableExport
-              v-model="showExportDialog"
-              :default-name="$t('zen.service.user.title')"
-              @confirm="handleExport"
-            />
-
-            <UserImport
-              v-model="showImportDialog"
-              :loading="importLoading"
-              @confirm="handleImport"
-            />
-
-            <AssignRole
-              v-model="showAssignDialog"
-              :data="tempData"
-              :role-ids
-              :role-list
-            />
           </template>
 
           <template #toolbar_left>
@@ -514,6 +457,15 @@ async function handleImport(file: File, updateSupport: boolean) {
               :show-empty="false"
               circle
             />
+            <TableAddModal @success="reloadTable" />
+            <TableEditModal @success="reloadTable" />
+            <TableExportModal
+              :default-name="$t('zen.service.user.title')"
+              @confirm="handleExport"
+            />
+            <UserImportModal @confirm="handleImport" />
+            <ImportResultModal @confirm="reloadTable" />
+            <AssignRoleModal />
           </template>
 
           <template #avatar="{ row: { avatar } }">

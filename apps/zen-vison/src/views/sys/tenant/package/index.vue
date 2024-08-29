@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import type { VxeGridProps } from 'vxe-table';
 
+import { type ModalApiOptions, useVbenModal } from '@vben/common-ui';
+
 import {
   batchDeleteTenantPackageApi,
   deleteTenantPackageApi,
-  getMenuSimpleListApi,
-  getTenantPackageApi,
   getTenantPackagePageListApi,
   type TenantApi,
 } from '#/api';
 import { type ActionItem, TableAction, VxeBasicTable } from '#/components';
 import { DictTypeEnum } from '#/enums';
-import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 import { formatToDateTime } from '#/utils';
@@ -25,25 +24,21 @@ dictStore.initDictData(DictTypeEnum.STATUS);
 
 let packageQuery: TenantApi.PackagePageQuery = {};
 const vxeBasicTableRef = ref<InstanceType<typeof VxeBasicTable>>();
-const tempData = ref<TenantApi.Package>();
-const showAddDialog = ref(false);
-const showEditDialog = ref(false);
 
-const requestConfig = {
-  loadingDelay: 200,
-  manual: true,
+const modalOpts: ModalApiOptions = {
+  closeOnClickModal: false,
+  draggable: true,
 };
 
-const { loading, runAsync: getPackage } = useRequest(
-  getTenantPackageApi,
-  requestConfig,
-);
+const [TableAddModal, addModal] = useVbenModal({
+  connectedComponent: TableAdd,
+  ...modalOpts,
+});
 
-const {
-  data: menus,
-  loading: menuLoading,
-  runAsync: getMenu,
-} = useRequest(getMenuSimpleListApi, requestConfig);
+const [TableEditModal, editModal] = useVbenModal({
+  connectedComponent: TableEdit,
+  ...modalOpts,
+});
 
 const vxeTable = computed(() =>
   vxeBasicTableRef.value?.getTableInstance<TenantApi.Package>(),
@@ -111,10 +106,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:tenant-package:create',
     icon: 'ep:plus',
-    onClick: async () => {
-      await getMenu();
-      showAddDialog.value = true;
-    },
+    onClick: () => addModal.open(),
     title: $t('zen.common.create'),
     type: 'primary',
   },
@@ -163,13 +155,9 @@ function createActions(row: TenantApi.Package) {
     {
       auth: 'system:tenant-package:update',
       icon: 'ep:edit',
-      onClick: async () => {
-        const [tentantPackage] = await Promise.all([
-          getPackage(row.id),
-          getMenu(),
-        ]);
-        tempData.value = tentantPackage;
-        showEditDialog.value = true;
+      onClick: () => {
+        editModal.setData({ id: row.id });
+        editModal.open();
       },
       tooltip: {
         content: $t('zen.common.edit'),
@@ -184,7 +172,7 @@ function createActions(row: TenantApi.Package) {
           confirm: () => {
             deleteTenantPackageApi(row.id).then(() => {
               ElMessage.success($t('zen.common.successTip'));
-              vxeTable.value?.commitProxy('reload');
+              reloadTable();
             });
           },
         },
@@ -204,30 +192,16 @@ function handleQuery(query: TenantApi.PackagePageQuery) {
   packageQuery = query;
   vxeTable.value?.commitProxy('query');
 }
+
+function reloadTable() {
+  vxeTable.value?.commitProxy('reload');
+}
 </script>
 
 <template>
-  <VxeBasicTable
-    ref="vxeBasicTableRef"
-    :columns="columns"
-    v-loading="loading || menuLoading"
-    v-bind="tableOpts"
-  >
+  <VxeBasicTable ref="vxeBasicTableRef" :columns="columns" v-bind="tableOpts">
     <template #form>
       <TableQuery @query="handleQuery" />
-
-      <TableAdd
-        v-model="showAddDialog"
-        :menus
-        @success="vxeTable?.commitProxy('reload')"
-      />
-
-      <TableEdit
-        v-model="showEditDialog"
-        :data="tempData"
-        :menus
-        @success="vxeTable?.commitProxy('reload')"
-      />
     </template>
 
     <template #toolbar_left>
@@ -237,6 +211,9 @@ function handleQuery(query: TenantApi.PackagePageQuery) {
         :show-empty="false"
         circle
       />
+
+      <TableAddModal @success="reloadTable" />
+      <TableEditModal @success="reloadTable" />
     </template>
 
     <template #status="{ row: { status } }">
