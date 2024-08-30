@@ -27,7 +27,7 @@ export namespace RoleApi {
     type: number;
     remark: Nullable<string>;
     dataScope: number;
-    dataScopeDeptIds: number[];
+    dataScopeDeptIds: Nullable<number[]>;
     createTime: number;
   }
 
@@ -36,6 +36,15 @@ export namespace RoleApi {
     code: string;
     sort: number;
     remark?: string;
+  }
+
+  export interface UpdateModel extends AddModel {
+    id: number;
+  }
+
+  export interface UpdateStatusModel {
+    id: number;
+    status: number;
   }
 
   export interface AssignDataScope {
@@ -80,6 +89,13 @@ export function getRoleMenuListApi(roleId: number) {
 }
 
 /**
+ * 批量删除角色
+ */
+export function batchDeleteRoleApi(ids: number[]) {
+  return requestClient.delete<boolean>(`${SYSTEM}/role`, { data: { ids } });
+}
+
+/**
  * 删除角色
  */
 export function deleteRoleApi(id: number) {
@@ -87,9 +103,16 @@ export function deleteRoleApi(id: number) {
 }
 
 /**
+ * 更新角色状态
+ */
+export function updateRoleStatusApi(data: RoleApi.UpdateStatusModel) {
+  return requestClient.put<boolean>(`${SYSTEM}/role/status`, data);
+}
+
+/**
  * 更新角色
  */
-export function updateRoleApi(data: { id: number } & RoleApi.AddModel) {
+export function updateRoleApi(data: RoleApi.UpdateModel) {
   return requestClient.put<boolean>(`${SYSTEM}/role`, data);
 }
 

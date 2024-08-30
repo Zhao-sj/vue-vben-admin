@@ -138,6 +138,25 @@
         "joinUser": " User",
         "joinNewPassword": "new password",
         "uploadFileTip": "Please select file"
+      },
+      "role": {
+        "title": "Role List",
+        "id": "ID",
+        "name": "Name",
+        "code": "Code",
+        "type": "Type",
+        "sort": "Sort",
+        "status": "Status",
+        "dataScope": "Scope",
+        "customScope": "Custom",
+        "assignMenu": "Asign Menu",
+        "menuPermission": "Menus",
+        "assignScope": "Assign Data Scope",
+        "create": "Create Role",
+        "edit": "Edit Role",
+        "strictly": "Strictly",
+        "strictlyTip": "Select the parent node to automatically select all child nodes.",
+        "joinRole": " Role"
       }
     }
   }

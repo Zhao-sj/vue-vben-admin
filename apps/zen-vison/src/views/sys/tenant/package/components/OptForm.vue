@@ -23,6 +23,7 @@ defineExpose({
 const dictStore = useDictStore();
 const formRef = ref<FormInstance>();
 const treeRef = ref<InstanceType<typeof ElTree>>();
+const isCheckAll = ref(false);
 
 const treeMapConf = {
   label: 'name',
@@ -69,6 +70,10 @@ function getFormInstance() {
 function getTreeInstance() {
   return treeRef.value;
 }
+
+watch(state, ({ menuIds }) => {
+  isCheckAll.value = props.menus.every((item) => menuIds?.includes(item.id));
+});
 </script>
 
 <template>
@@ -97,6 +102,7 @@ function getTreeInstance() {
                 @change="handleExpand"
               />
               <ElCheckbox
+                v-model="isCheckAll"
                 :label="`${$t('zen.common.selectAll')} / ${$t('zen.common.unselectAll')}`"
                 @change="handleChooseAll"
               />
@@ -105,7 +111,8 @@ function getTreeInstance() {
               ref="treeRef"
               :data="menuTree"
               :props="treeMapConf"
-              class="h-60 overflow-y-auto rounded-lg border pt-1"
+              check-strictly
+              class="min-h-60 overflow-y-auto rounded-lg border pt-1"
               node-key="id"
               show-checkbox
             />

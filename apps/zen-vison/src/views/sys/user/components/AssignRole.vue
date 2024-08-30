@@ -41,7 +41,7 @@ const { loading: userLoading, runAsync: getUser } = useRequest(
 
 const { loading, runAsync } = useRequest(assignUserRoleApi, requestConf);
 
-const [Modal, modalApi] = useVbenModal({ onConfirm, onOpenChange });
+const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
 async function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
@@ -49,7 +49,7 @@ async function onOpenChange(isOpen: boolean) {
     return;
   }
 
-  const { id } = modalApi.getData();
+  const { id } = modal.getData();
   if (id) {
     const [user, roleIds] = await Promise.all([
       getUser(id),
@@ -76,7 +76,7 @@ async function onConfirm() {
 
   await runAsync({ roleIds, userId: id });
   ElMessage.success($t('zen.common.successTip'));
-  modalApi.close();
+  modal.close();
 }
 </script>
 
@@ -87,7 +87,7 @@ async function onConfirm() {
     :confirm-text="$t('zen.common.confirm')"
     :loading="roleLoading || roleIdsLoading || userLoading"
     :title="$t('zen.service.user.assignRole')"
-    class="!w-11/12 md:!w-1/3 2xl:!w-1/5"
+    class="w-11/12 md:w-1/3 2xl:w-1/5"
     draggable
   >
     <ElForm :label-width="80" :model="formState">

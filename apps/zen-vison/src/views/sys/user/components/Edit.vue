@@ -48,7 +48,7 @@ const { loading: userLoading, runAsync: getUser } = useRequest(
 
 const { loading, runAsync } = useRequest(updateUserApi, requestConf);
 
-const [Modal, modalApi] = useVbenModal({ onConfirm, onOpenChange });
+const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
 const formInstance = computed(() => optFormRef.value?.getFormInstance());
 
@@ -57,7 +57,7 @@ async function onOpenChange(isOpen: boolean) {
     return;
   }
 
-  const { id } = modalApi.getData();
+  const { id } = modal.getData();
   if (id) {
     const [user] = await Promise.all([getUser(id), getDept(), getPost()]);
 
@@ -83,7 +83,7 @@ function onConfirm() {
     if (valid) {
       await runAsync(formState.value as UserApi.UpdateModel);
       ElMessage.success($t('zen.common.successTip'));
-      modalApi.close();
+      modal.close();
       emit('success');
     }
   });

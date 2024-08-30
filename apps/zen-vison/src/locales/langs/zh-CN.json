@@ -138,6 +138,25 @@
         "joinUser": "用户",
         "joinNewPassword": "的新密码",
         "uploadFileTip": "请选择文件"
+      },
+      "role": {
+        "title": "角色列表",
+        "id": "角色编号",
+        "name": "角色名称",
+        "code": "角色标识",
+        "type": "角色类型",
+        "sort": "显示顺序",
+        "status": "角色状态",
+        "dataScope": "权限范围",
+        "customScope": "数据权限",
+        "assignMenu": "分配菜单",
+        "menuPermission": "菜单权限",
+        "assignScope": "分配数据权限",
+        "create": "新增角色",
+        "edit": "编辑角色",
+        "strictly": "父子联动",
+        "strictlyTip": "选中父节点，自动选中所有子节点",
+        "joinRole": "角色"
       }
     }
   }

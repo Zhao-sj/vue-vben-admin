@@ -74,7 +74,7 @@ const columns = computed<PackageColumns>(() => [
     align: 'center',
     field: 'remark',
     formatter: ({ cellValue }) => cellValue || '-',
-    minWidth: 100,
+    minWidth: 150,
     title: $t('zen.service.package.remark'),
   },
   {

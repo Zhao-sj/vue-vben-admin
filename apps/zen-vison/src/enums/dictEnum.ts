@@ -20,3 +20,13 @@ export enum DictSex {
   FEMALE = 2,
   MALE = 1,
 }
+
+export enum DictRoleType {
+  /** 内置角色 */
+  ADMIN = 1,
+}
+
+export enum RoleDataScope {
+  /** 自定义数据权限 */
+  CUSTOM = 2,
+}

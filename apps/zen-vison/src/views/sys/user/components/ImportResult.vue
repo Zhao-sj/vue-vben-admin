@@ -15,7 +15,7 @@ const data = ref<UserApi.ImportResp>({
   updateUserList: [],
 });
 
-const [Modal, modalApi] = useVbenModal({ onConfirm, onOpenChange });
+const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
 const failList = computed(() =>
   Object.keys(data.value.failureUsers).map((item) => ({
@@ -29,7 +29,7 @@ function onOpenChange(isOpen: boolean) {
     return;
   }
 
-  const { data: resultData } = modalApi.getData();
+  const { data: resultData } = modal.getData();
   if (resultData) {
     data.value = resultData;
   }
@@ -40,7 +40,7 @@ function onConfirm() {
   if (createUserList.length > 0 || updateUserList.length > 0) {
     emit('confirm');
   }
-  modalApi.close();
+  modal.close();
 }
 </script>
 

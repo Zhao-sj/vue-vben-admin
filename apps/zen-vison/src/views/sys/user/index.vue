@@ -61,7 +61,7 @@ const requestConfig = {
   manual: true,
 };
 
-const { loading: statusLoading, runAsync: updateStatus } = useRequest(
+const { runAsync: updateStatus } = useRequest(
   updateUserStatusApi,
   requestConfig,
 );
@@ -219,7 +219,7 @@ const columns = computed<UserColumns>(() => [
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
-    auth: 'system:tenant-package:delete',
+    auth: 'system:user:delete',
     icon: 'ep:delete',
     onClick: () => {
       vxeTable.value?.commitProxy('delete');
@@ -228,7 +228,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
     type: 'danger',
   },
   {
-    auth: 'system:tenant-package:create',
+    auth: 'system:user:create',
     icon: 'ep:plus',
     onClick: () => addModal.open(),
     title: $t('zen.common.create'),
@@ -388,7 +388,11 @@ function handleStatusChange(row: UserApi.User) {
     row.status = row.status === ENABLE ? DISABLE : ENABLE;
   };
 
-  ElMessageBox.confirm(message, title, { type: 'warning' })
+  ElMessageBox.confirm(message, title, {
+    closeOnClickModal: false,
+    draggable: true,
+    type: 'warning',
+  })
     .then(() => {
       updateStatus({ id: row.id, status: row.status })
         .then(requestAfter)
@@ -491,7 +495,6 @@ function reloadTable() {
               :active-value="0"
               :disabled="statusDisabled"
               :inactive-value="1"
-              :loading="statusLoading"
               @change="handleStatusChange(row)"
             />
           </template>

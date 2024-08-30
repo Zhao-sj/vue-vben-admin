@@ -7,6 +7,7 @@ import { useRequest } from '#/hooks';
 type DictData = Record<DictTypeEnum, DictApi.DataSimple[]>;
 
 interface DictState {
+  loading: boolean;
   dictData: DictData;
 }
 
@@ -18,6 +19,10 @@ export const useDictStore = defineStore('zen-dict', {
 
     getDictDataList(type: DictTypeEnum) {
       return this.dictData[type] || [];
+    },
+
+    getRoleType(value: number | string) {
+      return this.getDictData(DictTypeEnum.ROLE_TYPE, value.toString());
     },
 
     getSex(value: number | string) {
@@ -36,6 +41,8 @@ export const useDictStore = defineStore('zen-dict', {
       dictTypes.forEach((type) =>
         useRequest(getDictDataSimpleListApi, {
           defaultParams: [type],
+          onBefore: () => (this.loading = true),
+          onFinally: () => (this.loading = false),
           onSuccess: (data) => {
             this.dictData[type] = data;
           },
@@ -45,5 +52,6 @@ export const useDictStore = defineStore('zen-dict', {
   },
   state: (): DictState => ({
     dictData: {} as DictData,
+    loading: false,
   }),
 });
