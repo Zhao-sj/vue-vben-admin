@@ -157,6 +157,16 @@
         "strictly": "Strictly",
         "strictlyTip": "Select the parent node to automatically select all child nodes.",
         "joinRole": " Role"
+      },
+      "post": {
+        "title": "Post List",
+        "id": "ID",
+        "name": "Name",
+        "code": "Code",
+        "sort": "Sort",
+        "status": "Status",
+        "create": "Create Post",
+        "edit": "Edit Post"
       }
     }
   }

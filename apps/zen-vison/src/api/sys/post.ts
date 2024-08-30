@@ -34,6 +34,17 @@ export namespace PostApi {
     status: number;
     remark?: string;
   }
+
+  export interface UpdateModel extends AddModel {
+    id: number;
+  }
+}
+
+/**
+ * 批量删除岗位
+ */
+export function batchDeletePostApi(ids: number[]) {
+  return requestClient.delete<boolean>(`${SYSTEM}/post`, { data: { ids } });
 }
 
 /**
@@ -46,7 +57,7 @@ export function deletePostApi(id: number) {
 /**
  * 更新岗位
  */
-export function updatePostApi(data: { id: number } & PostApi.AddModel) {
+export function updatePostApi(data: PostApi.UpdateModel) {
   return requestClient.put<boolean>(`${SYSTEM}/post`, data);
 }
 

@@ -3,12 +3,7 @@ import { useVbenModal } from '@vben/common-ui';
 
 import { omit } from 'lodash-es';
 
-import {
-  getMenuSimpleListApi,
-  getTenantPackageApi,
-  type TenantApi,
-  updateTenantPackageApi,
-} from '#/api';
+import { getPostApi, type PostApi, updatePostApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 
@@ -26,47 +21,38 @@ const requestConf = {
 };
 
 const optFormRef = ref<InstanceType<typeof OptForm>>();
-const formState = ref<Partial<TenantApi.AddPackageModel>>({});
+const formState = ref<Partial<PostApi.UpdateModel>>({});
 
-const {
-  data: menus,
-  loading: menuLoading,
-  runAsync: getMenu,
-} = useRequest(getMenuSimpleListApi, requestConf);
-
-const { loading: pckLoading, runAsync: getPackage } = useRequest(
-  getTenantPackageApi,
+const { loading: postLoading, runAsync: getPost } = useRequest(
+  getPostApi,
   requestConf,
 );
 
-const { loading, runAsync } = useRequest(updateTenantPackageApi, requestConf);
+const { loading, runAsync } = useRequest(updatePostApi, requestConf);
 
 const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
 const formInstance = computed(() => optFormRef.value?.getFormInstance());
-const treeInstance = computed(() => optFormRef.value?.getTreeInstance());
 
 async function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
+    formState.value = {};
     return;
   }
 
   const { id } = modal.getData();
   if (id) {
-    const [tenantPackage] = await Promise.all([getPackage(id), getMenu()]);
+    const role = await getPost(id);
     const ignoreKeys = ['createTime'];
-    formState.value = omit(tenantPackage, ignoreKeys) as TenantApi.UpdateModel;
-    treeInstance.value?.setCheckedKeys(tenantPackage.menuIds);
+    const data = omit(role, ignoreKeys) as PostApi.UpdateModel;
+    formState.value = data;
   }
 }
 
 function onConfirm() {
   formInstance.value?.validate(async (valid) => {
     if (valid) {
-      const keys = treeInstance.value!.getCheckedKeys() as number[];
-      formState.value.menuIds = keys;
-
-      await runAsync(formState.value as TenantApi.UpdatePackageModel);
+      await runAsync(formState.value as PostApi.UpdateModel);
       ElMessage.success($t('zen.common.successTip'));
       modal.close();
       emit('success');
@@ -81,11 +67,11 @@ function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :confirm-text="$t('zen.common.confirm')"
-    :loading="menuLoading || pckLoading"
-    :title="$t('zen.service.package.edit')"
-    class="w-11/12 md:w-1/2 2xl:w-1/3"
+    :loading="postLoading"
+    :title="$t('zen.service.post.edit')"
+    class="w-11/12 lg:w-1/3 2xl:w-1/4"
     draggable
   >
-    <OptForm ref="optFormRef" v-model="formState" :menus />
+    <OptForm ref="optFormRef" v-model="formState" />
   </Modal>
 </template>

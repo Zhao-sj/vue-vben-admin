@@ -64,11 +64,13 @@ function onConfirm() {
 <template>
   <Modal
     :cancel-text="$t('zen.common.cancel')"
+    :close-on-click-modal="false"
     :confirm-loading="loading"
     :confirm-text="$t('zen.common.confirm')"
     :loading="roleLoading"
     :title="$t('zen.service.role.edit')"
     class="w-11/12 lg:w-1/3 2xl:w-1/4"
+    draggable
   >
     <OptForm ref="optFormRef" v-model="formState" />
   </Modal>

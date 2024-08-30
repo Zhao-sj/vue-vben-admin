@@ -2,7 +2,7 @@
 import type { VxeGridProps } from 'vxe-table';
 
 import { useAccess } from '@vben/access';
-import { type ModalApiOptions, useVbenModal } from '@vben/common-ui';
+import { useVbenModal } from '@vben/common-ui';
 
 import {
   batchDeleteRoleApi,
@@ -51,44 +51,34 @@ const requestConfig = {
   manual: true,
 };
 
-const modalOpts: ModalApiOptions = {
-  closeOnClickModal: false,
-  draggable: true,
-};
-
 const { runAsync: updateStatus } = useRequest(
   updateRoleStatusApi,
   requestConfig,
 );
 
-const { loading: exportLoading, runAsync: exportUser } = useRequest(
+const { loading: exportLoading, runAsync: exportRole } = useRequest(
   exportRoleApi,
   requestConfig,
 );
 
 const [TableAddModal, addModal] = useVbenModal({
   connectedComponent: TableAdd,
-  ...modalOpts,
 });
 
 const [TableEditModal, editModal] = useVbenModal({
   connectedComponent: TableEdit,
-  ...modalOpts,
 });
 
 const [TableExportModal, exportModal] = useVbenModal({
   connectedComponent: TableExport,
-  ...modalOpts,
 });
 
 const [AsignMenuModal, asignMenuModal] = useVbenModal({
   connectedComponent: AsignMenu,
-  ...modalOpts,
 });
 
 const [AssignScopeModal, assignScopeModal] = useVbenModal({
   connectedComponent: AssignScope,
-  ...modalOpts,
 });
 
 const vxeTable = computed(() =>
@@ -330,7 +320,7 @@ async function handleExport(fileName: string) {
   if (exportLoading.value) {
     return;
   }
-  const { data } = await exportUser(roleQuery);
+  const { data } = await exportRole(roleQuery);
   downloadExcel(data, fileName);
   exportModal.close();
   ElMessage.success($t('zen.export.success'));

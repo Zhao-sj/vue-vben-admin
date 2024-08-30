@@ -47,8 +47,10 @@ function onConfirm() {
 <template>
   <Modal
     :cancel-text="$t('zen.common.cancel')"
+    :close-on-click-modal="false"
     :confirm-text="$t('zen.common.confirm')"
     :title="$t('zen.service.user.importResult')"
+    draggable
   >
     <div class="flex flex-col gap-2">
       <div>

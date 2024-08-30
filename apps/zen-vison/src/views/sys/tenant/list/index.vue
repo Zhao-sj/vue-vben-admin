@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type ModalApiOptions, useVbenModal } from '@vben/common-ui';
+import { useVbenModal } from '@vben/common-ui';
 
 import dayjs from 'dayjs';
 import { type VxeGridProps } from 'vxe-table';
@@ -34,24 +34,16 @@ dictStore.initDictData(DictTypeEnum.STATUS);
 let tenantQuery: TenantApi.PageQuery = {};
 const vxeBasicTableRef = ref<InstanceType<typeof VxeBasicTable>>();
 
-const modalOpts: ModalApiOptions = {
-  closeOnClickModal: false,
-  draggable: true,
-};
-
 const [TableAddModal, addModal] = useVbenModal({
   connectedComponent: TableAdd,
-  ...modalOpts,
 });
 
 const [TableEditModal, editModal] = useVbenModal({
   connectedComponent: TableEdit,
-  ...modalOpts,
 });
 
 const [TableExportModal, exportModal] = useVbenModal({
   connectedComponent: TableExport,
-  ...modalOpts,
 });
 
 const { data: packageList, runAsync: getPackageList } = useRequest(

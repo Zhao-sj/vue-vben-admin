@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VxeGridProps } from 'vxe-table';
 
-import { type ModalApiOptions, useVbenModal } from '@vben/common-ui';
+import { useVbenModal } from '@vben/common-ui';
 
 import {
   batchDeleteTenantPackageApi,
@@ -25,19 +25,12 @@ dictStore.initDictData(DictTypeEnum.STATUS);
 let packageQuery: TenantApi.PackagePageQuery = {};
 const vxeBasicTableRef = ref<InstanceType<typeof VxeBasicTable>>();
 
-const modalOpts: ModalApiOptions = {
-  closeOnClickModal: false,
-  draggable: true,
-};
-
 const [TableAddModal, addModal] = useVbenModal({
   connectedComponent: TableAdd,
-  ...modalOpts,
 });
 
 const [TableEditModal, editModal] = useVbenModal({
   connectedComponent: TableEdit,
-  ...modalOpts,
 });
 
 const vxeTable = computed(() =>

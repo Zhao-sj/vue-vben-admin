@@ -2,7 +2,7 @@
 import type { VxeGridProps } from 'vxe-table';
 
 import { useAccess } from '@vben/access';
-import { type ModalApiOptions, useVbenModal } from '@vben/common-ui';
+import { useVbenModal } from '@vben/common-ui';
 import { useNamespace } from '@vben/hooks';
 import { Icon } from '@vben/icons';
 
@@ -51,11 +51,6 @@ const ns = useNamespace('user-manage');
 let userQuery: UserApi.PageQuery = {};
 const vxeBasicTableRef = ref<InstanceType<typeof VxeBasicTable>>();
 
-const modalOpts: ModalApiOptions = {
-  closeOnClickModal: false,
-  draggable: true,
-};
-
 const requestConfig = {
   loadingDelay: 200,
   manual: true,
@@ -78,32 +73,26 @@ const { loading: importLoading, runAsync: importUser } = useRequest(
 
 const [TableAddModal, addModal] = useVbenModal({
   connectedComponent: TableAdd,
-  ...modalOpts,
 });
 
 const [TableEditModal, editModal] = useVbenModal({
   connectedComponent: TableEdit,
-  ...modalOpts,
 });
 
 const [AssignRoleModal, assignRoleModal] = useVbenModal({
   connectedComponent: AssignRole,
-  ...modalOpts,
 });
 
 const [TableExportModal, exportModal] = useVbenModal({
   connectedComponent: TableExport,
-  ...modalOpts,
 });
 
 const [UserImportModal, importModal] = useVbenModal({
   connectedComponent: UserImport,
-  ...modalOpts,
 });
 
 const [ImportResultModal, importResultModal] = useVbenModal({
   connectedComponent: ImportResult,
-  ...modalOpts,
 });
 
 const vxeTable = computed(() =>

@@ -83,6 +83,7 @@ async function onConfirm() {
 <template>
   <Modal
     :cancel-text="$t('zen.common.cancel')"
+    :close-on-click-modal="false"
     :confirm-loading="loading"
     :confirm-text="$t('zen.common.confirm')"
     :loading="roleLoading || roleIdsLoading || userLoading"
