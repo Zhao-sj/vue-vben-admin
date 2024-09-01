@@ -10,6 +10,7 @@ export const overridesPreferences = defineOverridesPreferences({
     accessMode: 'backend',
     loginExpiredMode: 'modal',
     name: import.meta.env.VITE_APP_TITLE,
+    preferencesButtonPosition: 'fixed',
   },
   copyright: {
     companyName: 'Zen',

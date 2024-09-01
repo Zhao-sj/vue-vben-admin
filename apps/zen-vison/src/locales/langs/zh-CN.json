@@ -22,9 +22,11 @@
       "confirm": "确认",
       "cancel": "取消",
       "opt": "操作",
+      "close": "关闭",
       "create": "新增",
       "edit": "编辑",
       "delete": "删除",
+      "detail": "详情",
       "batchDelete": "批量删除",
       "confirmDelete": "确认删除吗？",
       "export": "数据导出",
@@ -45,7 +47,9 @@
       "collapsed": "折叠",
       "selectAll": "全选",
       "unselectAll": "取消全选",
-      "joinAll": "全部"
+      "joinAll": "全部",
+      "selectTip": "请至少选择一条记录",
+      "updateConfirm": "您确定要更新所选记录吗?"
     },
     "export": {
       "title": "数据导出",
@@ -167,6 +171,54 @@
         "status": "岗位状态",
         "create": "新增岗位",
         "edit": "编辑岗位"
+      },
+      "log": {
+        "common": {
+          "code": "日志编号",
+          "traceId": "链路追踪",
+          "userId": "用户编号",
+          "userType": "用户类型",
+          "appName": "应用名称",
+          "requestMethod": "请求方式",
+          "requestUrl": "请求地址",
+          "requestParams": "请求参数",
+          "ip": "访问IP",
+          "location": "访问地点",
+          "ua": "设备信息",
+          "detail": "日志详情",
+          "basicInfo": "基础信息",
+          "userInfo": "用户信息",
+          "requestInfo": "请求信息"
+        },
+        "login": {
+          "title": "登录日志",
+          "type": "日志类型",
+          "username": "登录账号",
+          "result": "登录状态",
+          "createTime": "登录日期",
+          "success": "成功",
+          "fail": "失败"
+        },
+        "access": {
+          "title": "访问日志",
+          "responseBody": "响应结果",
+          "operateModule": "操作模块",
+          "operateName": "操作名称",
+          "operateType": "操作分类",
+          "beginTime": "开始时间",
+          "endTime": "结束时间",
+          "duration": "执行时长",
+          "resultCode": "结果编码",
+          "resultMsg": "操作结果",
+          "createTime": "请求时间"
+        },
+        "error": {
+          "title": "错误日志",
+          "exTime": "异常时间",
+          "exName": "异常名称",
+          "exMsg": "异常信息",
+          "status": "处理状态"
+        }
       }
     }
   }

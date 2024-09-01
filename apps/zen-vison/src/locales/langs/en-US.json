@@ -22,9 +22,11 @@
       "confirm": "Confirm",
       "cancel": "Cancel",
       "opt": "Operation",
+      "close": "Close",
       "create": "Create",
       "edit": "Edit",
       "delete": "Delete",
+      "detail": "Detail",
       "batchDelete": "Batch Delete",
       "confirmDelete": "Are you sure to delete?",
       "export": "Export",
@@ -45,7 +47,9 @@
       "collapsed": "Collapsed",
       "selectAll": "Select All",
       "unselectAll": "Unselect All",
-      "joinAll": " All"
+      "joinAll": " All",
+      "selectTip": "Please choose at least one piece of record",
+      "updateConfirm": "Are you sure you want to update the select record?"
     },
     "export": {
       "title": "Export",
@@ -167,6 +171,54 @@
         "status": "Status",
         "create": "Create Post",
         "edit": "Edit Post"
+      },
+      "log": {
+        "common": {
+          "code": "ID",
+          "traceId": "TraceId",
+          "userId": "UserId",
+          "userType": "UserType",
+          "appName": "ServerName",
+          "requestMethod": "Method",
+          "requestUrl": "Url",
+          "requestParams": "Params",
+          "ip": "IP",
+          "location": "Location",
+          "ua": "DeviceInfo",
+          "detail": "Log Detail",
+          "basicInfo": "Basic Info",
+          "userInfo": "User Info",
+          "requestInfo": "Request Info"
+        },
+        "login": {
+          "title": "Login Log",
+          "type": "Type",
+          "username": "Account",
+          "result": "Status",
+          "createTime": "LoginDate",
+          "success": "Success",
+          "fail": "Fail"
+        },
+        "access": {
+          "title": "Access Log",
+          "responseBody": "Response",
+          "operateModule": "Module",
+          "operateName": "ModuleName",
+          "operateType": "ModuleType",
+          "beginTime": "BeginTime",
+          "endTime": "EndTime",
+          "duration": "Duration",
+          "resultCode": "Code",
+          "resultMsg": "Message",
+          "createTime": "RequestTime"
+        },
+        "error": {
+          "title": "Error Log",
+          "exTime": "ExceptionTime",
+          "exName": "ExceptionName",
+          "exMsg": "ExceptionMessage",
+          "status": "ProcessStatus"
+        }
       }
     }
   }

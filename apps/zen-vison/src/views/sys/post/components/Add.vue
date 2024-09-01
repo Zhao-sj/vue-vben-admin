@@ -26,7 +26,7 @@ const formState = ref<Partial<PostApi.AddModel>>(cloneDeep(defaultState));
 
 const { loading, runAsync } = useRequest(addPostApi, requestConf);
 
-const [Modal, modalApi] = useVbenModal({ onConfirm, onOpenChange });
+const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
 const formInstance = computed(() => optFormRef.value?.getFormInstance());
 
@@ -45,7 +45,7 @@ function onConfirm() {
 
       await runAsync(state);
       ElMessage.success($t('zen.common.successTip'));
-      modalApi.close();
+      modal.close();
       emit('success');
     }
   });

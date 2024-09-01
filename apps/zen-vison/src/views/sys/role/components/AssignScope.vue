@@ -166,7 +166,10 @@ watch(
                   <ElCheckbox v-model="checkStrictly">
                     <div class="flex items-center gap-1">
                       <ElTooltip :content="$t('zen.service.role.strictlyTip')">
-                        <Icon icon="ep:question-filled" />
+                        <Icon
+                          class="cursor-help outline-none"
+                          icon="lucide:circle-help"
+                        />
                       </ElTooltip>
                       <span>{{ $t('zen.service.role.strictly') }}</span>
                     </div>

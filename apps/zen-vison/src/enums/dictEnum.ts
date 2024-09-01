@@ -30,3 +30,14 @@ export enum RoleDataScope {
   /** 自定义数据权限 */
   CUSTOM = 2,
 }
+
+export enum LogProcess {
+  /** 已忽略 */
+  IGNORE = 2,
+
+  /** 已处理 */
+  PROCESSED = 1,
+
+  /** 未处理 */
+  UN_PROCESS = 0,
+}

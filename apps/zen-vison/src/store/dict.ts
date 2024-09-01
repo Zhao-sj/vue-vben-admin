@@ -21,6 +21,25 @@ export const useDictStore = defineStore('zen-dict', {
       return this.dictData[type] || [];
     },
 
+    getLoginResult(value: number | string) {
+      return this.getDictData(DictTypeEnum.LOGIN_RESULT, value.toString());
+    },
+
+    getLoginType(value: number | string) {
+      return this.getDictData(DictTypeEnum.LOGIN_TYPE, value.toString());
+    },
+
+    getLogProcess(value: number | string) {
+      return this.getDictData(
+        DictTypeEnum.ERROR_LOG_PROCESS_STATUS,
+        value.toString(),
+      );
+    },
+
+    getOperaType(value: number | string) {
+      return this.getDictData(DictTypeEnum.OPERATE_TYPE, value.toString());
+    },
+
     getRoleType(value: number | string) {
       return this.getDictData(DictTypeEnum.ROLE_TYPE, value.toString());
     },
@@ -31,6 +50,9 @@ export const useDictStore = defineStore('zen-dict', {
 
     getStatus(value: number | string) {
       return this.getDictData(DictTypeEnum.STATUS, value.toString());
+    },
+    getUserType(value: number | string) {
+      return this.getDictData(DictTypeEnum.USER_TYPE, value.toString());
     },
 
     initDictData(...types: DictTypeEnum[]) {

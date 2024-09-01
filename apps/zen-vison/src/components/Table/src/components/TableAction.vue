@@ -21,14 +21,19 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const { hasAccessByCodes, hasAccessByRoles } = useAccess();
+const defaultShowAfter = 750;
 
-const showAction = computed(() =>
-  props.actions.some((item) => hasPermission(item.role, item.auth)),
+const authActions = computed(() =>
+  props.actions.filter((item) => hasPermission(item.role, item.auth)),
 );
 
-const showDropdown = computed(() =>
-  props.dropdownActions.some((item) => hasPermission(item.role, item.auth)),
+const authDropdownActions = computed(() =>
+  props.dropdownActions.filter((item) => hasPermission(item.role, item.auth)),
 );
+
+const showAction = computed(() => authActions.value.length > 0);
+
+const showDropdown = computed(() => authDropdownActions.value.length > 0);
 
 function hasPermission(
   roles: ActionItem['role'] = [],
@@ -46,7 +51,7 @@ function hasPermission(
     return true;
   }
 
-  return hasAccessByRoles(roles) || hasAccessByCodes(codes);
+  return hasAccessByCodes(codes) || hasAccessByRoles(roles);
 }
 
 function hasDisabled(config?: Record<string, any>) {
@@ -60,39 +65,39 @@ function hasDisabled(config?: Record<string, any>) {
 
 <template>
   <div class="flex items-center justify-center">
-    <template v-for="(item, i) in actions" :key="i">
-      <template v-if="hasPermission(item.role, item.auth)">
-        <ElPopconfirm
-          :disabled="item.disabled || hasDisabled(item.popConfirm)"
-          v-bind="item.popConfirm || {}"
-          v-on="item.popConfirm?.on || {}"
-        >
-          <template #reference>
-            <div>
-              <ElTooltip
-                :disabled="item.disabled || hasDisabled(item.tooltip)"
-                v-bind="item.tooltip || {}"
-              >
-                <ElButton :circle :link v-bind="{ ...item, icon: undefined }">
-                  <Icon
-                    v-if="item.icon"
-                    :class="{ 'mr-1': item.label }"
-                    :icon="item.icon"
-                  />
-                  <span v-if="item.label" class="z-span">{{ item.label }}</span>
-                </ElButton>
-              </ElTooltip>
-            </div>
-          </template>
-        </ElPopconfirm>
+    <template v-for="(item, i) in authActions" :key="i">
+      <ElPopconfirm
+        :disabled="item.disabled || hasDisabled(item.popConfirm)"
+        :width="180"
+        v-bind="item.popConfirm || {}"
+        v-on="item.popConfirm?.on || {}"
+      >
+        <template #reference>
+          <div>
+            <ElTooltip
+              :disabled="item.disabled || hasDisabled(item.tooltip)"
+              :show-after="defaultShowAfter"
+              v-bind="item.tooltip || {}"
+            >
+              <ElButton :circle :link v-bind="{ ...item, icon: undefined }">
+                <Icon
+                  v-if="item.icon"
+                  :class="{ 'mr-1': item.label }"
+                  :icon="item.icon"
+                />
+                <span v-if="item.label" class="z-span">{{ item.label }}</span>
+              </ElButton>
+            </ElTooltip>
+          </div>
+        </template>
+      </ElPopconfirm>
 
-        <ElDivider
-          v-if="i < actions.length - 1 || dropdownActions.length > 0"
-          :border-style="link ? 'solid' : 'none'"
-          class="!mx-1.5"
-          direction="vertical"
-        />
-      </template>
+      <ElDivider
+        v-if="i < authActions.length - 1 || showDropdown"
+        :border-style="link ? 'solid' : 'none'"
+        class="!mx-1.5"
+        direction="vertical"
+      />
     </template>
 
     <ElDropdown v-if="showDropdown">
@@ -104,15 +109,14 @@ function hasDisabled(config?: Record<string, any>) {
 
       <template #dropdown>
         <ElDropdownMenu>
-          <template v-for="(item, i) in dropdownActions" :key="i">
-            <ElDropdownItem
-              v-if="hasPermission(item.role, item.auth)"
-              v-bind="{ ...item, icon: undefined }"
-            >
-              <Icon v-if="item.icon" :icon="item.icon" class="mr-1" />
-              <span>{{ item.label }}</span>
-            </ElDropdownItem>
-          </template>
+          <ElDropdownItem
+            v-for="(item, i) in authDropdownActions"
+            :key="i"
+            v-bind="{ ...item, icon: undefined }"
+          >
+            <Icon v-if="item.icon" :icon="item.icon" class="mr-1" />
+            <span>{{ item.label }}</span>
+          </ElDropdownItem>
         </ElDropdownMenu>
       </template>
     </ElDropdown>

@@ -7,6 +7,9 @@ interface BaseCTime {
   createTime?: string;
 }
 
+/**
+ * element-ui 日期时间格式转换
+ */
 export function translateState(target: BaseCTime | Ref<BaseCTime>) {
   const state = cloneDeep(unref(target));
   const _addHm = (target: ConfigType) => {

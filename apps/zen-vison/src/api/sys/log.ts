@@ -9,7 +9,7 @@ export namespace LogApi {
   export interface LoginQuery {
     username?: string;
     ip?: string;
-    status?: string;
+    status?: boolean;
     createTime?: string;
   }
 
@@ -101,6 +101,20 @@ export namespace LogApi {
     id: number;
     processStatus: number;
   }
+
+  export interface BatchUpdateProcessStatusModel {
+    ids: number[];
+    processStatus: number;
+  }
+}
+
+/**
+ * 批量更新错误日志处理状态
+ */
+export function batchUpdateErrorLogStatusApi(
+  data: LogApi.BatchUpdateProcessStatusModel,
+) {
+  return requestClient.put<boolean>(`${SYSTEM}/log/error/status/batch`, data);
 }
 
 /**
