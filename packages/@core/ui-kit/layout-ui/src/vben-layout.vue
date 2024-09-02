@@ -50,7 +50,7 @@ const props = withDefaults(defineProps<Props>(), {
   sidebarWidth: 180,
   sideCollapseWidth: 60,
   tabbarEnable: true,
-  tabbarHeight: 36,
+  tabbarHeight: 40,
   zIndex: 200,
 });
 
@@ -184,9 +184,6 @@ const headerFixed = computed(() => {
 });
 
 const showSidebar = computed(() => {
-  // if (isMixedNav.value && !props.sideHidden) {
-  //   return false;
-  // }
   return isSideMode.value && sidebarEnable.value;
 });
 
@@ -537,8 +534,8 @@ function handleHeaderToggle() {
       >
         <slot name="content"></slot>
 
-        <template #overlay="{ overlayStyle }">
-          <slot :overlay-style="overlayStyle" name="content-overlay"></slot>
+        <template #overlay>
+          <slot name="content-overlay"></slot>
         </template>
       </LayoutContent>
 
