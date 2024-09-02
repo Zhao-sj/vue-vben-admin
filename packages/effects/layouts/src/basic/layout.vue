@@ -78,23 +78,17 @@ const isMenuRounded = computed(() => {
 });
 
 const logoCollapsed = computed(() => {
-  const shouldCollapse = isHeaderNav.value || isMixedNav.value;
-
-  if (shouldCollapse) {
+  if (isMobile.value) {
+    return true;
+  }
+  if (isHeaderNav.value || isMixedNav.value) {
     return false;
   }
-
-  const shouldExpandOnMobile = !sidebarCollapsed.value && isMobile.value;
-
-  if (shouldExpandOnMobile) {
-    return false;
-  }
-
   return sidebarCollapsed.value || isSideMixedNav.value;
 });
 
 const showHeaderNav = computed(() => {
-  return isHeaderNav.value || isMixedNav.value;
+  return !isMobile.value && (isHeaderNav.value || isMixedNav.value);
 });
 
 // 侧边多列菜单
@@ -208,7 +202,10 @@ const headerSlots = computed(() => {
     </template>
     <!-- 头部区域 -->
     <template #header>
-      <LayoutHeader :theme="theme">
+      <LayoutHeader
+        :theme="theme"
+        @clear-preferences-and-logout="clearPreferencesAndLogout"
+      >
         <template
           v-if="!showHeaderNav && preferences.breadcrumb.enable"
           #breadcrumb
@@ -298,11 +295,8 @@ const headerSlots = computed(() => {
     <template #content>
       <LayoutContent />
     </template>
-    <template
-      v-if="preferences.transition.loading"
-      #content-overlay="{ overlayStyle }"
-    >
-      <LayoutContentSpinner :overlay-style="overlayStyle" />
+    <template v-if="preferences.transition.loading" #content-overlay>
+      <LayoutContentSpinner />
     </template>
 
     <!-- 页脚 -->
