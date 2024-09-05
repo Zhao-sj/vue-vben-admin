@@ -43,6 +43,17 @@ export namespace MenuApi {
     meta?: RouteMeta;
     status: number;
   }
+
+  export interface UpdateModel extends AddModel {
+    id: number;
+  }
+}
+
+/**
+ * 获取菜单组件名称是否唯一
+ */
+export function getMenuUniqueApi(name: string) {
+  return requestClient.get<boolean>(`${SYSTEM}/menu/unique/${name}`);
 }
 
 /**
@@ -55,7 +66,7 @@ export function deleteMenuApi(id: number) {
 /**
  * 更新菜单
  */
-export function updateMenuApi(data: { id: number } & MenuApi.AddModel) {
+export function updateMenuApi(data: MenuApi.UpdateModel) {
   return requestClient.put<boolean>(`${SYSTEM}/menu`, data);
 }
 

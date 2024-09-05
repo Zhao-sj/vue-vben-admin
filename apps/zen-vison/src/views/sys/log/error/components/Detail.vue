@@ -71,16 +71,16 @@ function onOpenChange(isOpen: boolean) {
         </ElDescriptionsItem>
 
         <ElDescriptionsItem
+          :label="$t('zen.service.log.error.processUser')"
           class-name="w-1/6"
-          label="处理人员"
           label-class-name="w-1/6"
         >
           {{ log?.processUserId || '-' }}
         </ElDescriptionsItem>
 
         <ElDescriptionsItem
+          :label="$t('zen.service.log.error.processTime')"
           class-name="w-1/6"
-          label="处理时间"
           label-class-name="w-1/6"
         >
           {{ log?.processTime ? formatToDateTime(log.processTime) : '-' }}

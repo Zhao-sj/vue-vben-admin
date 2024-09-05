@@ -26,12 +26,12 @@ export enum DictRoleType {
   ADMIN = 1,
 }
 
-export enum RoleDataScope {
+export enum DictRoleDataScope {
   /** 自定义数据权限 */
   CUSTOM = 2,
 }
 
-export enum LogProcess {
+export enum DictLogProcess {
   /** 已忽略 */
   IGNORE = 2,
 

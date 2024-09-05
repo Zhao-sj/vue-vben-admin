@@ -16,7 +16,7 @@ import {
   TableExport,
   VxeBasicTable,
 } from '#/components';
-import { DictTypeEnum, LogProcess } from '#/enums';
+import { DictLogProcess, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -145,19 +145,19 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:error-log:update-status',
     icon: 'ep:close',
-    onClick: () => handleBatchProcess(LogProcess.IGNORE),
-    title: '批量忽略',
+    onClick: () => handleBatchProcess(DictLogProcess.IGNORE),
+    title: $t('zen.service.log.error.batchIgnore'),
     type: 'info',
   },
   {
     auth: 'system:error-log:update-status',
     icon: 'ep:check',
-    onClick: () => handleBatchProcess(LogProcess.PROCESSED),
-    title: '批量处理',
+    onClick: () => handleBatchProcess(DictLogProcess.PROCESSED),
+    title: $t('zen.service.log.error.batchProcess'),
     type: 'success',
   },
   {
-    auth: 'system:access-log:export',
+    auth: 'system:error-log:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
     onClick: () => exportModal.open(),
     title: $t('zen.common.export'),
@@ -167,7 +167,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
 
 const tableOpts = reactive<VxeGridProps<LogApi.Error>>({
   checkboxConfig: {
-    checkMethod: ({ row }) => row.processStatus === LogProcess.UN_PROCESS,
+    checkMethod: ({ row }) => row.processStatus === DictLogProcess.UN_PROCESS,
     highlight: true,
     range: true,
   },
@@ -201,7 +201,7 @@ const tableOpts = reactive<VxeGridProps<LogApi.Error>>({
 });
 
 function createActions(row: LogApi.Error) {
-  const disabled = row.processStatus !== LogProcess.UN_PROCESS;
+  const disabled = row.processStatus !== DictLogProcess.UN_PROCESS;
 
   const actions: ActionItem[] = [
     {
@@ -217,17 +217,17 @@ function createActions(row: LogApi.Error) {
       auth: 'system:error-log:update-status',
       disabled,
       icon: 'ep:circle-check',
-      label: '已处理',
+      label: $t('zen.service.log.error.processed'),
       popConfirm: {
         on: {
           confirm: () => {
             updateStatus({
               id: row.id,
-              processStatus: LogProcess.PROCESSED,
+              processStatus: DictLogProcess.PROCESSED,
             }).then(requestAfter);
           },
         },
-        title: '是否已处理该错误',
+        title: $t('zen.service.log.error.processTip'),
       },
       type: 'success',
     },
@@ -235,17 +235,17 @@ function createActions(row: LogApi.Error) {
       auth: 'system:error-log:update-status',
       disabled,
       icon: 'ep:circle-close',
-      label: '已忽略',
+      label: $t('zen.service.log.error.ignored'),
       popConfirm: {
         on: {
           confirm: () => {
             updateStatus({
               id: row.id,
-              processStatus: LogProcess.IGNORE,
+              processStatus: DictLogProcess.IGNORE,
             }).then(requestAfter);
           },
         },
-        title: '是否忽略该错误',
+        title: $t('zen.service.log.error.ignoreTip'),
       },
       type: 'info',
     },
@@ -278,7 +278,7 @@ async function handleExport(fileName: string) {
   ElMessage.success($t('zen.export.success'));
 }
 
-function handleBatchProcess(status: LogProcess) {
+function handleBatchProcess(status: DictLogProcess) {
   const records = vxeTable.value?.getCheckboxRecords();
   if (!records || records.length === 0) {
     ElMessage.warning($t('zen.common.selectTip'));

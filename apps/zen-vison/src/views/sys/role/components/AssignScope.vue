@@ -12,7 +12,7 @@ import {
   getRoleApi,
   type RoleApi,
 } from '#/api';
-import { DictTypeEnum, RoleDataScope } from '#/enums';
+import { DictRoleDataScope, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -68,7 +68,7 @@ function handleChooseAll(checked: boolean | number | string) {
 }
 
 function setCheckedKeys(dataScope: number, dataScopeDeptIds: number[]) {
-  if (dataScope === RoleDataScope.CUSTOM) {
+  if (dataScope === DictRoleDataScope.CUSTOM) {
     nextTick(() => {
       treeRef.value?.setCheckedKeys(dataScopeDeptIds);
     });
@@ -159,7 +159,10 @@ watch(
         </ElCol>
 
         <ElCollapseTransition>
-          <ElCol v-if="formState.dataScope === RoleDataScope.CUSTOM" :xs="24">
+          <ElCol
+            v-if="formState.dataScope === DictRoleDataScope.CUSTOM"
+            :xs="24"
+          >
             <ElFormItem :label="$t('zen.service.role.customScope')">
               <div class="w-full">
                 <div>

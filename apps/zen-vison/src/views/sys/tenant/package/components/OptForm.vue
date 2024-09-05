@@ -37,7 +37,7 @@ const state = defineModel<Partial<TenantApi.AddPackageModel>>('modelValue', {
 const status = computed(() => dictStore.getDictDataList(DictTypeEnum.STATUS));
 const menuTree = computed(() => buildMenuTree(cloneDeep(props.menus)));
 
-const rules = computed<FormRules<TenantApi.AddModel>>(() => ({
+const rules = computed<FormRules<TenantApi.AddPackageModel>>(() => ({
   name: [
     {
       message: t($t('zen.service.package.name')),

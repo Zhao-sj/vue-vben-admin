@@ -127,7 +127,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'DictManage',
         path: '/sys/dict',
-        component: () => import('#/views/sys/dict/index.vue'),
+        component: () => import('#/views/sys/dict/type/index.vue'),
         meta: {
           icon: 'streamline:dictionary-language-book',
           title: $t('zen.menu.manage.dict'),
