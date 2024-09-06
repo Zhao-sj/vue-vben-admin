@@ -287,6 +287,17 @@
         "linkTip": "Used to configure the external link jump path, which will open in a new window.",
         "menuVisibleWithForbiddenTip": "The configuration page can be seen in the menu, but the access will be redirected to 403.",
         "joinExists": " exists"
+      },
+      "dept": {
+        "name": "Name",
+        "leader": "Leader",
+        "phone": "Phone",
+        "email": "Email",
+        "sort": "Sort",
+        "status": "Status",
+        "parent": "Parent",
+        "create": "Create Dept",
+        "edit": "Edit Dept"
       }
     }
   }

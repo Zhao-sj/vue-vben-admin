@@ -184,9 +184,10 @@ function createActions(row: MenuApi.Menu) {
   return actions;
 }
 
-function handleQuery(query: MenuApi.Query) {
+async function handleQuery(query: MenuApi.Query) {
   menuQuery = query;
-  vxeTable.value?.commitProxy('query');
+  await vxeTable.value?.commitProxy('query');
+  vxeTable.value?.setAllTreeExpand(true);
 }
 
 function reloadTable() {

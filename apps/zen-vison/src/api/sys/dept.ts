@@ -36,6 +36,10 @@ export namespace DeptApi {
     email?: string;
     status: number;
   }
+
+  export interface UpdateModel extends AddModel {
+    id: number;
+  }
 }
 
 /**
@@ -48,7 +52,7 @@ export function deleteDeptApi(id: number) {
 /**
  * 更新部门
  */
-export function updateDeptApi(data: { id: number } & DeptApi.AddModel) {
+export function updateDeptApi(data: DeptApi.UpdateModel) {
   return requestClient.put<boolean>(`${SYSTEM}/dept`, data);
 }
 

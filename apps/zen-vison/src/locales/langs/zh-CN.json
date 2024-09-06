@@ -287,6 +287,17 @@
         "linkTip": "用于配置外链跳转路径，会在新窗口打开。",
         "menuVisibleWithForbiddenTip": "用于配置页面在菜单可以看到，但是访问会被重定向到403。",
         "joinExists": "已存在"
+      },
+      "dept": {
+        "name": "部门名称",
+        "leader": "负责人",
+        "phone": "联系方式",
+        "email": "联系邮箱",
+        "sort": "显示顺序",
+        "status": "部门状态",
+        "parent": "上级部门",
+        "create": "新增部门",
+        "edit": "编辑部门"
       }
     }
   }

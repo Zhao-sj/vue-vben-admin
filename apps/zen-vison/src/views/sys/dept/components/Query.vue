@@ -44,7 +44,7 @@ function handleReset() {
       <ElForm :model="formState">
         <ElRow :gutter="12">
           <ElCol :lg="6" :xl="4" :xs="24">
-            <ElFormItem :label="$t('zen.service.menu.name')" class="2xl:!mb-0">
+            <ElFormItem :label="$t('zen.service.dept.name')" class="2xl:!mb-0">
               <ElInput
                 v-model="formState.name"
                 :placeholder="$t('zen.common.pleaseInput')"
@@ -55,7 +55,7 @@ function handleReset() {
 
           <ElCol :lg="6" :xl="4" :xs="24">
             <ElFormItem
-              :label="$t('zen.service.menu.status')"
+              :label="$t('zen.service.dept.status')"
               class="2xl:!mb-0"
             >
               <ElSelect v-model="formState.status" clearable>
