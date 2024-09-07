@@ -41,3 +41,5 @@ export enum DictLogProcess {
   /** 未处理 */
   UN_PROCESS = 0,
 }
+
+export const DICT_DATA_NAME = 'DictDataManage';

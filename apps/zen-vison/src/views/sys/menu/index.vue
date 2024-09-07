@@ -184,14 +184,14 @@ function createActions(row: MenuApi.Menu) {
   return actions;
 }
 
-async function handleQuery(query: MenuApi.Query) {
+function handleQuery(query: MenuApi.Query) {
   menuQuery = query;
-  await vxeTable.value?.commitProxy('query');
-  vxeTable.value?.setAllTreeExpand(true);
+  reloadTable();
 }
 
-function reloadTable() {
-  vxeTable.value?.commitProxy('reload');
+async function reloadTable() {
+  await vxeTable.value?.commitProxy('query');
+  vxeTable.value?.setAllTreeExpand(true);
 }
 
 function toggleExpandAll() {

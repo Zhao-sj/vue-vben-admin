@@ -40,6 +40,10 @@ export namespace DictApi {
     remark?: string;
   }
 
+  export interface TypeUpdateModel extends TypeAddModel {
+    id: number;
+  }
+
   export interface DataSimple {
     id: number;
     dictTypeId: number;
@@ -75,6 +79,19 @@ export namespace DictApi {
     remark?: string;
     status: number;
   }
+
+  export interface DataUpdateModel extends DataAddModel {
+    id: number;
+  }
+}
+
+/**
+ * 批量删除字典数据
+ */
+export function batchDeleteDictDataApi(ids: number[]) {
+  return requestClient.delete<boolean>(`${SYSTEM}/dict/data`, {
+    data: { ids },
+  });
 }
 
 /**
@@ -87,7 +104,7 @@ export function deleteDictDataApi(id: number) {
 /**
  * 更新字典数据
  */
-export function updateDictDataApi(data: { id: number } & DictApi.DataAddModel) {
+export function updateDictDataApi(data: DictApi.DataUpdateModel) {
   return requestClient.put<boolean>(`${SYSTEM}/dict/data`, data);
 }
 
@@ -135,6 +152,15 @@ export function getDictDataSimpleListApi(type: string) {
 }
 
 /**
+ * 批量删除字典类型
+ */
+export function batchDeleteDictTypeApi(ids: number[]) {
+  return requestClient.delete<boolean>(`${SYSTEM}/dict/type`, {
+    data: { ids },
+  });
+}
+
+/**
  * 删除字典类型
  */
 export function deleteDictTypeApi(id: number) {
@@ -144,7 +170,7 @@ export function deleteDictTypeApi(id: number) {
 /**
  * 更新字典类型
  */
-export function updateDictTypeApi(data: { id: number } & DictApi.TypeAddModel) {
+export function updateDictTypeApi(data: DictApi.TypeUpdateModel) {
   return requestClient.put<boolean>(`${SYSTEM}/dict/type`, data);
 }
 

@@ -200,14 +200,14 @@ function getUserName(id: number) {
   return userList.value.find((item) => item.id === id)?.nickname || '-';
 }
 
-async function handleQuery(query: DeptApi.Query) {
+function handleQuery(query: DeptApi.Query) {
   deptQuery = query;
-  await vxeTable.value?.commitProxy('query');
-  vxeTable.value?.setAllTreeExpand(true);
+  reloadTable();
 }
 
-function reloadTable() {
-  vxeTable.value?.commitProxy('reload');
+async function reloadTable() {
+  await vxeTable.value?.commitProxy('query');
+  vxeTable.value?.setAllTreeExpand(true);
 }
 
 function toggleExpandAll() {

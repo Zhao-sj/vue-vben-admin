@@ -85,6 +85,7 @@
         "accessLog": "Access Log",
         "errorLog": "Error Log",
         "dict": "Dict Manage",
+        "dictData": "Dict Data",
         "notice": "Notice"
       }
     },
@@ -298,6 +299,21 @@
         "parent": "Parent",
         "create": "Create Dept",
         "edit": "Edit Dept"
+      },
+      "dict": {
+        "typeTitle": "Dict Type",
+        "code": "ID",
+        "name": "Name",
+        "type": "Type",
+        "status": "Status",
+        "create": "Create Dict",
+        "edit": "Edit Dict",
+        "label": "Label",
+        "value": "Value",
+        "sort": "Sort",
+        "color": "Color",
+        "createData": "Create Dict Data",
+        "editData": "Edit Dict Data"
       }
     }
   }
