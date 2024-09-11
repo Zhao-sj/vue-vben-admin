@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watchEffect } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
 import { LockKeyhole } from '@vben/icons';
 import { $t, useI18n } from '@vben/locales';
 import { storeToRefs, useLockStore } from '@vben/stores';
-import {
-  VbenAvatar,
-  VbenButton,
-  VbenInputPassword,
-} from '@vben-core/shadcn-ui';
+import { useVbenForm, z } from '@vben-core/form-ui';
+import { VbenAvatar, VbenButton } from '@vben-core/shadcn-ui';
 
 import { useDateFormat, useNow } from '@vueuse/core';
 
@@ -36,48 +33,42 @@ const minute = useDateFormat(now, 'mm');
 const date = useDateFormat(now, 'YYYY-MM-DD dddd', { locales: locale.value });
 
 const showUnlockForm = ref(false);
-const validPass = ref(true);
 const { lockScreenPassword } = storeToRefs(lockStore);
 
-const formState = reactive({
-  password: '',
-  submitted: false,
-});
+const [Form, { form, validate }] = useVbenForm(
+  reactive({
+    commonConfig: {
+      hideLabel: true,
+      hideRequiredMark: true,
+    },
+    schema: computed(() => [
+      {
+        component: 'VbenInputPassword' as const,
+        componentProps: {
+          placeholder: $t('widgets.lockScreen.placeholder'),
+        },
+        fieldName: 'password',
+        label: $t('authentication.password'),
+        rules: z.string().min(1, { message: $t('authentication.passwordTip') }),
+      },
+    ]),
+    showDefaultActions: false,
+  }),
+);
 
-const passwordStatus = computed(() => {
-  if (formState.submitted && !formState.password) {
-    return 'error';
+const validPass = computed(
+  () => lockScreenPassword?.value === form?.values?.password,
+);
+
+async function handleSubmit() {
+  const { valid } = await validate();
+  if (valid) {
+    if (validPass.value) {
+      lockStore.unlockScreen();
+    } else {
+      form.setFieldError('password', $t('authentication.passwordErrorTip'));
+    }
   }
-
-  if (formState.submitted && !validPass.value) {
-    return 'error';
-  }
-
-  return 'default';
-});
-
-const errorTip = computed(() => {
-  return lockScreenPassword?.value === undefined || !formState.password
-    ? $t('widgets.lockScreen.placeholder')
-    : $t('widgets.lockScreen.errorPasswordTip');
-});
-
-watchEffect(() => {
-  if (!formState.password) {
-    validPass.value = true;
-  }
-});
-
-function handleSubmit() {
-  formState.submitted = true;
-  if (passwordStatus.value !== 'default') {
-    return;
-  }
-  if (lockScreenPassword?.value !== formState.password) {
-    validPass.value = false;
-    return;
-  }
-  lockStore.unlockScreen();
 }
 
 function toggleUnlockForm() {
@@ -124,18 +115,9 @@ function toggleUnlockForm() {
       >
         <div class="flex-col-center mb-10 w-[300px]">
           <VbenAvatar :src="avatar" class="enter-x mb-6 size-20" />
+
           <div class="enter-x mb-2 w-full items-center">
-            <VbenInputPassword
-              v-model="formState.password"
-              :autofocus="true"
-              :error-tip="errorTip"
-              :label="$t('widgets.lockScreen.password')"
-              :placeholder="$t('widgets.lockScreen.placeholder')"
-              :status="passwordStatus"
-              name="password"
-              required
-              type="password"
-            />
+            <Form />
           </div>
           <VbenButton class="enter-x w-full" @click="handleSubmit">
             {{ $t('widgets.lockScreen.entry') }}
