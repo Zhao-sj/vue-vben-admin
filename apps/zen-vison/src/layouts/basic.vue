@@ -18,7 +18,7 @@ import {
   UserDropdown,
 } from '@vben/layouts';
 import { preferences } from '@vben/preferences';
-import { storeToRefs, useAccessStore } from '@vben/stores';
+import { useAccessStore } from '@vben/stores';
 import { openWindow } from '@vben/utils';
 
 import { useDebounceFn } from '@vueuse/core';
@@ -28,6 +28,7 @@ import { Captcha } from '#/components';
 import { $t } from '#/locales';
 import { useAuthStore, useUserStore } from '#/store';
 import { encryptBySha256 } from '#/utils';
+import LoginForm from '#/views/_core/authentication/login.vue';
 
 const notifications = ref<NotificationItem[]>([
   {
@@ -63,7 +64,6 @@ const notifications = ref<NotificationItem[]>([
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const accessStore = useAccessStore();
-const { loginLoading } = storeToRefs(authStore);
 const { refresh } = useRefresh();
 const showCaptcha = ref(false);
 let loginState: Nullable<AuthApi.LoginModel> = null;
@@ -146,9 +146,9 @@ function handleMakeAll() {
     <template #user-dropdown>
       <UserDropdown
         :avatar
-        :description="userStore.userInfo?.email"
+        :description="userStore.userInfo?.email!"
         :menus
-        :text="userStore.userInfo?.nickname"
+        :text="userStore.userInfo?.nickname!"
         tag-text="Pro"
         @logout="handleLogout"
       />
@@ -166,11 +166,9 @@ function handleMakeAll() {
         <AuthenticationLoginExpiredModal
           v-model:open="accessStore.loginExpired"
           :avatar
-          :loading="loginLoading"
-          :password-placeholder="$t('zen.login.passwordPlaceholder')"
-          :username-placeholder="$t('zen.login.usernamePlaceholder')"
-          @submit="handleLogin"
-        />
+        >
+          <LoginForm modal @submit="handleLogin" />
+        </AuthenticationLoginExpiredModal>
 
         <Captcha
           v-model="showCaptcha"

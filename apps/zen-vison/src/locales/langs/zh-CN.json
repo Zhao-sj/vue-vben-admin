@@ -60,10 +60,6 @@
       "fileNameMsg": "文件名不能为空",
       "success": "导出成功"
     },
-    "login": {
-      "usernamePlaceholder": "用户名",
-      "passwordPlaceholder": "密码"
-    },
     "menu": {
       "dashboard": {
         "title": "概览",

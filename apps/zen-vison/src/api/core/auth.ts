@@ -49,7 +49,7 @@ export namespace AuthApi {
     deptId: Nullable<number>;
     email: Nullable<string>;
     id: number;
-    nickname: Nullable<number>;
+    nickname: Nullable<string>;
     username: string;
   }
 

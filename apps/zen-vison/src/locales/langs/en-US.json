@@ -60,10 +60,6 @@
       "fileNameMsg": "File name cannot be empty",
       "success": "Export Success"
     },
-    "login": {
-      "usernamePlaceholder": "username",
-      "passwordPlaceholder": "password"
-    },
     "menu": {
       "dashboard": {
         "title": "Dashboard",
