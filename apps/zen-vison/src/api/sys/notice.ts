@@ -24,6 +24,10 @@ export namespace NoticeApi {
     content: string;
     status: number;
   }
+
+  export interface UpdateModel extends AddModel {
+    id: number;
+  }
 }
 
 /**
@@ -38,6 +42,13 @@ export function pushNoticeApi(id: number) {
 }
 
 /**
+ * 批量删除通知公告
+ */
+export function batchDeleteNoticeApi(ids: number[]) {
+  return requestClient.delete<boolean>(`${SYSTEM}/notice`, { data: { ids } });
+}
+
+/**
  * 删除通知公告
  */
 export function deleteNoticeApi(id: number) {
@@ -47,7 +58,7 @@ export function deleteNoticeApi(id: number) {
 /**
  * 更新通知公告
  */
-export function updateNoticeApi(data: { id: number } & NoticeApi.AddModel) {
+export function updateNoticeApi(data: NoticeApi.UpdateModel) {
   return requestClient.put<boolean>(`${SYSTEM}/notice`, data);
 }
 

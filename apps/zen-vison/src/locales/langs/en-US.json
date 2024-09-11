@@ -314,6 +314,17 @@
         "color": "Color",
         "createData": "Create Dict Data",
         "editData": "Edit Dict Data"
+      },
+      "notice": {
+        "code": "ID",
+        "title": "Title",
+        "type": "Type",
+        "status": "Status",
+        "content": "Content",
+        "push": "Push",
+        "pushTip": "Are you sure to push?",
+        "create": "Create Notice",
+        "edit": "Edit Notice"
       }
     }
   }

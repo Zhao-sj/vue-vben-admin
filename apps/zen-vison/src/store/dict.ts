@@ -36,6 +36,10 @@ export const useDictStore = defineStore('zen-dict', {
       );
     },
 
+    getNoticeType(value: number | string) {
+      return this.getDictData(DictTypeEnum.NOTICE_TYPE, value.toString());
+    },
+
     getOperaType(value: number | string) {
       return this.getDictData(DictTypeEnum.OPERATE_TYPE, value.toString());
     },
@@ -51,6 +55,7 @@ export const useDictStore = defineStore('zen-dict', {
     getStatus(value: number | string) {
       return this.getDictData(DictTypeEnum.STATUS, value.toString());
     },
+
     getUserType(value: number | string) {
       return this.getDictData(DictTypeEnum.USER_TYPE, value.toString());
     },
