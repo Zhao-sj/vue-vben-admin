@@ -498,8 +498,6 @@ function reloadTable() {
 </template>
 
 <style lang="scss" scoped>
-@import '@vben/styles/global';
-
 @include b('user-manage') {
   &-table__container {
     padding-top: 0;

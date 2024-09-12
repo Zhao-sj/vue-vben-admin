@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import type { Nullable } from '@vben/types';
 
+import { useNamespace } from '@vben/hooks';
+
 import { VxeGrid, type VxeGridInstance } from 'vxe-table';
 
 import { FullHeightContainer } from '#/components';
 
 defineOptions({ name: 'VxeBasicTable' });
 defineExpose({ getTableInstance });
+
+const ns = useNamespace('vxe-basic-table');
 
 const vxeTableRef = ref<Nullable<VxeGridInstance>>(null);
 const tableMaxHeight = ref<number | string>('auto');
@@ -20,6 +24,7 @@ function getTableInstance<T>() {
   <FullHeightContainer @resize="tableMaxHeight = $event">
     <VxeGrid
       ref="vxeTableRef"
+      :class="[ns.b(), $slots.form ? ns.m('has-form') : '']"
       v-bind="$attrs"
       :max-height="tableMaxHeight"
       :min-height="500"
@@ -34,3 +39,13 @@ function getTableInstance<T>() {
     </VxeGrid>
   </FullHeightContainer>
 </template>
+
+<style lang="scss" scoped>
+$prefix-cls: #{$namespace}-vxe-basic-table;
+
+:deep(.#{$prefix-cls}:not(.#{$prefix-cls}--has-form)) {
+  .vxe-toolbar {
+    padding-top: 0;
+  }
+}
+</style>

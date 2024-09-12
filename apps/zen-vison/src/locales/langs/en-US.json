@@ -32,6 +32,7 @@
       "export": "Export",
       "import": "Import",
       "search": "Search",
+      "query": "Search",
       "reset": "Reset",
       "pleaseInput": "Input",
       "pleaseSelect": "Select",
@@ -82,7 +83,8 @@
         "errorLog": "Error Log",
         "dict": "Dict Manage",
         "dictData": "Dict Data",
-        "notice": "Notice"
+        "notice": "Notice",
+        "area": "Area Manage"
       }
     },
     "service": {
@@ -321,6 +323,13 @@
         "pushTip": "Are you sure to push?",
         "create": "Create Notice",
         "edit": "Edit Notice"
+      },
+      "area": {
+        "id": "Code",
+        "name": "Name",
+        "search": "IP Search",
+        "ip": "IP",
+        "address": "Address"
       }
     }
   }

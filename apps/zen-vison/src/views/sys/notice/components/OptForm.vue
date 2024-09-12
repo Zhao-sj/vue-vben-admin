@@ -49,6 +49,13 @@ const rules = computed<FormRules<NoticeApi.AddModel>>(() => ({
       trigger: 'blur',
     },
   ],
+  type: [
+    {
+      message: t($t('zen.service.notice.type')),
+      required: true,
+      trigger: 'blur',
+    },
+  ],
 }));
 
 const tinymceOpts = computed<RawEditorSettings>(() => ({
@@ -115,13 +122,6 @@ function getFormInstance() {
           prop="content"
           required
         >
-          <!-- <ElInput
-            v-model="state.content"
-            :autosize="{ minRows: 5, maxRows: 5 }"
-            :placeholder="$t('zen.common.pleaseInput')"
-            resize="none"
-            type="textarea"
-          /> -->
           <Tinymce
             v-model="state.content"
             :options="tinymceOpts"

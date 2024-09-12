@@ -158,8 +158,6 @@ watch(
 </template>
 
 <style scoped lang="scss">
-@import '@vben/styles/global';
-
 @include b('block-puzzle') {
   .default-size {
     width: 310px;

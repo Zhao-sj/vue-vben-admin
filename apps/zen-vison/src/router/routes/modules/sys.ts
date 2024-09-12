@@ -142,6 +142,15 @@ const routes: RouteRecordRaw[] = [
           title: $t('zen.menu.manage.notice'),
         },
       },
+      {
+        name: 'AreaManage',
+        path: '/sys/area',
+        component: () => import('#/views/sys/area/index.vue'),
+        meta: {
+          icon: 'majesticons:map-marker-area-line',
+          title: $t('zen.menu.manage.area'),
+        },
+      },
     ],
   },
 ];

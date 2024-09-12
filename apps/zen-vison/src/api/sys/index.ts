@@ -1,3 +1,4 @@
+export * from './area';
 export * from './dept';
 export * from './dict';
 export * from './log';

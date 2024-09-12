@@ -116,8 +116,6 @@ watch(
 </template>
 
 <style scoped lang="scss">
-@import '@vben/styles/global';
-
 @include b('click-word') {
   .default-size {
     width: 310px;
