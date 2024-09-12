@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus';
+import type { RawEditorSettings } from 'tinymce';
 
 import { type NoticeApi } from '#/api';
+import { Tinymce } from '#/components';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -49,6 +51,11 @@ const rules = computed<FormRules<NoticeApi.AddModel>>(() => ({
   ],
 }));
 
+const tinymceOpts = computed<RawEditorSettings>(() => ({
+  menubar: false,
+  placeholder: $t('zen.common.pleaseInput'),
+}));
+
 function t(prefix: string) {
   return `${prefix}${$t('zen.common.joinNotEmypt')}`;
 }
@@ -56,10 +63,6 @@ function t(prefix: string) {
 function getFormInstance() {
   return formRef.value;
 }
-
-// onMounted(() => {
-//   const quill = new Quill('#editor', { theme: 'snow' });
-// });
 </script>
 
 <template>
@@ -108,15 +111,21 @@ function getFormInstance() {
       <ElCol :xs="24">
         <ElFormItem
           :label="$t('zen.service.notice.content')"
+          label-position="top"
           prop="content"
           required
         >
-          <ElInput
+          <!-- <ElInput
             v-model="state.content"
             :autosize="{ minRows: 5, maxRows: 5 }"
             :placeholder="$t('zen.common.pleaseInput')"
             resize="none"
             type="textarea"
+          /> -->
+          <Tinymce
+            v-model="state.content"
+            :options="tinymceOpts"
+            width="100%"
           />
         </ElFormItem>
       </ElCol>
