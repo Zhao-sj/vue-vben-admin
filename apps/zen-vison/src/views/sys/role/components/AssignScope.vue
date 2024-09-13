@@ -122,10 +122,8 @@ watch(
 
 <template>
   <Modal
-    :cancel-text="$t('zen.common.cancel')"
     :close-on-click-modal="false"
     :confirm-loading="loading"
-    :confirm-text="$t('zen.common.confirm')"
     :loading="dictStore.loading || roleLoading || deptLoading"
     :title="$t('zen.service.role.assignScope')"
     class="w-11/12 md:w-1/2 2xl:w-1/3"

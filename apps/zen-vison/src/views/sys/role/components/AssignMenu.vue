@@ -106,10 +106,8 @@ async function onConfirm() {
 
 <template>
   <Modal
-    :cancel-text="$t('zen.common.cancel')"
     :close-on-click-modal="false"
     :confirm-loading="loading"
-    :confirm-text="$t('zen.common.confirm')"
     :loading="roleLoading || menuLoading || menuIdsLoading"
     :title="$t('zen.service.role.assignMenu')"
     class="w-11/12 md:w-1/2 2xl:w-1/3"

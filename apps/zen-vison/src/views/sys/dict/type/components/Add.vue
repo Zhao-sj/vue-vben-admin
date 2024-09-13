@@ -54,10 +54,8 @@ function onConfirm() {
 
 <template>
   <Modal
-    :cancel-text="$t('zen.common.cancel')"
     :close-on-click-modal="false"
     :confirm-loading="loading"
-    :confirm-text="$t('zen.common.confirm')"
     :title="$t('zen.service.dict.create')"
     class="w-11/12 lg:w-1/3 2xl:w-1/4"
     draggable

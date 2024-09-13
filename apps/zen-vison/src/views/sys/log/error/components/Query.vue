@@ -50,112 +50,101 @@ function handleReset() {
   <ElCollapseTransition>
     <div v-show="visible" class="rounded-lg border p-3">
       <ElForm :model="formState">
-        <ElRow :gutter="12">
-          <ElCol :lg="8" :xl="4" :xs="24">
-            <ElFormItem
-              :label="$t('zen.service.log.common.userId')"
-              class="2xl:!mb-0"
-            >
-              <ElInput
-                v-model="formState.userId"
-                :placeholder="$t('zen.common.pleaseInput')"
-                clearable
+        <div class="grid grid-cols-[repeat(24,minmax(0,_1fr))] gap-3">
+          <ElFormItem
+            v-if="false"
+            :label="$t('zen.service.log.common.appName')"
+            class="col-[span_24_/_span_24] !mb-0 lg:col-span-8 xl:col-span-4"
+          >
+            <ElInput
+              v-model="formState.appName"
+              :placeholder="$t('zen.common.pleaseInput')"
+              clearable
+            />
+          </ElFormItem>
+
+          <ElFormItem
+            :label="$t('zen.service.log.common.userId')"
+            class="col-[span_24_/_span_24] !mb-0 lg:col-span-8 xl:col-span-4"
+          >
+            <ElInput
+              v-model="formState.userId"
+              :placeholder="$t('zen.common.pleaseInput')"
+              clearable
+            />
+          </ElFormItem>
+
+          <ElFormItem
+            :label="$t('zen.service.log.common.userType')"
+            class="col-[span_24_/_span_24] !mb-0 lg:col-span-8 xl:col-span-4"
+          >
+            <ElSelect v-model="formState.userType" clearable>
+              <ElOption
+                v-for="item in userTypeOpts"
+                :key="item.value"
+                :label="item.label"
+                :value="+item.value"
               />
-            </ElFormItem>
-          </ElCol>
+            </ElSelect>
+          </ElFormItem>
 
-          <ElCol :lg="8" :xl="4" :xs="24">
-            <ElFormItem
-              :label="$t('zen.service.log.common.userType')"
-              class="2xl:!mb-0"
-            >
-              <ElSelect v-model="formState.userType" clearable>
-                <ElOption
-                  v-for="item in userTypeOpts"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="+item.value"
-                />
-              </ElSelect>
-            </ElFormItem>
-          </ElCol>
+          <ElFormItem
+            :label="$t('zen.service.log.common.requestUrl')"
+            class="col-[span_24_/_span_24] !mb-0 lg:col-span-8 xl:col-span-4"
+          >
+            <ElInput
+              v-model="formState.requestUrl"
+              :placeholder="$t('zen.common.pleaseInput')"
+              clearable
+            />
+          </ElFormItem>
 
-          <ElCol v-if="false" :lg="8" :xl="4" :xs="24">
-            <ElFormItem
-              :label="$t('zen.service.log.common.appName')"
-              class="2xl:!mb-0"
-            >
-              <ElInput
-                v-model="formState.appName"
-                :placeholder="$t('zen.common.pleaseInput')"
-                clearable
+          <ElFormItem
+            :label="$t('zen.service.log.error.exTime')"
+            class="col-[span_24_/_span_24] !mb-0 lg:col-span-8 xl:col-span-5"
+          >
+            <ElDatePicker
+              v-model="formState.exTime"
+              :end-placeholder="$t('zen.common.endDate')"
+              :start-placeholder="$t('zen.common.startDate')"
+              type="daterange"
+            />
+          </ElFormItem>
+
+          <ElFormItem
+            :label="$t('zen.service.log.error.status')"
+            class="col-[span_24_/_span_24] !mb-0 lg:col-span-8 xl:col-span-4"
+          >
+            <ElSelect v-model="formState.processStatus" clearable>
+              <ElOption
+                v-for="item in ProcessOpts"
+                :key="item.value"
+                :label="item.label"
+                :value="+item.value"
               />
-            </ElFormItem>
-          </ElCol>
+            </ElSelect>
+          </ElFormItem>
 
-          <ElCol :lg="8" :xl="4" :xs="24">
-            <ElFormItem
-              :label="$t('zen.service.log.common.requestUrl')"
-              class="2xl:!mb-0"
-            >
-              <ElInput
-                v-model="formState.requestUrl"
-                :placeholder="$t('zen.common.pleaseInput')"
-                clearable
-              />
-            </ElFormItem>
-          </ElCol>
-
-          <ElCol :lg="8" :xl="5" :xs="24">
-            <ElFormItem
-              :label="$t('zen.service.log.error.exTime')"
-              class="2xl:!mb-0"
-            >
-              <ElDatePicker
-                v-model="formState.exTime"
-                :end-placeholder="$t('zen.common.endDate')"
-                :start-placeholder="$t('zen.common.startDate')"
-                type="daterange"
-              />
-            </ElFormItem>
-          </ElCol>
-
-          <ElCol :lg="8" :xl="4" :xs="24">
-            <ElFormItem
-              :label="$t('zen.service.log.error.status')"
-              class="2xl:!mb-0"
-            >
-              <ElSelect v-model="formState.processStatus" clearable>
-                <ElOption
-                  v-for="item in ProcessOpts"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="+item.value"
-                />
-              </ElSelect>
-            </ElFormItem>
-          </ElCol>
-
-          <ElCol :lg="8" :xl="3" :xs="24">
-            <ElFormItem class="!mb-0">
-              <div class="flex gap-3">
-                <div class="flex">
-                  <ElButton type="primary" @click="handleQuery">
-                    <Icon class="mr-1" icon="ep:search" />
-                    <span>{{ $t('zen.common.search') }}</span>
-                  </ElButton>
-                </div>
-
-                <div class="flex">
-                  <ElButton @click="handleReset">
-                    <Icon class="mr-1" icon="ep:refresh" />
-                    <span>{{ $t('zen.common.reset') }}</span>
-                  </ElButton>
-                </div>
+          <ElFormItem
+            class="col-[span_24_/_span_24] !mb-0 lg:col-span-6 xl:col-span-3"
+          >
+            <div class="flex gap-3">
+              <div class="flex">
+                <ElButton type="primary" @click="handleQuery">
+                  <Icon class="mr-1" icon="ep:search" />
+                  <span>{{ $t('zen.common.search') }}</span>
+                </ElButton>
               </div>
-            </ElFormItem>
-          </ElCol>
-        </ElRow>
+
+              <div class="flex">
+                <ElButton @click="handleReset">
+                  <Icon class="mr-1" icon="ep:refresh" />
+                  <span>{{ $t('zen.common.reset') }}</span>
+                </ElButton>
+              </div>
+            </div>
+          </ElFormItem>
+        </div>
       </ElForm>
     </div>
   </ElCollapseTransition>
