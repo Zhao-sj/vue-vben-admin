@@ -1,6 +1,6 @@
 import type { Nullable, RouteMeta } from '@vben/types';
 
-import type { HttpResponse } from '#/utils/request/types';
+import type { HttpResponse } from '#/utils/request/typing';
 
 import { ModuleEnum } from '#/api/common';
 import { requestClient } from '#/api/request';

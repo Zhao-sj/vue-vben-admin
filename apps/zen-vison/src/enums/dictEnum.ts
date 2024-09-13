@@ -42,4 +42,12 @@ export enum DictLogProcess {
   UN_PROCESS = 0,
 }
 
+export enum NoticeType {
+  /** 通知 */
+  NOTICE = 1,
+
+  /** 公告 */
+  REMIND = 2,
+}
+
 export const DICT_DATA_NAME = 'DictDataManage';

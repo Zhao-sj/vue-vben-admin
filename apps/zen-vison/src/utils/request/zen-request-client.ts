@@ -1,4 +1,4 @@
-import type { ZenRequestConfig } from './types';
+import type { ZenRequestConfig } from './typing';
 
 import { RequestClient } from '@vben/request';
 import { merge } from '@vben/utils';

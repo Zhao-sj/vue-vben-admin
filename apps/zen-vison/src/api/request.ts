@@ -1,7 +1,7 @@
 /**
  * 该文件可自行根据业务逻辑进行调整
  */
-import type { InternalZenRequestConfig } from '#/utils/request/types';
+import type { InternalZenRequestConfig } from '#/utils/request/typing';
 
 import { useAppConfig } from '@vben/hooks';
 import { preferences } from '@vben/preferences';

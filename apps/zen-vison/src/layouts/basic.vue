@@ -25,9 +25,10 @@ import { useDebounceFn } from '@vueuse/core';
 
 import { type AuthApi } from '#/api';
 import { Captcha } from '#/components';
+import { NoticeType } from '#/enums';
 import { $t } from '#/locales';
 import { useAuthStore, useUserStore } from '#/store';
-import { encryptBySha256 } from '#/utils';
+import { encryptBySha256, initWebSocketClient, wsEmitter } from '#/utils';
 import LoginForm from '#/views/_core/authentication/login.vue';
 
 const notifications = ref<NotificationItem[]>([
@@ -61,6 +62,7 @@ const notifications = ref<NotificationItem[]>([
   },
 ]);
 
+initWebSocketClient();
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const accessStore = useAccessStore();
@@ -104,6 +106,19 @@ const menus = computed(() => [
 
 const avatar = computed(() => {
   return userStore.userInfo?.avatar ?? preferences.app.defaultAvatar;
+});
+
+wsEmitter.on('notice-push', (notice) => {
+  if (notice.type === NoticeType.NOTICE) {
+    ElNotification({
+      dangerouslyUseHTMLString: true,
+      duration: 0,
+      message: notice.content,
+      position: 'bottom-right',
+      title: notice.title,
+      type: 'info',
+    });
+  }
 });
 
 const handleLogin = useDebounceFn((params: LoginAndRegisterParams) => {

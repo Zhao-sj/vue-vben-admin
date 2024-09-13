@@ -193,7 +193,7 @@ function createActions(row: DeptApi.Dept) {
 }
 
 function getUserName(id: number) {
-  if (!userList) {
+  if (!userList.value) {
     return '-';
   }
 

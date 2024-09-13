@@ -64,7 +64,6 @@ const tableOpts = reactive<VxeGridProps<AreaApi.Simple>>({
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
-    auth: 'system:menu:create',
     icon: 'ep:location',
     onClick: () => searchModal.open(),
     title: $t('zen.service.area.search'),
