@@ -211,11 +211,9 @@ onDeactivated(destory);
 <template>
   <div :style="{ width: containerWidth }">
     <textarea
-      v-if="!initOptions.inline"
       :id="tinymceId"
       ref="elRef"
       :style="{ visibility: 'hidden' }"
     ></textarea>
-    <slot v-else></slot>
   </div>
 </template>
