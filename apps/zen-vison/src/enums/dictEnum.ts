@@ -51,3 +51,4 @@ export enum NoticeType {
 }
 
 export const DICT_DATA_NAME = 'DictDataManage';
+export const ACCOUNT_SETTING = 'AccountSetting';

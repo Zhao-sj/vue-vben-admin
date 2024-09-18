@@ -85,6 +85,9 @@
         "dictData": "字典数据",
         "notice": "通知通告",
         "area": "地区管理"
+      },
+      "account": {
+        "profile": "个人中心"
       }
     },
     "service": {

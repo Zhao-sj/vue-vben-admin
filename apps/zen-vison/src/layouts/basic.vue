@@ -7,9 +7,8 @@ import {
   AuthenticationLoginExpiredModal,
   type LoginAndRegisterParams,
 } from '@vben/common-ui';
-import { VBEN_DOC_URL, VBEN_GITHUB_URL } from '@vben/constants';
 import { useRefresh } from '@vben/hooks';
-import { BookOpenText, CircleHelp, MdiGithub } from '@vben/icons';
+import { UserRoundPen } from '@vben/icons';
 import {
   BasicLayout,
   LockScreen,
@@ -19,13 +18,12 @@ import {
 } from '@vben/layouts';
 import { preferences } from '@vben/preferences';
 import { useAccessStore } from '@vben/stores';
-import { openWindow } from '@vben/utils';
 
 import { useDebounceFn } from '@vueuse/core';
 
 import { type AuthApi } from '#/api';
 import { Captcha } from '#/components';
-import { NoticeType } from '#/enums';
+import { ACCOUNT_SETTING, NoticeType } from '#/enums';
 import { $t } from '#/locales';
 import { useAuthStore, useUserStore } from '#/store';
 import { encryptBySha256, wsEmitter } from '#/utils';
@@ -62,6 +60,7 @@ const notifications = ref<NotificationItem[]>([
   },
 ]);
 
+const router = useRouter();
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const accessStore = useAccessStore();
@@ -76,30 +75,10 @@ const showDot = computed(() =>
 const menus = computed(() => [
   {
     handler: () => {
-      openWindow(VBEN_DOC_URL, {
-        target: '_blank',
-      });
+      router.push({ name: ACCOUNT_SETTING });
     },
-    icon: BookOpenText,
-    text: $t('widgets.document'),
-  },
-  {
-    handler: () => {
-      openWindow(VBEN_GITHUB_URL, {
-        target: '_blank',
-      });
-    },
-    icon: MdiGithub,
-    text: 'GitHub',
-  },
-  {
-    handler: () => {
-      openWindow(`${VBEN_GITHUB_URL}/issues`, {
-        target: '_blank',
-      });
-    },
-    icon: CircleHelp,
-    text: $t('widgets.qa'),
+    icon: UserRoundPen,
+    text: $t('zen.menu.account.profile'),
   },
 ]);
 

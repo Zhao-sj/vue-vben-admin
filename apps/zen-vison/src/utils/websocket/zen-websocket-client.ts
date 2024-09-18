@@ -63,7 +63,13 @@ export function createWebSocketClient() {
   watch(
     () => accessStore.accessToken,
     (accessToken) => {
-      accessToken ? connect() : ws?.close();
+      if (accessToken) {
+        connect();
+        return;
+      }
+
+      ws?.close();
+      wsEmitter.all.clear();
     },
     { immediate: true },
   );

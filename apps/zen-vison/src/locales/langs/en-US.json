@@ -85,6 +85,9 @@
         "dictData": "Dict Data",
         "notice": "Notice",
         "area": "Area Manage"
+      },
+      "account": {
+        "profile": "Profile"
       }
     },
     "service": {

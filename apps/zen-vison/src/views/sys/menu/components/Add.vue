@@ -55,6 +55,7 @@ function onOpenChange(isOpen: boolean) {
     return;
   }
 
+  modal.setData({ parentId: null });
   formState.value = cloneDeep(defaultState);
 }
 

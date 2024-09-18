@@ -52,6 +52,7 @@ VxeUI.setConfig({
     },
     round: true,
     rowConfig: {
+      isCurrent: true,
       isHover: true,
     },
     showOverflow: true,

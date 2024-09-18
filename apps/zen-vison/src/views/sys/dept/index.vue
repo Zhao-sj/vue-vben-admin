@@ -123,9 +123,6 @@ const tableOpts = reactive<VxeGridProps<DeptApi.Dept>>({
       query: () => getDeptListApi(deptQuery),
     },
   },
-  rowConfig: {
-    isCurrent: true,
-  },
   stripe: false,
   toolbarConfig: {
     print: true,

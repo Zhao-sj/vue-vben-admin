@@ -112,9 +112,6 @@ const tableOpts = reactive<VxeGridProps<MenuApi.Menu>>({
       query: () => getMenuListApi(menuQuery),
     },
   },
-  rowConfig: {
-    isCurrent: true,
-  },
   stripe: false,
   toolbarConfig: {
     print: true,
