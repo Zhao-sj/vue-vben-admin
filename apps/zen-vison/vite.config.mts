@@ -10,6 +10,53 @@ export default defineConfig(async () => {
   return {
     application: {},
     vite: {
+      build: {
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              'crypto-js': ['crypto-js'],
+              'element-plus': ['element-plus'],
+              tinymce: ['tinymce'],
+              'tinymce-icons': ['tinymce/icons/default/icons'],
+              'tinymce-plugin': [
+                'tinymce/plugins/image',
+                'tinymce/plugins/advlist',
+                'tinymce/plugins/anchor',
+                'tinymce/plugins/autolink',
+                'tinymce/plugins/autosave',
+                'tinymce/plugins/code',
+                'tinymce/plugins/codesample',
+                'tinymce/plugins/directionality',
+                'tinymce/plugins/fullscreen',
+                'tinymce/plugins/hr',
+                'tinymce/plugins/insertdatetime',
+                'tinymce/plugins/link',
+                'tinymce/plugins/lists',
+                'tinymce/plugins/media',
+                'tinymce/plugins/nonbreaking',
+                'tinymce/plugins/noneditable',
+                'tinymce/plugins/pagebreak',
+                'tinymce/plugins/paste',
+                'tinymce/plugins/preview',
+                'tinymce/plugins/print',
+                'tinymce/plugins/save',
+                'tinymce/plugins/searchreplace',
+                'tinymce/plugins/tabfocus',
+                'tinymce/plugins/table',
+                'tinymce/plugins/template',
+                'tinymce/plugins/textpattern',
+                'tinymce/plugins/visualblocks',
+                'tinymce/plugins/visualchars',
+                'tinymce/plugins/wordcount',
+              ],
+              'tinymce-theme': ['tinymce/themes/silver'],
+              'vxe-table': ['vxe-table'],
+              'vxe-ui': ['vxe-pc-ui'],
+              'zen-utils': ['lodash-es', 'ua-parser-js', 'dayjs'],
+            },
+          },
+        },
+      },
       plugins: [
         Mkcert(),
         AutoImport({
