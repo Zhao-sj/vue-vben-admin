@@ -6,11 +6,20 @@ import { Button, Card, message } from 'ant-design-vue';
 import { useVbenForm } from '#/adapter';
 
 const [Form, formApi] = useVbenForm({
-  // 使用 tailwindcss grid布局
   // 提交函数
   handleSubmit: onSubmit,
-  // 水平布局，label和input在同一行
   schema: [
+    {
+      component: 'Input',
+      defaultValue: 'hidden value',
+      dependencies: {
+        show: false,
+        // 随意一个字段改变时，都会触发
+        triggerFields: ['field1Switch'],
+      },
+      fieldName: 'hiddenField',
+      label: '隐藏字段',
+    },
     {
       component: 'Switch',
       defaultValue: true,
@@ -55,12 +64,9 @@ const [Form, formApi] = useVbenForm({
         show(values) {
           return !!values.field2Switch;
         },
-        // 只有指定的字段改变时，才会触发
         triggerFields: ['field2Switch'],
       },
-      // 字段名
       fieldName: 'field2',
-      // 界面显示的label
       label: '字段2',
     },
     {
@@ -69,12 +75,9 @@ const [Form, formApi] = useVbenForm({
         disabled(values) {
           return !!values.field3Switch;
         },
-        // 只有指定的字段改变时，才会触发
         triggerFields: ['field3Switch'],
       },
-      // 字段名
       fieldName: 'field3',
-      // 界面显示的label
       label: '字段3',
     },
     {
@@ -83,12 +86,9 @@ const [Form, formApi] = useVbenForm({
         required(values) {
           return !!values.field4Switch;
         },
-        // 只有指定的字段改变时，才会触发
         triggerFields: ['field4Switch'],
       },
-      // 字段名
       fieldName: 'field4',
-      // 界面显示的label
       label: '字段4',
     },
     {
@@ -100,13 +100,10 @@ const [Form, formApi] = useVbenForm({
           }
           return null;
         },
-        // 只有指定的字段改变时，才会触发
         triggerFields: ['field1'],
       },
-      // 字段名
       fieldName: 'field5',
       help: '当字段1的值为`123`时，必填',
-      // 界面显示的label
       label: '动态rules',
     },
     {
@@ -150,13 +147,10 @@ const [Form, formApi] = useVbenForm({
           }
           return {};
         },
-        // 只有指定的字段改变时，才会触发
         triggerFields: ['field2'],
       },
-      // 字段名
       fieldName: 'field6',
       help: '当字段2的值为`123`时，更改下拉选项',
-      // 界面显示的label
       label: '动态配置',
     },
     {

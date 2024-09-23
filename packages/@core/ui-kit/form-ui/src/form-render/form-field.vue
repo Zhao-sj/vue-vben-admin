@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ZodType } from 'zod';
 
-import type { FormSchema } from '../types';
+import type { FormSchema, MaybeComponentProps } from '../types';
 
 import { computed } from 'vue';
 
@@ -26,6 +26,7 @@ import { isEventObjectLike } from './helper';
 interface Props extends FormSchema {}
 
 const {
+  commonComponentProps,
   component,
   componentProps,
   dependencies,
@@ -38,7 +39,11 @@ const {
   labelWidth,
   renderComponentContent,
   rules,
-} = defineProps<Props>();
+} = defineProps<
+  {
+    commonComponentProps: MaybeComponentProps;
+  } & Props
+>();
 
 const { componentBindEventMap, componentMap, isVertical } = useFormContext();
 const formRenderProps = injectRenderFormProps();
@@ -80,7 +85,15 @@ const currentRules = computed(() => {
   return dynamicRules.value || rules;
 });
 
+const visible = computed(() => {
+  return isIf.value && isShow.value;
+});
+
 const shouldRequired = computed(() => {
+  if (!visible.value) {
+    return false;
+  }
+
   if (!currentRules.value) {
     return isRequired.value;
   }
@@ -90,7 +103,7 @@ const shouldRequired = computed(() => {
   }
 
   if (isString(currentRules.value)) {
-    return currentRules.value === 'required';
+    return ['required', 'selectRequired'].includes(currentRules.value);
   }
 
   let isOptional = currentRules?.value?.isOptional?.();
@@ -108,6 +121,10 @@ const shouldRequired = computed(() => {
 });
 
 const fieldRules = computed(() => {
+  if (!visible.value) {
+    return null;
+  }
+
   let rules = currentRules.value;
   if (!rules) {
     return isRequired.value ? 'required' : null;
@@ -133,6 +150,7 @@ const computedProps = computed(() => {
     : componentProps;
 
   return {
+    ...commonComponentProps,
     ...finalComponentProps,
     ...dynamicComponentProps.value,
   };
@@ -258,7 +276,8 @@ function createComponentProps(slotProps: Record<string, any>) {
             <component
               :is="fieldComponent"
               :class="{
-                'border-destructive focus:border-destructive': isInValid,
+                'border-destructive focus:border-destructive hover:border-destructive/80 focus:shadow-[0_0_0_2px_rgba(255,38,5,0.06)]':
+                  isInValid,
               }"
               v-bind="createComponentProps(slotProps)"
               :disabled="shouldDisabled"

@@ -5,7 +5,7 @@ import type {
   ValidationOptions,
 } from 'vee-validate';
 
-import type { FormActions, VbenFormProps } from './types';
+import type { FormActions, FormSchema, VbenFormProps } from './types';
 
 import { toRaw } from 'vue';
 
@@ -43,12 +43,12 @@ function getDefaultState(): VbenFormProps {
 }
 
 export class FormApi {
-  // private prevState!: ModalState;
-  private state: null | VbenFormProps = null;
   // private api: Pick<VbenFormProps, 'handleReset' | 'handleSubmit'>;
   public form = {} as FormActions;
-
   isMounted = false;
+
+  // private prevState!: ModalState;
+  public state: null | VbenFormProps = null;
 
   stateHandler: StateHandler;
 
@@ -90,6 +90,10 @@ export class FormApi {
   // 如果需要多次更新状态，可以使用 batch 方法
   batchStore(cb: () => void) {
     this.store.batch(cb);
+  }
+
+  getState() {
+    return this.state;
   }
 
   async getValues() {
@@ -182,8 +186,45 @@ export class FormApi {
     this.stateHandler.reset();
   }
 
+  updateSchema(schema: Partial<FormSchema>[]) {
+    const updated: Partial<FormSchema>[] = [...schema];
+    const hasField = updated.every(
+      (item) => Reflect.has(item, 'fieldName') && item.fieldName,
+    );
+
+    if (!hasField) {
+      console.error(
+        'All items in the schema array must have a valid `fieldName` property to be updated',
+      );
+      return;
+    }
+    const currentSchema = [...(this.state?.schema ?? [])];
+
+    const updatedMap: Record<string, any> = {};
+
+    updated.forEach((item) => {
+      if (item.fieldName) {
+        updatedMap[item.fieldName] = item;
+      }
+    });
+
+    currentSchema.forEach((schema, index) => {
+      const updatedData = updatedMap[schema.fieldName];
+      if (updatedData) {
+        currentSchema[index] = merge(updatedData, schema) as FormSchema;
+      }
+    });
+    this.setState({ schema: currentSchema });
+  }
+
   async validate(opts?: Partial<ValidationOptions>) {
     const form = await this.getForm();
-    return await form.validate(opts);
+
+    const validateResult = await form.validate(opts);
+
+    if (Object.keys(validateResult?.errors ?? {}).length > 0) {
+      console.error('validate error', validateResult?.errors);
+    }
+    return validateResult;
   }
 }
