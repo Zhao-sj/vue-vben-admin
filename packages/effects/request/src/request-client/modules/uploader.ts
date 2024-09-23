@@ -11,11 +11,14 @@ class FileUploader {
 
   public async upload<T = any>(
     url: string,
-    file: Blob | File,
+    data: { file: Blob | File } & Record<string, any>,
     config?: AxiosRequestConfig,
   ) {
     const formData = new FormData();
-    formData.append('file', file);
+
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
 
     const finalConfig: AxiosRequestConfig = {
       ...config,

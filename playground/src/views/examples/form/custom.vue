@@ -7,7 +7,7 @@ import { Card, Input, message } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter';
 
-const [BaseForm] = useVbenForm({
+const [Form] = useVbenForm({
   // 所有表单项共用，可单独在表单内覆盖
   commonConfig: {
     // 所有表单项
@@ -16,12 +16,11 @@ const [BaseForm] = useVbenForm({
     },
     labelClass: 'w-2/6',
   },
-  // 使用 tailwindcss grid布局
   // 提交函数
   handleSubmit: onSubmit,
   // 垂直布局，label和input在不同行，值为vertical
-  layout: 'horizontal',
   // 水平布局，label和input在同一行
+  layout: 'horizontal',
   schema: [
     {
       // 组件需要在 #/adapter.ts内注册，并加上类型
@@ -31,7 +30,6 @@ const [BaseForm] = useVbenForm({
       suffix: () => h('span', { class: 'text-red-600' }, '元'),
     },
     {
-      // 组件需要在 #/adapter.ts内注册，并加上类型
       component: 'Input',
       fieldName: 'field1',
       label: '自定义组件slot',
@@ -41,14 +39,12 @@ const [BaseForm] = useVbenForm({
       }),
     },
     {
-      // 组件需要在 #/adapter.ts内注册，并加上类型
       component: h(Input, { placeholder: '请输入' }),
       fieldName: 'field2',
       label: '自定义组件',
       rules: 'required',
     },
     {
-      // 组件需要在 #/adapter.ts内注册，并加上类型
       component: 'Input',
       fieldName: 'field3',
       label: '自定义组件(slot)',
@@ -69,11 +65,11 @@ function onSubmit(values: Record<string, any>) {
 <template>
   <Page description="表单组件自定义示例" title="表单组件">
     <Card title="基础示例">
-      <BaseForm>
+      <Form>
         <template #field3="slotProps">
           <Input placeholder="请输入" v-bind="slotProps" />
         </template>
-      </BaseForm>
+      </Form>
     </Card>
   </Page>
 </template>

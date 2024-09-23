@@ -11,6 +11,10 @@ import {
 } from '@nolebase/vitepress-plugin-git-changelog/vite';
 import tailwind from 'tailwindcss';
 import { defineConfig, postcssIsolateStyles } from 'vitepress';
+import {
+  groupIconMdPlugin,
+  groupIconVitePlugin,
+} from 'vitepress-plugin-group-icons';
 
 import { demoPreviewPlugin } from './plugins/demo-preview';
 import { search as zhSearch } from './zh.mts';
@@ -21,13 +25,14 @@ export const shared = defineConfig({
   markdown: {
     preConfig(md) {
       md.use(demoPreviewPlugin);
+      md.use(groupIconMdPlugin);
     },
   },
   pwa: pwa(),
   srcDir: 'src',
   themeConfig: {
     i18nRouting: true,
-    logo: 'https://unpkg.com/@vbenjs/static-source@0.1.6/source/logo-v1.webp',
+    logo: 'https://unpkg.com/@vbenjs/static-source@0.1.7/source/logo-v1.webp',
     search: {
       options: {
         locales: {
@@ -79,6 +84,7 @@ export const shared = defineConfig({
       }),
       GitChangelogMarkdownSection(),
       viteArchiverPlugin({ outputDir: '.vitepress' }),
+      groupIconVitePlugin(),
     ],
     server: {
       fs: {
@@ -132,12 +138,12 @@ function pwa(): PwaOptions {
       icons: [
         {
           sizes: '192x192',
-          src: 'https://unpkg.com/@vbenjs/static-source@0.1.6/source/pwa-icon-192.png',
+          src: 'https://unpkg.com/@vbenjs/static-source@0.1.7/source/pwa-icon-192.png',
           type: 'image/png',
         },
         {
           sizes: '512x512',
-          src: 'https://unpkg.com/@vbenjs/static-source@0.1.6/source/pwa-icon-512.png',
+          src: 'https://unpkg.com/@vbenjs/static-source@0.1.7/source/pwa-icon-512.png',
           type: 'image/png',
         },
       ],
