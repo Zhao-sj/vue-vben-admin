@@ -158,7 +158,7 @@ export function exportUserApi(params: UserApi.PageQuery) {
 export function importUserApi(file: Blob | File, updateSupport: boolean) {
   return requestClient.upload<UserApi.ImportResp>(
     `${SYSTEM}/user/import`,
-    file,
+    { file },
     {
       params: { updateSupport },
     },
