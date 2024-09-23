@@ -13,9 +13,8 @@ import { $t } from '@vben/locales';
 
 import { useDebounceFn } from '@vueuse/core';
 
-import { Captcha } from '#/components';
 import { useAuthStore } from '#/store';
-import { encryptBySha256 } from '#/utils';
+import { encryptBySha256 } from '#/utils/cipher';
 
 interface Props {
   modal?: boolean;
@@ -29,6 +28,10 @@ defineOptions({ name: 'Login' });
 
 const props = withDefaults(defineProps<Props>(), { modal: false });
 const emit = defineEmits<Emits>();
+
+const Captcha = defineAsyncComponent(
+  () => import('#/components/Captcha/Captcha.vue'),
+);
 
 const authStore = useAuthStore();
 const showCaptcha = ref(false);

@@ -1,15 +1,6 @@
-import type { App } from 'vue';
-
 import { usePreferences } from '@vben/preferences';
 
-import {
-  VxeButtonGroup,
-  VxeIcon,
-  VxeInput,
-  VxeLoading,
-  VxeSelect,
-  VxeTooltip,
-} from 'vxe-pc-ui';
+import { VxeIcon, VxeLoading, VxeTooltip } from 'vxe-pc-ui';
 import { VxeUI } from 'vxe-table';
 import enUS from 'vxe-table/lib/locale/lang/en-US';
 import zhCN from 'vxe-table/lib/locale/lang/zh-CN';
@@ -60,8 +51,4 @@ VxeUI.setConfig({
   },
 });
 
-function registerVxeUI(app: App) {
-  app.use(VxeInput).use(VxeButtonGroup).use(VxeSelect);
-}
-
-export { registerVxeUI, VxeUI };
+export { VxeUI as VxeTable };

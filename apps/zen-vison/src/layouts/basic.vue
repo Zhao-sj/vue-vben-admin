@@ -22,12 +22,15 @@ import { useAccessStore } from '@vben/stores';
 import { useDebounceFn } from '@vueuse/core';
 
 import { type AuthApi } from '#/api';
-import { Captcha } from '#/components';
 import { ACCOUNT_SETTING, NoticeType } from '#/enums';
 import { $t } from '#/locales';
 import { useAuthStore, useUserStore } from '#/store';
 import { encryptBySha256, wsEmitter } from '#/utils';
 import LoginForm from '#/views/_core/authentication/login.vue';
+
+const Captcha = defineAsyncComponent(
+  () => import('#/components/Captcha/Captcha.vue'),
+);
 
 const notifications = ref<NotificationItem[]>([
   {

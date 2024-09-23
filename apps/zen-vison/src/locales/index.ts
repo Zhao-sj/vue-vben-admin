@@ -11,7 +11,7 @@ import dayjs from 'dayjs';
 import enLocale from 'element-plus/es/locale/lang/en';
 import defaultLocale from 'element-plus/es/locale/lang/zh-cn';
 
-import { VxeUI } from '#/utils';
+import { VxeTable } from '#/utils';
 
 const elementLocale = ref<Language>(defaultLocale);
 
@@ -88,8 +88,8 @@ async function loadElementLocale(lang: SupportedLanguagesType) {
  * 加载vxe-table的语言包
  * @param lang
  */
-async function loadVxeTableLocale(lang: SupportedLanguagesType) {
-  VxeUI.setLanguage(lang);
+function loadVxeTableLocale(lang: SupportedLanguagesType) {
+  VxeTable.setLanguage(lang);
 }
 
 async function setupI18n(app: App, options: LocaleSetupOptions = {}) {
