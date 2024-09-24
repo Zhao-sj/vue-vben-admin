@@ -1,157 +1,133 @@
 <script setup lang="ts">
 import type { LogApi } from '#/api';
 
-import { Icon } from '@vben/icons';
+import { useIsMobile } from '@vben/hooks';
 
-import { useDebounceFn } from '@vueuse/core';
-import { cloneDeep } from 'lodash-es';
-
+import { useVbenForm, type VbenFormSchema } from '#/adapter';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 import { translateState } from '#/utils';
 
-interface Props {
-  visible?: boolean;
-}
-
 interface Emits {
   (e: 'query', data: LogApi.AccessQuery): void;
 }
 
-withDefaults(defineProps<Props>(), { visible: true });
 const emit = defineEmits<Emits>();
 
 const dictStore = useDictStore();
-const formState = ref<LogApi.AccessQuery>({});
+const { isMobile } = useIsMobile();
 
-const userTypeOpts = computed(() =>
-  dictStore.getDictDataList(DictTypeEnum.USER_TYPE),
+const formSchema = computed<VbenFormSchema[]>(() => [
+  // {
+  //   component: 'Input',
+  //   componentProps: {
+  //     placeholder: $t('zen.common.pleaseInput', [
+  //       $t('zen.service.log.common.appName'),
+  //     ]),
+  //   },
+  //   fieldName: 'appName',
+  //   label: $t('zen.service.log.common.appName'),
+  // },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.log.common.userId'),
+      ]),
+    },
+    fieldName: 'userId',
+    label: $t('zen.service.log.common.userId'),
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.USER_TYPE),
+      placeholder: $t('zen.common.pleaseSelect', [
+        $t('zen.service.log.common.userType'),
+      ]),
+    },
+    fieldName: 'userType',
+    label: $t('zen.service.log.common.userType'),
+  },
+  {
+    component: 'InputNumber',
+    componentProps: {
+      class: '!w-full',
+      controlsPosition: 'right',
+      min: 1,
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.log.access.duration'),
+      ]),
+    },
+    fieldName: 'duration',
+    label: $t('zen.service.log.access.duration'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.log.common.requestUrl'),
+      ]),
+    },
+    fieldName: 'requestUrl',
+    label: $t('zen.service.log.common.requestUrl'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.log.access.resultCode'),
+      ]),
+    },
+    fieldName: 'resultCode',
+    formItemClass: 'lg:pb-0 2xl:pb-6',
+    label: $t('zen.service.log.access.resultCode'),
+  },
+  {
+    component: 'DatePicker',
+    componentProps: {
+      class: '!w-full lg:!w-80',
+      endPlaceholder: $t('zen.common.endDate'),
+      startPlaceholder: $t('zen.common.startDate'),
+      type: 'daterange',
+    },
+    fieldName: 'beginTime',
+    formItemClass: 'lg:pb-0',
+    label: $t('zen.service.log.access.createTime'),
+  },
+]);
+
+const [QueryForm] = useVbenForm(
+  reactive({
+    actionWrapperClass: 'col-span-1 lg:text-left lg:pl-20',
+    collapsed: true,
+    commonConfig: {
+      componentProps: {
+        clearable: true,
+      },
+      formItemClass: 'lg:pr-4',
+      labelWidth: 65,
+    },
+    handleSubmit: onSubmit,
+    schema: formSchema,
+    showCollapseButton: isMobile,
+    submitButtonOptions: {
+      text: computed(() => $t('zen.common.query')),
+    },
+    wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-5',
+  }),
 );
 
-const handleQuery = useDebounceFn(() => {
-  const { state } = translateState({ createTime: formState.value.beginTime });
-  const cloneState = cloneDeep(formState.value);
-  cloneState.beginTime = state.createTime;
-  emit('query', cloneState);
-});
-
-function handleReset() {
-  formState.value = {};
-  handleQuery();
+function onSubmit(values: LogApi.AccessQuery) {
+  const { state } = translateState({ createTime: values.beginTime });
+  values.beginTime = state.createTime;
+  emit('query', values);
 }
 </script>
 
 <template>
-  <ElCollapseTransition>
-    <div v-show="visible" class="rounded-lg border p-3">
-      <ElForm :model="formState">
-        <div class="grid grid-cols-[repeat(24,minmax(0,_1fr))] gap-3">
-          <ElFormItem
-            v-if="false"
-            :label="$t('zen.service.log.common.appName')"
-            class="col-[span_24_/_span_24] !mb-0 lg:col-span-8 xl:col-span-4"
-          >
-            <ElInput
-              v-model="formState.appName"
-              :placeholder="$t('zen.common.pleaseInput')"
-              clearable
-            />
-          </ElFormItem>
-
-          <ElFormItem
-            :label="$t('zen.service.log.common.userId')"
-            class="col-[span_24_/_span_24] !mb-0 lg:col-span-8 xl:col-span-4"
-          >
-            <ElInput
-              v-model="formState.userId"
-              :placeholder="$t('zen.common.pleaseInput')"
-              clearable
-            />
-          </ElFormItem>
-
-          <ElFormItem
-            :label="$t('zen.service.log.common.userType')"
-            class="col-[span_24_/_span_24] !mb-0 lg:col-span-8 xl:col-span-4"
-          >
-            <ElSelect v-model="formState.userType" clearable>
-              <ElOption
-                v-for="item in userTypeOpts"
-                :key="item.value"
-                :label="item.label"
-                :value="+item.value"
-              />
-            </ElSelect>
-          </ElFormItem>
-
-          <ElFormItem
-            :label="$t('zen.service.log.access.duration')"
-            class="col-[span_24_/_span_24] !mb-0 lg:col-span-8 xl:col-span-4"
-          >
-            <ElInputNumber
-              v-model="formState.duration"
-              :min="1"
-              :placeholder="$t('zen.common.pleaseInput')"
-              class="!w-full"
-              controls-position="right"
-            />
-          </ElFormItem>
-
-          <ElFormItem
-            :label="$t('zen.service.log.common.requestUrl')"
-            class="col-[span_24_/_span_24] !mb-0 lg:col-span-8 xl:col-span-7"
-          >
-            <ElInput
-              v-model="formState.requestUrl"
-              :placeholder="$t('zen.common.pleaseInput')"
-              clearable
-            />
-          </ElFormItem>
-
-          <ElFormItem
-            :label="$t('zen.service.log.access.createTime')"
-            class="col-[span_24_/_span_24] !mb-0 lg:col-span-8 xl:col-span-5"
-          >
-            <ElDatePicker
-              v-model="formState.beginTime"
-              :end-placeholder="$t('zen.common.endDate')"
-              :start-placeholder="$t('zen.common.startDate')"
-              type="daterange"
-            />
-          </ElFormItem>
-
-          <ElFormItem
-            :label="$t('zen.service.log.access.resultCode')"
-            class="col-[span_24_/_span_24] !mb-0 lg:col-span-8 xl:col-span-4"
-          >
-            <ElInput
-              v-model="formState.resultCode"
-              :placeholder="$t('zen.common.pleaseInput')"
-              clearable
-            />
-          </ElFormItem>
-
-          <ElFormItem
-            class="col-[span_24_/_span_24] !mb-0 lg:col-span-8 xl:col-span-3"
-          >
-            <div class="flex gap-3">
-              <div class="flex">
-                <ElButton type="primary" @click="handleQuery">
-                  <Icon class="mr-1" icon="ep:search" />
-                  <span>{{ $t('zen.common.search') }}</span>
-                </ElButton>
-              </div>
-
-              <div class="flex">
-                <ElButton @click="handleReset">
-                  <Icon class="mr-1" icon="ep:refresh" />
-                  <span>{{ $t('zen.common.reset') }}</span>
-                </ElButton>
-              </div>
-            </div>
-          </ElFormItem>
-        </div>
-      </ElForm>
-    </div>
-  </ElCollapseTransition>
+  <div class="rounded-lg border p-3">
+    <QueryForm />
+  </div>
 </template>

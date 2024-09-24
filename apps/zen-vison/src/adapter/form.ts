@@ -13,6 +13,7 @@ import {
   ElButton,
   ElCheckbox,
   ElCheckboxGroup,
+  ElDatePicker,
   ElDivider,
   ElInput,
   ElInputNumber,
@@ -47,19 +48,32 @@ setupVbenForm<FormComponentType>({
   components: {
     Checkbox: ElCheckbox,
     CheckboxGroup: ElCheckboxGroup,
+    DatePicker: ElDatePicker,
     // 自定义默认的重置按钮
-    DefaultResetActionButton: (props, { attrs, slots }) => {
-      return h(ElButton, { ...props, attrs, type: 'info' }, slots);
+    DefaultResetActionButton: (_props, { slots }) => {
+      return h(ElButton, { class: '!mr-0', type: 'default' }, slots);
     },
     // 自定义默认的提交按钮
-    DefaultSubmitActionButton: (props, { attrs, slots }) => {
-      return h(ElButton, { ...props, attrs, type: 'primary' }, slots);
+    DefaultSubmitActionButton: (_props, { slots }) => {
+      return h(ElButton, { type: 'primary' }, slots);
     },
     Divider: ElDivider,
     Input: ElInput,
     InputNumber: ElInputNumber,
     RadioGroup: ElRadioGroup,
-    Select: ElSelect,
+    Select: (props, { attrs, slots }) => {
+      return h(
+        ElSelect,
+        { ...props, ...attrs },
+        {
+          ...slots,
+          default: () =>
+            props.options?.map((item: { label: number | string; value: any }) =>
+              h(ElOption, { label: item.label, value: item.value }),
+            ),
+        },
+      );
+    },
     Space: ElSpace,
     Switch: ElSwitch,
     TimePicker: ElTimePicker,

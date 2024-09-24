@@ -1,108 +1,87 @@
 <script setup lang="ts">
 import type { TenantApi } from '#/api';
 
-import { Icon } from '@vben/icons';
+import { useIsMobile } from '@vben/hooks';
 
-import { useDebounceFn } from '@vueuse/core';
-
+import { useVbenForm, type VbenFormSchema } from '#/adapter';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 import { translateState } from '#/utils';
 
-interface Props {
-  visible?: boolean;
-}
-
 interface Emits {
   (e: 'query', data: TenantApi.PackagePageQuery): void;
 }
 
-withDefaults(defineProps<Props>(), { visible: true });
 const emit = defineEmits<Emits>();
 
 const dictStore = useDictStore();
+const { isMobile } = useIsMobile();
 
-const formState = ref<TenantApi.PackagePageQuery>({});
+const formSchema = computed<VbenFormSchema[]>(() => [
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.package.name'),
+      ]),
+    },
+    fieldName: 'name',
+    label: $t('zen.service.package.name'),
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.STATUS),
+      placeholder: $t('zen.common.pleaseSelect', [
+        $t('zen.service.package.status'),
+      ]),
+    },
+    fieldName: 'status',
+    label: $t('zen.service.package.status'),
+  },
+  {
+    component: 'DatePicker',
+    componentProps: {
+      class: '!w-full lg:!w-80',
+      endPlaceholder: $t('zen.common.endDate'),
+      startPlaceholder: $t('zen.common.startDate'),
+      type: 'daterange',
+    },
+    fieldName: 'createTime',
+    label: $t('zen.common.createTime'),
+  },
+]);
 
-const statusOpts = computed(() =>
-  dictStore.getDictDataList(DictTypeEnum.STATUS),
+const [QueryForm] = useVbenForm(
+  reactive({
+    actionWrapperClass: 'col-span-1 lg:text-left pl-20',
+    collapsed: true,
+    commonConfig: {
+      componentProps: {
+        clearable: true,
+      },
+      formItemClass: 'lg:pr-4 lg:pb-0',
+      labelWidth: 65,
+    },
+    handleSubmit: onSubmit,
+    schema: formSchema,
+    showCollapseButton: isMobile,
+    submitButtonOptions: {
+      text: computed(() => $t('zen.common.query')),
+    },
+    wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
+  }),
 );
 
-const handleQuery = useDebounceFn(() => {
-  const { state } = translateState(formState);
+function onSubmit(values: TenantApi.PackagePageQuery) {
+  const { state } = translateState(values);
   emit('query', state);
-});
-
-function handleReset() {
-  formState.value = {};
-  handleQuery();
 }
 </script>
 
 <template>
-  <ElCollapseTransition>
-    <div v-show="visible" class="rounded-lg border p-3">
-      <ElForm :model="formState">
-        <div class="grid grid-cols-[repeat(24,minmax(0,_1fr))] gap-3">
-          <ElFormItem
-            :label="$t('zen.service.package.name')"
-            class="col-[span_24_/_span_24] !mb-0 lg:col-span-6 xl:col-span-4"
-          >
-            <ElInput
-              v-model="formState.name"
-              :placeholder="$t('zen.common.pleaseInput')"
-              clearable
-            />
-          </ElFormItem>
-
-          <ElFormItem
-            :label="$t('zen.service.package.status')"
-            class="col-[span_24_/_span_24] !mb-0 lg:col-span-6 xl:col-span-4"
-          >
-            <ElSelect v-model="formState.status" clearable>
-              <ElOption
-                v-for="item in statusOpts"
-                :key="item.value"
-                :label="item.label"
-                :value="+item.value"
-              />
-            </ElSelect>
-          </ElFormItem>
-
-          <ElFormItem
-            :label="$t('zen.common.createTime')"
-            class="col-[span_24_/_span_24] !mb-0 lg:col-span-8 xl:col-span-5"
-          >
-            <ElDatePicker
-              v-model="formState.createTime"
-              :end-placeholder="$t('zen.common.endDate')"
-              :start-placeholder="$t('zen.common.startDate')"
-              type="daterange"
-            />
-          </ElFormItem>
-
-          <ElFormItem
-            class="col-[span_24_/_span_24] !mb-0 lg:col-span-6 xl:col-span-3"
-          >
-            <div class="flex gap-3">
-              <div class="flex">
-                <ElButton type="primary" @click="handleQuery">
-                  <Icon class="mr-1" icon="ep:search" />
-                  <span>{{ $t('zen.common.search') }}</span>
-                </ElButton>
-              </div>
-
-              <div class="flex">
-                <ElButton @click="handleReset">
-                  <Icon class="mr-1" icon="ep:refresh" />
-                  <span>{{ $t('zen.common.reset') }}</span>
-                </ElButton>
-              </div>
-            </div>
-          </ElFormItem>
-        </div>
-      </ElForm>
-    </div>
-  </ElCollapseTransition>
+  <div class="rounded-lg border p-3">
+    <QueryForm />
+  </div>
 </template>
