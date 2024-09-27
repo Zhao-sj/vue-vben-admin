@@ -5,12 +5,12 @@ import { Icon } from '@vben/icons';
 import { ElTree } from 'element-plus';
 import { cloneDeep } from 'lodash-es';
 
+import { useVbenForm, type VbenFormSchema } from '#/adapter';
 import {
   assignRoleDataScopeApi,
   buildMenuTree,
   getDeptSimpleListApi,
   getRoleApi,
-  type RoleApi,
 } from '#/api';
 import { DictRoleDataScope, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
@@ -29,8 +29,7 @@ const treeMapConf = {
   children: 'children',
 };
 
-const formState = ref<Partial<RoleApi.Role>>({});
-const treeRef = ref<InstanceType<typeof ElTree>>();
+const treeRef = useTemplateRef<InstanceType<typeof ElTree>>('treeRef');
 const checkStrictly = ref(true);
 const isExpandAll = ref(true);
 
@@ -49,11 +48,66 @@ const { loading, runAsync } = useRequest(assignRoleDataScopeApi, requestConf);
 
 const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
-const dataScope = computed(() =>
-  dictStore.getDictDataList(DictTypeEnum.DATA_SCOPE),
-);
-
 const deptTree = computed(() => buildMenuTree(cloneDeep(deptList.value || [])));
+
+const formSchema = computed<VbenFormSchema[]>(() => [
+  {
+    component: 'Input',
+    componentProps: {
+      disabled: true,
+    },
+    fieldName: 'name',
+    label: $t('zen.service.role.name'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      disabled: true,
+    },
+    fieldName: 'code',
+    label: $t('zen.service.role.code'),
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: dictStore
+        .getDictDataList(DictTypeEnum.DATA_SCOPE)
+        .map((item) => ({
+          label: item.label,
+          value: +item.value,
+        })),
+    },
+    fieldName: 'dataScope',
+    label: $t('zen.service.role.dataScope'),
+  },
+  {
+    component: 'Input',
+    dependencies: {
+      if(values) {
+        return values.dataScope === DictRoleDataScope.CUSTOM;
+      },
+      trigger(values) {
+        setCheckedKeys(values.dataScope, values.dataScopeDeptIds || []);
+      },
+      triggerFields: ['dataScope'],
+    },
+    fieldName: 'dataScopeDeptIds',
+    label: $t('zen.service.role.customScope'),
+    labelClass: 'self-start h-8',
+  },
+]);
+
+const [Form, formApi] = useVbenForm(
+  reactive({
+    commonConfig: {
+      labelClass: 'mr-4',
+      labelWidth: 65,
+    },
+    schema: formSchema,
+    showDefaultActions: false,
+    wrapperClass: 'grid-cols-1',
+  }),
+);
 
 function handleExpand(checked: boolean | number | string) {
   deptList.value.forEach((item) => {
@@ -77,7 +131,6 @@ function setCheckedKeys(dataScope: number, dataScopeDeptIds: number[]) {
 
 async function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
-    formState.value = {};
     checkStrictly.value = true;
     isExpandAll.value = true;
     return;
@@ -89,13 +142,14 @@ async function onOpenChange(isOpen: boolean) {
     if (!role.dataScopeDeptIds) {
       role.dataScopeDeptIds = [];
     }
-    formState.value = role;
+
+    formApi.setValues(role);
     setCheckedKeys(role.dataScope, role.dataScopeDeptIds);
   }
 }
 
 async function onConfirm() {
-  const { dataScope, id } = formState.value;
+  const { dataScope, id } = await formApi.getValues();
   if (!id) {
     return;
   }
@@ -110,14 +164,6 @@ async function onConfirm() {
   ElMessage.success($t('zen.common.successTip'));
   modal.close();
 }
-
-watch(
-  () => formState.value.dataScope,
-  (dataScope) => {
-    dataScope &&
-      setCheckedKeys(dataScope, formState.value.dataScopeDeptIds || []);
-  },
-);
 </script>
 
 <template>
@@ -129,78 +175,44 @@ watch(
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
   >
-    <ElForm :label-width="80" :model="formState">
-      <ElRow :gutter="20">
-        <ElCol :xs="24">
-          <ElFormItem :label="$t('zen.service.role.name')">
-            <ElInput :model-value="formState.name" disabled />
-          </ElFormItem>
-        </ElCol>
-
-        <ElCol :xs="24">
-          <ElFormItem :label="$t('zen.service.role.code')">
-            <ElInput :model-value="formState.code" disabled />
-          </ElFormItem>
-        </ElCol>
-
-        <ElCol :xs="24">
-          <ElFormItem :label="$t('zen.service.role.dataScope')">
-            <ElSelect v-model="formState.dataScope">
-              <ElOption
-                v-for="item in dataScope"
-                :key="item.id"
-                :label="item.label"
-                :value="+item.value"
-              />
-            </ElSelect>
-          </ElFormItem>
-        </ElCol>
-
-        <ElCollapseTransition>
-          <ElCol
-            v-if="formState.dataScope === DictRoleDataScope.CUSTOM"
-            :xs="24"
-          >
-            <ElFormItem :label="$t('zen.service.role.customScope')">
-              <div class="w-full">
-                <div>
-                  <ElCheckbox v-model="checkStrictly">
-                    <div class="flex items-center gap-1">
-                      <ElTooltip :content="$t('zen.service.role.strictlyTip')">
-                        <Icon
-                          class="cursor-help outline-none"
-                          icon="lucide:circle-help"
-                        />
-                      </ElTooltip>
-                      <span>{{ $t('zen.service.role.strictly') }}</span>
-                    </div>
-                  </ElCheckbox>
-
-                  <ElCheckbox
-                    v-model="isExpandAll"
-                    :label="`${$t('zen.common.expand')} / ${$t('zen.common.collapsed')}`"
-                    @change="handleExpand"
+    <Form>
+      <template #dataScopeDeptIds>
+        <div class="w-full">
+          <div>
+            <ElCheckbox v-model="checkStrictly">
+              <div class="flex items-center gap-1">
+                <ElTooltip :content="$t('zen.service.role.strictlyTip')">
+                  <Icon
+                    class="cursor-help outline-none"
+                    icon="lucide:circle-help"
                   />
-                  <ElCheckbox
-                    :label="`${$t('zen.common.selectAll')} / ${$t('zen.common.unselectAll')}`"
-                    @change="handleChooseAll"
-                  />
-                </div>
-                <ElTree
-                  ref="treeRef"
-                  :check-strictly="!checkStrictly"
-                  :data="deptTree"
-                  :props="treeMapConf"
-                  class="min-h-60 overflow-y-auto rounded-lg border pt-1"
-                  default-expand-all
-                  node-key="id"
-                  show-checkbox
-                />
+                </ElTooltip>
+                <span>{{ $t('zen.service.role.strictly') }}</span>
               </div>
-            </ElFormItem>
-          </ElCol>
-        </ElCollapseTransition>
-      </ElRow>
-    </ElForm>
+            </ElCheckbox>
+
+            <ElCheckbox
+              v-model="isExpandAll"
+              :label="`${$t('zen.common.expand')} / ${$t('zen.common.collapsed')}`"
+              @change="handleExpand"
+            />
+            <ElCheckbox
+              :label="`${$t('zen.common.selectAll')} / ${$t('zen.common.unselectAll')}`"
+              @change="handleChooseAll"
+            />
+          </div>
+          <ElTree
+            ref="treeRef"
+            :check-strictly="!checkStrictly"
+            :data="deptTree"
+            :props="treeMapConf"
+            class="min-h-60 overflow-y-auto rounded-lg border pt-1"
+            default-expand-all
+            node-key="id"
+            show-checkbox
+          />
+        </div>
+      </template>
+    </Form>
   </Modal>
 </template>

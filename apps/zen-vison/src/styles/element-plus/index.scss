@@ -1,0 +1,6 @@
+.form-valid-error {
+  .el-input__wrapper,
+  .el-select__wrapper {
+    box-shadow: 0 0 0 1px var(--el-color-danger) inset;
+  }
+}

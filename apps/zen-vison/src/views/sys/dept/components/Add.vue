@@ -20,15 +20,12 @@ interface Emits {
 
 const emit = defineEmits<Emits>();
 
-const defaultState = { status: 0 };
-
 const requestConf = {
   loadingDelay: 200,
   manual: true,
 };
 
-const optFormRef = ref<InstanceType<typeof OptForm>>();
-const formState = ref<Partial<DeptApi.AddModel>>(cloneDeep(defaultState));
+const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
 const {
   data: deptList,
@@ -46,35 +43,35 @@ const { loading, runAsync } = useRequest(addDeptApi, requestConf);
 
 const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
-const formInstance = computed(() => optFormRef.value?.getFormInstance());
-
 async function onOpenChange(isOpen: boolean) {
   if (isOpen) {
     await Promise.all([getDeptList(), getUserList()]);
     const { parentId } = modal.getData();
     if (parentId) {
-      formState.value.parentId = parentId;
+      setTimeout(() => {
+        optFormRef.value?.formApi.setFieldValue('parentId', parentId);
+      }, 0);
     }
 
     return;
   }
 
   modal.setData({ parentId: null });
-  formState.value = cloneDeep(defaultState);
 }
 
-function onConfirm() {
-  formInstance.value?.validate(async (valid) => {
-    if (valid) {
-      const state = formState.value as DeptApi.AddModel;
-      state.parentId = state.parentId || 0;
+async function onConfirm() {
+  if (!optFormRef.value) return;
+  const { valid } = await optFormRef.value.formApi.validate();
+  if (!valid) return;
 
-      await runAsync(state);
-      ElMessage.success($t('zen.common.successTip'));
-      modal.close();
-      emit('success');
-    }
-  });
+  const values = await optFormRef.value.formApi.getValues();
+  const state = cloneDeep(values as DeptApi.AddModel);
+  state.parentId = state.parentId || 0;
+
+  await runAsync(state);
+  ElMessage.success($t('zen.common.successTip'));
+  modal.close();
+  emit('success');
 }
 </script>
 
@@ -87,6 +84,6 @@ function onConfirm() {
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
   >
-    <OptForm ref="optFormRef" v-model="formState" :dept-list :user-list />
+    <OptForm ref="optFormRef" :dept-list :user-list />
   </Modal>
 </template>

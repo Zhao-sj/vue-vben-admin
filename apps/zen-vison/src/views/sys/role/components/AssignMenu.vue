@@ -4,6 +4,7 @@ import { useVbenModal } from '@vben/common-ui';
 import { ElTree } from 'element-plus';
 import { cloneDeep } from 'lodash-es';
 
+import { useVbenForm, type VbenFormSchema } from '#/adapter';
 import {
   assignRoleMenuApi,
   buildMenuTree,
@@ -22,8 +23,7 @@ const requestConf = {
   manual: true,
 };
 
-const formState = ref<Partial<FormState>>({});
-const treeRef = ref<InstanceType<typeof ElTree>>();
+const treeRef = useTemplateRef<InstanceType<typeof ElTree>>('treeRef');
 const isCheckAll = ref(false);
 
 const treeMapConf = {
@@ -53,6 +53,43 @@ const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
 const menuTree = computed(() => buildMenuTree(cloneDeep(menus.value || [])));
 
+const formSchema = computed<VbenFormSchema[]>(() => [
+  {
+    component: 'Input',
+    componentProps: {
+      disabled: true,
+    },
+    fieldName: 'name',
+    label: $t('zen.service.role.name'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      disabled: true,
+    },
+    fieldName: 'code',
+    label: $t('zen.service.role.code'),
+  },
+  {
+    component: 'Input',
+    fieldName: 'menuIds',
+    label: $t('zen.service.role.menuPermission'),
+    labelClass: 'self-start h-8',
+  },
+]);
+
+const [Form, formApi] = useVbenForm(
+  reactive({
+    commonConfig: {
+      labelClass: 'mr-4',
+      labelWidth: 80,
+    },
+    schema: formSchema,
+    showDefaultActions: false,
+    wrapperClass: 'grid-cols-1',
+  }),
+);
+
 function handleExpand(checked: boolean | number | string) {
   menus.value.forEach((item) => {
     treeRef.value!.store.nodesMap[item.id]!.expanded = checked as boolean;
@@ -67,7 +104,6 @@ function handleChooseAll(checked: boolean | number | string) {
 
 async function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
-    formState.value = {};
     return;
   }
 
@@ -85,14 +121,14 @@ async function onOpenChange(isOpen: boolean) {
       name: role.name,
     };
 
-    formState.value = state;
+    formApi.setValues(state);
     treeRef.value?.setCheckedKeys(menuIds);
     isCheckAll.value = menu.every((item) => menuIds.includes(item.id));
   }
 }
 
 async function onConfirm() {
-  const { id } = formState.value;
+  const { id } = await formApi.getValues();
   if (!id) {
     return;
   }
@@ -113,47 +149,31 @@ async function onConfirm() {
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
   >
-    <ElForm :label-width="80" :model="formState">
-      <ElRow :gutter="20">
-        <ElCol :xs="24">
-          <ElFormItem :label="$t('zen.service.role.name')">
-            <ElInput :model-value="formState.name" disabled />
-          </ElFormItem>
-        </ElCol>
-
-        <ElCol :xs="24">
-          <ElFormItem :label="$t('zen.service.role.code')">
-            <ElInput :model-value="formState.code" disabled />
-          </ElFormItem>
-        </ElCol>
-
-        <ElCol :xs="24">
-          <ElFormItem :label="$t('zen.service.role.menuPermission')">
-            <div class="w-full">
-              <div>
-                <ElCheckbox
-                  :label="`${$t('zen.common.expand')} / ${$t('zen.common.collapsed')}`"
-                  @change="handleExpand"
-                />
-                <ElCheckbox
-                  v-model="isCheckAll"
-                  :label="`${$t('zen.common.selectAll')} / ${$t('zen.common.unselectAll')}`"
-                  @change="handleChooseAll"
-                />
-              </div>
-              <ElTree
-                ref="treeRef"
-                :data="menuTree"
-                :props="treeMapConf"
-                check-strictly
-                class="min-h-60 overflow-y-auto rounded-lg border pt-1"
-                node-key="id"
-                show-checkbox
-              />
-            </div>
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
-    </ElForm>
+    <Form>
+      <template #menuIds>
+        <div class="w-full">
+          <div>
+            <ElCheckbox
+              :label="`${$t('zen.common.expand')} / ${$t('zen.common.collapsed')}`"
+              @change="handleExpand"
+            />
+            <ElCheckbox
+              v-model="isCheckAll"
+              :label="`${$t('zen.common.selectAll')} / ${$t('zen.common.unselectAll')}`"
+              @change="handleChooseAll"
+            />
+          </div>
+          <ElTree
+            ref="treeRef"
+            :data="menuTree"
+            :props="treeMapConf"
+            check-strictly
+            class="min-h-60 overflow-y-auto rounded-lg border pt-1"
+            node-key="id"
+            show-checkbox
+          />
+        </div>
+      </template>
+    </Form>
   </Modal>
 </template>

@@ -10,6 +10,7 @@ import { setupVbenForm, useVbenForm as useForm, z } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import {
+  ElAutocomplete,
   ElButton,
   ElCheckbox,
   ElCheckboxGroup,
@@ -17,17 +18,18 @@ import {
   ElDivider,
   ElInput,
   ElInputNumber,
-  ElRadioGroup,
-  ElSelect,
   ElSpace,
   ElSwitch,
   ElTimePicker,
   ElTreeSelect,
   ElUpload,
 } from 'element-plus';
+
+import { AdapterRadioGroup, AdapterSelect } from './components';
 // 业务表单组件适配
 
 export type FormComponentType =
+  | 'Autocomplete'
   | 'Checkbox'
   | 'CheckboxGroup'
   | 'DatePicker'
@@ -46,6 +48,7 @@ export type FormComponentType =
 // 初始化表单组件，并注册到form组件内部
 setupVbenForm<FormComponentType>({
   components: {
+    Autocomplete: ElAutocomplete,
     Checkbox: ElCheckbox,
     CheckboxGroup: ElCheckboxGroup,
     DatePicker: ElDatePicker,
@@ -60,20 +63,8 @@ setupVbenForm<FormComponentType>({
     Divider: ElDivider,
     Input: ElInput,
     InputNumber: ElInputNumber,
-    RadioGroup: ElRadioGroup,
-    Select: (props, { attrs, slots }) => {
-      return h(
-        ElSelect,
-        { ...props, ...attrs },
-        {
-          ...slots,
-          default: () =>
-            props.options?.map((item: { label: number | string; value: any }) =>
-              h(ElOption, { label: item.label, value: item.value }),
-            ),
-        },
-      );
-    },
+    RadioGroup: AdapterRadioGroup,
+    Select: AdapterSelect,
     Space: ElSpace,
     Switch: ElSwitch,
     TimePicker: ElTimePicker,

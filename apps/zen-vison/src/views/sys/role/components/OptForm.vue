@@ -1,98 +1,70 @@
 <script setup lang="ts">
-import type { FormInstance, FormRules } from 'element-plus';
-
-import { type RoleApi } from '#/api';
+import { useVbenForm, type VbenFormSchema } from '#/adapter';
 import { $t } from '#/locales';
 
-defineExpose({
-  getFormInstance,
-});
-
-const state = defineModel<Partial<RoleApi.AddModel>>('modelValue', {
-  required: true,
-});
-
-const formRef = ref<FormInstance>();
-
-const rules = computed<FormRules<RoleApi.AddModel>>(() => ({
-  code: [
-    {
-      message: t($t('zen.service.role.code')),
-      required: true,
-      trigger: 'blur',
+const formSchema = computed<VbenFormSchema[]>(() => [
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.role.name')]),
     },
-  ],
-  name: [
-    {
-      message: t($t('zen.service.role.name')),
-      required: true,
-      trigger: 'blur',
+    fieldName: 'name',
+    label: $t('zen.service.role.name'),
+    rules: 'required',
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.role.code')]),
     },
-  ],
-  sort: [
-    {
-      message: t($t('zen.service.role.sort')),
-      required: true,
-      trigger: 'blur',
+    fieldName: 'code',
+    label: $t('zen.service.role.code'),
+    rules: 'required',
+  },
+  {
+    component: 'InputNumber',
+    componentProps: {
+      class: '!w-full',
+      controlsPosition: 'right',
+      min: 0,
+      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.role.sort')]),
     },
-  ],
-}));
+    fieldName: 'sort',
+    label: $t('zen.service.role.sort'),
+    rules: 'required',
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      autosize: { maxRows: 5, minRows: 3 },
+      placeholder: $t('zen.common.pleaseInput', [$t('zen.common.remark')]),
+      resize: 'none',
+      type: 'textarea',
+    },
+    fieldName: 'remark',
+    label: $t('zen.common.remark'),
+    labelClass: 'self-start h-8',
+  },
+]);
 
-function t(prefix: string) {
-  return `${prefix}${$t('zen.common.joinNotEmypt')}`;
-}
+const [Form, formApi] = useVbenForm(
+  reactive({
+    commonConfig: {
+      componentProps: {
+        clearable: true,
+      },
+      labelClass: 'mr-4',
+      labelWidth: 65,
+    },
+    schema: formSchema,
+    showDefaultActions: false,
+    wrapperClass: 'grid-cols-1',
+  }),
+);
 
-function getFormInstance() {
-  return formRef.value;
-}
+defineExpose({ formApi });
 </script>
 
 <template>
-  <ElForm ref="formRef" :label-width="80" :model="state" :rules>
-    <ElRow :gutter="20">
-      <ElCol :xs="24">
-        <ElFormItem :label="$t('zen.service.role.name')" prop="name" required>
-          <ElInput
-            v-model="state.name"
-            :placeholder="$t('zen.common.pleaseInput')"
-            clearable
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :xs="24">
-        <ElFormItem :label="$t('zen.service.role.code')" prop="code">
-          <ElInput
-            v-model="state.code"
-            :placeholder="$t('zen.common.pleaseInput')"
-            clearable
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :xs="24">
-        <ElFormItem :label="$t('zen.service.role.sort')" prop="sort" required>
-          <ElInputNumber
-            v-model="state.sort"
-            :min="0"
-            :placeholder="$t('zen.common.pleaseInput')"
-            class="!w-full"
-            controls-position="right"
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :xs="24">
-        <ElFormItem :label="$t('zen.common.remark')">
-          <ElInput
-            v-model="state.remark"
-            :autosize="{ minRows: 2, maxRows: 5 }"
-            :placeholder="$t('zen.common.pleaseInput')"
-            resize="none"
-            type="textarea"
-          />
-        </ElFormItem>
-      </ElCol>
-    </ElRow>
-  </ElForm>
+  <Form />
 </template>

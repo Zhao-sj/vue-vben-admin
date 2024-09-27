@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import type { FormState } from './typing';
-
 import { useVbenModal } from '@vben/common-ui';
 
-import { cloneDeep, isNull, omit } from 'lodash-es';
+import { omit } from 'lodash-es';
 
 import {
   getMenuApi,
@@ -11,7 +9,6 @@ import {
   type MenuApi,
   updateMenuApi,
 } from '#/api';
-import { defaultMeta } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 
@@ -23,17 +20,12 @@ interface Emits {
 
 const emit = defineEmits<Emits>();
 
-const defaultState = {
-  meta: defaultMeta,
-} as FormState;
-
 const requestConf = {
   loadingDelay: 200,
   manual: true,
 };
 
-const optFormRef = ref<InstanceType<typeof OptForm>>();
-const formState = ref<FormState>(cloneDeep(defaultState));
+const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
 const {
   data: menus,
@@ -50,8 +42,6 @@ const { loading, runAsync } = useRequest(updateMenuApi, requestConf);
 
 const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
-const formInstance = computed(() => optFormRef.value?.getFormInstance());
-
 async function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
     return;
@@ -61,24 +51,27 @@ async function onOpenChange(isOpen: boolean) {
   if (id) {
     const [menu] = await Promise.all([getData(id), getMenu()]);
     const ignoreKeys = ['createTime'];
-    if (isNull(menu.meta)) {
-      menu.meta = cloneDeep(defaultMeta);
-    }
-    formState.value = omit(menu, ignoreKeys) as FormState;
+    setTimeout(() => {
+      optFormRef.value?.setValues(
+        omit(menu, ignoreKeys) as MenuApi.UpdateModel,
+      );
+    }, 0);
   }
 }
 
-function onConfirm() {
-  formInstance.value?.validate(async (valid) => {
-    if (valid) {
-      const state = cloneDeep(formState.value) as MenuApi.UpdateModel;
+async function onConfirm() {
+  if (!optFormRef.value) return;
+  const { valid } = await optFormRef.value.formApi.validate();
+  if (!valid) {
+    optFormRef.value?.closeMetaForm();
+    return;
+  }
 
-      await runAsync(state);
-      ElMessage.success($t('zen.common.successTip'));
-      modal.close();
-      emit('success');
-    }
-  });
+  const values = await optFormRef.value.getValues();
+  await runAsync(values as MenuApi.UpdateModel);
+  ElMessage.success($t('zen.common.successTip'));
+  modal.close();
+  emit('success');
 }
 </script>
 
@@ -91,6 +84,6 @@ function onConfirm() {
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
   >
-    <OptForm ref="optFormRef" v-model="formState" :menus edit />
+    <OptForm ref="optFormRef" :menus />
   </Modal>
 </template>

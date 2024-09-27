@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useVbenModal } from '@vben/common-ui';
 
-import { omit } from 'lodash-es';
+import { cloneDeep, omit } from 'lodash-es';
 
 import {
   getMenuSimpleListApi,
@@ -25,8 +25,7 @@ const requestConf = {
   manual: true,
 };
 
-const optFormRef = ref<InstanceType<typeof OptForm>>();
-const formState = ref<Partial<TenantApi.AddPackageModel>>({});
+const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
 const {
   data: menus,
@@ -43,7 +42,6 @@ const { loading, runAsync } = useRequest(updateTenantPackageApi, requestConf);
 
 const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
-const formInstance = computed(() => optFormRef.value?.getFormInstance());
 const treeInstance = computed(() => optFormRef.value?.getTreeInstance());
 
 async function onOpenChange(isOpen: boolean) {
@@ -53,25 +51,39 @@ async function onOpenChange(isOpen: boolean) {
 
   const { id } = modal.getData();
   if (id) {
-    const [tenantPackage] = await Promise.all([getPackage(id), getMenu()]);
+    const [tenantPackage, menus] = await Promise.all([
+      getPackage(id),
+      getMenu(),
+    ]);
+
+    const isCheckAll = menus.every((item) =>
+      tenantPackage.menuIds.includes(item.id),
+    );
+
     const ignoreKeys = ['createTime'];
-    formState.value = omit(tenantPackage, ignoreKeys) as TenantApi.UpdateModel;
-    treeInstance.value?.setCheckedKeys(tenantPackage.menuIds);
+    const values = omit(tenantPackage, ignoreKeys);
+    setTimeout(() => {
+      optFormRef.value?.formApi.setValues(values);
+      optFormRef.value?.setCheckAll(isCheckAll);
+      treeInstance.value?.setCheckedKeys(tenantPackage.menuIds);
+    }, 0);
   }
 }
 
-function onConfirm() {
-  formInstance.value?.validate(async (valid) => {
-    if (valid) {
-      const keys = treeInstance.value!.getCheckedKeys() as number[];
-      formState.value.menuIds = keys;
+async function onConfirm() {
+  if (!optFormRef.value) return;
+  const { valid } = await optFormRef.value.formApi.validate();
+  if (!valid) return;
 
-      await runAsync(formState.value as TenantApi.UpdatePackageModel);
-      ElMessage.success($t('zen.common.successTip'));
-      modal.close();
-      emit('success');
-    }
-  });
+  const values = await optFormRef.value.formApi.getValues();
+  const state = cloneDeep(values as TenantApi.UpdatePackageModel);
+  const keys = treeInstance.value!.getCheckedKeys() as number[];
+  state.menuIds = keys;
+
+  await runAsync(state);
+  ElMessage.success($t('zen.common.successTip'));
+  modal.close();
+  emit('success');
 }
 </script>
 
@@ -84,6 +96,6 @@ function onConfirm() {
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
   >
-    <OptForm ref="optFormRef" v-model="formState" :menus />
+    <OptForm ref="optFormRef" :menus />
   </Modal>
 </template>

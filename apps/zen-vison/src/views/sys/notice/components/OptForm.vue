@@ -1,134 +1,96 @@
 <script setup lang="ts">
-import type { FormInstance, FormRules } from 'element-plus';
-import type { RawEditorSettings } from 'tinymce';
-
-import { type NoticeApi } from '#/api';
+import { useVbenForm, type VbenFormSchema } from '#/adapter';
 import { Tinymce } from '#/components';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 
-defineExpose({
-  getFormInstance,
-});
-
-const state = defineModel<Partial<NoticeApi.AddModel>>('modelValue', {
-  required: true,
-});
-
 const dictStore = useDictStore();
-const formRef = ref<FormInstance>();
 
-const typeOpts = computed(() =>
-  dictStore.getDictDataList(DictTypeEnum.NOTICE_TYPE),
+const formSchema = computed<VbenFormSchema[]>(() => [
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.notice.title'),
+      ]),
+    },
+    fieldName: 'title',
+    formItemClass: 'col-span-2',
+    label: $t('zen.service.notice.title'),
+    rules: 'required',
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: dictStore
+        .getDictDataList(DictTypeEnum.NOTICE_TYPE)
+        .map((item) => ({
+          ...item,
+          value: +item.value,
+        })),
+      placeholder: $t('zen.common.pleaseSelect', [
+        $t('zen.service.notice.type'),
+      ]),
+    },
+    fieldName: 'type',
+    label: $t('zen.service.notice.type'),
+    rules: 'selectRequired',
+  },
+  {
+    component: 'RadioGroup',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.STATUS).map((item) => ({
+        ...item,
+        value: +item.value,
+      })),
+      optionType: 'button',
+    },
+    defaultValue: 0,
+    fieldName: 'status',
+    label: $t('zen.service.notice.status'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      options: {
+        menubar: false,
+        placeholder: $t('zen.common.pleaseInput', [
+          $t('zen.service.notice.content'),
+        ]),
+      },
+      width: '100%',
+    },
+    fieldName: 'content',
+    formItemClass: 'col-span-2 flex-col items-start',
+    label: $t('zen.service.notice.content'),
+    labelClass: 'mb-2',
+    rules: 'required',
+  },
+]);
+
+const [Form, formApi] = useVbenForm(
+  reactive({
+    commonConfig: {
+      componentProps: {
+        clearable: true,
+      },
+      labelClass: 'mr-4',
+      labelWidth: 65,
+    },
+    schema: formSchema,
+    showDefaultActions: false,
+    wrapperClass: 'grid-cols-1 lg:grid-cols-2 gap-x-4',
+  }),
 );
 
-const statusOpts = computed(() =>
-  dictStore.getDictDataList(DictTypeEnum.STATUS),
-);
-
-const rules = computed<FormRules<NoticeApi.AddModel>>(() => ({
-  content: [
-    {
-      message: t($t('zen.service.notice.content')),
-      required: true,
-      trigger: 'blur',
-    },
-  ],
-  status: [
-    {
-      message: t($t('zen.service.notice.status')),
-      required: true,
-      trigger: 'blur',
-    },
-  ],
-  title: [
-    {
-      message: t($t('zen.service.notice.title')),
-      required: true,
-      trigger: 'blur',
-    },
-  ],
-  type: [
-    {
-      message: t($t('zen.service.notice.type')),
-      required: true,
-      trigger: 'blur',
-    },
-  ],
-}));
-
-const tinymceOpts = computed<RawEditorSettings>(() => ({
-  menubar: false,
-  placeholder: $t('zen.common.pleaseInput'),
-}));
-
-function t(prefix: string) {
-  return `${prefix}${$t('zen.common.joinNotEmypt')}`;
-}
-
-function getFormInstance() {
-  return formRef.value;
-}
+defineExpose({ formApi });
 </script>
 
 <template>
-  <ElForm ref="formRef" :model="state" :rules>
-    <ElRow :gutter="20">
-      <ElCol :xs="24">
-        <ElFormItem
-          :label="$t('zen.service.notice.title')"
-          prop="title"
-          required
-        >
-          <ElInput
-            v-model="state.title"
-            :placeholder="$t('zen.common.pleaseInput')"
-            clearable
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :lg="12" :xs="24">
-        <ElFormItem :label="$t('zen.service.notice.type')" prop="type" required>
-          <ElSelect v-model="state.type">
-            <ElOption
-              v-for="item in typeOpts"
-              :key="item.value"
-              :label="item.label"
-              :value="+item.value"
-            />
-          </ElSelect>
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :lg="12" :xs="24">
-        <ElFormItem :label="$t('zen.service.notice.status')">
-          <ElRadioGroup v-model="state.status">
-            <ElRadioButton
-              v-for="item in statusOpts"
-              :key="item.value"
-              :label="item.label"
-              :value="+item.value"
-            />
-          </ElRadioGroup>
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :xs="24">
-        <ElFormItem
-          :label="$t('zen.service.notice.content')"
-          label-position="top"
-          prop="content"
-          required
-        >
-          <Tinymce
-            v-model="state.content"
-            :options="tinymceOpts"
-            width="100%"
-          />
-        </ElFormItem>
-      </ElCol>
-    </ElRow>
-  </ElForm>
+  <Form>
+    <template #content="slotProps">
+      <Tinymce v-bind="slotProps" />
+    </template>
+  </Form>
 </template>

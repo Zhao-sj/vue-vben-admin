@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useVbenModal } from '@vben/common-ui';
 
-import { omit } from 'lodash-es';
+import { cloneDeep, omit } from 'lodash-es';
 
 import {
   type DictApi,
@@ -25,8 +25,7 @@ const requestConf = {
   manual: true,
 };
 
-const optFormRef = ref<InstanceType<typeof OptForm>>();
-const formState = ref<Partial<DictApi.DataUpdateModel>>({});
+const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
 const {
   data: dictType,
@@ -43,11 +42,8 @@ const { loading, runAsync } = useRequest(updateDictDataApi, requestConf);
 
 const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
-const formInstance = computed(() => optFormRef.value?.getFormInstance());
-
 async function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
-    formState.value = {};
     return;
   }
 
@@ -56,19 +52,24 @@ async function onOpenChange(isOpen: boolean) {
     const [dictData] = await Promise.all([getDict(id), getType(typeId)]);
     const ignoreKeys = ['createTime'];
     const data = omit(dictData, ignoreKeys) as DictApi.DataUpdateModel;
-    formState.value = data;
+    setTimeout(() => {
+      optFormRef.value?.formApi.setValues(data);
+    }, 0);
   }
 }
 
-function onConfirm() {
-  formInstance.value?.validate(async (valid) => {
-    if (valid) {
-      await runAsync(formState.value as DictApi.DataUpdateModel);
-      ElMessage.success($t('zen.common.successTip'));
-      modal.close();
-      emit('success');
-    }
-  });
+async function onConfirm() {
+  if (!optFormRef.value) return;
+  const { valid } = await optFormRef.value.formApi.validate();
+  if (!valid) return;
+
+  const values = await optFormRef.value.formApi.getValues();
+  const state = omit(cloneDeep(values), ['type']);
+
+  await runAsync(state as DictApi.DataUpdateModel);
+  ElMessage.success($t('zen.common.successTip'));
+  modal.close();
+  emit('success');
 }
 </script>
 
@@ -81,6 +82,6 @@ function onConfirm() {
     class="w-11/12 lg:w-1/3 2xl:w-1/4"
     draggable
   >
-    <OptForm ref="optFormRef" v-model="formState" :type="dictType?.type" />
+    <OptForm ref="optFormRef" :type="dictType?.type" />
   </Modal>
 </template>

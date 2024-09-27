@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import type { FormInstance, FormRules } from 'element-plus';
-
-import {
-  type BaseSimple,
-  buildMenuTree,
-  type DeptApi,
-  type UserApi,
-} from '#/api';
+import { useVbenForm, type VbenFormSchema } from '#/adapter';
+import { type BaseSimple, buildMenuTree, type DeptApi } from '#/api';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -22,177 +16,142 @@ const props = withDefaults(defineProps<Props>(), {
   postList: () => [],
 });
 
-defineExpose({
-  getFormInstance,
-});
-
-const state = defineModel<Partial<UserApi.AddModel>>('modelValue', {
-  required: true,
-});
-
-const treeMapConf = {
-  label: 'name',
-  children: 'children',
-};
-
 const dictStore = useDictStore();
-const formRef = ref<FormInstance>();
 
-const deptTree = computed(() => buildMenuTree(props.deptList));
-
-const sexList = computed(() => dictStore.getDictDataList(DictTypeEnum.SEX));
-
-const rules = computed<FormRules<UserApi.AddModel>>(() => ({
-  nickname: [
-    {
-      message: t($t('zen.service.user.nickname')),
-      required: true,
-      trigger: 'blur',
+const formSchema = computed<VbenFormSchema[]>(() => [
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.user.nickname'),
+      ]),
     },
-  ],
-  password: [
-    {
-      message: t($t('zen.service.tenant.password')),
-      required: true,
-      trigger: 'blur',
+    fieldName: 'nickname',
+    label: $t('zen.service.user.nickname'),
+    rules: 'required',
+  },
+  {
+    component: 'TreeSelect',
+    componentProps: {
+      checkStrictly: true,
+      data: buildMenuTree(props.deptList),
+      nodeKey: 'id',
+      placeholder: $t('zen.common.pleaseSelect', [
+        $t('zen.service.user.deptName'),
+      ]),
+      props: {
+        label: 'name',
+        children: 'children',
+      },
     },
-  ],
-  username: [
-    {
-      message: t($t('zen.service.tenant.username')),
-      required: true,
-      trigger: 'blur',
+    fieldName: 'deptId',
+    label: $t('zen.service.user.deptName'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.user.mobile'),
+      ]),
     },
-  ],
-}));
+    fieldName: 'mobile',
+    label: $t('zen.service.user.mobile'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.user.email')]),
+    },
+    fieldName: 'email',
+    label: $t('zen.service.user.email'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.user.username'),
+      ]),
+    },
+    fieldName: 'username',
+    label: $t('zen.service.user.username'),
+    rules: 'required',
+  },
+  ...(props.edit
+    ? []
+    : [
+        {
+          component: 'Input',
+          componentProps: {
+            placeholder: $t('zen.common.pleaseInput', [
+              $t('zen.service.user.password'),
+            ]),
+            showPassword: true,
+            type: 'password',
+          },
+          fieldName: 'password',
+          label: $t('zen.service.user.password'),
+          rules: 'required',
+        },
+      ]),
+  {
+    component: 'Select',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.SEX).map((item) => ({
+        label: item.label,
+        value: +item.value,
+      })),
+      placeholder: $t('zen.common.pleaseSelect', [$t('zen.service.user.sex')]),
+    },
+    fieldName: 'sex',
+    label: $t('zen.service.user.sex'),
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: props.postList.map((item) => ({
+        label: item.name,
+        value: item.id,
+      })),
+      placeholder: $t('zen.common.pleaseSelect', [$t('zen.service.user.post')]),
+    },
+    fieldName: 'postIds',
+    label: $t('zen.service.user.post'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      autosize: { maxRows: 5, minRows: 3 },
+      placeholder: $t('zen.common.pleaseInput', [$t('zen.common.remark')]),
+      resize: 'none',
+      type: 'textarea',
+    },
+    fieldName: 'remark',
+    formItemClass: 'lg:col-span-2',
+    label: $t('zen.common.remark'),
+    labelClass: 'self-start h-8',
+  },
+]);
 
-function t(prefix: string) {
-  return `${prefix}${$t('zen.common.joinNotEmypt')}`;
-}
+const [Form, formApi] = useVbenForm(
+  reactive({
+    commonConfig: {
+      componentProps: {
+        clearable: true,
+      },
+      labelClass: 'mr-4',
+      labelWidth: 80,
+    },
+    schema: formSchema,
+    showDefaultActions: false,
+    wrapperClass: 'grid-cols-1 lg:grid-cols-2 gap-x-4',
+  }),
+);
 
-function getFormInstance() {
-  return formRef.value;
-}
+defineExpose({
+  formApi,
+});
 </script>
 
 <template>
-  <ElForm ref="formRef" :label-width="80" :model="state" :rules>
-    <ElRow :gutter="20">
-      <ElCol :lg="12" :xs="24">
-        <ElFormItem
-          :label="$t('zen.service.user.nickname')"
-          prop="nickname"
-          required
-        >
-          <ElInput
-            v-model="state.nickname"
-            :placeholder="$t('zen.common.pleaseInput')"
-            clearable
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :lg="12" :xs="24">
-        <ElFormItem :label="$t('zen.service.user.deptName')" prop="deptId">
-          <ElTreeSelect
-            v-model="state.deptId"
-            :current-node-key="state.deptId"
-            :data="deptTree"
-            :expand-on-click-node="false"
-            :props="treeMapConf"
-            check-strictly
-            clearable
-            node-key="id"
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :lg="12" :xs="24">
-        <ElFormItem :label="$t('zen.service.user.mobile')" prop="mobile">
-          <ElInput
-            v-model="state.mobile"
-            :placeholder="$t('zen.common.pleaseInput')"
-            clearable
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :lg="12" :xs="24">
-        <ElFormItem :label="$t('zen.service.user.email')" prop="email">
-          <ElInput
-            v-model="state.email"
-            :placeholder="$t('zen.common.pleaseInput')"
-            clearable
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :lg="12" :xs="24">
-        <ElFormItem
-          :label="$t('zen.service.user.username')"
-          prop="username"
-          required
-        >
-          <ElInput
-            v-model="state.username"
-            :placeholder="$t('zen.common.pleaseInput')"
-            clearable
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol v-if="!edit" :lg="12" :xs="24">
-        <ElFormItem
-          :label="$t('zen.service.user.password')"
-          prop="password"
-          required
-        >
-          <ElInput
-            v-model="state.password"
-            :placeholder="$t('zen.common.pleaseInput')"
-            show-password
-            type="password"
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :lg="12" :xs="24">
-        <ElFormItem :label="$t('zen.service.user.sex')" prop="sex">
-          <ElSelect v-model="state.sex" clearable>
-            <ElOption
-              v-for="item in sexList"
-              :key="item.value"
-              :label="item.label"
-              :value="+item.value"
-            />
-          </ElSelect>
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :lg="12" :xs="24">
-        <ElFormItem :label="$t('zen.service.user.post')" prop="postIds">
-          <ElSelect v-model="state.postIds" clearable multiple>
-            <ElOption
-              v-for="item in postList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </ElSelect>
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :xs="24">
-        <ElFormItem :label="$t('zen.common.remark')">
-          <ElInput
-            v-model="state.remark"
-            :autosize="{ minRows: 2, maxRows: 5 }"
-            :placeholder="$t('zen.common.pleaseInput')"
-            resize="none"
-            type="textarea"
-          />
-        </ElFormItem>
-      </ElCol>
-    </ElRow>
-  </ElForm>
+  <Form />
 </template>

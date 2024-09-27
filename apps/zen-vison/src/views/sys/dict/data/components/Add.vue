@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useVbenModal } from '@vben/common-ui';
 
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep, omit } from 'lodash-es';
 
 import { addDictDataApi, type DictApi, getDictTypeApi } from '#/api';
 import { useRequest } from '#/hooks';
@@ -15,14 +15,12 @@ interface Emits {
 
 const emit = defineEmits<Emits>();
 
-const defaultState = { status: 0 };
 const requestConf = {
   loadingDelay: 200,
   manual: true,
 };
 
-const optFormRef = ref<InstanceType<typeof OptForm>>();
-const formState = ref<Partial<DictApi.DataAddModel>>(cloneDeep(defaultState));
+const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
 const {
   data: dictType,
@@ -34,32 +32,30 @@ const { loading, runAsync } = useRequest(addDictDataApi, requestConf);
 
 const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
-const formInstance = computed(() => optFormRef.value?.getFormInstance());
-
 async function onOpenChange(isOpen: boolean) {
   if (isOpen) {
     const { typeId } = modal.getData();
     if (typeId) {
-      getType(typeId);
-      formState.value.dictTypeId = typeId;
+      await getType(typeId);
+      setTimeout(() => {
+        optFormRef.value?.formApi.setFieldValue('dictTypeId', typeId);
+      }, 0);
     }
-    return;
   }
-
-  formState.value = cloneDeep(defaultState);
 }
 
-function onConfirm() {
-  formInstance.value?.validate(async (valid) => {
-    if (valid) {
-      const state = cloneDeep(formState.value as DictApi.DataAddModel);
+async function onConfirm() {
+  if (!optFormRef.value) return;
+  const { valid } = await optFormRef.value.formApi.validate();
+  if (!valid) return;
 
-      await runAsync(state);
-      ElMessage.success($t('zen.common.successTip'));
-      modal.close();
-      emit('success');
-    }
-  });
+  const values = await optFormRef.value.formApi.getValues();
+  const state = omit(cloneDeep(values), ['type']);
+
+  await runAsync(state as DictApi.DataAddModel);
+  ElMessage.success($t('zen.common.successTip'));
+  modal.close();
+  emit('success');
 }
 </script>
 
@@ -72,6 +68,6 @@ function onConfirm() {
     class="w-11/12 lg:w-1/3 2xl:w-1/4"
     draggable
   >
-    <OptForm ref="optFormRef" v-model="formState" :type="dictType?.type" />
+    <OptForm ref="optFormRef" :type="dictType?.type" />
   </Modal>
 </template>

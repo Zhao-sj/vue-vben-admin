@@ -20,8 +20,7 @@ const requestConf = {
   manual: true,
 };
 
-const optFormRef = ref<InstanceType<typeof OptForm>>();
-const formState = ref<Partial<NoticeApi.UpdateModel>>({});
+const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
 const { loading: noticeLoading, runAsync: getNotice } = useRequest(
   getNoticeApi,
@@ -32,11 +31,8 @@ const { loading, runAsync } = useRequest(updateNoticeApi, requestConf);
 
 const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
-const formInstance = computed(() => optFormRef.value?.getFormInstance());
-
 async function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
-    formState.value = {};
     return;
   }
 
@@ -44,20 +40,20 @@ async function onOpenChange(isOpen: boolean) {
   if (id) {
     const notice = await getNotice(id);
     const ignoreKeys = ['createTime'];
-    const data = omit(notice, ignoreKeys) as NoticeApi.UpdateModel;
-    formState.value = data;
+    optFormRef.value?.formApi.setValues(omit(notice, ignoreKeys));
   }
 }
 
-function onConfirm() {
-  formInstance.value?.validate(async (valid) => {
-    if (valid) {
-      await runAsync(formState.value as NoticeApi.UpdateModel);
-      ElMessage.success($t('zen.common.successTip'));
-      modal.close();
-      emit('success');
-    }
-  });
+async function onConfirm() {
+  if (!optFormRef.value) return;
+  const { valid } = await optFormRef.value.formApi.validate();
+  if (!valid) return;
+
+  const values = await optFormRef.value.formApi.getValues();
+  await runAsync(values as NoticeApi.UpdateModel);
+  ElMessage.success($t('zen.common.successTip'));
+  modal.close();
+  emit('success');
 }
 </script>
 
@@ -70,6 +66,6 @@ function onConfirm() {
     class="w-11/12 lg:w-1/2 2xl:w-1/3"
     draggable
   >
-    <OptForm ref="optFormRef" v-model="formState" />
+    <OptForm ref="optFormRef" />
   </Modal>
 </template>

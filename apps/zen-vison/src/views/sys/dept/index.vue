@@ -11,7 +11,7 @@ import {
   getUserSimpleListApi,
 } from '#/api';
 import { type ActionItem, TableAction, VxeBasicTable } from '#/components';
-import { DictTypeEnum } from '#/enums';
+import { DictStatus, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -142,17 +142,21 @@ const tableOpts = reactive<VxeGridProps<DeptApi.Dept>>({
 
 function createActions(row: DeptApi.Dept) {
   const actions: ActionItem[] = [
-    {
-      auth: 'system:dept:create',
-      icon: 'ep:plus',
-      onClick: () => {
-        addModal.setData({ parentId: row.id });
-        addModal.open();
-      },
-      tooltip: {
-        content: $t('zen.common.create'),
-      },
-    },
+    ...(row.status === DictStatus.ENABLE
+      ? [
+          {
+            auth: 'system:dept:create',
+            icon: 'ep:plus',
+            onClick: () => {
+              addModal.setData({ parentId: row.id });
+              addModal.open();
+            },
+            tooltip: {
+              content: $t('zen.common.create'),
+            },
+          },
+        ]
+      : []),
     {
       auth: 'system:dept:update',
       icon: 'ep:edit',

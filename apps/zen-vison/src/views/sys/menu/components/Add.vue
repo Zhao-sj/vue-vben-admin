@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import type { FormState } from './typing';
-
 import { useVbenModal } from '@vben/common-ui';
 
-import { cloneDeep, isEqual, omit } from 'lodash-es';
-
 import { addMenuApi, getMenuSimpleListApi, type MenuApi } from '#/api';
-import { defaultMeta, MenuType } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 
@@ -18,19 +13,12 @@ interface Emits {
 
 const emit = defineEmits<Emits>();
 
-const defaultState = {
-  meta: defaultMeta,
-  status: 0,
-  type: MenuType.DIR,
-} as FormState;
-
 const requestConf = {
   loadingDelay: 200,
   manual: true,
 };
 
-const optFormRef = ref<InstanceType<typeof OptForm>>();
-const formState = ref<FormState>(cloneDeep(defaultState));
+const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
 const {
   data: menus,
@@ -42,37 +30,35 @@ const { loading, runAsync } = useRequest(addMenuApi, requestConf);
 
 const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
-const formInstance = computed(() => optFormRef.value?.getFormInstance());
-
 function onOpenChange(isOpen: boolean) {
   if (isOpen) {
     getMenu();
     const { parentId } = modal.getData();
     if (parentId) {
-      formState.value.parentId = parentId;
+      setTimeout(() => {
+        optFormRef.value?.formApi.setFieldValue('parentId', parentId);
+      }, 0);
     }
 
     return;
   }
 
   modal.setData({ parentId: null });
-  formState.value = cloneDeep(defaultState);
 }
 
-function onConfirm() {
-  formInstance.value?.validate(async (valid) => {
-    if (valid) {
-      let state = cloneDeep(formState.value) as MenuApi.AddModel;
-      if (isEqual(state.meta, defaultMeta)) {
-        state = omit(state, 'meta');
-      }
+async function onConfirm() {
+  if (!optFormRef.value) return;
+  const { valid } = await optFormRef.value.formApi.validate();
+  if (!valid) {
+    optFormRef.value?.closeMetaForm();
+    return;
+  }
 
-      await runAsync(state);
-      ElMessage.success($t('zen.common.successTip'));
-      modal.close();
-      emit('success');
-    }
-  });
+  const values = await optFormRef.value.getValues();
+  await runAsync(values as MenuApi.AddModel);
+  ElMessage.success($t('zen.common.successTip'));
+  modal.close();
+  emit('success');
 }
 </script>
 
@@ -85,6 +71,6 @@ function onConfirm() {
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
   >
-    <OptForm ref="optFormRef" v-model="formState" :menus />
+    <OptForm ref="optFormRef" :menus />
   </Modal>
 </template>

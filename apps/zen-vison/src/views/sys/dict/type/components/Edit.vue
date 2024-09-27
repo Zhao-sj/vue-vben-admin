@@ -20,8 +20,7 @@ const requestConf = {
   manual: true,
 };
 
-const optFormRef = ref<InstanceType<typeof OptForm>>();
-const formState = ref<Partial<DictApi.TypeUpdateModel>>({});
+const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
 const { loading: dictLoading, runAsync: getDict } = useRequest(
   getDictTypeApi,
@@ -32,11 +31,8 @@ const { loading, runAsync } = useRequest(updateDictTypeApi, requestConf);
 
 const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
-const formInstance = computed(() => optFormRef.value?.getFormInstance());
-
 async function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
-    formState.value = {};
     return;
   }
 
@@ -44,20 +40,22 @@ async function onOpenChange(isOpen: boolean) {
   if (id) {
     const role = await getDict(id);
     const ignoreKeys = ['createTime'];
-    const data = omit(role, ignoreKeys) as DictApi.TypeUpdateModel;
-    formState.value = data;
+    setTimeout(() => {
+      optFormRef.value?.formApi.setValues(omit(role, ignoreKeys));
+    }, 0);
   }
 }
 
-function onConfirm() {
-  formInstance.value?.validate(async (valid) => {
-    if (valid) {
-      await runAsync(formState.value as DictApi.TypeUpdateModel);
-      ElMessage.success($t('zen.common.successTip'));
-      modal.close();
-      emit('success');
-    }
-  });
+async function onConfirm() {
+  if (!optFormRef.value) return;
+  const { valid } = await optFormRef.value.formApi.validate();
+  if (!valid) return;
+
+  const values = await optFormRef.value.formApi.getValues();
+  await runAsync(values as DictApi.TypeUpdateModel);
+  ElMessage.success($t('zen.common.successTip'));
+  modal.close();
+  emit('success');
 }
 </script>
 
@@ -70,6 +68,6 @@ function onConfirm() {
     class="w-11/12 lg:w-1/3 2xl:w-1/4"
     draggable
   >
-    <OptForm ref="optFormRef" v-model="formState" edit />
+    <OptForm ref="optFormRef" edit />
   </Modal>
 </template>

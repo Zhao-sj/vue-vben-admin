@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { FormInstance, FormRules } from 'element-plus';
+import type { BaseSimple } from '#/api';
 
-import type { BaseSimple, TenantApi } from '#/api';
-
+import { useVbenForm, type VbenFormSchema } from '#/adapter';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -12,231 +11,160 @@ interface Props {
   edit?: boolean;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   packages: () => [],
 });
 
-defineExpose({
-  getFormInstance,
-});
-
-const state = defineModel<Partial<TenantApi.AddModel>>('modelValue', {
-  required: true,
-});
-
 const dictStore = useDictStore();
-const formRef = ref<FormInstance>();
 
-const status = computed(() => dictStore.getDictDataList(DictTypeEnum.STATUS));
+const formSchema = computed<VbenFormSchema[]>(() => [
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.tenant.name'),
+      ]),
+    },
+    fieldName: 'name',
+    label: $t('zen.service.tenant.name'),
+    rules: 'required',
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: props.packages.map((item) => ({
+        label: item.name,
+        value: item.id,
+      })),
+      placeholder: $t('zen.common.pleaseSelect', [
+        $t('zen.service.tenant.package'),
+      ]),
+    },
+    fieldName: 'packageId',
+    label: $t('zen.service.tenant.package'),
+    rules: 'selectRequired',
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.tenant.contact'),
+      ]),
+    },
+    fieldName: 'contactName',
+    label: $t('zen.service.tenant.contact'),
+    rules: 'required',
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.tenant.contactPhone'),
+      ]),
+    },
+    fieldName: 'contactMobile',
+    label: $t('zen.service.tenant.contactPhone'),
+    rules: 'required',
+  },
+  ...(props.edit
+    ? []
+    : [
+        {
+          component: 'Input',
+          componentProps: {
+            placeholder: $t('zen.common.pleaseInput', [
+              $t('zen.service.tenant.username'),
+            ]),
+          },
+          fieldName: 'username',
+          label: $t('zen.service.tenant.username'),
+          rules: 'required',
+        },
+        {
+          component: 'Input',
+          componentProps: {
+            clearable: false,
+            placeholder: $t('zen.common.pleaseInput', [
+              $t('zen.service.tenant.password'),
+            ]),
+            showPassword: true,
+            type: 'password',
+          },
+          fieldName: 'password',
+          label: $t('zen.service.tenant.password'),
+          rules: 'required',
+        },
+      ]),
+  {
+    component: 'InputNumber',
+    componentProps: {
+      class: '!w-full',
+      controlsPosition: 'right',
+      min: 1,
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.tenant.accountLimit'),
+      ]),
+    },
+    fieldName: 'accountCount',
+    label: $t('zen.service.tenant.accountLimit'),
+    rules: 'required',
+  },
+  {
+    component: 'DatePicker',
+    componentProps: {
+      class: '!w-full',
+      placeholder: $t('zen.common.pleaseSelect', [
+        $t('zen.service.tenant.expireTime'),
+      ]),
+      type: 'datetime',
+    },
+    fieldName: 'expireTime',
+    label: $t('zen.service.tenant.expireTime'),
+    rules: 'selectRequired',
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.tenant.website'),
+      ]),
+    },
+    fieldName: 'website',
+    label: $t('zen.service.tenant.website'),
+  },
+  {
+    component: 'RadioGroup',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.STATUS).map((item) => ({
+        ...item,
+        value: +item.value,
+      })),
+      optionType: 'button',
+    },
+    defaultValue: 0,
+    fieldName: 'status',
+    label: $t('zen.service.tenant.status'),
+  },
+]);
 
-const rules = computed<FormRules<TenantApi.AddModel>>(() => ({
-  accountCount: [
-    {
-      message: t($t('zen.service.tenant.accountLimit')),
-      required: true,
-      trigger: 'blur',
+const [Form, formApi] = useVbenForm(
+  reactive({
+    commonConfig: {
+      componentProps: {
+        clearable: true,
+      },
+      labelClass: 'mr-4',
+      labelWidth: 80,
     },
-  ],
-  contactMobile: [
-    {
-      message: t($t('zen.service.tenant.contactPhone')),
-      required: true,
-      trigger: 'blur',
-    },
-  ],
-  contactName: [
-    {
-      message: t($t('zen.service.tenant.contact')),
-      required: true,
-      trigger: 'blur',
-    },
-  ],
-  expireTime: [
-    {
-      message: t($t('zen.service.tenant.expireTime')),
-      required: true,
-      trigger: 'blur',
-    },
-  ],
-  name: [
-    {
-      message: t($t('zen.service.tenant.name')),
-      required: true,
-      trigger: 'blur',
-    },
-  ],
-  packageId: [
-    {
-      message: t($t('zen.service.tenant.package')),
-      required: true,
-      trigger: 'blur',
-    },
-  ],
-  password: [
-    {
-      message: t($t('zen.service.tenant.password')),
-      required: true,
-      trigger: 'blur',
-    },
-  ],
-  username: [
-    {
-      message: t($t('zen.service.tenant.username')),
-      required: true,
-      trigger: 'blur',
-    },
-  ],
-}));
+    schema: formSchema,
+    showDefaultActions: false,
+    wrapperClass: 'grid-cols-1 lg:grid-cols-2 gap-x-4',
+  }),
+);
 
-function t(prefix: string) {
-  return `${prefix}${$t('zen.common.joinNotEmypt')}`;
-}
-
-function getFormInstance() {
-  return formRef.value;
-}
+defineExpose({ formApi });
 </script>
 
 <template>
-  <ElForm ref="formRef" :label-width="80" :model="state" :rules>
-    <ElRow :gutter="20">
-      <ElCol :lg="12" :xs="24">
-        <ElFormItem :label="$t('zen.service.tenant.name')" prop="name" required>
-          <ElInput
-            v-model="state.name"
-            :placeholder="$t('zen.common.pleaseInput')"
-            clearable
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :lg="12" :xs="24">
-        <ElFormItem
-          :label="$t('zen.service.tenant.package')"
-          prop="packageId"
-          required
-        >
-          <ElSelect v-model="state.packageId">
-            <ElOption
-              v-for="item in packages"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </ElSelect>
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :lg="12" :xs="24">
-        <ElFormItem
-          :label="$t('zen.service.tenant.contact')"
-          prop="contactName"
-          required
-        >
-          <ElInput
-            v-model="state.contactName"
-            :placeholder="$t('zen.common.pleaseInput')"
-            clearable
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :lg="12" :xs="24">
-        <ElFormItem
-          :label="$t('zen.service.tenant.contactPhone')"
-          prop="contactMobile"
-          required
-        >
-          <ElInput
-            v-model="state.contactMobile"
-            :placeholder="$t('zen.common.pleaseInput')"
-            clearable
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol v-if="!edit" :lg="12" :xs="24">
-        <ElFormItem
-          :label="$t('zen.service.tenant.username')"
-          prop="username"
-          required
-        >
-          <ElInput
-            v-model="state.username"
-            :placeholder="$t('zen.common.pleaseInput')"
-            clearable
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol v-if="!edit" :lg="12" :xs="24">
-        <ElFormItem
-          :label="$t('zen.service.tenant.password')"
-          prop="password"
-          required
-        >
-          <ElInput
-            v-model="state.password"
-            :placeholder="$t('zen.common.pleaseInput')"
-            show-password
-            type="password"
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :lg="12" :xs="24">
-        <ElFormItem
-          :label="$t('zen.service.tenant.accountLimit')"
-          prop="accountCount"
-          required
-        >
-          <ElInputNumber
-            v-model="state.accountCount"
-            :min="1"
-            :placeholder="$t('zen.common.pleaseInput')"
-            class="!w-full"
-            controls-position="right"
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :lg="12" :xs="24">
-        <ElFormItem
-          :label="$t('zen.service.tenant.expireTime')"
-          prop="expireTime"
-          required
-        >
-          <ElDatePicker
-            v-model="state.expireTime"
-            :placeholder="$t('zen.common.pleaseSelect')"
-            class="!w-full"
-            type="datetime"
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :lg="12" :xs="24">
-        <ElFormItem :label="$t('zen.service.tenant.website')">
-          <ElInput
-            v-model="state.website"
-            :placeholder="$t('zen.common.pleaseInput')"
-            clearable
-          />
-        </ElFormItem>
-      </ElCol>
-
-      <ElCol :lg="12" :xs="24">
-        <ElFormItem :label="$t('zen.service.tenant.status')">
-          <ElRadioGroup v-model="state.status">
-            <ElRadioButton
-              v-for="item in status"
-              :key="item.value"
-              :label="item.label"
-              :value="+item.value"
-            />
-          </ElRadioGroup>
-        </ElFormItem>
-      </ElCol>
-    </ElRow>
-  </ElForm>
+  <Form />
 </template>

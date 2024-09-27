@@ -1,5 +1,3 @@
-import type { RouteMeta } from '@vben/types';
-
 export enum MenuType {
   /** 按钮 */
   BUTTON = 3,
@@ -12,16 +10,3 @@ export enum MenuType {
 }
 
 export const MENU_ROOT = 0;
-
-export const defaultMeta: RouteMeta = {
-  affixTab: false,
-  badgeType: 'normal',
-  badgeVariants: 'success',
-  hideChildrenInMenu: false,
-  hideInBreadcrumb: false,
-  hideInMenu: false,
-  hideInTab: false,
-  keepAlive: false,
-  menuVisibleWithForbidden: false,
-  title: '',
-};

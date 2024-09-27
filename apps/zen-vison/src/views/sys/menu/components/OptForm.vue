@@ -1,54 +1,34 @@
 <script setup lang="ts">
-import type { FormInstance, FormRules } from 'element-plus';
+import { cloneDeep, omit } from 'lodash-es';
 
-import type { FormState } from './typing';
-
-import { useDebounceFn } from '@vueuse/core';
-
-import { buildMenuTree, getMenuUniqueApi, type MenuApi } from '#/api';
+import { useVbenForm, type VbenFormSchema } from '#/adapter';
+import { buildMenuTree, type MenuApi } from '#/api';
 import { DictTypeEnum, MENU_ROOT, MenuType } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 
-import FormItemHelp from './FormItemHelp.vue';
 import MetaForm from './MetaForm.vue';
 
 interface Props {
   menus?: MenuApi.Simple[];
-  edit?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   menus: () => [],
 });
 
-defineExpose({
-  getFormInstance,
-});
-
 const dictStore = useDictStore();
-const formRef = ref<FormInstance>();
 
-const treeMapConf = {
-  label: 'name',
-  children: 'children',
-};
-
-const formState = defineModel<FormState>('modelValue', {
-  required: true,
-});
+const metaFormRef =
+  useTemplateRef<InstanceType<typeof MetaForm>>('metaFormRef');
+const type = ref(MenuType.MENU);
 
 const componentList = [{ value: 'BasicLayout' }];
-
-const menuTypeOpts = computed(() => [
+const menuTypeOpts = [
   { label: $t('zen.service.menu.dir'), value: MenuType.DIR },
   { label: $t('zen.service.menu.menu'), value: MenuType.MENU },
   { label: $t('zen.service.menu.button'), value: MenuType.BUTTON },
-]);
-
-const statusOpts = computed(() =>
-  dictStore.getDictDataList(DictTypeEnum.STATUS),
-);
+];
 
 const menuTree = computed(() => {
   const menuList = props.menus.filter((item) => item.type !== MenuType.BUTTON);
@@ -61,238 +41,220 @@ const menuTree = computed(() => {
   return buildMenuTree(menuList);
 });
 
-const validateUnique = useDebounceFn(async (name: string) => {
-  const isUnique = await getMenuUniqueApi(name);
-  if (!isUnique) {
-    throw new Error(
-      `${$t('zen.service.menu.componentName')}${$t('zen.service.menu.joinExists')}`,
-    );
-  }
-});
-
-const rules = computed<FormRules<MenuApi.AddModel>>(() => ({
-  componentName: [
-    {
-      message: t($t('zen.service.menu.componentName')),
-      required: true,
-      trigger: 'blur',
-    },
-    props.edit
-      ? {}
-      : {
-          asyncValidator: (_, val) => {
-            if (!val) {
-              return Promise.resolve();
-            }
-            return validateUnique(val);
-          },
-          message: `${$t('zen.service.menu.componentName')}${$t('zen.service.menu.joinExists')}`,
-          trigger: ['change', 'blur'],
-        },
-  ],
-  name: [
-    {
-      message: t($t('zen.service.menu.name')),
-      required: true,
-      trigger: 'blur',
-    },
-  ],
-  parentId: [
-    {
-      message: t($t('zen.service.menu.parent')),
-      required: true,
-      trigger: 'blur',
-    },
-  ],
-  path: [
-    {
-      message: t($t('zen.service.menu.path')),
-      required: true,
-      trigger: 'blur',
-    },
-  ],
-  sort: [
-    {
-      message: t($t('zen.service.menu.sort')),
-      required: true,
-      trigger: 'blur',
-    },
-  ],
-}));
-
-function t(prefix: string) {
-  return `${prefix}${$t('zen.common.joinNotEmypt')}`;
-}
-
-function getFormInstance() {
-  return formRef.value;
-}
-
-function handleComponentAuto(qs: string, cb: any) {
+function querySearch(qs: string, cb: any) {
   const result = componentList.filter((item) =>
     item.value.toLowerCase().includes(qs.trim().toLowerCase()),
   );
 
   cb(result);
 }
+
+const formSchema = computed<VbenFormSchema[]>(() => [
+  {
+    component: 'RadioGroup',
+    componentProps: {
+      options: menuTypeOpts,
+      optionType: 'button',
+    },
+    defaultValue: MenuType.MENU,
+    dependencies: {
+      trigger(values) {
+        type.value = values.type;
+      },
+      triggerFields: ['type'],
+    },
+    fieldName: 'type',
+    formItemClass: 'lg:col-span-2',
+    label: $t('zen.service.menu.type'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.menu.name')]),
+    },
+    fieldName: 'name',
+    label: $t('zen.service.menu.name'),
+    rules: 'required',
+  },
+  {
+    component: 'TreeSelect',
+    componentProps: {
+      checkStrictly: true,
+      data: menuTree,
+      expandOnClickNode: false,
+      nodeKey: 'id',
+      placeholder: $t('zen.common.pleaseSelect', [
+        $t('zen.service.menu.parent'),
+      ]),
+      props: {
+        label: 'name',
+        children: 'children',
+      },
+    },
+    fieldName: 'parentId',
+    label: $t('zen.service.menu.parent'),
+    rules: 'selectRequired',
+  },
+  {
+    component: 'InputNumber',
+    componentProps: {
+      class: '!w-full',
+      controlsPosition: 'right',
+      min: 0,
+      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.menu.sort')]),
+    },
+    fieldName: 'sort',
+    label: $t('zen.service.menu.sort'),
+    rules: 'required',
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.menu.icon')]),
+    },
+    dependencies: {
+      if(values) {
+        return values.type !== MenuType.BUTTON;
+      },
+      triggerFields: ['type'],
+    },
+    fieldName: 'icon',
+    help: $t('zen.service.menu.iconTip'),
+    label: $t('zen.service.menu.icon'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.menu.path')]),
+    },
+    dependencies: {
+      if(values) {
+        return values.type !== MenuType.BUTTON;
+      },
+      triggerFields: ['type'],
+    },
+    fieldName: 'path',
+    help: $t('zen.service.menu.pathTip'),
+    label: $t('zen.service.menu.path'),
+    rules: 'required',
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.menu.componentName'),
+      ]),
+    },
+    dependencies: {
+      if(values) {
+        return values.type !== MenuType.BUTTON;
+      },
+      triggerFields: ['type'],
+    },
+    fieldName: 'componentName',
+    help: $t('zen.service.menu.componentNameTip'),
+    label: $t('zen.service.menu.componentName'),
+    rules: 'required', // TODO: 异步校验唯一性验证
+  },
+  {
+    component: 'Autocomplete',
+    componentProps: {
+      fetchSuggestions: querySearch,
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.menu.component'),
+      ]),
+      teleported: false,
+    },
+    dependencies: {
+      if(values) {
+        return values.type !== MenuType.BUTTON;
+      },
+      triggerFields: ['type'],
+    },
+    fieldName: 'component',
+    help: $t('zen.service.menu.componentTip'),
+    label: $t('zen.service.menu.component'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.menu.permission'),
+      ]),
+    },
+    dependencies: {
+      if(values) {
+        return values.type !== MenuType.DIR;
+      },
+      triggerFields: ['type'],
+    },
+    fieldName: 'permission',
+    label: $t('zen.service.menu.permission'),
+  },
+  {
+    component: 'RadioGroup',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.STATUS).map((item) => ({
+        ...item,
+        value: +item.value,
+      })),
+      optionType: 'button',
+    },
+    defaultValue: 0,
+    fieldName: 'status',
+    label: $t('zen.service.menu.status'),
+  },
+]);
+
+const [Form, formApi] = useVbenForm(
+  reactive({
+    commonConfig: {
+      componentProps: {
+        clearable: true,
+      },
+      labelClass: 'mr-4',
+    },
+    schema: formSchema,
+    showDefaultActions: false,
+    wrapperClass: 'grid-cols-1 lg:grid-cols-2 gap-x-4',
+  }),
+);
+
+async function getValues() {
+  const values = await formApi.getValues();
+  const metaValues = await metaFormRef.value!.formApi.getValues();
+
+  const formState = omit(cloneDeep(values), ['icon']);
+  const meta = cloneDeep(metaValues);
+  meta.icon = values.icon;
+  formState.meta = meta;
+  return formState;
+}
+
+function setValues(values: MenuApi.AddModel) {
+  const formState = omit(values, ['meta']) as Record<string, any>;
+  if (values.meta) {
+    formState.icon = values.meta.icon;
+    metaFormRef.value?.formApi.setValues(values.meta);
+  }
+  formApi.setValues(formState);
+}
+
+function closeMetaForm() {
+  metaFormRef.value?.close();
+}
+
+defineExpose({
+  closeMetaForm,
+  formApi,
+  getValues,
+  setValues,
+});
 </script>
 
 <template>
   <div>
-    <ElForm ref="formRef" :label-width="100" :model="formState" :rules>
-      <ElRow :gutter="20">
-        <ElCol :xs="24">
-          <ElFormItem :label="$t('zen.service.menu.type')">
-            <ElRadioGroup v-model="formState.type">
-              <ElRadioButton
-                v-for="item in menuTypeOpts"
-                :key="item.value"
-                :label="item.label"
-                :value="+item.value"
-              />
-            </ElRadioGroup>
-          </ElFormItem>
-        </ElCol>
-
-        <ElCol :lg="12" :xs="24">
-          <ElFormItem :label="$t('zen.service.menu.name')" prop="name" required>
-            <ElInput
-              v-model="formState.name"
-              :placeholder="$t('zen.common.pleaseInput')"
-              clearable
-            />
-          </ElFormItem>
-        </ElCol>
-
-        <ElCol :lg="12" :xs="24">
-          <ElFormItem
-            :label="$t('zen.service.menu.parent')"
-            prop="parentId"
-            required
-          >
-            <ElTreeSelect
-              v-model="formState.parentId"
-              :current-node-key="formState.parentId"
-              :data="menuTree"
-              :expand-on-click-node="false"
-              :props="treeMapConf"
-              check-strictly
-              clearable
-              node-key="id"
-            />
-          </ElFormItem>
-        </ElCol>
-
-        <ElCol :lg="12" :xs="24">
-          <ElFormItem :label="$t('zen.service.menu.sort')" prop="sort" required>
-            <ElInputNumber
-              v-model="formState.sort"
-              :min="0"
-              :placeholder="$t('zen.common.pleaseInput')"
-              class="!w-full"
-              controls-position="right"
-            />
-          </ElFormItem>
-        </ElCol>
-
-        <ElCol v-if="formState.type !== MenuType.BUTTON" :lg="12" :xs="24">
-          <FormItemHelp
-            :content="$t('zen.service.menu.iconTip')"
-            :label="$t('zen.service.menu.icon')"
-          >
-            <ElInput
-              v-model="formState.meta.icon"
-              :placeholder="$t('zen.common.pleaseInput')"
-              clearable
-            />
-          </FormItemHelp>
-        </ElCol>
-
-        <ElCol
-          v-if="formState.type !== MenuType.BUTTON && !formState.meta.link"
-          :lg="12"
-          :xs="24"
-        >
-          <FormItemHelp
-            :content="$t('zen.service.menu.pathTip')"
-            :label="$t('zen.service.menu.path')"
-            prop="path"
-            required
-          >
-            <ElInput
-              v-model="formState.path"
-              :placeholder="$t('zen.common.pleaseInput')"
-              clearable
-            />
-          </FormItemHelp>
-        </ElCol>
-
-        <ElCol v-if="formState.type !== MenuType.BUTTON" :lg="12" :xs="24">
-          <FormItemHelp
-            :content="$t('zen.service.menu.componentNameTip')"
-            :label="$t('zen.service.menu.componentName')"
-            class="!mb-0"
-            prop="componentName"
-            required
-          >
-            <ElInput
-              v-model="formState.componentName"
-              :placeholder="$t('zen.common.pleaseInput')"
-              clearable
-            />
-          </FormItemHelp>
-        </ElCol>
-
-        <ElCol v-if="formState.type !== MenuType.BUTTON" :lg="12" :xs="24">
-          <FormItemHelp
-            :content="$t('zen.service.menu.componentTip')"
-            :label="$t('zen.service.menu.component')"
-          >
-            <ElAutocomplete
-              v-model="formState.component"
-              :fetch-suggestions="handleComponentAuto"
-              :placeholder="$t('zen.common.pleaseInput')"
-              :teleported="false"
-              :trigger-on-focus="false"
-              clearable
-            />
-          </FormItemHelp>
-        </ElCol>
-
-        <ElCol v-if="formState.type !== MenuType.DIR" :lg="12" :xs="24">
-          <FormItemHelp
-            :content="$t('zen.service.menu.permissionTip')"
-            :label="$t('zen.service.menu.permission')"
-          >
-            <ElInput
-              v-model="formState.permission"
-              :placeholder="$t('zen.common.pleaseInput')"
-              clearable
-            />
-          </FormItemHelp>
-        </ElCol>
-
-        <ElCol :lg="12" :xs="24">
-          <ElFormItem :label="$t('zen.service.menu.status')" class="!mb-0">
-            <ElRadioGroup v-model="formState.status">
-              <ElRadioButton
-                v-for="item in statusOpts"
-                :key="item.value"
-                :label="item.label"
-                :value="+item.value"
-              />
-            </ElRadioGroup>
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
-    </ElForm>
-
-    <ElCollapseTransition>
-      <MetaForm
-        v-show="formState.type !== MenuType.BUTTON"
-        v-model="formState.meta"
-        :type="formState.type"
-      />
-    </ElCollapseTransition>
+    <Form />
+    <MetaForm v-show="type !== MenuType.BUTTON" ref="metaFormRef" :type />
   </div>
 </template>

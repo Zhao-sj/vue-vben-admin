@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useVbenModal } from '@vben/common-ui';
 
+import { useVbenForm, type VbenFormSchema } from '#/adapter';
 import {
   assignUserRoleApi,
   getRoleSimpleListApi,
@@ -20,8 +21,6 @@ const requestConf = {
   loadingDelay: 200,
   manual: true,
 };
-
-const formState = ref<Partial<FormState>>({});
 
 const {
   data: roleList,
@@ -43,9 +42,55 @@ const { loading, runAsync } = useRequest(assignUserRoleApi, requestConf);
 
 const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
+const formSchema = computed<VbenFormSchema[]>(() => [
+  {
+    component: 'Input',
+    componentProps: {
+      disabled: true,
+    },
+    fieldName: 'username',
+    label: $t('zen.service.user.username'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      disabled: true,
+    },
+    fieldName: 'nickname',
+    label: $t('zen.service.user.nickname'),
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      clearable: true,
+      multiple: true,
+      options: roleList.value?.map((item) => ({
+        label: item.name,
+        value: item.id,
+      })),
+      placeholder: $t('zen.common.pleaseSelect', [
+        $t('zen.service.user.userRole'),
+      ]),
+    },
+    fieldName: 'roleIds',
+    label: $t('zen.service.user.userRole'),
+  },
+]);
+
+const [Form, formApi] = useVbenForm(
+  reactive({
+    commonConfig: {
+      labelClass: 'mr-4',
+      labelWidth: 65,
+    },
+    schema: formSchema,
+    showDefaultActions: false,
+    wrapperClass: 'grid-cols-1',
+  }),
+);
+
 async function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
-    formState.value = {};
     return;
   }
 
@@ -64,12 +109,12 @@ async function onOpenChange(isOpen: boolean) {
       username: user.username,
     };
 
-    formState.value = state;
+    formApi.setValues(state);
   }
 }
 
 async function onConfirm() {
-  const { id, roleIds } = formState.value;
+  const { id, roleIds } = await formApi.getValues();
   if (!id || !roleIds) {
     return;
   }
@@ -89,33 +134,6 @@ async function onConfirm() {
     class="w-11/12 md:w-1/3 2xl:w-1/5"
     draggable
   >
-    <ElForm :label-width="80" :model="formState">
-      <ElRow :gutter="20">
-        <ElCol :xs="24">
-          <ElFormItem :label="$t('zen.service.user.username')">
-            <ElInput :model-value="formState.username" disabled />
-          </ElFormItem>
-        </ElCol>
-
-        <ElCol :xs="24">
-          <ElFormItem :label="$t('zen.service.user.nickname')">
-            <ElInput :model-value="formState.nickname" disabled />
-          </ElFormItem>
-        </ElCol>
-
-        <ElCol :xs="24">
-          <ElFormItem :label="$t('zen.service.user.userRole')">
-            <ElSelect v-model="formState.roleIds" clearable multiple>
-              <ElOption
-                v-for="item in roleList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </ElSelect>
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
-    </ElForm>
+    <Form />
   </Modal>
 </template>

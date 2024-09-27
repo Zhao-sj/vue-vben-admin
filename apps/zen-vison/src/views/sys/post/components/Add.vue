@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { useVbenModal } from '@vben/common-ui';
 
-import { cloneDeep } from 'lodash-es';
-
 import { addPostApi, type PostApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
@@ -15,40 +13,27 @@ interface Emits {
 
 const emit = defineEmits<Emits>();
 
-const defaultState = { status: 0 };
 const requestConf = {
   loadingDelay: 200,
   manual: true,
 };
 
-const optFormRef = ref<InstanceType<typeof OptForm>>();
-const formState = ref<Partial<PostApi.AddModel>>(cloneDeep(defaultState));
+const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
 const { loading, runAsync } = useRequest(addPostApi, requestConf);
 
-const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
+const [Modal, modal] = useVbenModal({ onConfirm });
 
-const formInstance = computed(() => optFormRef.value?.getFormInstance());
+async function onConfirm() {
+  if (!optFormRef.value) return;
+  const { valid } = await optFormRef.value.formApi.validate();
+  if (!valid) return;
 
-async function onOpenChange(isOpen: boolean) {
-  if (isOpen) {
-    return;
-  }
-
-  formState.value = cloneDeep(defaultState);
-}
-
-function onConfirm() {
-  formInstance.value?.validate(async (valid) => {
-    if (valid) {
-      const state = cloneDeep(formState.value as PostApi.AddModel);
-
-      await runAsync(state);
-      ElMessage.success($t('zen.common.successTip'));
-      modal.close();
-      emit('success');
-    }
-  });
+  const values = await optFormRef.value.formApi.getValues();
+  await runAsync(values as PostApi.AddModel);
+  ElMessage.success($t('zen.common.successTip'));
+  modal.close();
+  emit('success');
 }
 </script>
 
@@ -60,6 +45,6 @@ function onConfirm() {
     class="w-11/12 lg:w-1/3 2xl:w-1/4"
     draggable
   >
-    <OptForm ref="optFormRef" v-model="formState" />
+    <OptForm ref="optFormRef" />
   </Modal>
 </template>

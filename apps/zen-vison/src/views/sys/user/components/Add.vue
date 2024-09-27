@@ -21,14 +21,12 @@ interface Emits {
 
 const emit = defineEmits<Emits>();
 
-const defaultState = {};
 const requestConf = {
   loadingDelay: 200,
   manual: true,
 };
 
-const optFormRef = ref<InstanceType<typeof OptForm>>();
-const formState = ref<Partial<UserApi.AddModel>>(cloneDeep(defaultState));
+const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
 const {
   data: deptList,
@@ -46,29 +44,25 @@ const { loading, runAsync } = useRequest(addUserApi, requestConf);
 
 const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
-const formInstance = computed(() => optFormRef.value?.getFormInstance());
-
 async function onOpenChange(isOpen: boolean) {
   if (isOpen) {
     await Promise.all([getDept(), getPost()]);
-    return;
   }
-
-  formState.value = cloneDeep(defaultState);
 }
 
-function onConfirm() {
-  formInstance.value?.validate(async (valid) => {
-    if (valid) {
-      const state = cloneDeep(formState.value as UserApi.AddModel);
-      state.password = encryptBySha256(state.password);
+async function onConfirm() {
+  if (!optFormRef.value) return;
+  const { valid } = await optFormRef.value.formApi.validate();
+  if (!valid) return;
 
-      await runAsync(state);
-      ElMessage.success($t('zen.common.successTip'));
-      modal.close();
-      emit('success');
-    }
-  });
+  const values = await optFormRef.value.formApi.getValues();
+  const state = cloneDeep(values as UserApi.AddModel);
+  state.password = encryptBySha256(state.password);
+
+  await runAsync(state);
+  ElMessage.success($t('zen.common.successTip'));
+  modal.close();
+  emit('success');
 }
 </script>
 
@@ -81,6 +75,6 @@ function onConfirm() {
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
   >
-    <OptForm ref="optFormRef" v-model="formState" :dept-list :post-list />
+    <OptForm ref="optFormRef" :dept-list :post-list />
   </Modal>
 </template>

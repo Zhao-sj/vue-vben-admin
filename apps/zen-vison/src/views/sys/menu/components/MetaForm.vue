@@ -1,47 +1,259 @@
 <script setup lang="ts">
-import type { RouteMeta } from '@vben/types';
-
 import { Icon } from '@vben/icons';
 
-import { ElRadioButton, ElRadioGroup } from 'element-plus';
-
+import { useVbenForm, type VbenFormSchema } from '#/adapter';
 import { MenuType } from '#/enums';
 import { $t } from '#/locales';
 
-import FormItemHelp from './FormItemHelp.vue';
+import BadgeVariants from './BadgeVariants.vue';
 
 interface Props {
   type?: number;
 }
 
-defineProps<Props>();
-
-const formState = defineModel<RouteMeta>('modelValue', {
-  required: true,
-});
+const props = defineProps<Props>();
 
 const show = ref(false);
 
-const chooseOpts = computed(() => [
+const chooseOpts = [
   { label: $t('zen.common.no'), value: false },
   { label: $t('zen.common.yes'), value: true },
-]);
+];
 
-const badgeTypeOpts = computed(() => [
+const badgeTypeOpts = [
   { label: $t('zen.service.menu.badgeDot'), value: 'dot' },
   { label: $t('zen.service.menu.badgeNormal'), value: 'normal' },
+];
+
+const formSchema = computed<VbenFormSchema[]>(() => [
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.menu.metaTitle'),
+      ]),
+    },
+    defaultValue: '',
+    fieldName: 'title',
+    formItemClass: 'lg:col-span-2',
+    help: $t('zen.service.menu.titleTip'),
+    label: $t('zen.service.menu.metaTitle'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.menu.activePath'),
+      ]),
+    },
+    fieldName: 'activePath',
+    help: $t('zen.service.menu.activePathTip'),
+    label: $t('zen.service.menu.activePath'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.menu.activeIcon'),
+      ]),
+    },
+    fieldName: 'activeIcon',
+    help: $t('zen.service.menu.iconTip'),
+    label: $t('zen.service.menu.activeIcon'),
+  },
+  ...(props.type === MenuType.MENU
+    ? [
+        {
+          component: 'RadioGroup',
+          componentProps: {
+            options: chooseOpts,
+            optionType: 'button',
+          },
+          defaultValue: false,
+          fieldName: 'keepAlive',
+          help: $t('zen.service.menu.keepAliveTip'),
+          label: $t('zen.service.menu.keepAlive'),
+        },
+      ]
+    : []),
+  {
+    component: 'RadioGroup',
+    componentProps: {
+      options: chooseOpts,
+      optionType: 'button',
+    },
+    defaultValue: false,
+    fieldName: 'hideInMenu',
+    help: $t('zen.service.menu.hideInMenuTip'),
+    label: $t('zen.service.menu.hideInMenu'),
+  },
+  {
+    component: 'RadioGroup',
+    componentProps: {
+      options: chooseOpts,
+      optionType: 'button',
+    },
+    defaultValue: false,
+    fieldName: 'hideInTab',
+    help: $t('zen.service.menu.hideInTabTip'),
+    label: $t('zen.service.menu.hideInTab'),
+  },
+  {
+    component: 'RadioGroup',
+    componentProps: {
+      options: chooseOpts,
+      optionType: 'button',
+    },
+    defaultValue: false,
+    fieldName: 'hideInBreadcrumb',
+    help: $t('zen.service.menu.hideInBreadcrumbTip'),
+    label: $t('zen.service.menu.hideInBreadcrumb'),
+  },
+  {
+    component: 'RadioGroup',
+    componentProps: {
+      options: chooseOpts,
+      optionType: 'button',
+    },
+    defaultValue: false,
+    fieldName: 'hideChildrenInMenu',
+    help: $t('zen.service.menu.hideChildrenInMenuTip'),
+    label: $t('zen.service.menu.hideChildrenInMenu'),
+  },
+  {
+    component: 'RadioGroup',
+    componentProps: {
+      options: badgeTypeOpts,
+      optionType: 'button',
+    },
+    defaultValue: 'normal',
+    fieldName: 'badgeType',
+    help: $t('zen.service.menu.badgeTypeTip'),
+    label: $t('zen.service.menu.badgeType'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.menu.badge')]),
+    },
+    dependencies: {
+      if(values) {
+        return values.badgeType === 'normal';
+      },
+      triggerFields: ['badgeType'],
+    },
+    fieldName: 'badge',
+    help: $t('zen.service.menu.badgeTip'),
+    label: $t('zen.service.menu.badge'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.menu.badgeVariants'),
+      ]),
+    },
+    defaultValue: 'success',
+    fieldName: 'badgeVariants',
+    help: $t('zen.service.menu.badgeVariantsTip'),
+    label: $t('zen.service.menu.badgeVariants'),
+  },
+  {
+    component: 'RadioGroup',
+    componentProps: {
+      options: chooseOpts,
+      optionType: 'button',
+    },
+    defaultValue: false,
+    fieldName: 'affixTab',
+    help: $t('zen.service.menu.affixTabTip'),
+    label: $t('zen.service.menu.affixTab'),
+  },
+  {
+    component: 'InputNumber',
+    componentProps: {
+      class: '!w-full',
+      controlsPosition: 'right',
+      min: 0,
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.menu.affixTabOrder'),
+      ]),
+    },
+    fieldName: 'affixTabOrder',
+    help: $t('zen.service.menu.affixTabOrderTip'),
+    label: $t('zen.service.menu.affixTabOrder'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [
+        $t('zen.service.menu.iframeSrc'),
+      ]),
+    },
+    dependencies: {
+      if(values) {
+        return !values.link;
+      },
+      triggerFields: ['link'],
+    },
+    fieldName: 'iframeSrc',
+    formItemClass: 'lg:col-span-2',
+    help: $t('zen.service.menu.iframeSrcTip'),
+    label: $t('zen.service.menu.iframeSrc'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.menu.link')]),
+    },
+    dependencies: {
+      if(values) {
+        return !values.iframeSrc;
+      },
+      triggerFields: ['iframeSrc'],
+    },
+    fieldName: 'link',
+    formItemClass: 'lg:col-span-2',
+    help: $t('zen.service.menu.linkTip'),
+    label: $t('zen.service.menu.link'),
+  },
+  ...(props.type === MenuType.MENU
+    ? [
+        {
+          component: 'RadioGroup',
+          componentProps: {
+            options: chooseOpts,
+            optionType: 'button',
+          },
+          defaultValue: false,
+          fieldName: 'menuVisibleWithForbidden',
+          help: $t('zen.service.menu.menuVisibleWithForbiddenTip'),
+          label: $t('zen.service.menu.menuVisibleWithForbidden'),
+        },
+      ]
+    : []),
 ]);
 
-const Choose = defineComponent({
-  setup(props, { attrs }) {
-    return () =>
-      h(ElRadioGroup, { ...props, ...attrs }, () =>
-        chooseOpts.value.map((item) =>
-          h(ElRadioButton, { label: item.label, value: item.value }),
-        ),
-      );
-  },
-});
+const [Form, formApi] = useVbenForm(
+  reactive({
+    commonConfig: {
+      componentProps: {
+        clearable: true,
+      },
+      formItemClass: 'pb-4',
+      labelClass: 'mr-4',
+    },
+    schema: formSchema,
+    showDefaultActions: false,
+    wrapperClass: 'grid-cols-1 lg:grid-cols-2 gap-x-4',
+  }),
+);
+
+function close() {
+  show.value = false;
+}
+
+defineExpose({ close, formApi });
 </script>
 
 <template>
@@ -54,198 +266,11 @@ const Choose = defineComponent({
     </ElDivider>
 
     <ElCollapseTransition>
-      <ElForm v-if="show" :label-width="100" :model="formState">
-        <ElRow :gutter="20">
-          <ElCol :xs="24">
-            <FormItemHelp
-              :content="$t('zen.service.menu.titleTip')"
-              :label="$t('zen.service.menu.metaTitle')"
-            >
-              <ElInput
-                v-model="formState.title"
-                :placeholder="$t('zen.common.pleaseInput')"
-                clearable
-              />
-            </FormItemHelp>
-          </ElCol>
-
-          <ElCol :lg="12" :xs="24">
-            <FormItemHelp
-              :content="$t('zen.service.menu.activePathTip')"
-              :label="$t('zen.service.menu.activePath')"
-            >
-              <ElInput
-                v-model="formState.activePath"
-                :placeholder="$t('zen.common.pleaseInput')"
-                clearable
-              />
-            </FormItemHelp>
-          </ElCol>
-
-          <ElCol :lg="12" :xs="24">
-            <FormItemHelp
-              :content="$t('zen.service.menu.iconTip')"
-              :label="$t('zen.service.menu.activeIcon')"
-            >
-              <ElInput
-                v-model="formState.activeIcon"
-                :placeholder="$t('zen.common.pleaseInput')"
-                clearable
-              />
-            </FormItemHelp>
-          </ElCol>
-
-          <ElCol v-if="type === MenuType.MENU" :lg="12" :xs="24">
-            <FormItemHelp
-              :content="$t('zen.service.menu.keepAliveTip')"
-              :label="$t('zen.service.menu.keepAlive')"
-            >
-              <Choose v-model="formState.keepAlive" />
-            </FormItemHelp>
-          </ElCol>
-
-          <ElCol :lg="12" :xs="24">
-            <FormItemHelp
-              :content="$t('zen.service.menu.hideInMenuTip')"
-              :label="$t('zen.service.menu.hideInMenu')"
-            >
-              <Choose v-model="formState.hideInMenu" />
-            </FormItemHelp>
-          </ElCol>
-
-          <ElCol :lg="12" :xs="24">
-            <FormItemHelp
-              :content="$t('zen.service.menu.hideInTabTip')"
-              :label="$t('zen.service.menu.hideInTab')"
-            >
-              <Choose v-model="formState.hideInTab" />
-            </FormItemHelp>
-          </ElCol>
-
-          <ElCol :lg="12" :xs="24">
-            <FormItemHelp
-              :content="$t('zen.service.menu.hideInBreadcrumbTip')"
-              :label="$t('zen.service.menu.hideInBreadcrumb')"
-            >
-              <Choose v-model="formState.hideInBreadcrumb" />
-            </FormItemHelp>
-          </ElCol>
-
-          <ElCol :lg="12" :xs="24">
-            <FormItemHelp
-              :content="$t('zen.service.menu.hideChildrenInMenuTip')"
-              :label="$t('zen.service.menu.hideChildrenInMenu')"
-            >
-              <Choose v-model="formState.hideChildrenInMenu" />
-            </FormItemHelp>
-          </ElCol>
-
-          <ElCol :lg="12" :xs="24">
-            <FormItemHelp
-              :content="$t('zen.service.menu.badgeTypeTip')"
-              :label="$t('zen.service.menu.badgeType')"
-            >
-              <ElRadioGroup v-model="formState.badgeType">
-                <ElRadioButton
-                  v-for="item in badgeTypeOpts"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </ElRadioGroup>
-            </FormItemHelp>
-          </ElCol>
-
-          <ElCol v-if="formState.badgeType === 'normal'" :lg="12" :xs="24">
-            <FormItemHelp
-              :content="$t('zen.service.menu.badgeTip')"
-              :label="$t('zen.service.menu.badge')"
-            >
-              <ElInput
-                v-model="formState.badge"
-                :placeholder="$t('zen.common.pleaseInput')"
-                clearable
-              />
-            </FormItemHelp>
-          </ElCol>
-
-          <ElCol :lg="12" :xs="24">
-            <FormItemHelp
-              :content="$t('zen.service.menu.badgeVariantsTip')"
-              :label="$t('zen.service.menu.badgeVariants')"
-            >
-              <div class="flex items-center gap-1">
-                <ElInput
-                  v-model="formState.badgeVariants"
-                  :placeholder="$t('zen.common.pleaseInput')"
-                  clearable
-                />
-
-                <ElColorPicker v-model="formState.badgeVariants" />
-              </div>
-            </FormItemHelp>
-          </ElCol>
-
-          <ElCol :lg="12" :xs="24">
-            <FormItemHelp
-              :content="$t('zen.service.menu.affixTabTip')"
-              :label="$t('zen.service.menu.affixTab')"
-            >
-              <Choose v-model="formState.affixTab" />
-            </FormItemHelp>
-          </ElCol>
-
-          <ElCol :lg="12" :xs="24">
-            <FormItemHelp
-              :content="$t('zen.service.menu.affixTabOrderTip')"
-              :label="$t('zen.service.menu.affixTabOrder')"
-            >
-              <ElInputNumber
-                v-model="formState.affixTabOrder"
-                :min="0"
-                :placeholder="$t('zen.common.pleaseInput')"
-                class="!w-full"
-                controls-position="right"
-              />
-            </FormItemHelp>
-          </ElCol>
-
-          <ElCol v-if="!formState.link" :xs="24">
-            <FormItemHelp
-              :content="$t('zen.service.menu.iframeSrcTip')"
-              :label="$t('zen.service.menu.iframeSrc')"
-            >
-              <ElInput
-                v-model="formState.iframeSrc"
-                :placeholder="$t('zen.common.pleaseInput')"
-                clearable
-              />
-            </FormItemHelp>
-          </ElCol>
-
-          <ElCol v-if="!formState.iframeSrc" :xs="24">
-            <FormItemHelp
-              :content="$t('zen.service.menu.linkTip')"
-              :label="$t('zen.service.menu.link')"
-            >
-              <ElInput
-                v-model="formState.link"
-                :placeholder="$t('zen.common.pleaseInput')"
-                clearable
-              />
-            </FormItemHelp>
-          </ElCol>
-
-          <ElCol v-if="type === MenuType.MENU" :lg="12" :xs="24">
-            <FormItemHelp
-              :content="$t('zen.service.menu.menuVisibleWithForbiddenTip')"
-              :label="$t('zen.service.menu.menuVisibleWithForbidden')"
-            >
-              <Choose v-model="formState.menuVisibleWithForbidden" />
-            </FormItemHelp>
-          </ElCol>
-        </ElRow>
-      </ElForm>
+      <Form v-show="show">
+        <template #badgeVariants="slotProps">
+          <BadgeVariants v-bind="slotProps" />
+        </template>
+      </Form>
     </ElCollapseTransition>
   </div>
 </template>
