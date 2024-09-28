@@ -9,6 +9,11 @@
       "qrcodeLogin": "二维码登录",
       "forgetPassword": "忘记密码"
     },
+    "login": {
+      "tenant": "租户",
+      "username": "账号",
+      "password": "密码"
+    },
     "request": {
       "requestError": "请求出错，请稍后重试",
       "requestExpire": "身份已过期，请重新登录"

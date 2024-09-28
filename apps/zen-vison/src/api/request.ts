@@ -27,7 +27,6 @@ function createRequestClient(baseURL: string) {
 
       config.headers.Authorization = accessStore.accessToken;
       config.headers['Accept-Language'] = preferences.app.locale;
-      config.headers.Tenant = 1; // TODO 登录时多租户选择暂不处理
       return config;
     },
   });

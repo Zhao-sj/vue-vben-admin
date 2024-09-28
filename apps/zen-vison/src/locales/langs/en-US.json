@@ -9,6 +9,11 @@
       "qrcodeLogin": "Qr Code Login",
       "forgetPassword": "Forget Password"
     },
+    "login": {
+      "tenant": "Tenant",
+      "username": "Account",
+      "password": "Password"
+    },
     "request": {
       "requestError": "Request error, please try again later",
       "requestExpire": "Your identity has expired, please log in again"
@@ -34,8 +39,8 @@
       "search": "Search",
       "query": "Search",
       "reset": "Reset",
-      "pleaseInput": "Input {0}",
-      "pleaseSelect": "Select {0}",
+      "pleaseInput": "Please enter {0}",
+      "pleaseSelect": "Please select {0}",
       "startDate": "Start Date",
       "endDate": "End Date",
       "createTime": "CreateTime",

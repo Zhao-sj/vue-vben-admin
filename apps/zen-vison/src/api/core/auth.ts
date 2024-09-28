@@ -2,6 +2,8 @@ import type { Nullable, RouteMeta } from '@vben/types';
 
 import type { HttpResponse } from '#/utils/request/typing';
 
+import { omit } from 'lodash-es';
+
 import { ModuleEnum } from '#/api/common';
 import { requestClient } from '#/api/request';
 import { CaptchaEnum } from '#/enums';
@@ -24,6 +26,7 @@ export namespace AuthApi {
   }
 
   export interface LoginModel {
+    tenant: number;
     captcha?: string;
     password: string;
     username: string;
@@ -87,7 +90,15 @@ export function checkCaptchaApi(data: AuthApi.CheckCaptchaModel) {
  * 登录
  */
 export function userLoginApi(data: AuthApi.LoginModel) {
-  return requestClient.post<AuthApi.LoginResp>(`${SYSTEM}/auth/login`, data);
+  return requestClient.post<AuthApi.LoginResp>(
+    `${SYSTEM}/auth/login`,
+    omit(data, ['tenant']),
+    {
+      headers: {
+        Tenant: data.tenant,
+      },
+    },
+  );
 }
 
 /**
