@@ -103,7 +103,7 @@ wsEmitter.on('notice-push', (notice) => {
 });
 
 const handleLogin = useDebounceFn((params: LoginAndRegisterParams) => {
-  loginState = params;
+  loginState = params as AuthApi.LoginModel;
   accessStore.setLoginExpired(false);
   showCaptcha.value = true;
 });
@@ -169,7 +169,6 @@ function handleMakeAll() {
         <Captcha
           v-model="showCaptcha"
           :show-close="false"
-          modal
           random
           @fail="handleCaptchaFail"
           @success="handleValidateSuccess"

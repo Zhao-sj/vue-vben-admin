@@ -9,6 +9,18 @@
       "qrcodeLogin": "Qr Code Login",
       "forgetPassword": "Forget Password"
     },
+    "captcha": {
+      "title": "Security verification",
+      "blockPuzzleDefaultTip": "Click picture to refresh",
+      "blockPuzzleSuccessTip": "Validation successful, time {0} seconds",
+      "clickWordTip": "Please click in turn: {0}",
+      "confirmAriaLabel": "Confirm selection",
+      "confirm": "Confirm",
+      "refreshAriaLabel": "Refresh captcha",
+      "pointAriaLabel": "Click point",
+      "pass": "Verification passed",
+      "fail": "Verification failed"
+    },
     "login": {
       "tenant": "Tenant",
       "username": "Account",

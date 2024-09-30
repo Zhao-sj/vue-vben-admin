@@ -9,6 +9,18 @@
       "qrcodeLogin": "二维码登录",
       "forgetPassword": "忘记密码"
     },
+    "captcha": {
+      "title": "安全验证",
+      "blockPuzzleDefaultTip": "点击图片可刷新",
+      "blockPuzzleSuccessTip": "验证成功，耗时{0}秒",
+      "clickWordTip": "请依次点击：{0}",
+      "confirmAriaLabel": "确认选择",
+      "confirm": "确认",
+      "refreshAriaLabel": "刷新验证码",
+      "pointAriaLabel": "点击点",
+      "pass": "验证通过",
+      "fail": "验证失败"
+    },
     "login": {
       "tenant": "租户",
       "username": "账号",

@@ -1,125 +1,201 @@
 <script setup lang="ts">
-import type { Nullable } from '@vben/types';
+import type { AuthApi } from '#/api';
 
-import { useNamespace } from '@vben/hooks';
-import { Icon } from '@vben/icons';
+import { VbenButton } from '@vben/common-ui';
+import { Icon, RotateCw } from '@vben/icons';
 
-import { useDebounceFn } from '@vueuse/core';
-
-import { type AuthApi } from '#/api';
+import { useCaptchaPoints } from './hooks/useCaptchaPoints';
 
 interface Props {
-  data: Nullable<AuthApi.CaptchaResp>;
-  isSuccess: boolean;
-  showFeedback: boolean;
+  data?: AuthApi.CaptchaResp;
+  validate: (pointJsonStr: string) => Promise<boolean>;
 }
 
 interface Emits {
   (e: 'refresh'): void;
-  (e: 'validate', data: string): void;
 }
 
-defineOptions({ name: 'ClickWord' });
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
-const ns = useNamespace('click-word');
 
-const isLoaded = ref(false);
-const pointList = ref<Array<{ x: number; y: number }>>([]);
+const POINT_OFFSET = 11;
+const basemapRef = useTemplateRef<HTMLImageElement>('basemapRef');
+const { addPoint, clearPoints, points } = useCaptchaPoints();
 
-const handleBaseMapClick = useDebounceFn((e: MouseEvent) => {
-  if (!props.data || pointList.value.length >= props.data.wordList!.length) {
-    return;
-  }
-  const pointJson = { x: e.offsetX, y: e.offsetY };
-  pointList.value.push(pointJson);
-
-  if (pointList.value.length === props.data.wordList!.length) {
-    emit('validate', JSON.stringify(pointList.value));
-  }
+const state = reactive({
+  imgSize: {
+    height: 155,
+    width: 310,
+  },
+  isPassing: false,
+  showTip: false,
 });
 
-function handleRefresh(e: MouseEvent) {
-  e.stopPropagation();
-  pointList.value = [];
-  emit('refresh');
+const basemapStyles = computed(() => ({
+  height: `${state.imgSize.height}px`,
+  width: `${state.imgSize.width}px`,
+}));
+
+function getElementPosition(element: HTMLElement) {
+  const rect = element.getBoundingClientRect();
+  return {
+    x: rect.left + window.scrollX,
+    y: rect.top + window.scrollY,
+  };
 }
 
-function handleBaseMapLoaded() {
-  isLoaded.value = true;
+function handleBasemapOnLoad() {
+  state.imgSize.width = basemapRef.value!.offsetWidth;
+  state.imgSize.height = basemapRef.value!.offsetHeight;
 }
 
-watch(
-  () => props.showFeedback,
-  (showFeedback) => {
-    if (!showFeedback) {
-      pointList.value = [];
+function handleClick(e: MouseEvent) {
+  if (points.length >= props.data!.wordList!.length) {
+    return;
+  }
+
+  try {
+    const dom = e.currentTarget as HTMLElement;
+    if (!dom) throw new Error('Element not found');
+
+    const { x: domX, y: domY } = getElementPosition(dom);
+
+    const mouseX = e.clientX + window.scrollX;
+    const mouseY = e.clientY + window.scrollY;
+
+    if (typeof mouseX !== 'number' || typeof mouseY !== 'number') {
+      throw new TypeError('Mouse coordinates not found');
     }
-  },
-);
+
+    const xPos = mouseX - domX;
+    const yPos = mouseY - domY;
+
+    const rect = dom.getBoundingClientRect();
+
+    // 点击位置边界校验
+    if (xPos < 0 || yPos < 0 || xPos > rect.width || yPos > rect.height) {
+      console.warn('Click position is out of the valid range');
+      return;
+    }
+
+    const x = Math.ceil(xPos);
+    const y = Math.ceil(yPos);
+
+    const point = {
+      i: points.length,
+      t: Date.now(),
+      x,
+      y,
+    };
+
+    addPoint(point);
+  } catch (error) {
+    console.error('Error in handleClick:', error);
+  }
+}
+
+function clear() {
+  try {
+    clearPoints();
+  } catch (error) {
+    console.error('Error in clear:', error);
+  }
+}
+
+function handleRefresh() {
+  try {
+    clear();
+    state.showTip = false;
+    state.isPassing = false;
+    emit('refresh');
+  } catch (error) {
+    console.error('Error in handleRefresh:', error);
+  }
+}
+
+async function handleConfirm() {
+  const pointList = points.map((point) => ({ x: point.x, y: point.y }));
+  const isPassing = await props.validate(JSON.stringify(pointList));
+  state.isPassing = isPassing;
+  state.showTip = true;
+
+  if (!isPassing) {
+    setTimeout(() => {
+      handleRefresh();
+    }, 1200);
+  }
+}
 </script>
 
 <template>
-  <div :class="[ns.b()]" class="relative flex flex-col gap-1">
-    <div
-      :class="[{ 'default-size': !isLoaded }]"
-      class="relative flex overflow-hidden"
-      @click="handleBaseMapClick"
-    >
-      <div
-        class="absolute right-0 top-0 z-10 flex h-8 w-8 cursor-pointer items-center justify-center"
-        @click="handleRefresh"
-      >
-        <Icon class="text-2xl text-white" icon="material-symbols:refresh" />
-      </div>
-
-      <ElImage
-        v-if="data"
-        :src="data.basemap"
-        class="select-none"
-        @load="handleBaseMapLoaded"
+  <div class="relative">
+    <div :style="basemapStyles" class="relative overflow-hidden rounded-md">
+      <img
+        ref="basemapRef"
+        :src="data?.basemap"
+        :style="basemapStyles"
+        alt="basemap"
+        class="relative z-10"
+        @click.stop.prevent="handleClick"
+        @load="handleBasemapOnLoad"
       />
 
-      <div
-        v-for="(item, i) in pointList"
-        :key="i"
-        :style="{ left: `${item.x}px`, top: `${item.y}px` }"
-        class="absolute flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 select-none items-center justify-center rounded-full bg-green-500 text-white"
-      >
-        {{ i + 1 }}
+      <div class="absolute inset-0">
+        <div
+          v-for="(point, index) in points"
+          :key="index"
+          :aria-label="$t('zen.captcha.pointAriaLabel') + (index + 1)"
+          :style="{
+            top: `${point.y - POINT_OFFSET}px`,
+            left: `${point.x - POINT_OFFSET}px`,
+          }"
+          :tabindex="index"
+          class="bg-primary text-primary-50 border-primary-50 absolute z-20 flex h-5 w-5 cursor-default items-center justify-center rounded-full border-2"
+          role="button"
+        >
+          {{ index + 1 }}
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-2 flex items-end justify-between">
+      <div>
+        <VbenButton
+          :aria-label="$t('zen.captcha.refreshAriaLabel')"
+          class="rounded-full"
+          size="icon"
+          variant="icon"
+          @click="handleRefresh"
+        >
+          <RotateCw class="size-5" />
+        </VbenButton>
+      </div>
+
+      <div>
+        <VbenButton
+          :aria-label="$t('zen.captcha.confirmAriaLabel')"
+          :disabled="points.length === 0"
+          size="sm"
+          @click="handleConfirm"
+        >
+          {{ $t('zen.captcha.confirm') }}
+        </VbenButton>
       </div>
     </div>
 
     <div
-      v-if="data && data.wordList"
-      class="flex h-12 select-none items-center justify-center"
+      v-if="state.showTip"
+      class="absolute inset-0 z-30 flex flex-col items-center justify-center gap-1 rounded-md bg-white/80 dark:bg-black/80"
     >
-      <span class="text-lg">
-        请依次点击【{{ data.wordList.map((item) => item).join('，') }}】
+      <Icon
+        :class="[state.isPassing ? 'text-green-600' : 'text-red-500']"
+        :icon="`ep:circle-${state.isPassing ? 'check' : 'close'}-filled`"
+        class="text-2xl"
+      />
+
+      <span class="text-xs">
+        {{ state.isPassing ? $t('zen.captcha.pass') : $t('zen.captcha.fail') }}
       </span>
-    </div>
-
-    <div
-      v-if="showFeedback"
-      class="absolute left-0 top-0 z-20 flex h-full w-full items-center justify-center bg-slate-100 bg-opacity-75"
-    >
-      <div class="flex flex-col items-center gap-1">
-        <Icon
-          :class="[isSuccess ? 'text-green-600' : 'text-red-500']"
-          :icon="`ep:circle-${isSuccess ? 'check' : 'close'}-filled`"
-          class="text-2xl"
-        />
-        <span class="text-xs">验证{{ isSuccess ? '成功' : '失败' }}</span>
-      </div>
     </div>
   </div>
 </template>
-
-<style scoped lang="scss">
-@include b('click-word') {
-  .default-size {
-    width: 310px;
-    height: 155px;
-  }
-}
-</style>

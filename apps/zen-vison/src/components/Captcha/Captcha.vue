@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import type { Nullable } from '@vben/types';
+import { VbenButton } from '@vben/common-ui';
+import { X } from '@vben/icons';
 
-import { type AuthApi, checkCaptchaApi, getCaptchaApi } from '#/api';
+import { checkCaptchaApi, getCaptchaApi } from '#/api';
 import { CaptchaEnum, ResultEnum } from '#/enums';
+import { useRequest } from '#/hooks';
 import { AesEncryption } from '#/utils';
 
 import BlockPuzzle from './BlockPuzzle.vue';
@@ -11,6 +13,7 @@ import ClickWord from './ClickWord.vue';
 interface Props {
   random?: boolean;
   type?: CaptchaEnum;
+  showClose?: boolean;
 }
 
 interface Emits {
@@ -18,24 +21,29 @@ interface Emits {
   (e: 'fail'): void;
 }
 
-defineOptions({ name: 'Captcha' });
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  showClose: true,
+  type: CaptchaEnum.BLOCK_PUZZLE,
+});
 const emit = defineEmits<Emits>();
-const dialogVisible = defineModel<boolean>('modelValue');
+
+const modelValue = defineModel<boolean>('modelValue');
 
 const captchaTypes = [CaptchaEnum.BLOCK_PUZZLE, CaptchaEnum.CLICK_WORD];
-const captchaType = ref(props.type || captchaTypes[0]!);
-const dialogRef =
-  ref<Nullable<{ dialogContentRef: { $el: HTMLDivElement } }>>(null);
-const loading = ref(false);
-const showFeedback = ref(false);
-const isSuccess = ref(false);
-const dialogOffsetLeft = ref(0);
-const captchaData = ref<Nullable<AuthApi.CaptchaResp>>(null);
+const captchaType = ref(props.type);
 
-function covert2DataUrl(base64: string) {
-  return `data:image/png;base64,${base64}`;
-}
+const requestConf = {
+  manual: true,
+};
+
+const {
+  data,
+  loading,
+  runAsync: getData,
+} = useRequest(getCaptcha, requestConf);
+const { runAsync: checkCaptcha } = useRequest(checkCaptchaApi, requestConf);
+
+const clickWordTip = computed(() => data.value?.wordList?.join(' '));
 
 async function getCaptcha() {
   if (props.random) {
@@ -43,108 +51,139 @@ async function getCaptcha() {
       captchaTypes[Math.floor(Math.random() * captchaTypes.length)]!;
   }
 
-  try {
-    loading.value = true;
-    const ret = await getCaptchaApi(captchaType.value);
+  const ret = await getCaptchaApi(captchaType.value);
 
-    if (ret.basemap) {
-      ret.basemap = covert2DataUrl(ret.basemap);
-    }
-
-    if (ret.slider) {
-      ret.slider = covert2DataUrl(ret.slider);
-    }
-
-    captchaData.value = ret;
-  } catch (error) {
-    emit('fail');
-    dialogVisible.value = false;
-    throw new Error(error as any);
-  } finally {
-    loading.value = false;
+  if (ret.basemap) {
+    ret.basemap = covert2DataUrl(ret.basemap);
   }
+
+  if (ret.slider) {
+    ret.slider = covert2DataUrl(ret.slider);
+  }
+
+  return ret;
 }
 
-function getDialogOffsetLeft() {
-  dialogOffsetLeft.value = dialogRef.value!.dialogContentRef.$el.offsetLeft;
+function covert2DataUrl(base64: string) {
+  return `data:image/png;base64,${base64}`;
 }
 
-function encryptData(data: string) {
-  const { secretKey, token } = captchaData.value!;
-  let captcha = `${token}---${data}`;
-  let pointJson = data;
+function encryptPointJson(pointJsonStr: string) {
+  const { secretKey, token } = data.value!;
+  let captcha = `${token}---${pointJsonStr}`;
+  let pointJson = pointJsonStr;
   if (secretKey) {
     const encryption = new AesEncryption({ key: secretKey });
-    pointJson = encryption.encryptByAES(data)!;
+    pointJson = encryption.encryptByAES(pointJsonStr)!;
     captcha = encryption.encryptByAES(captcha)!;
   }
 
   return { captcha, pointJson };
 }
 
-async function handleValidate(data: string) {
-  loading.value = true;
-  const { captcha, pointJson } = encryptData(data);
-  const { code } = await checkCaptchaApi({
-    captchaType: captchaType.value,
-    pointJson,
-    token: captchaData.value!.token,
-  });
-
-  loading.value = false;
-  isSuccess.value = code === ResultEnum.SUCCESS;
-  showFeedback.value = true;
-  setTimeout(async () => {
-    if (!isSuccess.value) {
-      await getCaptcha();
-      showFeedback.value = false;
-      return;
-    }
-    dialogVisible.value = false;
-    emit('success', captcha);
-  }, 1200);
+async function handleRefresh() {
+  try {
+    await getData();
+  } catch {
+    emit('fail');
+    handleClose();
+  }
 }
 
-watch(dialogVisible, (dialogVisible) => {
-  if (dialogVisible) {
-    showFeedback.value = false;
-    getCaptcha();
+async function handleValidate(pointJsonStr: string) {
+  const { captcha, pointJson } = encryptPointJson(pointJsonStr);
+  const { code } = await checkCaptcha({
+    captchaType: captchaType.value,
+    pointJson,
+    token: data.value!.token,
+  });
+
+  const isPassing = code === ResultEnum.SUCCESS;
+  if (isPassing) {
+    setTimeout(() => {
+      emit('success', captcha);
+      handleClose();
+    }, 1200);
   }
+
+  return isPassing;
+}
+
+function handleClose() {
+  modelValue.value = false;
+}
+
+watch(modelValue, (visible) => {
+  visible && handleRefresh();
 });
 </script>
 
 <template>
-  <ElDialog
-    ref="dialogRef"
-    v-model="dialogVisible"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :modal="false"
-    append-to-body
-    title="请完成安全验证"
-    width="fit-content"
-    v-bind="$attrs"
-  >
-    <div v-loading="loading">
-      <BlockPuzzle
-        v-if="CaptchaEnum.BLOCK_PUZZLE === captchaType"
-        :base-offset-left="dialogOffsetLeft"
-        :data="captchaData"
-        :is-success="isSuccess"
-        :show-feedback="showFeedback"
-        @load="getDialogOffsetLeft"
-        @refresh="getCaptcha"
-        @validate="handleValidate"
-      />
+  <Teleport to="body">
+    <Transition name="fade">
+      <div
+        v-if="modelValue"
+        class="bg-overlay fixed inset-0 z-[999] flex h-screen w-screen items-center justify-center"
+      >
+        <div
+          class="bg-background modal-enter relative overflow-hidden rounded-md p-2 shadow-md"
+          v-loading="loading"
+        >
+          <div :class="{ 'mb-3': captchaType === CaptchaEnum.BLOCK_PUZZLE }">
+            <h2 class="text-sm">{{ $t('zen.captcha.title') }}</h2>
+            <p
+              v-if="captchaType === CaptchaEnum.CLICK_WORD"
+              class="text-lg font-bold"
+            >
+              {{ $t('zen.captcha.clickWordTip', [clickWordTip]) }}
+            </p>
+          </div>
 
-      <ClickWord
-        v-if="CaptchaEnum.CLICK_WORD === captchaType"
-        :data="captchaData"
-        :is-success="isSuccess"
-        :show-feedback="showFeedback"
-        @refresh="getCaptcha"
-        @validate="handleValidate"
-      />
-    </div>
-  </ElDialog>
+          <VbenButton
+            v-if="showClose"
+            class="absolute right-2 top-2 h-6 w-6 rounded-full"
+            size="icon"
+            variant="icon"
+            @click="handleClose"
+          >
+            <X class="h-4 w-4" />
+          </VbenButton>
+
+          <div>
+            <BlockPuzzle
+              v-if="captchaType === CaptchaEnum.BLOCK_PUZZLE"
+              :data
+              :validate="handleValidate"
+              @refresh="handleRefresh"
+            />
+
+            <ClickWord
+              v-if="captchaType === CaptchaEnum.CLICK_WORD"
+              :data
+              :validate="handleValidate"
+              @refresh="handleRefresh"
+            />
+          </div>
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
+
+<style lang="css" scoped>
+.modal-enter {
+  animation: modal-fade-in 0.3s cubic-bezier(0.25, 0.1, 0.25, 1.4) forwards;
+}
+
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.1);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+</style>
