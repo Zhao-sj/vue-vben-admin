@@ -7,7 +7,7 @@ const routes: RouteRecordRaw[] = [
   {
     component: BasicLayout,
     meta: {
-      icon: 'ant-design:setting-outlined',
+      icon: 'lucide:bolt',
       order: 999,
       title: $t('zen.menu.manage.system'),
     },
@@ -18,7 +18,7 @@ const routes: RouteRecordRaw[] = [
         name: 'TenantManage',
         path: '/sys/tenant',
         meta: {
-          icon: 'majesticons:users-line',
+          icon: 'lucide:users',
           title: $t('zen.menu.manage.tenant'),
         },
         children: [
@@ -27,7 +27,7 @@ const routes: RouteRecordRaw[] = [
             path: '/sys/tenant/list',
             component: () => import('#/views/sys/tenant/list/index.vue'),
             meta: {
-              icon: 'hugeicons:user-list',
+              icon: 'lucide:book-user',
               title: $t('zen.menu.manage.tenantList'),
             },
           },
@@ -36,7 +36,7 @@ const routes: RouteRecordRaw[] = [
             path: '/sys/tenant/package',
             component: () => import('#/views/sys/tenant/package/index.vue'),
             meta: {
-              icon: 'hugeicons:package',
+              icon: 'lucide:combine',
               title: $t('zen.menu.manage.tenantPackage'),
             },
           },
@@ -47,7 +47,7 @@ const routes: RouteRecordRaw[] = [
         path: '/sys/user',
         component: () => import('#/views/sys/user/index.vue'),
         meta: {
-          icon: 'ep:user',
+          icon: 'lucide:user-cog',
           title: $t('zen.menu.manage.user'),
         },
       },
@@ -56,7 +56,7 @@ const routes: RouteRecordRaw[] = [
         path: '/sys/role',
         component: () => import('#/views/sys/role/index.vue'),
         meta: {
-          icon: 'icon-park-outline:user-positioning',
+          icon: 'lucide:contact-round',
           title: $t('zen.menu.manage.role'),
         },
       },
@@ -65,7 +65,7 @@ const routes: RouteRecordRaw[] = [
         path: '/sys/menu',
         component: () => import('#/views/sys/menu/index.vue'),
         meta: {
-          icon: 'ep:menu',
+          icon: 'lucide:menu',
           title: $t('zen.menu.manage.menu'),
         },
       },
@@ -74,7 +74,7 @@ const routes: RouteRecordRaw[] = [
         path: '/sys/dept',
         component: () => import('#/views/sys/dept/index.vue'),
         meta: {
-          icon: 'carbon:layers',
+          icon: 'lucide:layers',
           title: $t('zen.menu.manage.dept'),
         },
       },
@@ -83,7 +83,7 @@ const routes: RouteRecordRaw[] = [
         path: '/sys/post',
         component: () => import('#/views/sys/post/index.vue'),
         meta: {
-          icon: 'mdi:account-tie',
+          icon: 'lucide:network',
           title: $t('zen.menu.manage.post'),
         },
       },
@@ -91,7 +91,7 @@ const routes: RouteRecordRaw[] = [
         name: 'LogManage',
         path: '/sys/log',
         meta: {
-          icon: 'ph:read-cv-logo-bold',
+          icon: 'lucide:logs',
           title: $t('zen.menu.manage.log'),
         },
         children: [
@@ -100,7 +100,7 @@ const routes: RouteRecordRaw[] = [
             path: '/sys/log/login',
             component: () => import('#/views/sys/log/login/index.vue'),
             meta: {
-              icon: 'ri:login-box-line',
+              icon: 'lucide:log-in',
               title: $t('zen.menu.manage.loginLog'),
             },
           },
@@ -109,7 +109,7 @@ const routes: RouteRecordRaw[] = [
             path: '/sys/log/access',
             component: () => import('#/views/sys/log/access/index.vue'),
             meta: {
-              icon: 'solar:clipboard-list-broken',
+              icon: 'lucide:scroll-text',
               title: $t('zen.menu.manage.accessLog'),
             },
           },
@@ -118,19 +118,30 @@ const routes: RouteRecordRaw[] = [
             path: '/sys/log/error',
             component: () => import('#/views/sys/log/error/index.vue'),
             meta: {
-              icon: 'ic:round-error-outline',
+              icon: 'lucide:triangle-alert',
               title: $t('zen.menu.manage.errorLog'),
             },
           },
         ],
       },
       {
-        name: 'DictManage',
-        path: '/sys/dict',
+        name: 'DictTypeManage',
+        path: '/sys/dict/type',
         component: () => import('#/views/sys/dict/type/index.vue'),
         meta: {
           icon: 'streamline:dictionary-language-book',
           title: $t('zen.menu.manage.dict'),
+        },
+      },
+      {
+        name: 'DictDataManage',
+        path: '/sys/dict/data/:id',
+        component: () => import('#/views/sys/dict/data/index.vue'),
+        meta: {
+          activePath: '/sys/dict/type',
+          hideInMenu: true,
+          icon: 'lucide:text-search',
+          title: $t('zen.menu.manage.dictData'),
         },
       },
       {
@@ -147,8 +158,18 @@ const routes: RouteRecordRaw[] = [
         path: '/sys/area',
         component: () => import('#/views/sys/area/index.vue'),
         meta: {
-          icon: 'majesticons:map-marker-area-line',
+          icon: 'lucide:map-pinned',
           title: $t('zen.menu.manage.area'),
+        },
+      },
+      {
+        name: 'AccountSetting',
+        path: '/setting',
+        component: () => import('#/views/account/setting/index.vue'),
+        meta: {
+          hideInMenu: true,
+          icon: 'lucide:user-round-pen',
+          title: $t('zen.menu.account.profile'),
         },
       },
     ],

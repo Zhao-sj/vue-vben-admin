@@ -93,7 +93,7 @@
         "menu": "菜单管理",
         "dept": "组织架构",
         "post": "岗位管理",
-        "log": "审计日志",
+        "log": "日志管理",
         "loginLog": "登录日志",
         "accessLog": "访问日志",
         "errorLog": "错误日志",
