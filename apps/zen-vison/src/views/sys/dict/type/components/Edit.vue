@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { useVbenModal } from '@vben/common-ui';
 
-import { omit } from 'lodash-es';
-
 import { type DictApi, getDictTypeApi, updateDictTypeApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
@@ -22,10 +20,11 @@ const requestConf = {
 
 const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
-const { loading: dictLoading, runAsync: getDict } = useRequest(
-  getDictTypeApi,
-  requestConf,
-);
+const {
+  data: dict,
+  loading: dictLoading,
+  runAsync: getDict,
+} = useRequest(getDictTypeApi, requestConf);
 
 const { loading, runAsync } = useRequest(updateDictTypeApi, requestConf);
 
@@ -38,10 +37,9 @@ async function onOpenChange(isOpen: boolean) {
 
   const { id } = modal.getData();
   if (id) {
-    const role = await getDict(id);
-    const ignoreKeys = ['createTime'];
+    const dict = await getDict(id);
     setTimeout(() => {
-      optFormRef.value?.formApi.setValues(omit(role, ignoreKeys));
+      optFormRef.value?.formApi.setValues(dict);
     }, 0);
   }
 }
@@ -52,7 +50,7 @@ async function onConfirm() {
   if (!valid) return;
 
   const values = await optFormRef.value.formApi.getValues();
-  await runAsync(values as DictApi.TypeUpdateModel);
+  await runAsync({ id: dict.value.id, ...values } as DictApi.TypeUpdateModel);
   ElMessage.success($t('zen.common.successTip'));
   modal.close();
   emit('success');

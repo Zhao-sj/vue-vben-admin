@@ -42,10 +42,11 @@ const { loading: menuIdsLoading, runAsync: getMenuIds } = useRequest(
   requestConf,
 );
 
-const { loading: roleLoading, runAsync: getRole } = useRequest(
-  getRoleApi,
-  requestConf,
-);
+const {
+  data: role,
+  loading: roleLoading,
+  runAsync: getRole,
+} = useRequest(getRoleApi, requestConf);
 
 const { loading, runAsync } = useRequest(assignRoleMenuApi, requestConf);
 
@@ -128,13 +129,8 @@ async function onOpenChange(isOpen: boolean) {
 }
 
 async function onConfirm() {
-  const { id } = await formApi.getValues();
-  if (!id) {
-    return;
-  }
-
   const menuIds = treeRef.value!.getCheckedKeys() as number[];
-  await runAsync({ menuIds, roleId: id });
+  await runAsync({ menuIds, roleId: role.value.id });
   ElMessage.success($t('zen.common.successTip'));
   modal.close();
 }

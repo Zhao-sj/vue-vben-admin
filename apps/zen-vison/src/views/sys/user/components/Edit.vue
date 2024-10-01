@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { useVbenModal } from '@vben/common-ui';
 
-import { omit } from 'lodash-es';
-
 import {
   getDeptSimpleListApi,
   getPostSimpleListApi,
@@ -40,10 +38,11 @@ const {
   runAsync: getPost,
 } = useRequest(getPostSimpleListApi, requestConf);
 
-const { loading: userLoading, runAsync: getUser } = useRequest(
-  getUserApi,
-  requestConf,
-);
+const {
+  data: user,
+  loading: userLoading,
+  runAsync: getUser,
+} = useRequest(getUserApi, requestConf);
 
 const { loading, runAsync } = useRequest(updateUserApi, requestConf);
 
@@ -57,23 +56,12 @@ async function onOpenChange(isOpen: boolean) {
   const { id } = modal.getData();
   if (id) {
     const [user] = await Promise.all([getUser(id), getDept(), getPost()]);
-
-    const ignoreKeys = [
-      'createTime',
-      'loginDate',
-      'loginIp',
-      'status',
-      'avatar',
-      'deptName',
-    ];
-
-    const data = omit(user, ignoreKeys) as UserApi.UpdateModel;
-    if (!data.postIds) {
-      data.postIds = [];
+    if (!user.postIds) {
+      user.postIds = [];
     }
 
     setTimeout(() => {
-      optFormRef.value?.formApi.setValues(data);
+      optFormRef.value?.formApi.setValues(user);
     }, 0);
   }
 }
@@ -84,7 +72,7 @@ async function onConfirm() {
   if (!valid) return;
 
   const values = await optFormRef.value.formApi.getValues();
-  await runAsync(values as UserApi.UpdateModel);
+  await runAsync({ id: user.value.id, ...values } as UserApi.UpdateModel);
   ElMessage.success($t('zen.common.successTip'));
   modal.close();
   emit('success');

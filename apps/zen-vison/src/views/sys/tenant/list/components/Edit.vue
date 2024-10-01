@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useVbenModal } from '@vben/common-ui';
 
-import { omit } from 'lodash-es';
+import dayjs from 'dayjs';
+import { cloneDeep } from 'lodash-es';
 
 import {
   getTenantApi,
@@ -33,10 +34,11 @@ const {
   runAsync: getPackage,
 } = useRequest(getTenantPackageSimpleListApi, requestConf);
 
-const { loading: tentantLoading, runAsync: getTenant } = useRequest(
-  getTenantApi,
-  requestConf,
-);
+const {
+  data: tenant,
+  loading: tentantLoading,
+  runAsync: getTenant,
+} = useRequest(getTenantApi, requestConf);
 
 const { loading, runAsync } = useRequest(updateTenantApi, requestConf);
 
@@ -50,9 +52,8 @@ async function onOpenChange(isOpen: boolean) {
   const { id } = modal.getData();
   if (id) {
     const [tenant] = await Promise.all([getTenant(id), getPackage()]);
-    const ignoreKeys = ['createTime'];
     setTimeout(() => {
-      optFormRef.value?.formApi.setValues(omit(tenant, ignoreKeys));
+      optFormRef.value?.formApi.setValues(tenant);
     }, 0);
   }
 }
@@ -63,7 +64,10 @@ async function onConfirm() {
   if (!valid) return;
 
   const values = await optFormRef.value.formApi.getValues();
-  await runAsync(values as TenantApi.UpdateModel);
+  const state = cloneDeep(values);
+  state.id = tenant.value.id;
+  state.expireTime = dayjs(state.expireTime).valueOf();
+  await runAsync(state as TenantApi.UpdateModel);
   ElMessage.success($t('zen.common.successTip'));
   modal.close();
   emit('success');

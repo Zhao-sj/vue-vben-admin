@@ -33,10 +33,11 @@ const {
   runAsync: getType,
 } = useRequest(getDictTypeApi, requestConf);
 
-const { loading: dictLoading, runAsync: getDict } = useRequest(
-  getDictDataApi,
-  requestConf,
-);
+const {
+  data,
+  loading: dictLoading,
+  runAsync: getDict,
+} = useRequest(getDictDataApi, requestConf);
 
 const { loading, runAsync } = useRequest(updateDictDataApi, requestConf);
 
@@ -50,10 +51,8 @@ async function onOpenChange(isOpen: boolean) {
   const { id, typeId } = modal.getData();
   if (id && typeId) {
     const [dictData] = await Promise.all([getDict(id), getType(typeId)]);
-    const ignoreKeys = ['createTime'];
-    const data = omit(dictData, ignoreKeys) as DictApi.DataUpdateModel;
     setTimeout(() => {
-      optFormRef.value?.formApi.setValues(data);
+      optFormRef.value?.formApi.setValues(dictData);
     }, 0);
   }
 }
@@ -65,6 +64,8 @@ async function onConfirm() {
 
   const values = await optFormRef.value.formApi.getValues();
   const state = omit(cloneDeep(values), ['type']);
+  state.id = data.value.id;
+  state.dictTypeId = dictType.value.id;
 
   await runAsync(state as DictApi.DataUpdateModel);
   ElMessage.success($t('zen.common.successTip'));

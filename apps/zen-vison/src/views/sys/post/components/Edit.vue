@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { useVbenModal } from '@vben/common-ui';
 
-import { omit } from 'lodash-es';
-
 import { getPostApi, type PostApi, updatePostApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
@@ -22,10 +20,11 @@ const requestConf = {
 
 const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
-const { loading: postLoading, runAsync: getPost } = useRequest(
-  getPostApi,
-  requestConf,
-);
+const {
+  data: post,
+  loading: postLoading,
+  runAsync: getPost,
+} = useRequest(getPostApi, requestConf);
 
 const { loading, runAsync } = useRequest(updatePostApi, requestConf);
 
@@ -39,9 +38,8 @@ async function onOpenChange(isOpen: boolean) {
   const { id } = modal.getData();
   if (id) {
     const role = await getPost(id);
-    const ignoreKeys = ['createTime'];
     setTimeout(() => {
-      optFormRef.value?.formApi.setValues(omit(role, ignoreKeys));
+      optFormRef.value?.formApi.setValues(role);
     }, 0);
   }
 }
@@ -52,7 +50,7 @@ async function onConfirm() {
   if (!valid) return;
 
   const values = await optFormRef.value.formApi.getValues();
-  await runAsync(values as PostApi.UpdateModel);
+  await runAsync({ id: post.value.id, ...values } as PostApi.UpdateModel);
   ElMessage.success($t('zen.common.successTip'));
   modal.close();
   emit('success');

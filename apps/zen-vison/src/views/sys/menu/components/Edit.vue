@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { useVbenModal } from '@vben/common-ui';
 
-import { omit } from 'lodash-es';
-
 import {
   getMenuApi,
   getMenuSimpleListApi,
@@ -33,10 +31,11 @@ const {
   runAsync: getMenu,
 } = useRequest(getMenuSimpleListApi, requestConf);
 
-const { loading: pckLoading, runAsync: getData } = useRequest(
-  getMenuApi,
-  requestConf,
-);
+const {
+  data: menu,
+  loading: pckLoading,
+  runAsync: getData,
+} = useRequest(getMenuApi, requestConf);
 
 const { loading, runAsync } = useRequest(updateMenuApi, requestConf);
 
@@ -50,11 +49,8 @@ async function onOpenChange(isOpen: boolean) {
   const { id } = modal.getData();
   if (id) {
     const [menu] = await Promise.all([getData(id), getMenu()]);
-    const ignoreKeys = ['createTime'];
     setTimeout(() => {
-      optFormRef.value?.setValues(
-        omit(menu, ignoreKeys) as MenuApi.UpdateModel,
-      );
+      optFormRef.value?.setValues(menu as MenuApi.UpdateModel);
     }, 0);
   }
 }
@@ -68,7 +64,7 @@ async function onConfirm() {
   }
 
   const values = await optFormRef.value.getValues();
-  await runAsync(values as MenuApi.UpdateModel);
+  await runAsync({ id: menu.value.id, ...values } as MenuApi.UpdateModel);
   ElMessage.success($t('zen.common.successTip'));
   modal.close();
   emit('success');

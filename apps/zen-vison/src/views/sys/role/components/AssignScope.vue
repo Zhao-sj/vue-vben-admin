@@ -39,10 +39,11 @@ const {
   runAsync: getDeptList,
 } = useRequest(getDeptSimpleListApi, requestConf);
 
-const { loading: roleLoading, runAsync: getRole } = useRequest(
-  getRoleApi,
-  requestConf,
-);
+const {
+  data: role,
+  loading: roleLoading,
+  runAsync: getRole,
+} = useRequest(getRoleApi, requestConf);
 
 const { loading, runAsync } = useRequest(assignRoleDataScopeApi, requestConf);
 
@@ -149,17 +150,13 @@ async function onOpenChange(isOpen: boolean) {
 }
 
 async function onConfirm() {
-  const { dataScope, id } = await formApi.getValues();
-  if (!id) {
-    return;
-  }
-
+  const { dataScope } = await formApi.getValues();
   const dataScopeDeptIds = treeRef.value?.getCheckedKeys() as number[];
 
   await runAsync({
-    dataScope: dataScope!,
+    dataScope,
     dataScopeDeptIds: dataScopeDeptIds || [],
-    roleId: id,
+    roleId: role.value.id,
   });
   ElMessage.success($t('zen.common.successTip'));
   modal.close();

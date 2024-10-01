@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useVbenModal } from '@vben/common-ui';
 
-import { cloneDeep, omit } from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 
 import {
   getMenuSimpleListApi,
@@ -33,10 +33,11 @@ const {
   runAsync: getMenu,
 } = useRequest(getMenuSimpleListApi, requestConf);
 
-const { loading: pckLoading, runAsync: getPackage } = useRequest(
-  getTenantPackageApi,
-  requestConf,
-);
+const {
+  data: tenantPackage,
+  loading: pckLoading,
+  runAsync: getPackage,
+} = useRequest(getTenantPackageApi, requestConf);
 
 const { loading, runAsync } = useRequest(updateTenantPackageApi, requestConf);
 
@@ -60,10 +61,8 @@ async function onOpenChange(isOpen: boolean) {
       tenantPackage.menuIds.includes(item.id),
     );
 
-    const ignoreKeys = ['createTime'];
-    const values = omit(tenantPackage, ignoreKeys);
     setTimeout(() => {
-      optFormRef.value?.formApi.setValues(values);
+      optFormRef.value?.formApi.setValues(tenantPackage);
       optFormRef.value?.setCheckAll(isCheckAll);
       treeInstance.value?.setCheckedKeys(tenantPackage.menuIds);
     }, 0);
@@ -76,7 +75,10 @@ async function onConfirm() {
   if (!valid) return;
 
   const values = await optFormRef.value.formApi.getValues();
-  const state = cloneDeep(values as TenantApi.UpdatePackageModel);
+  const state = cloneDeep({
+    id: tenantPackage.value.id,
+    ...values,
+  } as TenantApi.UpdatePackageModel);
   const keys = treeInstance.value!.getCheckedKeys() as number[];
   state.menuIds = keys;
 

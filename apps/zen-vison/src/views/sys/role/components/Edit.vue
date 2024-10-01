@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { useVbenModal } from '@vben/common-ui';
 
-import { omit } from 'lodash-es';
-
 import { getRoleApi, type RoleApi, updateRoleApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
@@ -22,10 +20,11 @@ const requestConf = {
 
 const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
-const { loading: roleLoading, runAsync: getRole } = useRequest(
-  getRoleApi,
-  requestConf,
-);
+const {
+  data: role,
+  loading: roleLoading,
+  runAsync: getRole,
+} = useRequest(getRoleApi, requestConf);
 
 const { loading, runAsync } = useRequest(updateRoleApi, requestConf);
 
@@ -39,10 +38,8 @@ async function onOpenChange(isOpen: boolean) {
   const { id } = modal.getData();
   if (id) {
     const role = await getRole(id);
-    const ignoreKeys = ['type', 'dataScope', 'dataScopeDeptIds', 'createTime'];
-    const data = omit(role, ignoreKeys) as RoleApi.UpdateModel;
     setTimeout(() => {
-      optFormRef.value?.formApi.setValues(data);
+      optFormRef.value?.formApi.setValues(role);
     }, 0);
   }
 }
@@ -53,7 +50,7 @@ async function onConfirm() {
   if (!valid) return;
 
   const values = await optFormRef.value.formApi.getValues();
-  await runAsync(values as RoleApi.UpdateModel);
+  await runAsync({ id: role.value.id, ...values } as RoleApi.UpdateModel);
   ElMessage.success($t('zen.common.successTip'));
   modal.close();
   emit('success');

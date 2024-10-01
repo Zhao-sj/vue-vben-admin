@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { useVbenModal } from '@vben/common-ui';
 
-import { omit } from 'lodash-es';
-
 import { getNoticeApi, type NoticeApi, updateNoticeApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
@@ -22,10 +20,11 @@ const requestConf = {
 
 const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
-const { loading: noticeLoading, runAsync: getNotice } = useRequest(
-  getNoticeApi,
-  requestConf,
-);
+const {
+  data: notice,
+  loading: noticeLoading,
+  runAsync: getNotice,
+} = useRequest(getNoticeApi, requestConf);
 
 const { loading, runAsync } = useRequest(updateNoticeApi, requestConf);
 
@@ -39,8 +38,9 @@ async function onOpenChange(isOpen: boolean) {
   const { id } = modal.getData();
   if (id) {
     const notice = await getNotice(id);
-    const ignoreKeys = ['createTime'];
-    optFormRef.value?.formApi.setValues(omit(notice, ignoreKeys));
+    setTimeout(() => {
+      optFormRef.value?.formApi.setValues(notice);
+    }, 0);
   }
 }
 
@@ -50,7 +50,7 @@ async function onConfirm() {
   if (!valid) return;
 
   const values = await optFormRef.value.formApi.getValues();
-  await runAsync(values as NoticeApi.UpdateModel);
+  await runAsync({ id: notice.value.id, ...values } as NoticeApi.UpdateModel);
   ElMessage.success($t('zen.common.successTip'));
   modal.close();
   emit('success');

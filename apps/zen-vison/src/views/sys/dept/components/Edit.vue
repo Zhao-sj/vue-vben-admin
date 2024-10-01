@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useVbenModal } from '@vben/common-ui';
 
-import { cloneDeep, omit } from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 
 import {
   type DeptApi,
@@ -40,10 +40,11 @@ const {
   runAsync: getUserList,
 } = useRequest(getUserSimpleListApi, requestConf);
 
-const { loading: dataLoading, runAsync: getData } = useRequest(
-  getDeptApi,
-  requestConf,
-);
+const {
+  data: dept,
+  loading: dataLoading,
+  runAsync: getData,
+} = useRequest(getDeptApi, requestConf);
 
 const { loading, runAsync } = useRequest(updateDeptApi, requestConf);
 
@@ -61,9 +62,9 @@ async function onOpenChange(isOpen: boolean) {
       getDeptList(),
       getUserList(),
     ]);
-    const ignoreKeys = ['createTime'];
+
     setTimeout(() => {
-      optFormRef.value?.formApi.setValues(omit(dept, ignoreKeys));
+      optFormRef.value?.formApi.setValues(dept);
     }, 0);
   }
 }
@@ -75,6 +76,7 @@ async function onConfirm() {
 
   const values = await optFormRef.value.formApi.getValues();
   const state = cloneDeep(values as DeptApi.UpdateModel);
+  state.id = dept.value.id;
   state.parentId = state.parentId || 0;
 
   await runAsync(state);

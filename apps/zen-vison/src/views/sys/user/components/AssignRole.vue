@@ -7,15 +7,9 @@ import {
   getRoleSimpleListApi,
   getUserApi,
   getUserRoleListApi,
-  type UserApi,
 } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
-
-type FormState = { roleIds: number[] } & Pick<
-  UserApi.User,
-  'id' | 'nickname' | 'username'
->;
 
 const requestConf = {
   loadingDelay: 200,
@@ -33,10 +27,11 @@ const { loading: roleIdsLoading, runAsync: getRoleIds } = useRequest(
   requestConf,
 );
 
-const { loading: userLoading, runAsync: getUser } = useRequest(
-  getUserApi,
-  requestConf,
-);
+const {
+  data: user,
+  loading: userLoading,
+  runAsync: getUser,
+} = useRequest(getUserApi, requestConf);
 
 const { loading, runAsync } = useRequest(assignUserRoleApi, requestConf);
 
@@ -102,24 +97,17 @@ async function onOpenChange(isOpen: boolean) {
       getRole(),
     ]);
 
-    const state: Partial<FormState> = {
-      id: user.id,
+    formApi.setValues({
       nickname: user.nickname,
       roleIds,
       username: user.username,
-    };
-
-    formApi.setValues(state);
+    });
   }
 }
 
 async function onConfirm() {
-  const { id, roleIds } = await formApi.getValues();
-  if (!id || !roleIds) {
-    return;
-  }
-
-  await runAsync({ roleIds, userId: id });
+  const { roleIds } = await formApi.getValues();
+  await runAsync({ roleIds, userId: user.value.id });
   ElMessage.success($t('zen.common.successTip'));
   modal.close();
 }
