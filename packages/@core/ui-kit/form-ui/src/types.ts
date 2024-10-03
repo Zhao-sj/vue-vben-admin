@@ -1,5 +1,5 @@
 import type { VbenButtonProps } from '@vben-core/shadcn-ui';
-import type { Field, FormContext, GenericObject } from 'vee-validate';
+import type { FieldOptions, FormContext, GenericObject } from 'vee-validate';
 import type { ZodTypeAny } from 'zod';
 
 import type { FormApi } from './form-api';
@@ -32,6 +32,15 @@ export type FormItemClassType =
   | `${Breakpoints}cols-start-${'auto' | GridCols}`
   | (Record<never, never> & string)
   | WrapperClassType;
+
+export type FormFieldOptions = Partial<
+  {
+    validateOnBlur?: boolean;
+    validateOnChange?: boolean;
+    validateOnInput?: boolean;
+    validateOnModelUpdate?: boolean;
+  } & FieldOptions
+>;
 
 export interface FormShape {
   /** 默认值 */
@@ -140,10 +149,15 @@ export interface FormCommonConfig {
    */
   disabled?: boolean;
   /**
+   * 是否禁用所有表单项的change事件监听
+   * @default false
+   */
+  disabledOnChangeListener?: boolean;
+  /**
    * 所有表单项的控件样式
    * @default {}
    */
-  formFieldProps?: Partial<typeof Field>;
+  formFieldProps?: FormFieldOptions;
   /**
    * 所有表单项的栅格布局
    * @default ""
@@ -317,6 +331,7 @@ export interface VbenFormAdapterOptions<
   components: Partial<Record<T, Component>>;
   config?: {
     baseModelPropName?: string;
+    disabledOnChangeListener?: boolean;
     modelPropNameMap?: Partial<Record<T, string>>;
   };
   defineRules?: {
