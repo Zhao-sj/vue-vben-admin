@@ -108,6 +108,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Select',
     componentProps: {
+      multiple: true,
       options: props.postList.map((item) => ({
         label: item.name,
         value: item.id,

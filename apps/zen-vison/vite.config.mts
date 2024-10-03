@@ -8,7 +8,9 @@ import Mkcert from 'vite-plugin-mkcert';
 
 export default defineConfig(async () => {
   return {
-    application: {},
+    application: {
+      license: false,
+    },
     vite: {
       build: {
         rollupOptions: {
