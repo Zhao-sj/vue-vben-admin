@@ -4,7 +4,7 @@ import type {
   VbenFormProps,
 } from '@vben/common-ui';
 
-import { h } from 'vue';
+import { h, type SetupContext } from 'vue';
 
 import { setupVbenForm, useVbenForm as useForm, z } from '@vben/common-ui';
 import { $t } from '@vben/locales';
@@ -45,6 +45,16 @@ export type FormComponentType =
   | 'Upload'
   | BaseFormComponentType;
 
+const withDefaultPlaceholder = <T extends Component>(
+  component: T,
+  type: 'input' | 'select',
+) => {
+  return (props: any, { attrs, slots }: Omit<SetupContext, 'expose'>) => {
+    const placeholder = props?.placeholder || $t(`placeholder.${type}`);
+    return h(component, { ...props, ...attrs, placeholder }, slots);
+  };
+};
+
 // 初始化表单组件，并注册到form组件内部
 setupVbenForm<FormComponentType>({
   components: {
@@ -61,14 +71,14 @@ setupVbenForm<FormComponentType>({
       return h(ElButton, { type: 'primary' }, slots);
     },
     Divider: ElDivider,
-    Input: ElInput,
-    InputNumber: ElInputNumber,
+    Input: withDefaultPlaceholder(ElInput, 'input'),
+    InputNumber: withDefaultPlaceholder(ElInputNumber, 'input'),
     RadioGroup: AdapterRadioGroup,
-    Select: AdapterSelect,
+    Select: withDefaultPlaceholder(AdapterSelect, 'select'),
     Space: ElSpace,
     Switch: ElSwitch,
     TimePicker: ElTimePicker,
-    TreeSelect: ElTreeSelect,
+    TreeSelect: withDefaultPlaceholder(ElTreeSelect, 'select'),
     Upload: ElUpload,
   },
   config: {
