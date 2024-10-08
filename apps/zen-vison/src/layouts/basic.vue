@@ -7,7 +7,7 @@ import {
   AuthenticationLoginExpiredModal,
   type LoginAndRegisterParams,
 } from '@vben/common-ui';
-import { useRefresh } from '@vben/hooks';
+import { useRefresh, useWatermark } from '@vben/hooks';
 import { UserRoundPen } from '@vben/icons';
 import {
   BasicLayout,
@@ -67,6 +67,7 @@ const router = useRouter();
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const accessStore = useAccessStore();
+const { destroyWatermark, updateWatermark } = useWatermark();
 const { refresh } = useRefresh();
 const showCaptcha = ref(false);
 let loginState: Nullable<AuthApi.LoginModel> = null;
@@ -135,6 +136,22 @@ function handleNoticeClear() {
 function handleMakeAll() {
   notifications.value.forEach((item) => (item.isRead = true));
 }
+
+watch(
+  () => preferences.app.watermark,
+  async (enable) => {
+    if (enable) {
+      await updateWatermark({
+        content: `${userStore.userInfo?.username}`,
+      });
+    } else {
+      destroyWatermark();
+    }
+  },
+  {
+    immediate: true,
+  },
+);
 </script>
 
 <template>
