@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import type { VxeGridProps } from 'vxe-table';
-
 import { useAccess } from '@vben/access';
-import { useVbenModal } from '@vben/common-ui';
+import { Page, useVbenModal } from '@vben/common-ui';
 
+import { useVbenVxeGrid, type VxeGridProps } from '#/adapter';
 import {
   batchDeleteRoleApi,
   deleteRoleApi,
@@ -17,13 +16,12 @@ import {
   type ActionItem,
   TableAction,
   TableExport,
-  VxeBasicTable,
 } from '#/components';
 import { DictRoleType, DictStatus, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
-import { downloadExcel, formatToDateTime } from '#/utils';
+import { downloadExcel, formatToDateTime, useBatchSelect } from '#/utils';
 
 import {
   AsignMenu,
@@ -44,7 +42,6 @@ dictStore.initDictData(
 );
 
 let roleQuery: RoleApi.PageQuery = {};
-const vxeBasicTableRef = ref<InstanceType<typeof VxeBasicTable>>();
 
 const requestConfig = {
   loadingDelay: 200,
@@ -81,87 +78,107 @@ const [AssignScopeModal, assignScopeModal] = useVbenModal({
   connectedComponent: AssignScope,
 });
 
-const vxeTable = computed(() =>
-  vxeBasicTableRef.value?.getTableInstance<RoleApi.Role>(),
-);
-
 const statusDisabled = computed(
   () => !hasAccessByCodes(['system:role:update']),
 );
 
-const columns = computed<RoleColumns>(() => [
+const columns: RoleColumns = [
   {
-    align: 'center',
     fixed: 'left',
     type: 'checkbox',
     width: 50,
   },
   {
-    align: 'center',
     field: 'id',
     minWidth: 80,
     title: $t('zen.service.role.id'),
   },
   {
-    align: 'center',
     field: 'name',
     minWidth: 150,
     title: $t('zen.service.role.name'),
   },
   {
-    align: 'center',
     field: 'code',
     minWidth: 150,
     title: $t('zen.service.role.code'),
   },
   {
-    align: 'center',
     field: 'type',
     minWidth: 150,
     slots: { default: 'type' },
     title: $t('zen.service.role.type'),
   },
   {
-    align: 'center',
     field: 'sort',
     minWidth: 80,
     title: $t('zen.service.role.sort'),
   },
   {
-    align: 'center',
     field: 'status',
     minWidth: 100,
     slots: { default: 'status' },
     title: $t('zen.service.role.status'),
   },
   {
-    align: 'center',
     field: 'remark',
     formatter: ({ cellValue }) => cellValue || '-',
     minWidth: 200,
     title: $t('zen.common.remark'),
   },
   {
-    align: 'center',
     field: 'createTime',
     formatter: ({ cellValue }) => formatToDateTime(cellValue),
     minWidth: 150,
     title: $t('zen.common.createTime'),
   },
   {
-    align: 'center',
     fixed: 'right',
     slots: { default: 'opt' },
     title: $t('zen.common.opt'),
     width: 120,
   },
-]);
+];
+
+const gridOptions: VxeGridProps<RoleApi.Role> = {
+  columns,
+  checkboxConfig: {
+    checkMethod: ({ row }) => row.type !== DictRoleType.ADMIN,
+    highlight: true,
+    range: true,
+  },
+  customConfig: {},
+  id: 'role_manage',
+  height: 'auto',
+  proxyConfig: {
+    ajax: {
+      query: ({ page: { currentPage, pageSize } }) =>
+        getRolePageListApi({
+          pageNum: currentPage,
+          pageSize,
+          ...roleQuery,
+        }),
+    },
+  },
+  toolbarConfig: {
+    refresh: true,
+  },
+};
+
+const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:role:delete',
     icon: 'ep:delete',
-    onClick: () => vxeTable.value?.commitProxy('delete'),
+    onClick: () => {
+      useBatchSelect<RoleApi.Role>({
+        gridApi,
+        handleBatch: (records) =>
+          batchDeleteRoleApi(records.map((item) => item.id)),
+        query: roleQuery,
+      });
+    },
     title: $t('zen.common.batchDelete'),
     type: 'danger',
   },
@@ -180,45 +197,6 @@ const toolbarActions = computed<ActionItem[]>(() => [
     type: 'warning',
   },
 ]);
-
-const tableOpts = reactive<VxeGridProps<RoleApi.Role>>({
-  checkboxConfig: {
-    checkMethod: ({ row }) => row.type !== DictRoleType.ADMIN,
-    highlight: true,
-    range: true,
-  },
-  customConfig: {},
-  id: 'role_manage',
-  pagerConfig: {
-    pageSize: 20,
-  },
-  printConfig: {},
-  proxyConfig: {
-    ajax: {
-      delete: ({ body: { removeRecords } }) => {
-        const ids = removeRecords.map((item) => item.id);
-        return batchDeleteRoleApi(ids);
-      },
-      query: ({ page: { currentPage, pageSize } }) =>
-        getRolePageListApi({
-          pageNum: currentPage,
-          pageSize,
-          ...roleQuery,
-        }),
-    },
-    response: {
-      result: 'list',
-      total: 'total',
-    },
-  },
-  toolbarConfig: {
-    print: true,
-    refresh: true,
-    slots: {
-      buttons: 'toolbar_left',
-    },
-  },
-});
 
 function createActions(row: RoleApi.Role) {
   const actions: ActionItem[] = [
@@ -307,13 +285,13 @@ function requestAfter(reload = true) {
   reload && reloadTable();
 }
 
-function reloadTable() {
-  vxeTable.value?.commitProxy('reload');
-}
-
 function handleQuery(query: RoleApi.PageQuery) {
   roleQuery = query;
-  vxeTable.value?.commitProxy('query');
+  gridApi.query();
+}
+
+function reloadTable() {
+  gridApi.reload(roleQuery);
 }
 
 async function handleExport(fileName: string) {
@@ -328,47 +306,49 @@ async function handleExport(fileName: string) {
 </script>
 
 <template>
-  <VxeBasicTable ref="vxeBasicTableRef" :columns v-bind="tableOpts">
-    <template #form>
-      <TableQuery @query="handleQuery" />
-    </template>
+  <Page auto-content-height>
+    <Grid>
+      <template #form>
+        <TableQuery @query="handleQuery" />
+      </template>
 
-    <template #toolbar_left>
-      <TableAction
-        :actions="toolbarActions"
-        :link="false"
-        :show-empty="false"
-        circle
-      />
+      <template #toolbar-actions>
+        <TableAction
+          :actions="toolbarActions"
+          :link="false"
+          :show-empty="false"
+          circle
+        />
 
-      <TableAddModal @success="reloadTable" />
-      <TableEditModal @success="reloadTable" />
-      <TableExportModal
-        :default-name="$t('zen.service.role.title')"
-        @confirm="handleExport"
-      />
-      <AsignMenuModal />
-      <AssignScopeModal />
-    </template>
+        <TableAddModal @success="reloadTable" />
+        <TableEditModal @success="reloadTable" />
+        <TableExportModal
+          :default-name="$t('zen.service.role.title')"
+          @confirm="handleExport"
+        />
+        <AsignMenuModal />
+        <AssignScopeModal />
+      </template>
 
-    <template #type="{ row: { type } }">
-      <ElTag :type="dictStore.getRoleType(type)?.color">
-        {{ dictStore.getRoleType(type)?.label }}
-      </ElTag>
-    </template>
+      <template #type="{ row: { type } }">
+        <ElTag :type="dictStore.getRoleType(type)?.color">
+          {{ dictStore.getRoleType(type)?.label }}
+        </ElTag>
+      </template>
 
-    <template #status="{ row }">
-      <ElSwitch
-        v-model="row.status"
-        :active-value="0"
-        :disabled="statusDisabled"
-        :inactive-value="1"
-        @change="handleStatusChange(row)"
-      />
-    </template>
+      <template #status="{ row }">
+        <ElSwitch
+          v-model="row.status"
+          :active-value="0"
+          :disabled="statusDisabled"
+          :inactive-value="1"
+          @change="handleStatusChange(row)"
+        />
+      </template>
 
-    <template #opt="{ row }">
-      <TableAction v-bind="createActions(row)" />
-    </template>
-  </VxeBasicTable>
+      <template #opt="{ row }">
+        <TableAction v-bind="createActions(row)" />
+      </template>
+    </Grid>
+  </Page>
 </template>

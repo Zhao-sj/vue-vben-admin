@@ -11,8 +11,6 @@ import dayjs from 'dayjs';
 import enLocale from 'element-plus/es/locale/lang/en';
 import defaultLocale from 'element-plus/es/locale/lang/zh-cn';
 
-import { VxeTable } from '#/utils';
-
 const elementLocale = ref<Language>(defaultLocale);
 
 const modules = import.meta.glob('./langs/*.json');
@@ -37,11 +35,7 @@ async function loadMessages(lang: SupportedLanguagesType) {
  * @param lang
  */
 async function loadThirdPartyMessage(lang: SupportedLanguagesType) {
-  await Promise.all([
-    loadElementLocale(lang),
-    loadDayjsLocale(lang),
-    loadVxeTableLocale(lang),
-  ]);
+  await Promise.all([loadElementLocale(lang), loadDayjsLocale(lang)]);
 }
 
 /**
@@ -82,14 +76,6 @@ async function loadElementLocale(lang: SupportedLanguagesType) {
       break;
     }
   }
-}
-
-/**
- * 加载vxe-table的语言包
- * @param lang
- */
-function loadVxeTableLocale(lang: SupportedLanguagesType) {
-  VxeTable.setLanguage(lang);
 }
 
 async function setupI18n(app: App, options: LocaleSetupOptions = {}) {

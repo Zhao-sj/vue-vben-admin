@@ -11,20 +11,38 @@ setupVbenVxeTable({
     vxeUI.setConfig({
       grid: {
         align: 'center',
-        border: true,
-        minHeight: 180,
+        minHeight: 500,
+        toolbarConfig: {
+          custom: true,
+          zoom: true,
+        },
+        size: 'small',
         proxyConfig: {
           autoLoad: true,
           response: {
-            result: 'items',
+            result: 'list',
             total: 'total',
-            list: 'items',
+            list: 'list',
           },
           showActiveMsg: true,
           showResponseMsg: false,
         },
+      },
+      table: {
+        border: true,
+        columnConfig: {
+          resizable: true,
+        },
+        customConfig: {
+          storage: true,
+        },
         round: true,
-        size: 'small',
+        rowConfig: {
+          isCurrent: true,
+          isHover: true,
+        },
+        showOverflow: true,
+        stripe: true,
       },
     });
 

@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import type { VxeGridProps } from 'vxe-table';
-
 import { useAccess } from '@vben/access';
-import { useVbenModal } from '@vben/common-ui';
-import { useNamespace } from '@vben/hooks';
+import { Page, useVbenModal } from '@vben/common-ui';
 import { Icon } from '@vben/icons';
 
+import { useVbenVxeGrid, type VxeGridProps } from '#/adapter';
 import {
   batchDeleteUserApi,
   deleteUserApi,
@@ -19,16 +17,19 @@ import {
 import {
   type ActionDropdownItem,
   type ActionItem,
-  FullHeightContainer,
   TableAction,
   TableExport,
-  VxeBasicTable,
 } from '#/components';
 import { DictSex, DictStatus, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore, useUserStore } from '#/store';
-import { downloadExcel, encryptBySha256, formatToDateTime } from '#/utils';
+import {
+  downloadExcel,
+  encryptBySha256,
+  formatToDateTime,
+  useBatchSelect,
+} from '#/utils';
 
 import {
   AssignRole,
@@ -47,9 +48,7 @@ const userStore = useUserStore();
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.STATUS, DictTypeEnum.SEX);
 
-const ns = useNamespace('user-manage');
 let userQuery: UserApi.PageQuery = {};
-const vxeBasicTableRef = ref<InstanceType<typeof VxeBasicTable>>();
 
 const requestConfig = {
   loadingDelay: 200,
@@ -95,29 +94,22 @@ const [ImportResultModal, importResultModal] = useVbenModal({
   connectedComponent: ImportResult,
 });
 
-const vxeTable = computed(() =>
-  vxeBasicTableRef.value?.getTableInstance<UserApi.User>(),
-);
-
 const statusDisabled = computed(
   () => !hasAccessByCodes(['system:user:update']),
 );
 
-const columns = computed<UserColumns>(() => [
+const columns: UserColumns = [
   {
-    align: 'center',
     fixed: 'left',
     type: 'checkbox',
     width: 50,
   },
   {
-    align: 'center',
     field: 'id',
     minWidth: 80,
     title: $t('zen.service.user.code'),
   },
   {
-    align: 'center',
     field: 'avatar',
     minWidth: 80,
     slots: { default: 'avatar' },
@@ -125,41 +117,35 @@ const columns = computed<UserColumns>(() => [
     visible: false,
   },
   {
-    align: 'center',
     field: 'username',
     minWidth: 120,
     title: $t('zen.service.user.username'),
   },
   {
-    align: 'center',
     field: 'nickname',
     formatter: ({ cellValue }) => cellValue || '-',
     minWidth: 120,
     title: $t('zen.service.user.nickname'),
   },
   {
-    align: 'center',
     field: 'sex',
     minWidth: 100,
     slots: { default: 'sex' },
     title: $t('zen.service.user.sex'),
   },
   {
-    align: 'center',
     field: 'deptName',
     formatter: ({ cellValue }) => cellValue || '-',
     minWidth: 150,
     title: $t('zen.service.user.deptName'),
   },
   {
-    align: 'center',
     field: 'mobile',
     formatter: ({ cellValue }) => cellValue || '-',
     minWidth: 150,
     title: $t('zen.service.user.mobile'),
   },
   {
-    align: 'center',
     field: 'email',
     formatter: ({ cellValue }) => cellValue || '-',
     minWidth: 150,
@@ -167,14 +153,12 @@ const columns = computed<UserColumns>(() => [
     visible: false,
   },
   {
-    align: 'center',
     field: 'status',
     minWidth: 100,
     slots: { default: 'status' },
     title: $t('zen.service.user.status'),
   },
   {
-    align: 'center',
     field: 'loginIp',
     formatter: ({ cellValue }) => cellValue || '-',
     minWidth: 150,
@@ -182,7 +166,6 @@ const columns = computed<UserColumns>(() => [
     visible: false,
   },
   {
-    align: 'center',
     field: 'loginDate',
     formatter: ({ cellValue }) =>
       cellValue ? formatToDateTime(cellValue) : '-',
@@ -191,27 +174,57 @@ const columns = computed<UserColumns>(() => [
     visible: false,
   },
   {
-    align: 'center',
     field: 'createTime',
     formatter: ({ cellValue }) => formatToDateTime(cellValue),
     minWidth: 150,
     title: $t('zen.common.createTime'),
   },
   {
-    align: 'center',
     fixed: 'right',
     slots: { default: 'opt' },
     title: $t('zen.common.opt'),
     width: 120,
   },
-]);
+];
+
+const gridOptions: VxeGridProps<UserApi.User> = {
+  columns,
+  checkboxConfig: {
+    checkMethod: ({ row }) => row.id !== userStore.userId,
+    highlight: true,
+    range: true,
+  },
+  customConfig: {},
+  id: 'user_manage',
+  height: 'auto',
+  proxyConfig: {
+    ajax: {
+      query: ({ page: { currentPage, pageSize } }) =>
+        getUserPageListApi({
+          pageNum: currentPage,
+          pageSize,
+          ...userQuery,
+        }),
+    },
+  },
+  toolbarConfig: {
+    refresh: true,
+  },
+};
+
+const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:user:delete',
     icon: 'ep:delete',
     onClick: () => {
-      vxeTable.value?.commitProxy('delete');
+      useBatchSelect<UserApi.User>({
+        gridApi,
+        handleBatch: (records) =>
+          batchDeleteUserApi(records.map((item) => item.id)),
+        query: userQuery,
+      });
     },
     title: $t('zen.common.batchDelete'),
     type: 'danger',
@@ -238,45 +251,6 @@ const toolbarActions = computed<ActionItem[]>(() => [
     type: 'info',
   },
 ]);
-
-const tableOpts = reactive<VxeGridProps<UserApi.User>>({
-  checkboxConfig: {
-    checkMethod: ({ row }) => row.id !== userStore.userId,
-    highlight: true,
-    range: true,
-  },
-  customConfig: {},
-  id: 'user_manage',
-  pagerConfig: {
-    pageSize: 20,
-  },
-  printConfig: {},
-  proxyConfig: {
-    ajax: {
-      delete: ({ body: { removeRecords } }) => {
-        const ids = removeRecords.map((item) => item.id);
-        return batchDeleteUserApi(ids);
-      },
-      query: ({ page: { currentPage, pageSize } }) =>
-        getUserPageListApi({
-          pageNum: currentPage,
-          pageSize,
-          ...userQuery,
-        }),
-    },
-    response: {
-      result: 'list',
-      total: 'total',
-    },
-  },
-  toolbarConfig: {
-    print: true,
-    refresh: true,
-    slots: {
-      buttons: 'toolbar_left',
-    },
-  },
-});
 
 function createActions(row: UserApi.User) {
   const actions: ActionItem[] = [
@@ -360,7 +334,7 @@ function createSex(sex: number) {
 
 function handleFilterDept(deptId?: number) {
   userQuery = { ...userQuery, deptId };
-  vxeTable.value?.commitProxy('query');
+  gridApi.query();
 }
 
 function handleStatusChange(row: UserApi.User) {
@@ -397,7 +371,7 @@ function requestAfter(reload = true) {
 
 function handleQuery(query: UserApi.PageQuery) {
   userQuery = query;
-  vxeTable.value?.commitProxy('query');
+  gridApi.query();
 }
 
 async function handleExport(fileName: string) {
@@ -421,29 +395,24 @@ async function handleImport(file: File, updateSupport: boolean) {
 }
 
 function reloadTable() {
-  vxeTable.value?.commitProxy('reload');
+  gridApi.reload(userQuery);
 }
 </script>
 
 <template>
-  <FullHeightContainer :card="false" :class="[ns.b()]">
-    <div class="flex h-full gap-5">
+  <Page auto-content-height>
+    <div class="flex h-full gap-4">
       <div class="hidden w-1/5 xl:block">
         <DeptFilter @query="handleFilterDept" />
       </div>
 
       <div class="w-full xl:w-4/5">
-        <VxeBasicTable
-          ref="vxeBasicTableRef"
-          :class="[ns.be('table', 'container')]"
-          :columns="columns"
-          v-bind="tableOpts"
-        >
+        <Grid>
           <template #form>
             <TableQuery @query="handleQuery" />
           </template>
 
-          <template #toolbar_left>
+          <template #toolbar-actions>
             <TableAction
               :actions="toolbarActions"
               :link="false"
@@ -491,18 +460,8 @@ function reloadTable() {
           <template #opt="{ row }">
             <TableAction v-bind="createActions(row)" />
           </template>
-        </VxeBasicTable>
+        </Grid>
       </div>
     </div>
-  </FullHeightContainer>
+  </Page>
 </template>
-
-<style lang="scss" scoped>
-@include b('user-manage') {
-  &-table__container {
-    padding-top: 0;
-    padding-right: 0;
-    padding-left: 0;
-  }
-}
-</style>

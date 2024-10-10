@@ -7,6 +7,7 @@ import { DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
+import { useResetVbenVxeForm } from '#/utils';
 
 interface Emits {
   (e: 'query', data: DictApi.DataPageQuery): void;
@@ -17,6 +18,9 @@ const emit = defineEmits<Emits>();
 const { currentRoute } = useRouter();
 const dictStore = useDictStore();
 const { isMobile } = useIsMobile();
+
+const queryWrapperRef = useTemplateRef<HTMLDivElement>('queryWrapperRef');
+useResetVbenVxeForm(queryWrapperRef);
 
 const { data: dictTypeList, loading } = useRequest(getDictTypeSimpleListApi);
 
@@ -57,9 +61,9 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
 ]);
 
-const [QueryForm] = useVbenForm(
+const [QueryForm, formApi] = useVbenForm(
   reactive({
-    actionWrapperClass: 'col-span-1 lg:text-left',
+    actionWrapperClass: 'col-span-1 lg:text-left lg:pb-0',
     collapsed: true,
     commonConfig: {
       componentProps: {
@@ -69,10 +73,11 @@ const [QueryForm] = useVbenForm(
       labelWidth: 65,
     },
     handleSubmit: onSubmit,
+    handleReset: onReset,
     schema: formSchema,
     showCollapseButton: isMobile,
     submitButtonOptions: {
-      text: computed(() => $t('zen.common.query')),
+      content: computed(() => $t('zen.common.query')),
     },
     wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
   }),
@@ -81,10 +86,15 @@ const [QueryForm] = useVbenForm(
 function onSubmit(values: Record<string, any>) {
   emit('query', values as DictApi.DataPageQuery);
 }
+
+function onReset() {
+  formApi.resetForm();
+  emit('query', { dictTypeId: +currentRoute.value.params.id! });
+}
 </script>
 
 <template>
-  <div class="rounded-lg border p-3">
+  <div ref="queryWrapperRef" class="rounded-lg border p-3">
     <QueryForm />
   </div>
 </template>

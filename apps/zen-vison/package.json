@@ -37,9 +37,7 @@
     "tinymce": "^5.10.9",
     "ua-parser-js": "^1.0.38",
     "vue": "catalog:",
-    "vue-router": "catalog:",
-    "vxe-pc-ui": "^4.1.22",
-    "vxe-table": "^4.7.77"
+    "vue-router": "catalog:"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",

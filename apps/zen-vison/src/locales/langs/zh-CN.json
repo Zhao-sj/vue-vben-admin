@@ -41,6 +41,7 @@
       "opt": "操作",
       "close": "关闭",
       "create": "新增",
+      "update": "更新",
       "edit": "编辑",
       "delete": "删除",
       "detail": "详情",
@@ -66,7 +67,7 @@
       "unselectAll": "取消全选",
       "joinAll": "全部",
       "selectTip": "请至少选择一条记录",
-      "updateConfirm": "您确定要更新所选记录吗?",
+      "batchConfirm": "您确定要批量{0}所选记录吗?",
       "yes": "是",
       "no": "否"
     },

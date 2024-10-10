@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { VxeGridProps } from 'vxe-table';
+import { Page, useVbenModal } from '@vben/common-ui';
 
-import { useVbenModal } from '@vben/common-ui';
-
+import { useVbenVxeGrid, type VxeGridProps } from '#/adapter';
 import {
   batchDeletePostApi,
   deletePostApi,
@@ -10,17 +9,12 @@ import {
   getPostPageListApi,
   type PostApi,
 } from '#/api';
-import {
-  type ActionItem,
-  TableAction,
-  TableExport,
-  VxeBasicTable,
-} from '#/components';
+import { type ActionItem, TableAction, TableExport } from '#/components';
 import { DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
-import { downloadExcel, formatToDateTime } from '#/utils';
+import { downloadExcel, formatToDateTime, useBatchSelect } from '#/utils';
 
 import { TableAdd, TableEdit, TableQuery } from './components';
 
@@ -30,7 +24,6 @@ const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.STATUS);
 
 let postQuery: PostApi.PageQuery = {};
-const vxeBasicTableRef = ref<InstanceType<typeof VxeBasicTable>>();
 
 const requestConfig = {
   loadingDelay: 200,
@@ -54,76 +47,96 @@ const [TableExportModal, exportModal] = useVbenModal({
   connectedComponent: TableExport,
 });
 
-const vxeTable = computed(() =>
-  vxeBasicTableRef.value?.getTableInstance<PostApi.Post>(),
-);
-
-const columns = computed<RoleColumns>(() => [
+const columns: RoleColumns = [
   {
-    align: 'center',
     fixed: 'left',
     type: 'checkbox',
     width: 50,
   },
   {
-    align: 'center',
     field: 'id',
     minWidth: 80,
     title: $t('zen.service.post.id'),
   },
   {
-    align: 'center',
     field: 'code',
     minWidth: 150,
     title: $t('zen.service.post.code'),
   },
   {
-    align: 'center',
     field: 'name',
     minWidth: 150,
     title: $t('zen.service.post.name'),
   },
   {
-    align: 'center',
     field: 'sort',
     minWidth: 80,
     title: $t('zen.service.post.sort'),
   },
   {
-    align: 'center',
     field: 'status',
     minWidth: 100,
     slots: { default: 'status' },
     title: $t('zen.service.post.status'),
   },
   {
-    align: 'center',
     field: 'remark',
     formatter: ({ cellValue }) => cellValue || '-',
     minWidth: 200,
     title: $t('zen.common.remark'),
   },
   {
-    align: 'center',
     field: 'createTime',
     formatter: ({ cellValue }) => formatToDateTime(cellValue),
     minWidth: 150,
     title: $t('zen.common.createTime'),
   },
   {
-    align: 'center',
     fixed: 'right',
     slots: { default: 'opt' },
     title: $t('zen.common.opt'),
     width: 120,
   },
-]);
+];
+
+const gridOptions: VxeGridProps<PostApi.Post> = {
+  columns,
+  checkboxConfig: {
+    highlight: true,
+    range: true,
+  },
+  customConfig: {},
+  id: 'post_manage',
+  height: 'auto',
+  proxyConfig: {
+    ajax: {
+      query: ({ page: { currentPage, pageSize } }) =>
+        getPostPageListApi({
+          pageNum: currentPage,
+          pageSize,
+          ...postQuery,
+        }),
+    },
+  },
+  toolbarConfig: {
+    refresh: true,
+  },
+};
+
+const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:post:delete',
     icon: 'ep:delete',
-    onClick: () => vxeTable.value?.commitProxy('delete'),
+    onClick: () => {
+      useBatchSelect<PostApi.Post>({
+        gridApi,
+        handleBatch: (records) =>
+          batchDeletePostApi(records.map((item) => item.id)),
+        query: postQuery,
+      });
+    },
     title: $t('zen.common.batchDelete'),
     type: 'danger',
   },
@@ -142,44 +155,6 @@ const toolbarActions = computed<ActionItem[]>(() => [
     type: 'warning',
   },
 ]);
-
-const tableOpts = reactive<VxeGridProps<PostApi.Post>>({
-  checkboxConfig: {
-    highlight: true,
-    range: true,
-  },
-  customConfig: {},
-  id: 'post_manage',
-  pagerConfig: {
-    pageSize: 20,
-  },
-  printConfig: {},
-  proxyConfig: {
-    ajax: {
-      delete: ({ body: { removeRecords } }) => {
-        const ids = removeRecords.map((item) => item.id);
-        return batchDeletePostApi(ids);
-      },
-      query: ({ page: { currentPage, pageSize } }) =>
-        getPostPageListApi({
-          pageNum: currentPage,
-          pageSize,
-          ...postQuery,
-        }),
-    },
-    response: {
-      result: 'list',
-      total: 'total',
-    },
-  },
-  toolbarConfig: {
-    print: true,
-    refresh: true,
-    slots: {
-      buttons: 'toolbar_left',
-    },
-  },
-});
 
 function createActions(row: PostApi.Post) {
   const actions: ActionItem[] = [
@@ -216,11 +191,11 @@ function createActions(row: PostApi.Post) {
 
 function handleQuery(query: PostApi.PageQuery) {
   postQuery = query;
-  vxeTable.value?.commitProxy('query');
+  gridApi.query();
 }
 
 function reloadTable() {
-  vxeTable.value?.commitProxy('reload');
+  gridApi.reload(postQuery);
 }
 
 function requestAfter(reload = true) {
@@ -240,35 +215,37 @@ async function handleExport(fileName: string) {
 </script>
 
 <template>
-  <VxeBasicTable ref="vxeBasicTableRef" :columns v-bind="tableOpts">
-    <template #form>
-      <TableQuery @query="handleQuery" />
-    </template>
+  <Page auto-content-height>
+    <Grid>
+      <template #form>
+        <TableQuery @query="handleQuery" />
+      </template>
 
-    <template #toolbar_left>
-      <TableAction
-        :actions="toolbarActions"
-        :link="false"
-        :show-empty="false"
-        circle
-      />
+      <template #toolbar-actions>
+        <TableAction
+          :actions="toolbarActions"
+          :link="false"
+          :show-empty="false"
+          circle
+        />
 
-      <TableAddModal @success="reloadTable" />
-      <TableEditModal @success="reloadTable" />
-      <TableExportModal
-        :default-name="$t('zen.service.post.title')"
-        @confirm="handleExport"
-      />
-    </template>
+        <TableAddModal @success="reloadTable" />
+        <TableEditModal @success="reloadTable" />
+        <TableExportModal
+          :default-name="$t('zen.service.post.title')"
+          @confirm="handleExport"
+        />
+      </template>
 
-    <template #status="{ row: { status } }">
-      <ElTag :type="dictStore.getStatus(status)?.color">
-        {{ dictStore.getStatus(status)?.label }}
-      </ElTag>
-    </template>
+      <template #status="{ row: { status } }">
+        <ElTag :type="dictStore.getStatus(status)?.color">
+          {{ dictStore.getStatus(status)?.label }}
+        </ElTag>
+      </template>
 
-    <template #opt="{ row }">
-      <TableAction :actions="createActions(row)" />
-    </template>
-  </VxeBasicTable>
+      <template #opt="{ row }">
+        <TableAction :actions="createActions(row)" />
+      </template>
+    </Grid>
+  </Page>
 </template>

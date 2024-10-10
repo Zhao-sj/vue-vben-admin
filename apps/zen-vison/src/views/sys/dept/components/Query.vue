@@ -7,6 +7,7 @@ import { useVbenForm, type VbenFormSchema } from '#/adapter';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
+import { useResetVbenVxeForm } from '#/utils';
 
 interface Props {
   visible?: boolean;
@@ -21,6 +22,9 @@ const emit = defineEmits<Emits>();
 
 const dictStore = useDictStore();
 const { isMobile } = useIsMobile();
+
+const queryWrapperRef = useTemplateRef<HTMLDivElement>('queryWrapperRef');
+useResetVbenVxeForm(queryWrapperRef);
 
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
@@ -44,9 +48,9 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
 ]);
 
-const [QueryForm] = useVbenForm(
+const [QueryForm, formApi] = useVbenForm(
   reactive({
-    actionWrapperClass: 'col-span-1 lg:text-left',
+    actionWrapperClass: 'col-span-1 lg:text-left lg:pb-0',
     collapsed: true,
     commonConfig: {
       componentProps: {
@@ -56,10 +60,11 @@ const [QueryForm] = useVbenForm(
       labelWidth: 65,
     },
     handleSubmit: onSubmit,
+    handleReset: onReset,
     schema: formSchema,
     showCollapseButton: isMobile,
     submitButtonOptions: {
-      text: computed(() => $t('zen.common.query')),
+      content: computed(() => $t('zen.common.query')),
     },
     wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
   }),
@@ -68,10 +73,15 @@ const [QueryForm] = useVbenForm(
 function onSubmit(values: DeptApi.Query) {
   emit('query', values);
 }
+
+function onReset() {
+  formApi.resetForm();
+  emit('query', {});
+}
 </script>
 
 <template>
-  <div class="rounded-lg border p-3">
+  <div ref="queryWrapperRef" class="rounded-lg border p-3">
     <QueryForm />
   </div>
 </template>

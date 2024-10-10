@@ -63,7 +63,10 @@ function joinLabel(prefix: string) {
 </script>
 
 <template>
-  <div class="card-box flex h-full flex-col" v-loading="loading">
+  <div
+    class="bg-card flex h-full flex-col overflow-hidden rounded-md"
+    v-loading="loading"
+  >
     <div class="flex items-center justify-between gap-3 border-b p-2">
       <label class="hidden whitespace-nowrap 2xl:block">
         {{ $t('zen.menu.manage.dept') }}

@@ -1,17 +1,11 @@
 <script setup lang="ts">
-import type { VxeGridProps } from 'vxe-table';
-
-import { useVbenModal } from '@vben/common-ui';
+import { Page, useVbenModal } from '@vben/common-ui';
 
 import { isNumber } from 'lodash-es';
 
+import { useVbenVxeGrid, type VxeGridProps } from '#/adapter';
 import { exporAccessLogApi, getAccessLogPageListApi, type LogApi } from '#/api';
-import {
-  type ActionItem,
-  TableAction,
-  TableExport,
-  VxeBasicTable,
-} from '#/components';
+import { type ActionItem, TableAction, TableExport } from '#/components';
 import { DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
@@ -27,7 +21,6 @@ const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.USER_TYPE, DictTypeEnum.OPERATE_TYPE);
 
 let logQuery: LogApi.AccessQuery = {};
-const vxeBasicTableRef = ref<InstanceType<typeof VxeBasicTable>>();
 
 const { loading: exportLoading, runAsync: exportLog } = useRequest(
   exporAccessLogApi,
@@ -45,39 +38,30 @@ const [TableDetailModal, detailModal] = useVbenModal({
   connectedComponent: TableDetail,
 });
 
-const vxeTable = computed(() =>
-  vxeBasicTableRef.value?.getTableInstance<LogApi.Access>(),
-);
-
-const columns = computed<LogColumns>(() => [
+const columns: LogColumns = [
   {
-    align: 'center',
     field: 'id',
     minWidth: 80,
     title: $t('zen.service.log.common.code'),
   },
   {
-    align: 'center',
     field: 'userId',
     minWidth: 80,
     title: $t('zen.service.log.common.userId'),
   },
   {
-    align: 'center',
     field: 'userType',
     minWidth: 80,
     slots: { default: 'userType' },
     title: $t('zen.service.log.common.userType'),
   },
   {
-    align: 'center',
     field: 'appName',
     minWidth: 150,
     title: $t('zen.service.log.common.appName'),
     visible: false,
   },
   {
-    align: 'center',
     field: 'requestMethod',
     minWidth: 80,
     title: $t('zen.service.log.common.requestMethod'),
@@ -85,18 +69,17 @@ const columns = computed<LogColumns>(() => [
   {
     field: 'requestUrl',
     headerAlign: 'center',
+    align: 'left',
     minWidth: 250,
     title: $t('zen.service.log.common.requestUrl'),
   },
   {
-    align: 'center',
     field: 'beginTime',
     formatter: ({ cellValue }) => formatToDateTime(cellValue),
     minWidth: 150,
     title: $t('zen.service.log.access.createTime'),
   },
   {
-    align: 'center',
     field: 'duration',
     formatter: ({ cellValue }) =>
       isNumber(cellValue) ? `${cellValue}ms` : cellValue,
@@ -104,33 +87,28 @@ const columns = computed<LogColumns>(() => [
     title: $t('zen.service.log.access.duration'),
   },
   {
-    align: 'center',
     field: 'resultCode',
     minWidth: 100,
     title: $t('zen.service.log.access.resultCode'),
     visible: false,
   },
   {
-    align: 'center',
     field: 'resultMsg',
     formatter: ({ cellValue }) => cellValue || '-',
     minWidth: 150,
     title: $t('zen.service.log.access.resultMsg'),
   },
   {
-    align: 'center',
     field: 'ip',
     minWidth: 150,
     title: $t('zen.service.log.common.ip'),
   },
   {
-    align: 'center',
     field: 'location',
     minWidth: 150,
     title: $t('zen.service.log.common.location'),
   },
   {
-    align: 'center',
     field: 'ua',
     minWidth: 300,
     slots: { default: 'ua' },
@@ -138,13 +116,34 @@ const columns = computed<LogColumns>(() => [
     visible: false,
   },
   {
-    align: 'center',
     fixed: 'right',
     slots: { default: 'opt' },
     title: $t('zen.common.opt'),
     width: 120,
   },
-]);
+];
+
+const gridOptions: VxeGridProps<LogApi.Access> = {
+  columns,
+  height: 'auto',
+  customConfig: {},
+  id: 'log_access_manage',
+  proxyConfig: {
+    ajax: {
+      query: ({ page: { currentPage, pageSize } }) =>
+        getAccessLogPageListApi({
+          pageNum: currentPage,
+          pageSize,
+          ...logQuery,
+        }),
+    },
+  },
+  toolbarConfig: {
+    refresh: true,
+  },
+};
+
+const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
@@ -155,36 +154,6 @@ const toolbarActions = computed<ActionItem[]>(() => [
     type: 'warning',
   },
 ]);
-
-const tableOpts = reactive<VxeGridProps<LogApi.Access>>({
-  customConfig: {},
-  id: 'log_access_manage',
-  pagerConfig: {
-    pageSize: 20,
-  },
-  printConfig: {},
-  proxyConfig: {
-    ajax: {
-      query: ({ page: { currentPage, pageSize } }) =>
-        getAccessLogPageListApi({
-          pageNum: currentPage,
-          pageSize,
-          ...logQuery,
-        }),
-    },
-    response: {
-      result: 'list',
-      total: 'total',
-    },
-  },
-  toolbarConfig: {
-    print: true,
-    refresh: true,
-    slots: {
-      buttons: 'toolbar_left',
-    },
-  },
-});
 
 function createActions(row: LogApi.Access) {
   const actions: ActionItem[] = [
@@ -205,7 +174,7 @@ function createActions(row: LogApi.Access) {
 
 function handleQuery(query: LogApi.AccessQuery) {
   logQuery = query;
-  vxeTable.value?.commitProxy('query');
+  gridApi.query();
 }
 
 async function handleExport(fileName: string) {
@@ -220,38 +189,40 @@ async function handleExport(fileName: string) {
 </script>
 
 <template>
-  <VxeBasicTable ref="vxeBasicTableRef" :columns v-bind="tableOpts">
-    <template #form>
-      <TableQuery @query="handleQuery" />
-    </template>
+  <Page auto-content-height>
+    <Grid>
+      <template #form>
+        <TableQuery @query="handleQuery" />
+      </template>
 
-    <template #toolbar_left>
-      <TableAction
-        :actions="toolbarActions"
-        :link="false"
-        :show-empty="false"
-        circle
-      />
+      <template #toolbar-actions>
+        <TableAction
+          :actions="toolbarActions"
+          :link="false"
+          :show-empty="false"
+          circle
+        />
 
-      <TableExportModal
-        :default-name="$t('zen.service.log.access.title')"
-        @confirm="handleExport"
-      />
-      <TableDetailModal />
-    </template>
+        <TableExportModal
+          :default-name="$t('zen.service.log.access.title')"
+          @confirm="handleExport"
+        />
+        <TableDetailModal />
+      </template>
 
-    <template #ua="{ row: { ua } }">
-      <DeviceInfo :ua />
-    </template>
+      <template #ua="{ row: { ua } }">
+        <DeviceInfo :ua />
+      </template>
 
-    <template #userType="{ row: { userType } }">
-      <ElTag :type="dictStore.getUserType(userType)?.color">
-        {{ dictStore.getUserType(userType)?.label }}
-      </ElTag>
-    </template>
+      <template #userType="{ row: { userType } }">
+        <ElTag :type="dictStore.getUserType(userType)?.color">
+          {{ dictStore.getUserType(userType)?.label }}
+        </ElTag>
+      </template>
 
-    <template #opt="{ row }">
-      <TableAction :actions="createActions(row)" />
-    </template>
-  </VxeBasicTable>
+      <template #opt="{ row }">
+        <TableAction :actions="createActions(row)" />
+      </template>
+    </Grid>
+  </Page>
 </template>

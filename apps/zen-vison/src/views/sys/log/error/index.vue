@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { VxeGridProps } from 'vxe-table';
+import { Page, useVbenModal } from '@vben/common-ui';
 
-import { useVbenModal } from '@vben/common-ui';
-
+import { useVbenVxeGrid, type VxeGridProps } from '#/adapter';
 import {
   batchUpdateErrorLogStatusApi,
   exporErrorLogApi,
@@ -10,17 +9,12 @@ import {
   type LogApi,
   updateErrorLogStatusApi,
 } from '#/api';
-import {
-  type ActionItem,
-  TableAction,
-  TableExport,
-  VxeBasicTable,
-} from '#/components';
+import { type ActionItem, TableAction, TableExport } from '#/components';
 import { DictLogProcess, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
-import { downloadExcel, formatToDateTime } from '#/utils';
+import { downloadExcel, formatToDateTime, useBatchSelect } from '#/utils';
 
 import { TableDetail, TableQuery } from './components';
 
@@ -33,7 +27,6 @@ dictStore.initDictData(
 );
 
 let logQuery: LogApi.ErrorQuery = {};
-const vxeBasicTableRef = ref<InstanceType<typeof VxeBasicTable>>();
 
 const requestConfig = {
   loadingDelay: 200,
@@ -63,83 +56,97 @@ const [TableDetailModal, detailModal] = useVbenModal({
   connectedComponent: TableDetail,
 });
 
-const vxeTable = computed(() =>
-  vxeBasicTableRef.value?.getTableInstance<LogApi.Error>(),
-);
-
-const columns = computed<LogColumns>(() => [
+const columns: LogColumns = [
   {
-    align: 'center',
     fixed: 'left',
     type: 'checkbox',
     width: 50,
   },
   {
-    align: 'center',
     field: 'id',
     minWidth: 80,
     title: $t('zen.service.log.common.code'),
   },
   {
-    align: 'center',
     field: 'userId',
     minWidth: 80,
     title: $t('zen.service.log.common.userId'),
   },
   {
-    align: 'center',
     field: 'userType',
     minWidth: 100,
     slots: { default: 'userType' },
     title: $t('zen.service.log.common.userType'),
   },
   {
-    align: 'center',
     field: 'appName',
     minWidth: 150,
     title: $t('zen.service.log.common.appName'),
     visible: false,
   },
   {
-    align: 'center',
     field: 'requestMethod',
     minWidth: 80,
     title: $t('zen.service.log.common.requestMethod'),
   },
   {
     field: 'requestUrl',
+    align: 'left',
     headerAlign: 'center',
     minWidth: 250,
     title: $t('zen.service.log.common.requestUrl'),
   },
   {
-    align: 'center',
     field: 'exTime',
     formatter: ({ cellValue }) => formatToDateTime(cellValue),
     minWidth: 150,
     title: $t('zen.service.log.error.exTime'),
   },
   {
-    align: 'center',
     field: 'exName',
     minWidth: 300,
     title: $t('zen.service.log.error.exName'),
   },
   {
-    align: 'center',
     field: 'processStatus',
     minWidth: 100,
     slots: { default: 'processStatus' },
     title: $t('zen.service.log.error.status'),
   },
   {
-    align: 'center',
     fixed: 'right',
     slots: { default: 'opt' },
     title: $t('zen.common.opt'),
     width: 240,
   },
-]);
+];
+
+const gridOptions: VxeGridProps<LogApi.Error> = {
+  columns,
+  height: 'auto',
+  checkboxConfig: {
+    checkMethod: ({ row }) => row.processStatus === DictLogProcess.UN_PROCESS,
+    highlight: true,
+    range: true,
+  },
+  customConfig: {},
+  id: 'log_error_manage',
+  proxyConfig: {
+    ajax: {
+      query: ({ page: { currentPage, pageSize } }) =>
+        getErrorLogPageListApi({
+          pageNum: currentPage,
+          pageSize,
+          ...logQuery,
+        }),
+    },
+  },
+  toolbarConfig: {
+    refresh: true,
+  },
+};
+
+const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
@@ -164,41 +171,6 @@ const toolbarActions = computed<ActionItem[]>(() => [
     type: 'warning',
   },
 ]);
-
-const tableOpts = reactive<VxeGridProps<LogApi.Error>>({
-  checkboxConfig: {
-    checkMethod: ({ row }) => row.processStatus === DictLogProcess.UN_PROCESS,
-    highlight: true,
-    range: true,
-  },
-  customConfig: {},
-  id: 'log_error_manage',
-  pagerConfig: {
-    pageSize: 20,
-  },
-  printConfig: {},
-  proxyConfig: {
-    ajax: {
-      query: ({ page: { currentPage, pageSize } }) =>
-        getErrorLogPageListApi({
-          pageNum: currentPage,
-          pageSize,
-          ...logQuery,
-        }),
-    },
-    response: {
-      result: 'list',
-      total: 'total',
-    },
-  },
-  toolbarConfig: {
-    print: true,
-    refresh: true,
-    slots: {
-      buttons: 'toolbar_left',
-    },
-  },
-});
 
 function createActions(row: LogApi.Error) {
   const disabled = row.processStatus !== DictLogProcess.UN_PROCESS;
@@ -256,7 +228,7 @@ function createActions(row: LogApi.Error) {
 
 function handleQuery(query: LogApi.ErrorQuery) {
   logQuery = query;
-  vxeTable.value?.commitProxy('query');
+  gridApi.query();
 }
 
 function requestAfter(reload = true) {
@@ -265,7 +237,7 @@ function requestAfter(reload = true) {
 }
 
 function reloadTable() {
-  vxeTable.value?.commitProxy('reload');
+  gridApi.reload(logQuery);
 }
 
 async function handleExport(fileName: string) {
@@ -279,60 +251,56 @@ async function handleExport(fileName: string) {
 }
 
 function handleBatchProcess(status: DictLogProcess) {
-  const records = vxeTable.value?.getCheckboxRecords();
-  if (!records || records.length === 0) {
-    ElMessage.warning($t('zen.common.selectTip'));
-    return;
-  }
-
-  const title = $t('zen.common.systemTitle');
-  const message = $t('zen.common.updateConfirm');
-  ElMessageBox.confirm(message, title, {
-    closeOnClickModal: false,
-    draggable: true,
-    type: 'warning',
-  }).then(() => {
-    const ids = records.map((item) => item.id);
-    batchUpdateStatus({ ids, processStatus: status }).then(requestAfter);
+  useBatchSelect<LogApi.Error>({
+    gridApi,
+    handleBatch: (records) =>
+      batchUpdateStatus({
+        ids: records.map((item) => item.id),
+        processStatus: status,
+      }),
+    query: logQuery,
+    type: $t('zen.common.update'),
   });
 }
 </script>
 
 <template>
-  <VxeBasicTable ref="vxeBasicTableRef" :columns v-bind="tableOpts">
-    <template #form>
-      <TableQuery @query="handleQuery" />
-    </template>
+  <Page auto-content-height>
+    <Grid>
+      <template #form>
+        <TableQuery @query="handleQuery" />
+      </template>
 
-    <template #toolbar_left>
-      <TableAction
-        :actions="toolbarActions"
-        :link="false"
-        :show-empty="false"
-        circle
-      />
+      <template #toolbar-actions>
+        <TableAction
+          :actions="toolbarActions"
+          :link="false"
+          :show-empty="false"
+          circle
+        />
 
-      <TableExportModal
-        :default-name="$t('zen.service.log.error.title')"
-        @confirm="handleExport"
-      />
-      <TableDetailModal />
-    </template>
+        <TableExportModal
+          :default-name="$t('zen.service.log.error.title')"
+          @confirm="handleExport"
+        />
+        <TableDetailModal />
+      </template>
 
-    <template #userType="{ row: { userType } }">
-      <ElTag :type="dictStore.getUserType(userType)?.color">
-        {{ dictStore.getUserType(userType)?.label }}
-      </ElTag>
-    </template>
+      <template #userType="{ row: { userType } }">
+        <ElTag :type="dictStore.getUserType(userType)?.color">
+          {{ dictStore.getUserType(userType)?.label }}
+        </ElTag>
+      </template>
 
-    <template #processStatus="{ row: { processStatus } }">
-      <ElTag :type="dictStore.getLogProcess(processStatus)?.color">
-        {{ dictStore.getLogProcess(processStatus)?.label }}
-      </ElTag>
-    </template>
+      <template #processStatus="{ row: { processStatus } }">
+        <ElTag :type="dictStore.getLogProcess(processStatus)?.color">
+          {{ dictStore.getLogProcess(processStatus)?.label }}
+        </ElTag>
+      </template>
 
-    <template #opt="{ row }">
-      <TableAction :actions="createActions(row)" />
-    </template>
-  </VxeBasicTable>
+      <template #opt="{ row }">
+        <TableAction :actions="createActions(row)" />
+      </template>
+    </Grid>
+  </Page>
 </template>

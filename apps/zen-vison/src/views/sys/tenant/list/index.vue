@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useVbenModal } from '@vben/common-ui';
+import { Page, useVbenModal } from '@vben/common-ui';
 
 import dayjs from 'dayjs';
-import { type VxeGridProps } from 'vxe-table';
 
+import { useVbenVxeGrid, type VxeGridProps } from '#/adapter';
 import {
   batchDeleteTenantApi,
   deleteTenantApi,
@@ -12,17 +12,17 @@ import {
   getTenantPageListApi,
   type TenantApi,
 } from '#/api';
-import {
-  type ActionItem,
-  TableAction,
-  TableExport,
-  VxeBasicTable,
-} from '#/components';
+import { type ActionItem, TableAction, TableExport } from '#/components';
 import { DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
-import { downloadExcel, formatToDateTime, formatToThousand } from '#/utils';
+import {
+  downloadExcel,
+  formatToDateTime,
+  formatToThousand,
+  useBatchSelect,
+} from '#/utils';
 
 import { TableAdd, TableEdit, TableQuery } from './components';
 
@@ -32,7 +32,6 @@ const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.STATUS);
 
 let tenantQuery: TenantApi.PageQuery = {};
-const vxeBasicTableRef = ref<InstanceType<typeof VxeBasicTable>>();
 
 const [TableAddModal, addModal] = useVbenModal({
   connectedComponent: TableAdd,
@@ -60,50 +59,39 @@ const { loading: exportLoading, runAsync: exportTenant } = useRequest(
   },
 );
 
-const vxeTable = computed(() =>
-  vxeBasicTableRef.value?.getTableInstance<TenantApi.Tenant>(),
-);
-
-const columns = computed<TenantColumns>(() => [
+const columns: TenantColumns = [
   {
-    align: 'center',
     fixed: 'left',
     type: 'checkbox',
     width: 50,
   },
   {
-    align: 'center',
     field: 'id',
     minWidth: 80,
     title: $t('zen.service.tenant.code'),
   },
   {
-    align: 'center',
     field: 'name',
     minWidth: 150,
     title: $t('zen.service.tenant.name'),
   },
   {
-    align: 'center',
     field: 'packageId',
     minWidth: 120,
     slots: { default: 'package' },
     title: $t('zen.service.tenant.package'),
   },
   {
-    align: 'center',
     field: 'contactName',
     minWidth: 100,
     title: $t('zen.service.tenant.contact'),
   },
   {
-    align: 'center',
     field: 'contactMobile',
     minWidth: 120,
     title: $t('zen.service.tenant.contactPhone'),
   },
   {
-    align: 'center',
     field: 'accountCount',
     formatter: ({ cellValue }) => formatToThousand(cellValue),
     minWidth: 150,
@@ -111,7 +99,6 @@ const columns = computed<TenantColumns>(() => [
     title: $t('zen.service.tenant.accountLimit'),
   },
   {
-    align: 'center',
     field: 'expireTime',
     minWidth: 150,
     slots: { default: 'expire' },
@@ -119,41 +106,73 @@ const columns = computed<TenantColumns>(() => [
     title: $t('zen.service.tenant.expireTime'),
   },
   {
-    align: 'center',
     field: 'website',
     minWidth: 150,
     slots: { default: 'website' },
     title: $t('zen.service.tenant.website'),
   },
   {
-    align: 'center',
     field: 'status',
     minWidth: 100,
     slots: { default: 'status' },
     title: $t('zen.service.tenant.status'),
   },
   {
-    align: 'center',
     field: 'createTime',
     formatter: ({ cellValue }) => formatToDateTime(cellValue),
     minWidth: 150,
     title: $t('zen.common.createTime'),
   },
   {
-    align: 'center',
     fixed: 'right',
     slots: { default: 'opt' },
     title: $t('zen.common.opt'),
     width: 120,
   },
-]);
+];
+
+const gridOptions: VxeGridProps<TenantApi.Tenant> = {
+  columns,
+  checkboxConfig: {
+    checkMethod: ({ row }) => row.packageId !== 0,
+    highlight: true,
+    range: true,
+  },
+  customConfig: {},
+  id: 'tenant_list',
+  height: 'auto',
+  proxyConfig: {
+    ajax: {
+      query: async ({ page: { currentPage, pageSize } }) => {
+        if (!packageList.value) {
+          await getPackageList();
+        }
+        return getTenantPageListApi({
+          pageNum: currentPage,
+          pageSize,
+          ...tenantQuery,
+        });
+      },
+    },
+  },
+  toolbarConfig: {
+    refresh: true,
+  },
+};
+
+const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:tenant:delete',
     icon: 'ep:delete',
     onClick: () => {
-      vxeTable.value?.commitProxy('delete');
+      useBatchSelect<TenantApi.Tenant>({
+        gridApi,
+        handleBatch: (records) =>
+          batchDeleteTenantApi(records.map((item) => item.id)),
+        query: tenantQuery,
+      });
     },
     title: $t('zen.common.batchDelete'),
     type: 'danger',
@@ -173,49 +192,6 @@ const toolbarActions = computed<ActionItem[]>(() => [
     type: 'warning',
   },
 ]);
-
-const tableOpts = reactive<VxeGridProps<TenantApi.Tenant>>({
-  checkboxConfig: {
-    checkMethod: ({ row }) => row.packageId !== 0,
-    highlight: true,
-    range: true,
-  },
-  customConfig: {},
-  id: 'tenant_list',
-  pagerConfig: {
-    pageSize: 20,
-  },
-  printConfig: {},
-  proxyConfig: {
-    ajax: {
-      delete: ({ body: { removeRecords } }) => {
-        const ids = removeRecords.map((item) => item.id);
-        return batchDeleteTenantApi(ids);
-      },
-      query: async ({ page: { currentPage, pageSize } }) => {
-        if (!packageList.value) {
-          await getPackageList();
-        }
-        return getTenantPageListApi({
-          pageNum: currentPage,
-          pageSize,
-          ...tenantQuery,
-        });
-      },
-    },
-    response: {
-      result: 'list',
-      total: 'total',
-    },
-  },
-  toolbarConfig: {
-    print: true,
-    refresh: true,
-    slots: {
-      buttons: 'toolbar_left',
-    },
-  },
-});
 
 function createActions(row: TenantApi.Tenant) {
   const disabled = row.packageId === 0;
@@ -271,11 +247,6 @@ function getPackageNameById(id: number) {
   return packageList.value.find((item) => item.id === id)?.name || '-';
 }
 
-function handleQuery(query: TenantApi.PageQuery) {
-  tenantQuery = query;
-  vxeTable.value?.commitProxy('query');
-}
-
 async function handleExport(fileName: string) {
   if (exportLoading.value) {
     return;
@@ -286,64 +257,71 @@ async function handleExport(fileName: string) {
   ElMessage.success($t('zen.export.success'));
 }
 
+function handleQuery(query: TenantApi.PageQuery) {
+  tenantQuery = query;
+  gridApi.query();
+}
+
 function reloadTable() {
-  vxeTable.value?.commitProxy('reload');
+  gridApi.reload(tenantQuery);
 }
 </script>
 
 <template>
-  <VxeBasicTable ref="vxeBasicTableRef" :columns="columns" v-bind="tableOpts">
-    <template #form>
-      <TableQuery @query="handleQuery" />
-    </template>
+  <Page auto-content-height>
+    <Grid>
+      <template #form>
+        <TableQuery @query="handleQuery" />
+      </template>
 
-    <template #toolbar_left>
-      <TableAction
-        :actions="toolbarActions"
-        :link="false"
-        :show-empty="false"
-        circle
-      />
+      <template #toolbar-actions>
+        <TableAction
+          :actions="toolbarActions"
+          :link="false"
+          :show-empty="false"
+          circle
+        />
 
-      <TableAddModal @success="reloadTable" />
-      <TableEditModal @success="reloadTable" />
+        <TableAddModal @success="reloadTable" />
+        <TableEditModal @success="reloadTable" />
 
-      <TableExportModal
-        :default-name="$t('zen.menu.manage.tenantList')"
-        @confirm="handleExport"
-      />
-    </template>
+        <TableExportModal
+          :default-name="$t('zen.menu.manage.tenantList')"
+          @confirm="handleExport"
+        />
+      </template>
 
-    <template #package="{ row: { packageId } }">
-      <ElTag :type="packageId === 0 ? 'danger' : 'success'">
-        {{ getPackageNameById(packageId) }}
-      </ElTag>
-    </template>
+      <template #package="{ row: { packageId } }">
+        <ElTag :type="packageId === 0 ? 'danger' : 'success'">
+          {{ getPackageNameById(packageId) }}
+        </ElTag>
+      </template>
 
-    <template #expire="{ row: { expireTime } }">
-      <ElText
-        :class="{ 'line-through': isExpire(expireTime) }"
-        :type="isExpire(expireTime) ? 'info' : undefined"
-      >
-        {{ formatToDateTime(expireTime) }}
-      </ElText>
-    </template>
+      <template #expire="{ row: { expireTime } }">
+        <ElText
+          :class="{ 'line-through': isExpire(expireTime) }"
+          :type="isExpire(expireTime) ? 'info' : undefined"
+        >
+          {{ formatToDateTime(expireTime) }}
+        </ElText>
+      </template>
 
-    <template #website="{ row: { website } }">
-      <ElLink v-if="website" :href="website" target="_blank" type="primary">
-        {{ website }}
-      </ElLink>
-      <span v-else>-</span>
-    </template>
+      <template #website="{ row: { website } }">
+        <ElLink v-if="website" :href="website" target="_blank" type="primary">
+          {{ website }}
+        </ElLink>
+        <span v-else>-</span>
+      </template>
 
-    <template #status="{ row: { status } }">
-      <ElTag :type="dictStore.getStatus(status)?.color">
-        {{ dictStore.getStatus(status)?.label }}
-      </ElTag>
-    </template>
+      <template #status="{ row: { status } }">
+        <ElTag :type="dictStore.getStatus(status)?.color">
+          {{ dictStore.getStatus(status)?.label }}
+        </ElTag>
+      </template>
 
-    <template #opt="{ row }">
-      <TableAction :actions="createActions(row)" />
-    </template>
-  </VxeBasicTable>
+      <template #opt="{ row }">
+        <TableAction :actions="createActions(row)" />
+      </template>
+    </Grid>
+  </Page>
 </template>

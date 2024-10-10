@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import type { VxeGridProps } from 'vxe-table';
+import { Page, useVbenModal } from '@vben/common-ui';
 
-import { useVbenModal } from '@vben/common-ui';
-
+import { useVbenVxeGrid, type VxeGridProps } from '#/adapter';
 import { type AreaApi, getAreaListApi } from '#/api';
-import { type ActionItem, TableAction, VxeBasicTable } from '#/components';
+import { type ActionItem, TableAction } from '#/components';
 import { $t } from '#/locales';
 
 import { IPSearch } from './components';
@@ -15,10 +14,11 @@ const [IPSearchModal, searchModal] = useVbenModal({
   connectedComponent: IPSearch,
 });
 
-const columns = computed<AreaColumns>(() => [
+const columns: AreaColumns = [
   {
     field: 'id',
     headerAlign: 'center',
+    align: 'left',
     minWidth: 200,
     title: $t('zen.service.area.id'),
     treeNode: true,
@@ -26,12 +26,15 @@ const columns = computed<AreaColumns>(() => [
   {
     field: 'name',
     headerAlign: 'center',
+    align: 'left',
     minWidth: 200,
     title: $t('zen.service.area.name'),
   },
-]);
+];
 
-const tableOpts = reactive<VxeGridProps<AreaApi.Simple>>({
+const gridOptions: VxeGridProps<AreaApi.Simple> = {
+  columns,
+  height: 'auto',
   customConfig: {},
   id: 'area_manage',
   keyboardConfig: {
@@ -39,10 +42,9 @@ const tableOpts = reactive<VxeGridProps<AreaApi.Simple>>({
     isBack: true,
     isEnter: true,
   },
-  printConfig: {},
   proxyConfig: {
     ajax: {
-      query: getAreaListApi,
+      query: getAreaList,
     },
   },
   rowConfig: {
@@ -50,17 +52,18 @@ const tableOpts = reactive<VxeGridProps<AreaApi.Simple>>({
   },
   stripe: false,
   toolbarConfig: {
-    print: true,
     refresh: true,
-    slots: {
-      buttons: 'toolbar_left',
-    },
   },
   treeConfig: {
     childrenField: 'children',
     rowField: 'id',
   },
-});
+  pagerConfig: {
+    enabled: false,
+  },
+};
+
+const [Grid] = useVbenVxeGrid({ gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
@@ -70,19 +73,26 @@ const toolbarActions = computed<ActionItem[]>(() => [
     type: 'primary',
   },
 ]);
+
+async function getAreaList() {
+  const list = await getAreaListApi();
+  return { list };
+}
 </script>
 
 <template>
-  <VxeBasicTable :columns="columns" v-bind="tableOpts">
-    <template #toolbar_left>
-      <TableAction
-        :actions="toolbarActions"
-        :link="false"
-        :show-empty="false"
-        circle
-      />
+  <Page auto-content-height>
+    <Grid>
+      <template #toolbar-actions>
+        <TableAction
+          :actions="toolbarActions"
+          :link="false"
+          :show-empty="false"
+          circle
+        />
 
-      <IPSearchModal />
-    </template>
-  </VxeBasicTable>
+        <IPSearchModal />
+      </template>
+    </Grid>
+  </Page>
 </template>

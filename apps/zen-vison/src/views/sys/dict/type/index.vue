@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { VxeGridProps } from 'vxe-table';
+import { Page, useVbenModal } from '@vben/common-ui';
 
-import { useVbenModal } from '@vben/common-ui';
-
+import { useVbenVxeGrid, type VxeGridProps } from '#/adapter';
 import {
   batchDeleteDictTypeApi,
   deleteDictTypeApi,
@@ -10,17 +9,12 @@ import {
   exportDictTypeApi,
   getDictTypePageListApi,
 } from '#/api';
-import {
-  type ActionItem,
-  TableAction,
-  TableExport,
-  VxeBasicTable,
-} from '#/components';
+import { type ActionItem, TableAction, TableExport } from '#/components';
 import { DICT_DATA_NAME, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
-import { downloadExcel, formatToDateTime } from '#/utils';
+import { downloadExcel, formatToDateTime, useBatchSelect } from '#/utils';
 
 import { TableAdd, TableEdit, TableQuery } from './components';
 
@@ -30,7 +24,6 @@ const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.STATUS);
 
 let dictQuery: DictApi.TypePageQuery = {};
-const vxeBasicTableRef = ref<InstanceType<typeof VxeBasicTable>>();
 
 const requestConfig = {
   loadingDelay: 200,
@@ -54,71 +47,92 @@ const [TableExportModal, exportModal] = useVbenModal({
   connectedComponent: TableExport,
 });
 
-const vxeTable = computed(() =>
-  vxeBasicTableRef.value?.getTableInstance<DictApi.Type>(),
-);
-
-const columns = computed<DictColumns>(() => [
+const columns: DictColumns = [
   {
-    align: 'center',
     fixed: 'left',
     type: 'checkbox',
     width: 50,
   },
   {
-    align: 'center',
     field: 'id',
     minWidth: 80,
     title: $t('zen.service.dict.code'),
   },
   {
-    align: 'center',
     field: 'name',
     minWidth: 150,
     title: $t('zen.service.dict.name'),
   },
   {
-    align: 'center',
     field: 'type',
     minWidth: 200,
     slots: { default: 'type' },
     title: $t('zen.service.dict.type'),
   },
   {
-    align: 'center',
     field: 'status',
     minWidth: 100,
     slots: { default: 'status' },
     title: $t('zen.service.dict.status'),
   },
   {
-    align: 'center',
     field: 'remark',
     formatter: ({ cellValue }) => cellValue || '-',
     minWidth: 200,
     title: $t('zen.common.remark'),
   },
   {
-    align: 'center',
     field: 'createTime',
     formatter: ({ cellValue }) => formatToDateTime(cellValue),
     minWidth: 150,
     title: $t('zen.common.createTime'),
   },
   {
-    align: 'center',
     fixed: 'right',
     slots: { default: 'opt' },
     title: $t('zen.common.opt'),
     width: 120,
   },
-]);
+];
+
+const gridOptions: VxeGridProps<DictApi.Type> = {
+  columns,
+  height: 'auto',
+  checkboxConfig: {
+    highlight: true,
+    range: true,
+  },
+  customConfig: {},
+  id: 'dict_type_manage',
+  proxyConfig: {
+    ajax: {
+      query: ({ page: { currentPage, pageSize } }) =>
+        getDictTypePageListApi({
+          pageNum: currentPage,
+          pageSize,
+          ...dictQuery,
+        }),
+    },
+  },
+  toolbarConfig: {
+    refresh: true,
+  },
+};
+
+const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:dict:delete',
     icon: 'ep:delete',
-    onClick: () => vxeTable.value?.commitProxy('delete'),
+    onClick: () => {
+      useBatchSelect<DictApi.Type>({
+        gridApi,
+        handleBatch: (records) =>
+          batchDeleteDictTypeApi(records.map((item) => item.id)),
+        query: dictQuery,
+      });
+    },
     title: $t('zen.common.batchDelete'),
     type: 'danger',
   },
@@ -137,44 +151,6 @@ const toolbarActions = computed<ActionItem[]>(() => [
     type: 'warning',
   },
 ]);
-
-const tableOpts = reactive<VxeGridProps<DictApi.Type>>({
-  checkboxConfig: {
-    highlight: true,
-    range: true,
-  },
-  customConfig: {},
-  id: 'dict_type_manage',
-  pagerConfig: {
-    pageSize: 20,
-  },
-  printConfig: {},
-  proxyConfig: {
-    ajax: {
-      delete: ({ body: { removeRecords } }) => {
-        const ids = removeRecords.map((item) => item.id);
-        return batchDeleteDictTypeApi(ids);
-      },
-      query: ({ page: { currentPage, pageSize } }) =>
-        getDictTypePageListApi({
-          pageNum: currentPage,
-          pageSize,
-          ...dictQuery,
-        }),
-    },
-    response: {
-      result: 'list',
-      total: 'total',
-    },
-  },
-  toolbarConfig: {
-    print: true,
-    refresh: true,
-    slots: {
-      buttons: 'toolbar_left',
-    },
-  },
-});
 
 function createActions(row: DictApi.Type) {
   const actions: ActionItem[] = [
@@ -211,11 +187,11 @@ function createActions(row: DictApi.Type) {
 
 function handleQuery(query: DictApi.TypePageQuery) {
   dictQuery = query;
-  vxeTable.value?.commitProxy('query');
+  gridApi.query();
 }
 
 function reloadTable() {
-  vxeTable.value?.commitProxy('reload');
+  gridApi.reload(dictQuery);
 }
 
 function requestAfter(reload = true) {
@@ -235,46 +211,50 @@ async function handleExport(fileName: string) {
 </script>
 
 <template>
-  <VxeBasicTable ref="vxeBasicTableRef" :columns v-bind="tableOpts">
-    <template #form>
-      <TableQuery @query="handleQuery" />
-    </template>
+  <Page auto-content-height>
+    <Grid>
+      <template #form>
+        <TableQuery @query="handleQuery" />
+      </template>
 
-    <template #toolbar_left>
-      <TableAction
-        :actions="toolbarActions"
-        :link="false"
-        :show-empty="false"
-        circle
-      />
+      <template #toolbar-actions>
+        <TableAction
+          :actions="toolbarActions"
+          :link="false"
+          :show-empty="false"
+          circle
+        />
 
-      <TableAddModal @success="reloadTable" />
-      <TableEditModal @success="reloadTable" />
-      <TableExportModal
-        :default-name="$t('zen.service.dict.typeTitle')"
-        @confirm="handleExport"
-      />
-    </template>
+        <TableAddModal @success="reloadTable" />
+        <TableEditModal @success="reloadTable" />
+        <TableExportModal
+          :default-name="$t('zen.service.dict.typeTitle')"
+          @confirm="handleExport"
+        />
+      </template>
 
-    <template #type="{ row }">
-      <ElText
-        class="cursor-pointer"
-        tag="ins"
-        type="primary"
-        @click="$router.push({ name: DICT_DATA_NAME, params: { id: row.id } })"
-      >
-        {{ row.type }}
-      </ElText>
-    </template>
+      <template #type="{ row }">
+        <ElText
+          class="cursor-pointer"
+          tag="ins"
+          type="primary"
+          @click="
+            $router.push({ name: DICT_DATA_NAME, params: { id: row.id } })
+          "
+        >
+          {{ row.type }}
+        </ElText>
+      </template>
 
-    <template #status="{ row: { status } }">
-      <ElTag :type="dictStore.getStatus(status)?.color">
-        {{ dictStore.getStatus(status)?.label }}
-      </ElTag>
-    </template>
+      <template #status="{ row: { status } }">
+        <ElTag :type="dictStore.getStatus(status)?.color">
+          {{ dictStore.getStatus(status)?.label }}
+        </ElTag>
+      </template>
 
-    <template #opt="{ row }">
-      <TableAction :actions="createActions(row)" />
-    </template>
-  </VxeBasicTable>
+      <template #opt="{ row }">
+        <TableAction :actions="createActions(row)" />
+      </template>
+    </Grid>
+  </Page>
 </template>
