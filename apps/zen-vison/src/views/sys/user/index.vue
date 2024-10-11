@@ -175,7 +175,7 @@ const columns: UserColumns = [
   },
   {
     field: 'createTime',
-    formatter: ({ cellValue }) => formatToDateTime(cellValue),
+    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('zen.common.createTime'),
   },

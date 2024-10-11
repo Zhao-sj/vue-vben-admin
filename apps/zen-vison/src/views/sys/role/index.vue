@@ -21,7 +21,7 @@ import { DictRoleType, DictStatus, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
-import { downloadExcel, formatToDateTime, useBatchSelect } from '#/utils';
+import { downloadExcel, useBatchSelect } from '#/utils';
 
 import {
   AsignMenu,
@@ -128,7 +128,7 @@ const columns: RoleColumns = [
   },
   {
     field: 'createTime',
-    formatter: ({ cellValue }) => formatToDateTime(cellValue),
+    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('zen.common.createTime'),
   },

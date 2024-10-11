@@ -195,8 +195,15 @@ export function getTenantPageListApi(params: PageParam & TenantApi.PageQuery) {
 /**
  * 获取租户精简列表
  */
-export function getTenantSimpleListApi(name: string) {
-  return requestClient.get<BaseSimple[]>(`${SYSTEM}/tenant/simple`, {
+export function getTenantSimpleListApi() {
+  return requestClient.get<BaseSimple[]>(`${SYSTEM}/tenant/simple`);
+}
+
+/**
+ * 获取租户列表（登录页面）
+ */
+export function getTenantListByNameApi(name: string) {
+  return requestClient.get<BaseSimple[]>(`${SYSTEM}/tenant/search`, {
     params: { name },
   });
 }

@@ -1,31 +1,45 @@
 <script setup lang="ts">
+import { useAccess } from '@vben/access';
 import { Page, useVbenModal } from '@vben/common-ui';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter';
-import { exporLoginLogApi, getLoginLogPageListApi, type LogApi } from '#/api';
+import {
+  exporLoginLogApi,
+  getLoginLogPageListApi,
+  getTenantSimpleListApi,
+  type LogApi,
+} from '#/api';
 import { type ActionItem, TableAction, TableExport } from '#/components';
 import { DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
-import { downloadExcel, formatToDateTime } from '#/utils';
+import { downloadExcel } from '#/utils';
 import { DeviceInfo } from '#/views/sys/log/components';
 
 import { TableQuery } from './components';
 
 type LogColumns = VxeGridProps<LogApi.Login>['columns'];
 
+const { hasAccessByCodes } = useAccess();
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.LOGIN_TYPE, DictTypeEnum.LOGIN_RESULT);
 
+const hasTenantPermission = hasAccessByCodes(['system:tenant:list']);
 let logQuery: LogApi.LoginQuery = {};
+
+const requestConfig = {
+  loadingDelay: 200,
+  manual: true,
+};
+
+const { data: tenantList } = useRequest(getTenantSimpleListApi, {
+  manual: !hasTenantPermission,
+});
 
 const { loading: exportLoading, runAsync: exportLog } = useRequest(
   exporLoginLogApi,
-  {
-    loadingDelay: 200,
-    manual: true,
-  },
+  requestConfig,
 );
 
 const [TableExportModal, exportModal] = useVbenModal({
@@ -38,6 +52,16 @@ const columns: LogColumns = [
     minWidth: 80,
     title: $t('zen.service.log.common.code'),
   },
+  ...(hasTenantPermission
+    ? [
+        {
+          field: 'tenantId',
+          minWidth: 150,
+          slots: { default: 'tenant' },
+          title: $t('zen.service.log.login.tenant'),
+        },
+      ]
+    : []),
   {
     field: 'type',
     minWidth: 150,
@@ -73,7 +97,7 @@ const columns: LogColumns = [
   },
   {
     field: 'createTime',
-    formatter: ({ cellValue }) => formatToDateTime(cellValue),
+    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('zen.service.log.login.createTime'),
   },
@@ -131,7 +155,11 @@ async function handleExport(fileName: string) {
   <Page auto-content-height>
     <Grid>
       <template #form>
-        <TableQuery @query="handleQuery" />
+        <TableQuery
+          :show-tenant="tenantList?.length > 0"
+          :tenant-list
+          @query="handleQuery"
+        />
       </template>
 
       <template #toolbar-actions>
@@ -146,6 +174,10 @@ async function handleExport(fileName: string) {
           :default-name="$t('zen.service.log.login.title')"
           @confirm="handleExport"
         />
+      </template>
+
+      <template #tenant="{ row: { tenantId } }">
+        {{ tenantList?.find((item) => item.id === tenantId)?.name }}
       </template>
 
       <template #type="{ row: { type } }">

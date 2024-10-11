@@ -1,33 +1,47 @@
 <script setup lang="ts">
+import { useAccess } from '@vben/access';
 import { Page, useVbenModal } from '@vben/common-ui';
 
 import { isNumber } from 'lodash-es';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter';
-import { exporAccessLogApi, getAccessLogPageListApi, type LogApi } from '#/api';
+import {
+  exporAccessLogApi,
+  getAccessLogPageListApi,
+  getTenantSimpleListApi,
+  type LogApi,
+} from '#/api';
 import { type ActionItem, TableAction, TableExport } from '#/components';
 import { DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
-import { downloadExcel, formatToDateTime } from '#/utils';
+import { downloadExcel } from '#/utils';
 import { DeviceInfo } from '#/views/sys/log/components';
 
 import { TableDetail, TableQuery } from './components';
 
 type LogColumns = VxeGridProps<LogApi.Access>['columns'];
 
+const { hasAccessByCodes } = useAccess();
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.USER_TYPE, DictTypeEnum.OPERATE_TYPE);
 
+const hasTenantPermission = hasAccessByCodes(['system:tenant:list']);
 let logQuery: LogApi.AccessQuery = {};
+
+const requestConfig = {
+  loadingDelay: 200,
+  manual: true,
+};
+
+const { data: tenantList } = useRequest(getTenantSimpleListApi, {
+  manual: !hasTenantPermission,
+});
 
 const { loading: exportLoading, runAsync: exportLog } = useRequest(
   exporAccessLogApi,
-  {
-    loadingDelay: 200,
-    manual: true,
-  },
+  requestConfig,
 );
 
 const [TableExportModal, exportModal] = useVbenModal({
@@ -44,6 +58,17 @@ const columns: LogColumns = [
     minWidth: 80,
     title: $t('zen.service.log.common.code'),
   },
+  ...(hasTenantPermission
+    ? [
+        {
+          field: 'tenantId',
+          minWidth: 150,
+          slots: { default: 'tenant' },
+          title: $t('zen.service.log.access.tenant'),
+          visible: false,
+        },
+      ]
+    : []),
   {
     field: 'userId',
     minWidth: 80,
@@ -75,7 +100,7 @@ const columns: LogColumns = [
   },
   {
     field: 'beginTime',
-    formatter: ({ cellValue }) => formatToDateTime(cellValue),
+    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('zen.service.log.access.createTime'),
   },
@@ -192,7 +217,11 @@ async function handleExport(fileName: string) {
   <Page auto-content-height>
     <Grid>
       <template #form>
-        <TableQuery @query="handleQuery" />
+        <TableQuery
+          :show-tenant="tenantList?.length > 0"
+          :tenant-list
+          @query="handleQuery"
+        />
       </template>
 
       <template #toolbar-actions>
@@ -208,6 +237,10 @@ async function handleExport(fileName: string) {
           @confirm="handleExport"
         />
         <TableDetailModal />
+      </template>
+
+      <template #tenant="{ row: { tenantId } }">
+        {{ tenantList?.find((item) => item.id === tenantId)?.name }}
       </template>
 
       <template #ua="{ row: { ua } }">

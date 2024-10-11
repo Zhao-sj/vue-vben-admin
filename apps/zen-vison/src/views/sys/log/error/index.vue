@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAccess } from '@vben/access';
 import { Page, useVbenModal } from '@vben/common-ui';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter';
@@ -6,6 +7,7 @@ import {
   batchUpdateErrorLogStatusApi,
   exporErrorLogApi,
   getErrorLogPageListApi,
+  getTenantSimpleListApi,
   type LogApi,
   updateErrorLogStatusApi,
 } from '#/api';
@@ -14,24 +16,30 @@ import { DictLogProcess, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
-import { downloadExcel, formatToDateTime, useBatchSelect } from '#/utils';
+import { downloadExcel, useBatchSelect } from '#/utils';
 
 import { TableDetail, TableQuery } from './components';
 
 type LogColumns = VxeGridProps<LogApi.Error>['columns'];
 
+const { hasAccessByCodes } = useAccess();
 const dictStore = useDictStore();
 dictStore.initDictData(
   DictTypeEnum.USER_TYPE,
   DictTypeEnum.ERROR_LOG_PROCESS_STATUS,
 );
 
+const hasTenantPermission = hasAccessByCodes(['system:tenant:list']);
 let logQuery: LogApi.ErrorQuery = {};
 
 const requestConfig = {
   loadingDelay: 200,
   manual: true,
 };
+
+const { data: tenantList } = useRequest(getTenantSimpleListApi, {
+  manual: !hasTenantPermission,
+});
 
 const { loading: exportLoading, runAsync: exportLog } = useRequest(
   exporErrorLogApi,
@@ -58,7 +66,6 @@ const [TableDetailModal, detailModal] = useVbenModal({
 
 const columns: LogColumns = [
   {
-    fixed: 'left',
     type: 'checkbox',
     width: 50,
   },
@@ -67,6 +74,16 @@ const columns: LogColumns = [
     minWidth: 80,
     title: $t('zen.service.log.common.code'),
   },
+  ...(hasTenantPermission
+    ? [
+        {
+          field: 'tenantId',
+          minWidth: 150,
+          slots: { default: 'tenant' },
+          title: $t('zen.service.log.error.tenant'),
+        },
+      ]
+    : []),
   {
     field: 'userId',
     minWidth: 80,
@@ -98,7 +115,7 @@ const columns: LogColumns = [
   },
   {
     field: 'exTime',
-    formatter: ({ cellValue }) => formatToDateTime(cellValue),
+    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('zen.service.log.error.exTime'),
   },
@@ -114,7 +131,6 @@ const columns: LogColumns = [
     title: $t('zen.service.log.error.status'),
   },
   {
-    fixed: 'right',
     slots: { default: 'opt' },
     title: $t('zen.common.opt'),
     width: 240,
@@ -268,7 +284,11 @@ function handleBatchProcess(status: DictLogProcess) {
   <Page auto-content-height>
     <Grid>
       <template #form>
-        <TableQuery @query="handleQuery" />
+        <TableQuery
+          :show-tenant="tenantList?.length > 0"
+          :tenant-list
+          @query="handleQuery"
+        />
       </template>
 
       <template #toolbar-actions>
@@ -284,6 +304,10 @@ function handleBatchProcess(status: DictLogProcess) {
           @confirm="handleExport"
         />
         <TableDetailModal />
+      </template>
+
+      <template #tenant="{ row: { tenantId } }">
+        {{ tenantList?.find((item) => item.id === tenantId)?.name }}
       </template>
 
       <template #userType="{ row: { userType } }">

@@ -218,7 +218,8 @@
           "result": "Status",
           "createTime": "LoginDate",
           "success": "Success",
-          "fail": "Fail"
+          "fail": "Fail",
+          "tenant": "Tenant"
         },
         "access": {
           "title": "Access Log",
@@ -231,7 +232,8 @@
           "duration": "Duration",
           "resultCode": "Code",
           "resultMsg": "Message",
-          "createTime": "RequestTime"
+          "createTime": "RequestTime",
+          "tenant": "Tenant"
         },
         "error": {
           "title": "Error Log",
@@ -246,7 +248,8 @@
           "processTip": "Has the error been handled?",
           "ignoreTip": "Ignore this error?",
           "processUser": "ProcessUser",
-          "processTime": "ProcessTime"
+          "processTime": "ProcessTime",
+          "tenant": "Tenant"
         }
       },
       "menu": {

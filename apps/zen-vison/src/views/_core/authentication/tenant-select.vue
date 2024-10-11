@@ -2,12 +2,12 @@
 import { useDebounceFn } from '@vueuse/core';
 import { ElOption, ElSelect } from 'element-plus';
 
-import { getTenantSimpleListApi } from '#/api';
+import { getTenantListByNameApi } from '#/api';
 import { useRequest } from '#/hooks';
 
 const modelValue = defineModel<string>('modelValue');
 
-const { data, loading, runAsync } = useRequest(getTenantSimpleListApi, {
+const { data, loading, runAsync } = useRequest(getTenantListByNameApi, {
   manual: true,
 });
 

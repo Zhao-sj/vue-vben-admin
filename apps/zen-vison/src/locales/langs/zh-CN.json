@@ -104,7 +104,7 @@
         "area": "地区管理"
       },
       "account": {
-        "profile": "个人中心"
+        "profile": "个人设置"
       }
     },
     "service": {
@@ -218,7 +218,8 @@
           "result": "登录状态",
           "createTime": "登录日期",
           "success": "成功",
-          "fail": "失败"
+          "fail": "失败",
+          "tenant": "登录租户"
         },
         "access": {
           "title": "访问日志",
@@ -231,7 +232,8 @@
           "duration": "执行时长",
           "resultCode": "结果编码",
           "resultMsg": "操作结果",
-          "createTime": "请求时间"
+          "createTime": "请求时间",
+          "tenant": "访问租户"
         },
         "error": {
           "title": "错误日志",
@@ -246,7 +248,8 @@
           "processTip": "是否已处理该错误?",
           "ignoreTip": "是否忽略该错误?",
           "processUser": "处理人员",
-          "processTime": "处理时间"
+          "processTime": "处理时间",
+          "tenant": "日志租户"
         }
       },
       "menu": {

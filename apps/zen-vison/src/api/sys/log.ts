@@ -11,6 +11,7 @@ export namespace LogApi {
     ip?: string;
     status?: boolean;
     createTime?: string;
+    tenantId?: number;
   }
 
   export interface Login {

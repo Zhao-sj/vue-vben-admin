@@ -12,7 +12,7 @@ import { type ActionItem, TableAction } from '#/components';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
-import { formatToDateTime, useBatchSelect } from '#/utils';
+import { useBatchSelect } from '#/utils';
 
 import { TableAdd, TableEdit, TableQuery } from './components';
 
@@ -61,7 +61,7 @@ const columns: PackageColumns = [
   },
   {
     field: 'createTime',
-    formatter: ({ cellValue }) => formatToDateTime(cellValue),
+    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('zen.common.createTime'),
   },

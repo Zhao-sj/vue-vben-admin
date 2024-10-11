@@ -8,7 +8,6 @@ import { type ActionItem, TableAction } from '#/components';
 import { DictTypeEnum, MenuType } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
-import { formatToDateTime } from '#/utils';
 
 import { TableAdd, TableEdit, TableQuery } from './components';
 
@@ -68,7 +67,7 @@ const columns: MenuColumns = [
   },
   {
     field: 'createTime',
-    formatter: ({ cellValue }) => formatToDateTime(cellValue),
+    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('zen.common.createTime'),
   },

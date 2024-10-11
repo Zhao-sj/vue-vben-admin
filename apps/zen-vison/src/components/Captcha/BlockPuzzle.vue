@@ -67,14 +67,16 @@ async function handleDragEnd() {
   const pointJsonStr = JSON.stringify({ x: state.moveX, y: 5 });
   state.isPassing = true;
   const isPassing = await props.validate(pointJsonStr);
-  state.isPassing = isPassing;
-  state.showTip = true;
+  setTimeout(() => {
+    state.isPassing = isPassing;
+    state.showTip = true;
 
-  if (!isPassing) {
-    setTimeout(() => {
-      handleRefresh();
-    }, 1200);
-  }
+    if (!isPassing) {
+      setTimeout(() => {
+        handleRefresh();
+      }, 1200);
+    }
+  }, 0);
 }
 
 function handleBasemapOnLoad() {
