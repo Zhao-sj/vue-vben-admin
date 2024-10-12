@@ -22,6 +22,7 @@ export const useAuthStore = defineStore('zen-auth', () => {
   const router = useRouter();
 
   const loginLoading = ref(false);
+  let userInfoCache: Nullable<AuthApi.PermissionResp> = null;
 
   /**
    * 异步处理登录操作
@@ -44,9 +45,10 @@ export const useAuthStore = defineStore('zen-auth', () => {
         accessStore.setAccessToken(accessToken);
 
         // 获取用户信息并存储到 accessStore 中
-        const { user } = (await fetchUserInfo()) || {};
-        if (user) {
-          userInfo = user;
+        const resp = await fetchUserInfo();
+        userInfoCache = resp;
+        if (resp?.user) {
+          userInfo = resp.user;
         }
 
         if (accessStore.loginExpired) {
@@ -97,6 +99,10 @@ export const useAuthStore = defineStore('zen-auth', () => {
 
   async function fetchUserInfo() {
     let userInfo: Nullable<AuthApi.PermissionResp> = null;
+    if (userInfoCache) {
+      return userInfoCache;
+    }
+
     try {
       const userPermission = await getUserPermissionApi();
       const { permissions, roles, user } = userPermission;
