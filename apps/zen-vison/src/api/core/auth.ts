@@ -48,6 +48,7 @@ export namespace AuthApi {
   }
 
   export interface User {
+    packageName: Nullable<string>;
     avatar: Nullable<string>;
     deptId: Nullable<number>;
     email: Nullable<string>;

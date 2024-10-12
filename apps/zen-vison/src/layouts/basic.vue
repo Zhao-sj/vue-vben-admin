@@ -161,8 +161,8 @@ watch(
         :avatar
         :description="userStore.userInfo?.email!"
         :menus
+        :tag-text="userStore.userInfo?.packageName!"
         :text="userStore.userInfo?.nickname!"
-        tag-text="Pro"
         @logout="handleLogout"
       />
     </template>
