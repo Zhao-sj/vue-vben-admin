@@ -5,7 +5,7 @@ import { Icon } from '@vben/icons';
 import { ElTree } from 'element-plus';
 import { cloneDeep } from 'lodash-es';
 
-import { useVbenForm, type VbenFormSchema } from '#/adapter';
+import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
 import {
   assignRoleDataScopeApi,
   buildMenuTree,

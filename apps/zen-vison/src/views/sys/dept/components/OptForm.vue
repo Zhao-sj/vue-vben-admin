@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useVbenForm, type VbenFormSchema } from '#/adapter';
+import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
 import { buildMenuTree, type DeptApi, type UserApi } from '#/api';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';

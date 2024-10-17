@@ -1,4 +1,4 @@
-import { useVbenVxeGrid } from '#/adapter';
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { $t } from '#/locales';
 
 type ExtendedVxeGridApi = ReturnType<typeof useVbenVxeGrid>;

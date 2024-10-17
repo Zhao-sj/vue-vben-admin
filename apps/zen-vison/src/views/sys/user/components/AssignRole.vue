@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useVbenModal } from '@vben/common-ui';
 
-import { useVbenForm, type VbenFormSchema } from '#/adapter';
+import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
 import {
   assignUserRoleApi,
   getRoleSimpleListApi,

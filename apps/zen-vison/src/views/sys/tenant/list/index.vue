@@ -3,7 +3,7 @@ import { Page, useVbenModal } from '@vben/common-ui';
 
 import dayjs from 'dayjs';
 
-import { useVbenVxeGrid, type VxeGridProps } from '#/adapter';
+import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
 import {
   batchDeleteTenantApi,
   deleteTenantApi,

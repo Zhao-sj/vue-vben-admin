@@ -3,7 +3,7 @@ import { useVbenModal } from '@vben/common-ui';
 
 import { useDebounceFn } from '@vueuse/core';
 
-import { useVbenForm, type VbenFormSchema } from '#/adapter';
+import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
 import { $t } from '#/locales';
 
 interface Props {

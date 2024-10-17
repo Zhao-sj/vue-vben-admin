@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useIsMobile } from '@vben/hooks';
 
-import { useVbenForm, type VbenFormSchema } from '#/adapter';
+import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
 import { type BaseSimple, type LogApi } from '#/api';
 import { $t } from '#/locales';
 import { translateState, useResetVbenVxeForm } from '#/utils';

@@ -2,7 +2,7 @@
 import { Page, useVbenModal } from '@vben/common-ui';
 import { Icon } from '@vben/icons';
 
-import { useVbenVxeGrid, type VxeGridProps } from '#/adapter';
+import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
 import {
   deleteDeptApi,
   type DeptApi,

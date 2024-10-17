@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Page, useVbenModal } from '@vben/common-ui';
 
-import { useVbenVxeGrid, type VxeGridProps } from '#/adapter';
+import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
 import { type AreaApi, getAreaListApi } from '#/api';
 import { type ActionItem, TableAction } from '#/components';
 import { $t } from '#/locales';

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useVbenForm, type VbenFormSchema } from '#/adapter';
+import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
 import { $t } from '#/locales';
 
 const formSchema = computed<VbenFormSchema[]>(() => [

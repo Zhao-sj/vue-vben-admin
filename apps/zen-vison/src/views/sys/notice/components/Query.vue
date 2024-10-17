@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useIsMobile } from '@vben/hooks';
 
-import { useVbenForm, type VbenFormSchema } from '#/adapter';
+import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
 import { type NoticeApi } from '#/api';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';

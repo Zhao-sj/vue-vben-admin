@@ -2,7 +2,7 @@
 import { Page, useVbenModal } from '@vben/common-ui';
 import { Icon } from '@vben/icons';
 
-import { useVbenVxeGrid, type VxeGridProps } from '#/adapter';
+import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
 import { deleteMenuApi, getMenuListApi, type MenuApi } from '#/api';
 import { type ActionItem, TableAction } from '#/components';
 import { DictTypeEnum, MenuType } from '#/enums';

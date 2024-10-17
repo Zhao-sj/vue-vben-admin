@@ -3,7 +3,7 @@ import type { TenantApi } from '#/api';
 
 import { useIsMobile } from '@vben/hooks';
 
-import { useVbenForm, type VbenFormSchema } from '#/adapter';
+import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';

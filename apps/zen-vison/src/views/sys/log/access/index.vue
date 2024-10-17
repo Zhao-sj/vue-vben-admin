@@ -4,7 +4,7 @@ import { Page, useVbenModal } from '@vben/common-ui';
 
 import { isNumber } from 'lodash-es';
 
-import { useVbenVxeGrid, type VxeGridProps } from '#/adapter';
+import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
 import {
   exporAccessLogApi,
   getAccessLogPageListApi,

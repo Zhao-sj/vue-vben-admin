@@ -4,7 +4,7 @@ import { useVbenModal } from '@vben/common-ui';
 import { ElTree } from 'element-plus';
 import { cloneDeep } from 'lodash-es';
 
-import { useVbenForm, type VbenFormSchema } from '#/adapter';
+import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
 import {
   assignRoleMenuApi,
   buildMenuTree,

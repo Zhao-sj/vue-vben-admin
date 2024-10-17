@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useIsMobile } from '@vben/hooks';
 
-import { useVbenForm, type VbenFormSchema } from '#/adapter';
+import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
 import { type DictApi, getDictTypeSimpleListApi } from '#/api';
 import { DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';

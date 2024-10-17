@@ -2,7 +2,7 @@
 import { ElTree } from 'element-plus';
 import { cloneDeep } from 'lodash-es';
 
-import { useVbenForm, type VbenFormSchema } from '#/adapter';
+import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
 import { buildMenuTree, type MenuApi } from '#/api';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
