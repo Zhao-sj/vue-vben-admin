@@ -5,12 +5,16 @@ import type { AuthApi } from '#/api';
 import { defineStore } from 'pinia';
 
 interface UserState {
+  tenantId: Nullable<number>;
   roles: string[];
   userInfo: Nullable<AuthApi.User>;
 }
 
 export const useUserStore = defineStore('zen-user', {
   actions: {
+    setTenantId(id: number) {
+      this.tenantId = id;
+    },
     setRoles(roles: string[]) {
       this.roles = roles;
     },
@@ -24,7 +28,11 @@ export const useUserStore = defineStore('zen-user', {
     },
   },
   state: (): UserState => ({
+    tenantId: null,
     roles: [],
     userInfo: null,
   }),
+  persist: {
+    pick: ['tenantId'],
+  },
 });

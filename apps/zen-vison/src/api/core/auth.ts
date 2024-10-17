@@ -33,7 +33,10 @@ export namespace AuthApi {
   }
 
   export interface LoginResp {
+    userId: number;
     accessToken: string;
+    refreshToken: string;
+    expiresTime: number;
   }
 
   export interface Menu {
@@ -66,25 +69,32 @@ export namespace AuthApi {
 }
 
 /**
- * 获取验证码
+ * 刷新token
  */
-export function getCaptchaApi(captchaType = CaptchaEnum.BLOCK_PUZZLE) {
-  return requestClient.post<AuthApi.CaptchaResp>(`${SYSTEM}/captcha/get`, {
-    captchaType,
-  });
+export function refreshTokenApi(refreshToken: string, tenantId?: number) {
+  return requestClient.post<AuthApi.LoginResp>(
+    `${SYSTEM}/auth/refresh-token`,
+    { refreshToken },
+    {
+      headers: {
+        ...(tenantId ? { Tenant: tenantId } : {}),
+      },
+    },
+  );
 }
 
 /**
- * 校验验证码
+ * 获取登录用户的权限信息
  */
-export function checkCaptchaApi(data: AuthApi.CheckCaptchaModel) {
-  return requestClient.post<HttpResponse<AuthApi.CheckCaptchaModel>>(
-    `${SYSTEM}/captcha/check`,
-    data,
-    {
-      isTransformResponse: false,
-    },
-  );
+export function getUserPermissionApi() {
+  return requestClient.get<AuthApi.PermissionResp>(`${SYSTEM}/auth/permission`);
+}
+
+/**
+ * 登出
+ */
+export function userLogoutApi() {
+  return requestClient.post<boolean>(`${SYSTEM}/auth/logout`);
 }
 
 /**
@@ -103,15 +113,23 @@ export function userLoginApi(data: AuthApi.LoginModel) {
 }
 
 /**
- * 登出
+ * 校验验证码
  */
-export function userLogoutApi() {
-  return requestClient.post<boolean>(`${SYSTEM}/auth/logout`);
+export function checkCaptchaApi(data: AuthApi.CheckCaptchaModel) {
+  return requestClient.post<HttpResponse<AuthApi.CheckCaptchaModel>>(
+    `${SYSTEM}/captcha/check`,
+    data,
+    {
+      isTransformResponse: false,
+    },
+  );
 }
 
 /**
- * 获取登录用户的权限信息
+ * 获取验证码
  */
-export function getUserPermissionApi() {
-  return requestClient.get<AuthApi.PermissionResp>(`${SYSTEM}/auth/permission`);
+export function getCaptchaApi(captchaType = CaptchaEnum.BLOCK_PUZZLE) {
+  return requestClient.post<AuthApi.CaptchaResp>(`${SYSTEM}/captcha/get`, {
+    captchaType,
+  });
 }

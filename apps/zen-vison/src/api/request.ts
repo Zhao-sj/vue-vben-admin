@@ -8,10 +8,12 @@ import { preferences } from '@vben/preferences';
 import { errorMessageResponseInterceptor } from '@vben/request';
 import { useAccessStore } from '@vben/stores';
 
-import { hasUnAuthentication, ResultEnum } from '#/enums';
+import { ResultEnum } from '#/enums';
 import { $t } from '#/locales';
-import { useAuthStore } from '#/store';
-import { ZenRequestClient } from '#/utils';
+import { useAuthStore, useUserStore } from '#/store';
+import { authenticateResponseHandler, ZenRequestClient } from '#/utils';
+
+import { refreshTokenApi } from './core/auth';
 
 const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
 
@@ -20,12 +22,49 @@ function createRequestClient(baseURL: string) {
     baseURL,
   });
 
+  /**
+   * 重新认证逻辑
+   */
+  async function doReAuthenticate() {
+    console.warn('Access token or refresh token is invalid or expired.');
+    const accessStore = useAccessStore();
+    const authStore = useAuthStore();
+    accessStore.setAccessToken(null);
+    if (
+      preferences.app.loginExpiredMode === 'modal' &&
+      accessStore.isAccessChecked
+    ) {
+      accessStore.setLoginExpired(true);
+    } else {
+      await authStore.logout();
+    }
+  }
+
+  /**
+   * 刷新token逻辑
+   */
+  async function doRefreshToken() {
+    const accessStore = useAccessStore();
+    const userStore = useUserStore();
+    const { refreshToken, accessToken } = await refreshTokenApi(
+      accessStore.refreshToken as string,
+      userStore.tenantId as number,
+    );
+    accessStore.setAccessToken(accessToken);
+    accessStore.setRefreshToken(refreshToken);
+    return accessToken;
+  }
+
+  function formatToken(token: null | string) {
+    return token ? `Bearer ${token}` : null;
+  }
+
   // 请求头处理
   client.addRequestInterceptor({
     fulfilled: async (config) => {
       const accessStore = useAccessStore();
 
-      config.headers.Authorization = accessStore.accessToken;
+      config.headers.Authorization = formatToken(accessStore.accessToken);
       config.headers['Accept-Language'] = preferences.app.locale;
       return config;
     },
@@ -88,19 +127,15 @@ function createRequestClient(baseURL: string) {
         return data;
       }
 
-      if (hasUnAuthentication(code)) {
-        const accessStore = useAccessStore();
-        const authStore = useAuthStore();
-        accessStore.setAccessToken(null);
-
-        if (preferences.app.loginExpiredMode === 'modal') {
-          accessStore.setLoginExpired(true);
-          code !== ResultEnum.UN_AUTHORIZED && ElMessage.error(msg);
-          throw new Error(msg || $t('zen.request.requestExpire'));
-        }
-
-        // 退出登录
-        await authStore.logout();
+      if (code === ResultEnum.UN_AUTHORIZED) {
+        return authenticateResponseHandler({
+          response,
+          client,
+          doReAuthenticate,
+          doRefreshToken,
+          enableRefreshToken: preferences.app.enableRefreshToken,
+          formatToken,
+        });
       }
 
       if (errorMessageMode === 'message') {

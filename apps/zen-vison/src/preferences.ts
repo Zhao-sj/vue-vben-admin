@@ -11,6 +11,7 @@ export const overridesPreferences = defineOverridesPreferences({
     loginExpiredMode: 'modal',
     name: import.meta.env.VITE_APP_TITLE,
     preferencesButtonPosition: 'fixed',
+    enableRefreshToken: true,
   },
   copyright: {
     companyName: 'Zen',

@@ -37,12 +37,16 @@ export const useAuthStore = defineStore('zen-auth', () => {
     let userInfo: Nullable<AuthApi.User> = null;
     try {
       loginLoading.value = true;
-      const { accessToken } = await userLoginApi(params);
+      const { accessToken, refreshToken } = await userLoginApi(params);
 
       // 如果成功获取到 accessToken
       if (accessToken) {
-        // 将 accessToken 存储到 accessStore 中
+        // 存储 租户 到 zenUserStore 中
+        zenUserStore.setTenantId(params.tenant);
+
+        // 将 token 存储到 accessStore 中
         accessStore.setAccessToken(accessToken);
+        accessStore.setRefreshToken(refreshToken);
 
         // 获取用户信息并存储到 accessStore 中
         const resp = await fetchUserInfo();
@@ -84,6 +88,7 @@ export const useAuthStore = defineStore('zen-auth', () => {
     } finally {
       resetAllStores();
       accessStore.setLoginExpired(false);
+      userInfoCache = null;
 
       // 回登陆页带上当前路由地址
       await router.replace({

@@ -28,7 +28,7 @@ class ZenRequestClient extends RequestClient {
     return this.request<T>(url, { ...config, data, method: 'PUT' });
   }
 
-  override request<T>(url: string, config: ZenRequestConfig): Promise<T> {
+  override request<T = any>(url: string, config: ZenRequestConfig): Promise<T> {
     const defaultConfig: ZenRequestConfig = {
       errorMessageMode: 'message',
     };
