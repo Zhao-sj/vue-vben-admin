@@ -71,16 +71,10 @@ export namespace AuthApi {
 /**
  * 刷新token
  */
-export function refreshTokenApi(refreshToken: string, tenantId?: number) {
-  return requestClient.post<AuthApi.LoginResp>(
-    `${SYSTEM}/auth/refresh-token`,
-    { refreshToken },
-    {
-      headers: {
-        ...(tenantId ? { Tenant: tenantId } : {}),
-      },
-    },
-  );
+export function refreshTokenApi(refreshToken: string) {
+  return requestClient.post<AuthApi.LoginResp>(`${SYSTEM}/auth/refresh-token`, {
+    refreshToken,
+  });
 }
 
 /**

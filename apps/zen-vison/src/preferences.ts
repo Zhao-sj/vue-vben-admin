@@ -14,8 +14,7 @@ export const overridesPreferences = defineOverridesPreferences({
     enableRefreshToken: true,
   },
   copyright: {
-    companyName: 'Zen',
-    enable: false,
+    settingShow: false,
   },
   footer: {
     enable: false,

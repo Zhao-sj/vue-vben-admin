@@ -94,13 +94,17 @@
         "menu": "Menu Manage",
         "dept": "Org Structure",
         "post": "Post Manage",
+        "dict": "Dict Manage",
+        "dictData": "Dict Data",
+        "message": "Message Center",
+        "notice": "Notice",
         "log": "Log Manage",
         "loginLog": "Login Log",
         "accessLog": "Access Log",
         "errorLog": "Error Log",
-        "dict": "Dict Manage",
-        "dictData": "Dict Data",
-        "notice": "Notice",
+        "oauth2": "OAuth 2.0",
+        "oauth2Client": "Client",
+        "oauth2Token": "Token",
         "area": "Area Manage"
       },
       "account": {
@@ -323,6 +327,7 @@
       },
       "dict": {
         "typeTitle": "Dict Type",
+        "dataTitle": "Dict Data",
         "code": "ID",
         "name": "Name",
         "type": "Type",
@@ -353,6 +358,47 @@
         "search": "IP Search",
         "ip": "IP",
         "address": "Address"
+      },
+      "oauth2": {
+        "client": {
+          "id": "ID",
+          "clientId": "Client ID",
+          "secret": "Secret",
+          "name": "App Name",
+          "logo": "Logo",
+          "status": "Status",
+          "description": "App Description",
+          "accessTokenValiditySeconds": "Token Validity {0}",
+          "refreshTokenValiditySeconds": "Refresh Validity {0}",
+          "authorizedGrantTypes": "Grant Types",
+          "scopes": "Scopes",
+          "autoApproveScopes": "Auto Approve",
+          "redirectUris": "Redirect URI",
+          "authorities": "Authorities",
+          "resourceIds": "Resources",
+          "additionalInformation": "Additional Information {0}",
+          "create": "Create OAuth2 Client",
+          "edit": "Edit OAuth2 Client",
+          "passwordMode": "Password Mode",
+          "authorizationCodeMode": "Code Mode",
+          "implicitMode": "Simple Mode",
+          "clientCredentialsMode": "Client Mode",
+          "refreshTokenMode": "Refresh Mode",
+          "jsonFormatter": "(JSON format data)",
+          "unit": "(Unit: seconds)"
+        },
+        "token": {
+          "id": "ID",
+          "clientId": "ClientId",
+          "userId": "UserId",
+          "userType": "UserType",
+          "accessToken": "AccessToken",
+          "refreshToken": "RefreshToken",
+          "createTime": "CreateTime",
+          "expiresTime": "ExpiresTime",
+          "kickout": "Kickout",
+          "kickoutTip": "Are you sure you want to forcibly kick the user with user ID [{0}] offline?"
+        }
       }
     }
   }

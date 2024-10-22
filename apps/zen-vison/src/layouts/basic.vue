@@ -24,8 +24,8 @@ import { useDebounceFn } from '@vueuse/core';
 import { type AuthApi } from '#/api';
 import { ACCOUNT_SETTING, NoticeType } from '#/enums';
 import { $t } from '#/locales';
-import { useAuthStore, useUserStore } from '#/store';
-import { encryptBySha256, wsEmitter } from '#/utils';
+import { useAuthStore, useUserStore, useWsStore } from '#/store';
+import { encryptBySha256 } from '#/utils';
 import LoginForm from '#/views/_core/authentication/login.vue';
 
 const Captcha = defineAsyncComponent(
@@ -67,6 +67,7 @@ const router = useRouter();
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const accessStore = useAccessStore();
+const wsStore = useWsStore();
 const { destroyWatermark, updateWatermark } = useWatermark();
 const { refresh } = useRefresh();
 const showCaptcha = ref(false);
@@ -90,7 +91,7 @@ const avatar = computed(() => {
   return userStore.userInfo?.avatar ?? preferences.app.defaultAvatar;
 });
 
-wsEmitter.on('notice-push', (notice) => {
+wsStore.emitter.on('notice-push', (notice) => {
   if (notice.type === NoticeType.NOTICE) {
     ElNotification({
       dangerouslyUseHTMLString: true,

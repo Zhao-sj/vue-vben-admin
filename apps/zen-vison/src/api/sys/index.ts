@@ -4,6 +4,7 @@ export * from './dict';
 export * from './log';
 export * from './menu';
 export * from './notice';
+export * from './oauth2';
 export * from './post';
 export * from './role';
 export * from './tenant';

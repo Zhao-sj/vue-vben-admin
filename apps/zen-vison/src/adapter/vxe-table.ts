@@ -2,7 +2,9 @@ import { h } from 'vue';
 
 import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
 
-import { ElButton, ElImage } from 'element-plus';
+import { ElAvatar, ElButton, ElImage, ElTag } from 'element-plus';
+
+import { formatToSeconds } from '#/utils';
 
 import { useVbenForm } from './form';
 
@@ -55,6 +57,18 @@ setupVbenVxeTable({
       },
     });
 
+    // 表格配置项可以用 cellRender: { name: 'CellAvatar' },
+    vxeUI.renderer.add('CellAvatar', {
+      renderDefault(renderOpts, params) {
+        const { props, attrs } = renderOpts;
+        const { column, row } = params;
+        const src = row[column.field];
+
+        const node = h(ElAvatar, { src, ...props, ...attrs });
+        return src ? node : '-';
+      },
+    });
+
     // 表格配置项可以用 cellRender: { name: 'CellLink' },
     vxeUI.renderer.add('CellLink', {
       renderDefault(renderOpts) {
@@ -67,8 +81,36 @@ setupVbenVxeTable({
       },
     });
 
+    // 表格配置项可以用 cellRender: { name: 'CellTags' },
+    vxeUI.renderer.add('CellTags', {
+      renderDefault(_renderOpts, params) {
+        const { column, row } = params;
+        const children: any[] = row[column.field];
+        const node = h(
+          'div',
+          { class: 'flex flex-wrap justify-center gap-1' },
+          {
+            default: () =>
+              children?.map((item) => h(ElTag, {}, { default: () => item })),
+          },
+        );
+
+        return children?.length > 0 ? node : '-';
+      },
+    });
+
     // 这里可以自行扩展 vxe-table 的全局配置，比如自定义格式化
-    // vxeUI.formats.add
+    vxeUI.formats.add('formatSeconds', {
+      tableCellFormatMethod({ cellValue }) {
+        return formatToSeconds(cellValue);
+      },
+    });
+
+    vxeUI.formats.add('formatBlank', {
+      tableCellFormatMethod({ cellValue }) {
+        return cellValue || '-';
+      },
+    });
   },
   useVbenForm,
 });

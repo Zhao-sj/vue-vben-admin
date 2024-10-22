@@ -10,7 +10,7 @@ import { useAccessStore } from '@vben/stores';
 
 import { ResultEnum } from '#/enums';
 import { $t } from '#/locales';
-import { useAuthStore, useUserStore } from '#/store';
+import { useAuthStore, useUserStore, useWsStore } from '#/store';
 import { authenticateResponseHandler, ZenRequestClient } from '#/utils';
 
 import { refreshTokenApi } from './core/auth';
@@ -45,13 +45,15 @@ function createRequestClient(baseURL: string) {
    */
   async function doRefreshToken() {
     const accessStore = useAccessStore();
-    const userStore = useUserStore();
+    const wsStore = useWsStore();
+
+    wsStore.disconnect();
     const { refreshToken, accessToken } = await refreshTokenApi(
       accessStore.refreshToken as string,
-      userStore.tenantId as number,
     );
     accessStore.setAccessToken(accessToken);
     accessStore.setRefreshToken(refreshToken);
+    wsStore.connect(accessToken);
     return accessToken;
   }
 
@@ -63,9 +65,14 @@ function createRequestClient(baseURL: string) {
   client.addRequestInterceptor({
     fulfilled: async (config) => {
       const accessStore = useAccessStore();
+      const userStore = useUserStore();
 
       config.headers.Authorization = formatToken(accessStore.accessToken);
       config.headers['Accept-Language'] = preferences.app.locale;
+      if (userStore.tenantId) {
+        config.headers.Tenant = userStore.tenantId;
+      }
+
       return config;
     },
   });

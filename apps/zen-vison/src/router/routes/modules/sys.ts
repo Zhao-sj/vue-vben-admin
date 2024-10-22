@@ -88,6 +88,45 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        name: 'DictTypeManage',
+        path: '/sys/dict/type',
+        component: () => import('#/views/sys/dict/type/index.vue'),
+        meta: {
+          icon: 'streamline:dictionary-language-book',
+          title: $t('zen.menu.manage.dict'),
+        },
+      },
+      {
+        name: 'DictDataManage',
+        path: '/sys/dict/data/:id',
+        component: () => import('#/views/sys/dict/data/index.vue'),
+        meta: {
+          activePath: '/sys/dict/type',
+          hideInMenu: true,
+          icon: 'lucide:text-search',
+          title: $t('zen.menu.manage.dictData'),
+        },
+      },
+      {
+        name: 'MessageManage',
+        path: '/sys/message',
+        meta: {
+          icon: 'lucide:bot-message-square',
+          title: $t('zen.menu.manage.message'),
+        },
+        children: [
+          {
+            name: 'NoticeManage',
+            path: '/sys/message/notice',
+            component: () => import('#/views/sys/notice/index.vue'),
+            meta: {
+              icon: 'icon-park-outline:volume-notice',
+              title: $t('zen.menu.manage.notice'),
+            },
+          },
+        ],
+      },
+      {
         name: 'LogManage',
         path: '/sys/log',
         meta: {
@@ -125,33 +164,32 @@ const routes: RouteRecordRaw[] = [
         ],
       },
       {
-        name: 'DictTypeManage',
-        path: '/sys/dict/type',
-        component: () => import('#/views/sys/dict/type/index.vue'),
+        name: 'OAuth2',
+        path: '/sys/oauth2',
         meta: {
-          icon: 'streamline:dictionary-language-book',
-          title: $t('zen.menu.manage.dict'),
+          icon: 'lucide:shield-check',
+          title: $t('zen.menu.manage.oauth2'),
         },
-      },
-      {
-        name: 'DictDataManage',
-        path: '/sys/dict/data/:id',
-        component: () => import('#/views/sys/dict/data/index.vue'),
-        meta: {
-          activePath: '/sys/dict/type',
-          hideInMenu: true,
-          icon: 'lucide:text-search',
-          title: $t('zen.menu.manage.dictData'),
-        },
-      },
-      {
-        name: 'NoticeManage',
-        path: '/sys/notice',
-        component: () => import('#/views/sys/notice/index.vue'),
-        meta: {
-          icon: 'icon-park-outline:volume-notice',
-          title: $t('zen.menu.manage.notice'),
-        },
+        children: [
+          {
+            name: 'OAuth2Client',
+            path: '/sys/oauth2/client',
+            component: () => import('#/views/sys/oauth2/client/index.vue'),
+            meta: {
+              icon: 'lucide:layout-grid',
+              title: $t('zen.menu.manage.oauth2Client'),
+            },
+          },
+          {
+            name: 'OAuth2Token',
+            path: '/sys/oauth2/token',
+            component: () => import('#/views/sys/oauth2/token/index.vue'),
+            meta: {
+              icon: 'lucide:key-round',
+              title: $t('zen.menu.manage.oauth2Token'),
+            },
+          },
+        ],
       },
       {
         name: 'AreaManage',

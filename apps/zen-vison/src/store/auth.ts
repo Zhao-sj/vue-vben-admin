@@ -13,12 +13,13 @@ import { defineStore } from 'pinia';
 
 import { getUserPermissionApi, userLoginApi, userLogoutApi } from '#/api';
 import { $t } from '#/locales';
-import { useUserStore as useZenUserStore } from '#/store';
+import { useWsStore, useUserStore as useZenUserStore } from '#/store';
 
 export const useAuthStore = defineStore('zen-auth', () => {
   const accessStore = useAccessStore();
   const userStore = useUserStore();
   const zenUserStore = useZenUserStore();
+  const wsStore = useWsStore();
   const router = useRouter();
 
   const loginLoading = ref(false);
@@ -41,6 +42,9 @@ export const useAuthStore = defineStore('zen-auth', () => {
 
       // 如果成功获取到 accessToken
       if (accessToken) {
+        // 连接ws
+        wsStore.connect(accessToken);
+
         // 存储 租户 到 zenUserStore 中
         zenUserStore.setTenantId(params.tenant);
 
@@ -86,6 +90,7 @@ export const useAuthStore = defineStore('zen-auth', () => {
         await userLogoutApi();
       }
     } finally {
+      wsStore.disconnect(true);
       resetAllStores();
       accessStore.setLoginExpired(false);
       userInfoCache = null;
