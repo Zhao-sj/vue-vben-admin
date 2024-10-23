@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useVbenModal } from '@vben/common-ui';
-import { Icon } from '@vben/icons';
+import { IconifyIcon } from '@vben/icons';
 
 import { useDebounceFn } from '@vueuse/core';
 import {
@@ -42,7 +42,7 @@ const handleDownload = useDebounceFn(async () => {
   }
 
   const { data } = await downloadTemplate();
-  downloadExcel(data, $t('zen.service.user.templateTitle'));
+  downloadExcel(data, $t('sys.user.download.template'));
 });
 
 function handleExceed(files: File[]) {
@@ -64,7 +64,7 @@ function onOpenChange(isOpen: boolean) {
 
 function onConfirm() {
   if (fileList.value.length === 0) {
-    ElMessage.warning($t('zen.service.user.uploadFileTip'));
+    ElMessage.warning($t('sys.user.upload.empty'));
     return;
   }
 
@@ -79,7 +79,7 @@ function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="downloading"
-    :title="$t('zen.common.import')"
+    :title="$t('page.import')"
     class="w-11/12 lg:w-1/3 2xl:w-1/4"
     draggable
   >
@@ -93,11 +93,11 @@ function onConfirm() {
       @exceed="handleExceed"
     >
       <div class="flex flex-col items-center gap-3">
-        <Icon class="text-6xl text-gray-300" icon="ep:upload-filled" />
+        <IconifyIcon class="text-6xl text-gray-300" icon="ep:upload-filled" />
         <p>
-          <ElText>{{ $t('zen.service.user.dragEnterTitle') }}</ElText>
+          <ElText>{{ $t('sys.user.upload.dragEnter') }}</ElText>
           <ElText type="primary">
-            {{ $t('zen.service.user.clickUpload') }}
+            {{ $t('sys.user.upload.title') }}
           </ElText>
         </p>
       </div>
@@ -106,12 +106,12 @@ function onConfirm() {
         <div class="mt-2 flex flex-col items-center">
           <ElCheckbox
             v-model="updateSupport"
-            :label="$t('zen.service.user.updateSupport')"
+            :label="$t('sys.user.upload.support')"
           />
           <p>
-            <ElText>{{ $t('zen.service.user.uploadLimitTitle') }}</ElText>
+            <ElText>{{ $t('sys.user.upload.limit') }}</ElText>
             <ElButton link type="primary" @click="handleDownload">
-              {{ $t('zen.service.user.downloadTemplate') }}
+              {{ $t('sys.user.download.title') }}
             </ElButton>
           </p>
         </div>

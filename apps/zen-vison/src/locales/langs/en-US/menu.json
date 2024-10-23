@@ -1,0 +1,43 @@
+{
+  "dashboard": {
+    "title": "Dashboard",
+    "analytics": "Analytics",
+    "workspace": "Workspace"
+  },
+  "sys": {
+    "title": "System Mange",
+    "tenant": {
+      "title": "Tenant Manage",
+      "list": "Tenant List",
+      "package": "Tenant Package"
+    },
+    "user": "User Manage",
+    "role": "Role Manage",
+    "menu": "Menu Manage",
+    "dept": "Org Structure",
+    "post": "Post Manage",
+    "dict": {
+      "title": "Dict Manage",
+      "data": "Dict Data"
+    },
+    "message": {
+      "title": "Message Center",
+      "notice": "Notice"
+    },
+    "log": {
+      "title": "Log Manage",
+      "login": "Login Log",
+      "access": "Access Log",
+      "error": "Error Log"
+    },
+    "oauth2": {
+      "title": "OAuth 2.0",
+      "client": "Client",
+      "token": "Token"
+    },
+    "area": "Area Manage"
+  },
+  "account": {
+    "profile": "Profile"
+  }
+}

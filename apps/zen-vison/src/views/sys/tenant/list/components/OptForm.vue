@@ -21,12 +21,10 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.tenant.name'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.name')]),
     },
     fieldName: 'name',
-    label: $t('zen.service.tenant.name'),
+    label: $t('sys.tenant.list.name'),
     rules: 'required',
   },
   {
@@ -36,34 +34,28 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item.name,
         value: item.id,
       })),
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.tenant.package'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.tenant.list.package')]),
     },
     fieldName: 'packageId',
-    label: $t('zen.service.tenant.package'),
+    label: $t('sys.tenant.list.package'),
     rules: 'selectRequired',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.tenant.contact'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.contact')]),
     },
     fieldName: 'contactName',
-    label: $t('zen.service.tenant.contact'),
+    label: $t('sys.tenant.list.contact'),
     rules: 'required',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.tenant.contactPhone'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.contactPhone')]),
     },
     fieldName: 'contactMobile',
-    label: $t('zen.service.tenant.contactPhone'),
+    label: $t('sys.tenant.list.contactPhone'),
     rules: 'required',
   },
   ...(props.edit
@@ -72,26 +64,26 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         {
           component: 'Input',
           componentProps: {
-            placeholder: $t('zen.common.pleaseInput', [
-              $t('zen.service.tenant.username'),
+            placeholder: $t('page.pleaseInput', [
+              $t('sys.tenant.list.username'),
             ]),
           },
           fieldName: 'username',
-          label: $t('zen.service.tenant.username'),
+          label: $t('sys.tenant.list.username'),
           rules: 'required',
         },
         {
           component: 'Input',
           componentProps: {
             clearable: false,
-            placeholder: $t('zen.common.pleaseInput', [
-              $t('zen.service.tenant.password'),
+            placeholder: $t('page.pleaseInput', [
+              $t('sys.tenant.list.password'),
             ]),
             showPassword: true,
             type: 'password',
           },
           fieldName: 'password',
-          label: $t('zen.service.tenant.password'),
+          label: $t('sys.tenant.list.password'),
           rules: 'required',
         },
       ]),
@@ -101,36 +93,30 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 1,
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.tenant.accountLimit'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.accountLimit')]),
     },
     fieldName: 'accountCount',
-    label: $t('zen.service.tenant.accountLimit'),
+    label: $t('sys.tenant.list.accountLimit'),
     rules: 'required',
   },
   {
     component: 'DatePicker',
     componentProps: {
       class: '!w-full',
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.tenant.expireTime'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.tenant.list.expireTime')]),
       type: 'datetime',
     },
     fieldName: 'expireTime',
-    label: $t('zen.service.tenant.expireTime'),
+    label: $t('sys.tenant.list.expireTime'),
     rules: 'selectRequired',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.tenant.website'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.website')]),
     },
     fieldName: 'website',
-    label: $t('zen.service.tenant.website'),
+    label: $t('sys.tenant.list.website'),
   },
   {
     component: 'RadioGroup',
@@ -143,7 +129,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     defaultValue: 0,
     fieldName: 'status',
-    label: $t('zen.service.tenant.status'),
+    label: $t('sys.tenant.list.status'),
   },
 ]);
 

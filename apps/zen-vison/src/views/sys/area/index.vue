@@ -20,7 +20,7 @@ const columns: AreaColumns = [
     headerAlign: 'center',
     align: 'left',
     minWidth: 200,
-    title: $t('zen.service.area.id'),
+    title: $t('sys.area.id'),
     treeNode: true,
   },
   {
@@ -28,7 +28,7 @@ const columns: AreaColumns = [
     headerAlign: 'center',
     align: 'left',
     minWidth: 200,
-    title: $t('zen.service.area.name'),
+    title: $t('sys.area.name'),
   },
 ];
 
@@ -69,7 +69,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     icon: 'lucide:search',
     onClick: () => searchModal.open(),
-    title: $t('zen.service.area.search'),
+    title: $t('sys.area.search'),
     type: 'primary',
   },
 ]);

@@ -25,21 +25,19 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.menu.name')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.menu.name')]),
     },
     fieldName: 'name',
-    label: $t('zen.service.menu.name'),
+    label: $t('sys.menu.name'),
   },
   {
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.STATUS),
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.menu.status'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.menu.status')]),
     },
     fieldName: 'status',
-    label: $t('zen.service.menu.status'),
+    label: $t('sys.menu.status'),
   },
 ]);
 
@@ -59,7 +57,7 @@ const [QueryForm, formApi] = useVbenForm(
     schema: formSchema,
     showCollapseButton: isMobile,
     submitButtonOptions: {
-      content: computed(() => $t('zen.common.query')),
+      content: computed(() => $t('page.query')),
     },
     wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
   }),

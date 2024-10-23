@@ -4,7 +4,11 @@ import type { Language } from 'element-plus/es/locale';
 import type { App } from 'vue';
 import { ref } from 'vue';
 
-import { $t, setupI18n as coreSetup, loadLocalesMap } from '@vben/locales';
+import {
+  $t,
+  setupI18n as coreSetup,
+  loadLocalesMapFromDir,
+} from '@vben/locales';
 import { preferences } from '@vben/preferences';
 
 import dayjs from 'dayjs';
@@ -13,9 +17,12 @@ import defaultLocale from 'element-plus/es/locale/lang/zh-cn';
 
 const elementLocale = ref<Language>(defaultLocale);
 
-const modules = import.meta.glob('./langs/*.json');
+const modules = import.meta.glob('./langs/**/*.json');
 
-const localesMap = loadLocalesMap(modules);
+const localesMap = loadLocalesMapFromDir(
+  /\.\/langs\/([^/]+)\/(.*)\.json$/,
+  modules,
+);
 
 /**
  * 加载应用特有的语言包
@@ -58,7 +65,11 @@ async function loadDayjsLocale(lang: SupportedLanguagesType) {
       locale = await import('dayjs/locale/en');
     }
   }
-  dayjs.locale(locale);
+  if (locale) {
+    dayjs.locale(locale);
+  } else {
+    console.error(`Failed to load dayjs locale for ${lang}`);
+  }
 }
 
 /**

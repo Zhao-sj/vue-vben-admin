@@ -31,18 +31,16 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.package.name'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.tenant.package.name')]),
     },
     fieldName: 'name',
-    label: $t('zen.service.package.name'),
+    label: $t('sys.tenant.package.name'),
     rules: 'required',
   },
   {
     component: 'Input',
     fieldName: 'menuIds',
-    label: $t('zen.service.package.menu'),
+    label: $t('sys.tenant.package.menu'),
     labelClass: 'self-start h-8',
   },
   {
@@ -56,7 +54,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     defaultValue: 0,
     fieldName: 'status',
-    label: $t('zen.service.package.status'),
+    label: $t('sys.tenant.package.status'),
   },
   {
     component: 'Input',
@@ -65,14 +63,12 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         maxRows: 5,
         minRows: 3,
       },
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.package.remark'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.tenant.package.remark')]),
       resize: 'none',
       type: 'textarea',
     },
     fieldName: 'remark',
-    label: $t('zen.service.package.remark'),
+    label: $t('sys.tenant.package.remark'),
     labelClass: 'self-start h-8',
   },
 ]);
@@ -125,12 +121,12 @@ defineExpose({
       <div class="w-full">
         <div>
           <ElCheckbox
-            :label="`${$t('zen.common.expand')} / ${$t('zen.common.collapsed')}`"
+            :label="`${$t('page.expand')} / ${$t('page.collapsed')}`"
             @change="handleExpand"
           />
           <ElCheckbox
             v-model="isCheckAll"
-            :label="`${$t('zen.common.selectAll')} / ${$t('zen.common.unselectAll')}`"
+            :label="`${$t('page.selectAll')} / ${$t('page.unselectAll')}`"
             @change="handleChooseAll"
           />
         </div>

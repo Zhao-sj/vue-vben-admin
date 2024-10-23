@@ -32,15 +32,15 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     fieldName: 'parentId',
     formItemClass: 'col-span-2',
-    label: $t('zen.service.dept.parent'),
+    label: $t('sys.dept.parent'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.dept.name')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.dept.name')]),
     },
     fieldName: 'name',
-    label: $t('zen.service.dept.name'),
+    label: $t('sys.dept.name'),
     rules: 'required',
   },
   {
@@ -49,10 +49,10 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 0,
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.dept.sort')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.dept.sort')]),
     },
     fieldName: 'sort',
-    label: $t('zen.service.dept.sort'),
+    label: $t('sys.dept.sort'),
     rules: 'required',
   },
   {
@@ -62,28 +62,26 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item.nickname || item.id,
         value: item.id,
       })),
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.dept.leader'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.dept.leader')]),
     },
     fieldName: 'leaderId',
-    label: $t('zen.service.dept.leader'),
+    label: $t('sys.dept.leader'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.dept.phone')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.dept.phone')]),
     },
     fieldName: 'phone',
-    label: $t('zen.service.dept.phone'),
+    label: $t('sys.dept.phone'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.dept.email')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.dept.email')]),
     },
     fieldName: 'email',
-    label: $t('zen.service.dept.email'),
+    label: $t('sys.dept.email'),
   },
   {
     component: 'RadioGroup',
@@ -96,7 +94,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     defaultValue: 0,
     fieldName: 'status',
-    label: $t('zen.service.dept.status'),
+    label: $t('sys.dept.status'),
   },
 ]);
 

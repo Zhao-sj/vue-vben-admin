@@ -29,14 +29,14 @@ function onOpenChange(isOpen: boolean) {
   <Modal
     :close-on-click-modal="false"
     :footer="false"
-    :title="$t('zen.service.log.common.detail')"
+    :title="$t('sys.log.detail')"
     class="w-11/12 2xl:w-3/5"
     draggable
   >
     <div class="flex flex-col gap-3">
-      <ElDescriptions :title="$t('zen.service.log.common.basicInfo')" border>
+      <ElDescriptions :title="$t('sys.log.basicInfo')" border>
         <ElDescriptionsItem
-          :label="$t('zen.service.log.common.appName')"
+          :label="$t('sys.log.appName')"
           class-name="w-1/6"
           label-class-name="w-1/6"
         >
@@ -44,7 +44,7 @@ function onOpenChange(isOpen: boolean) {
         </ElDescriptionsItem>
 
         <ElDescriptionsItem
-          :label="$t('zen.service.log.common.code')"
+          :label="$t('sys.log.id')"
           class-name="w-1/6"
           label-class-name="w-1/6"
         >
@@ -52,7 +52,7 @@ function onOpenChange(isOpen: boolean) {
         </ElDescriptionsItem>
 
         <ElDescriptionsItem
-          :label="$t('zen.service.log.common.traceId')"
+          :label="$t('sys.log.traceId')"
           :span="2"
           class-name="w-1/6"
           label-class-name="w-1/6"
@@ -61,7 +61,7 @@ function onOpenChange(isOpen: boolean) {
         </ElDescriptionsItem>
 
         <ElDescriptionsItem
-          :label="$t('zen.service.log.error.status')"
+          :label="$t('sys.log.error.status')"
           class-name="w-1/6"
           label-class-name="w-1/6"
         >
@@ -71,7 +71,7 @@ function onOpenChange(isOpen: boolean) {
         </ElDescriptionsItem>
 
         <ElDescriptionsItem
-          :label="$t('zen.service.log.error.processUser')"
+          :label="$t('sys.log.error.processUser')"
           class-name="w-1/6"
           label-class-name="w-1/6"
         >
@@ -79,7 +79,7 @@ function onOpenChange(isOpen: boolean) {
         </ElDescriptionsItem>
 
         <ElDescriptionsItem
-          :label="$t('zen.service.log.error.processTime')"
+          :label="$t('sys.log.error.processTime')"
           class-name="w-1/6"
           label-class-name="w-1/6"
         >
@@ -87,74 +87,52 @@ function onOpenChange(isOpen: boolean) {
         </ElDescriptionsItem>
       </ElDescriptions>
 
-      <ElDescriptions
-        :column="2"
-        :title="$t('zen.service.log.common.userInfo')"
-        border
-      >
-        <ElDescriptionsItem
-          :label="$t('zen.service.log.common.userId')"
-          width="25%"
-        >
+      <ElDescriptions :column="2" :title="$t('sys.log.userInfo')" border>
+        <ElDescriptionsItem :label="$t('sys.log.userId')" width="25%">
           {{ log?.userId }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem
-          :label="$t('zen.service.log.common.userType')"
-          width="25%"
-        >
+        <ElDescriptionsItem :label="$t('sys.log.userType')" width="25%">
           <ElTag :type="dictStore.getUserType(log?.userType!)?.color">
             {{ dictStore.getUserType(log?.userType!)?.label }}
           </ElTag>
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem
-          :label="$t('zen.service.log.common.ip')"
-          width="25%"
-        >
+        <ElDescriptionsItem :label="$t('sys.log.ip')" width="25%">
           {{ log?.ip }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem
-          :label="$t('zen.service.log.common.location')"
-          width="25%"
-        >
+        <ElDescriptionsItem :label="$t('sys.log.location')" width="25%">
           {{ log?.location }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.common.ua')">
+        <ElDescriptionsItem :label="$t('sys.log.ua')">
           <DeviceInfo :ua="log?.ua!" />
         </ElDescriptionsItem>
       </ElDescriptions>
 
-      <ElDescriptions
-        :column="1"
-        :title="$t('zen.service.log.common.requestInfo')"
-      >
-        <ElDescriptionsItem
-          :label="$t('zen.service.log.common.requestMethod')"
-          :span="8"
-        >
+      <ElDescriptions :column="1" :title="$t('sys.log.requestInfo')">
+        <ElDescriptionsItem :label="$t('sys.log.requestMethod')" :span="8">
           {{ log?.requestMethod }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.common.requestUrl')">
+        <ElDescriptionsItem :label="$t('sys.log.requestUrl')">
           {{ log?.requestUrl }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.common.requestParams')">
+        <ElDescriptionsItem :label="$t('sys.log.requestParams')">
           {{ log?.requestParams }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.error.exTime')">
+        <ElDescriptionsItem :label="$t('sys.log.error.exTime')">
           {{ formatToDateTime(log?.exTime) }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.error.exName')">
+        <ElDescriptionsItem :label="$t('sys.log.error.exName')">
           {{ log?.exName }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.error.exMsg')">
+        <ElDescriptionsItem :label="$t('sys.log.error.exMsg')">
           <div class="max-h-80 overflow-y-auto rounded-lg border p-2">
             {{ log?.exStackTrace }}
           </div>

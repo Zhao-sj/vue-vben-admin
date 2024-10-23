@@ -2,7 +2,7 @@
 import type { AuthApi } from '#/api';
 
 import { VbenButton } from '@vben/common-ui';
-import { Icon, RotateCw } from '@vben/icons';
+import { IconifyIcon, RotateCw } from '@vben/icons';
 
 import { useCaptchaPoints } from './hooks/useCaptchaPoints';
 
@@ -144,7 +144,7 @@ async function handleConfirm() {
         <div
           v-for="(point, index) in points"
           :key="index"
-          :aria-label="$t('zen.captcha.pointAriaLabel') + (index + 1)"
+          :aria-label="$t('page.captcha.pointAriaLabel') + (index + 1)"
           :style="{
             top: `${point.y - POINT_OFFSET}px`,
             left: `${point.x - POINT_OFFSET}px`,
@@ -161,7 +161,7 @@ async function handleConfirm() {
     <div class="mt-2 flex items-end justify-between">
       <div>
         <VbenButton
-          :aria-label="$t('zen.captcha.refreshAriaLabel')"
+          :aria-label="$t('page.captcha.refreshAriaLabel')"
           class="rounded-full"
           size="icon"
           variant="icon"
@@ -173,12 +173,12 @@ async function handleConfirm() {
 
       <div>
         <VbenButton
-          :aria-label="$t('zen.captcha.confirmAriaLabel')"
+          :aria-label="$t('page.captcha.confirmAriaLabel')"
           :disabled="points.length === 0"
           size="sm"
           @click="handleConfirm"
         >
-          {{ $t('zen.captcha.confirm') }}
+          {{ $t('page.captcha.confirm') }}
         </VbenButton>
       </div>
     </div>
@@ -187,14 +187,16 @@ async function handleConfirm() {
       v-if="state.showTip"
       class="absolute inset-0 z-30 flex flex-col items-center justify-center gap-1 rounded-md bg-white/80 dark:bg-black/80"
     >
-      <Icon
+      <IconifyIcon
         :class="[state.isPassing ? 'text-green-600' : 'text-red-500']"
         :icon="`ep:circle-${state.isPassing ? 'check' : 'close'}-filled`"
         class="text-2xl"
       />
 
       <span class="text-xs">
-        {{ state.isPassing ? $t('zen.captcha.pass') : $t('zen.captcha.fail') }}
+        {{
+          state.isPassing ? $t('page.captcha.pass') : $t('page.captcha.fail')
+        }}
       </span>
     </div>
   </div>

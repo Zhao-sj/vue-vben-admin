@@ -6,19 +6,19 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.role.name')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.role.name')]),
     },
     fieldName: 'name',
-    label: $t('zen.service.role.name'),
+    label: $t('sys.role.name'),
     rules: 'required',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.role.code')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.role.code')]),
     },
     fieldName: 'code',
-    label: $t('zen.service.role.code'),
+    label: $t('sys.role.code'),
     rules: 'required',
   },
   {
@@ -27,22 +27,22 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 0,
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.role.sort')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.role.sort')]),
     },
     fieldName: 'sort',
-    label: $t('zen.service.role.sort'),
+    label: $t('sys.role.sort'),
     rules: 'required',
   },
   {
     component: 'Input',
     componentProps: {
       autosize: { maxRows: 5, minRows: 3 },
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.common.remark')]),
+      placeholder: $t('page.pleaseInput', [$t('page.remark')]),
       resize: 'none',
       type: 'textarea',
     },
     fieldName: 'remark',
-    label: $t('zen.common.remark'),
+    label: $t('page.remark'),
     labelClass: 'self-start h-8',
   },
 ]);

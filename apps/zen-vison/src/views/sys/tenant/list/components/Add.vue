@@ -55,7 +55,7 @@ async function onConfirm() {
   state.expireTime = dayjs(state.expireTime).valueOf();
 
   await runAsync(state);
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   modal.close();
   emit('success');
 }
@@ -66,7 +66,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="pckLoading"
-    :title="$t('zen.service.tenant.create')"
+    :title="$t('sys.tenant.list.create')"
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
   >

@@ -25,41 +25,39 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.dict.name')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.dict.type.name')]),
     },
     fieldName: 'name',
-    label: $t('zen.service.dict.name'),
+    label: $t('sys.dict.type.name'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.dict.type')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.dict.type.title')]),
     },
     fieldName: 'type',
-    label: $t('zen.service.dict.type'),
+    label: $t('sys.dict.type.title'),
   },
   {
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.STATUS),
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.dict.status'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.dict.status')]),
     },
     fieldName: 'status',
-    label: $t('zen.service.dict.status'),
+    label: $t('sys.dict.status'),
   },
   {
     component: 'DatePicker',
     componentProps: {
       class: '!w-full 2xl:!w-80',
-      endPlaceholder: $t('zen.common.endDate'),
-      startPlaceholder: $t('zen.common.startDate'),
+      endPlaceholder: $t('page.endDate'),
+      startPlaceholder: $t('page.startDate'),
       type: 'daterange',
     },
     fieldName: 'createTime',
     formItemClass: 'lg:pb-0',
-    label: $t('zen.common.createTime'),
+    label: $t('page.createTime'),
   },
 ]);
 
@@ -79,7 +77,7 @@ const [QueryForm, formApi] = useVbenForm(
     schema: formSchema,
     showCollapseButton: isMobile,
     submitButtonOptions: {
-      content: computed(() => $t('zen.common.query')),
+      content: computed(() => $t('page.query')),
     },
     wrapperClass: 'grid-cols-1 lg:grid-cols-3 2xl:grid-cols-6',
   }),

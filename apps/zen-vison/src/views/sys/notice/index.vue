@@ -49,35 +49,35 @@ const columns: DictColumns = [
   {
     field: 'id',
     minWidth: 80,
-    title: $t('zen.service.notice.code'),
+    title: $t('sys.message.notice.id'),
   },
   {
     field: 'title',
     minWidth: 200,
-    title: $t('zen.service.notice.title'),
+    title: $t('sys.message.notice.title'),
   },
   {
     field: 'type',
     minWidth: 100,
     slots: { default: 'type' },
-    title: $t('zen.service.notice.type'),
+    title: $t('sys.message.notice.type'),
   },
   {
     field: 'status',
     minWidth: 100,
     slots: { default: 'status' },
-    title: $t('zen.service.notice.status'),
+    title: $t('sys.message.notice.status'),
   },
   {
     field: 'createTime',
     formatter: 'formatDateTime',
     minWidth: 150,
-    title: $t('zen.common.createTime'),
+    title: $t('page.createTime'),
   },
   {
     fixed: 'right',
     slots: { default: 'opt' },
-    title: $t('zen.common.opt'),
+    title: $t('page.options'),
     width: 120,
   },
 ];
@@ -120,14 +120,14 @@ const toolbarActions = computed<ActionItem[]>(() => [
         query: noticeQuery,
       });
     },
-    title: $t('zen.common.batchDelete'),
+    title: $t('page.batchDelete'),
     type: 'danger',
   },
   {
     auth: 'system:notice:create',
     icon: 'ep:plus',
     onClick: () => addModal.open(),
-    title: $t('zen.common.create'),
+    title: $t('page.create'),
     type: 'primary',
   },
 ]);
@@ -142,7 +142,7 @@ function createActions(row: NoticeApi.Notice) {
         editModal.open();
       },
       tooltip: {
-        content: $t('zen.common.edit'),
+        content: $t('page.edit'),
       },
       type: 'primary',
     },
@@ -153,10 +153,10 @@ function createActions(row: NoticeApi.Notice) {
         on: {
           confirm: () => deleteNoticeApi(row.id).then(requestAfter),
         },
-        title: $t('zen.common.confirmDelete'),
+        title: $t('page.confirmDelete'),
       },
       tooltip: {
-        content: $t('zen.common.delete'),
+        content: $t('page.delete'),
       },
       type: 'danger',
     },
@@ -167,10 +167,10 @@ function createActions(row: NoticeApi.Notice) {
         on: {
           confirm: () => pushNotice(row.id).then(() => requestAfter(false)),
         },
-        title: $t('zen.service.notice.pushTip'),
+        title: $t('sys.message.notice.push.title'),
       },
       tooltip: {
-        content: $t('zen.service.notice.push'),
+        content: $t('sys.message.notice.push.tip'),
       },
       type: 'warning',
     },
@@ -189,7 +189,7 @@ function reloadTable() {
 }
 
 function requestAfter(reload = true) {
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   reload && reloadTable();
 }
 </script>

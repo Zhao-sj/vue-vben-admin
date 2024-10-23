@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Page, useVbenModal } from '@vben/common-ui';
-import { Icon } from '@vben/icons';
+import { IconifyIcon } from '@vben/icons';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
 import { deleteMenuApi, getMenuListApi, type MenuApi } from '#/api';
@@ -32,49 +32,49 @@ const columns: MenuColumns = [
     headerAlign: 'center',
     align: 'left',
     minWidth: 200,
-    title: $t('zen.service.menu.name'),
+    title: $t('sys.menu.name'),
     treeNode: true,
   },
   {
     minWidth: 80,
     slots: { default: 'icon' },
-    title: $t('zen.service.menu.icon'),
+    title: $t('sys.menu.icon'),
   },
   {
     field: 'permission',
     headerAlign: 'center',
     align: 'left',
     minWidth: 200,
-    title: $t('zen.service.menu.permission'),
+    title: $t('sys.menu.permission'),
   },
   {
     field: 'component',
     headerAlign: 'center',
     align: 'left',
     minWidth: 350,
-    title: $t('zen.service.menu.component'),
+    title: $t('sys.menu.component'),
   },
   {
     field: 'sort',
     minWidth: 80,
-    title: $t('zen.service.menu.sort'),
+    title: $t('sys.menu.sort'),
   },
   {
     field: 'status',
     minWidth: 100,
     slots: { default: 'status' },
-    title: $t('zen.service.menu.status'),
+    title: $t('sys.menu.status'),
   },
   {
     field: 'createTime',
     formatter: 'formatDateTime',
     minWidth: 150,
-    title: $t('zen.common.createTime'),
+    title: $t('page.createTime'),
   },
   {
     fixed: 'right',
     slots: { default: 'opt' },
-    title: $t('zen.common.opt'),
+    title: $t('page.options'),
     width: 120,
   },
 ];
@@ -116,7 +116,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'system:menu:create',
     icon: 'ep:plus',
     onClick: () => addModal.open(),
-    title: $t('zen.common.create'),
+    title: $t('page.create'),
     type: 'primary',
   },
 ]);
@@ -131,7 +131,7 @@ function createActions(row: MenuApi.Menu) {
         editModal.open();
       },
       tooltip: {
-        content: $t('zen.common.edit'),
+        content: $t('page.edit'),
       },
       type: 'primary',
     },
@@ -142,15 +142,15 @@ function createActions(row: MenuApi.Menu) {
         on: {
           confirm: () => {
             deleteMenuApi(row.id).then(() => {
-              ElMessage.success($t('zen.common.successTip'));
+              ElMessage.success($t('page.successTip'));
               reloadTable();
             });
           },
         },
-        title: $t('zen.common.confirmDelete'),
+        title: $t('page.confirmDelete'),
       },
       tooltip: {
-        content: $t('zen.common.delete'),
+        content: $t('page.delete'),
       },
       type: 'danger',
     },
@@ -165,7 +165,7 @@ function createActions(row: MenuApi.Menu) {
         addModal.open();
       },
       tooltip: {
-        content: $t('zen.common.create'),
+        content: $t('page.create'),
       },
     });
   }
@@ -216,20 +216,20 @@ function toggleExpandAll() {
       <template #toolbar-tools>
         <div class="mr-3">
           <ElButton
-            :title="`${$t('zen.common.expand')} / ${$t('zen.common.collapsed')}`"
+            :title="`${$t('page.expand')} / ${$t('page.collapsed')}`"
             circle
             class="scale-95"
             plain
             @click="toggleExpandAll"
           >
-            <Icon icon="ep:sort" />
+            <IconifyIcon icon="ep:sort" />
           </ElButton>
         </div>
       </template>
 
       <template #icon="{ row }">
         <div v-if="row.meta?.icon" class="flex justify-center">
-          <Icon :icon="row.meta.icon" class="text-xl" />
+          <IconifyIcon :icon="row.meta.icon" class="text-xl" />
         </div>
       </template>
 

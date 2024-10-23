@@ -34,30 +34,28 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item.name,
         value: item.id,
       })),
-      placeholder: $t('zen.common.pleaseSelect', [$t('zen.service.dict.name')]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.dict.type.title')]),
     },
     defaultValue: +currentRoute.value.params.id!,
     fieldName: 'dictTypeId',
-    label: $t('zen.service.dict.name'),
+    label: $t('sys.dict.type.title'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.dict.label')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.dict.data.label')]),
     },
     fieldName: 'label',
-    label: $t('zen.service.dict.label'),
+    label: $t('sys.dict.data.label'),
   },
   {
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.STATUS),
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.dict.status'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.dict.status')]),
     },
     fieldName: 'status',
-    label: $t('zen.service.dict.status'),
+    label: $t('sys.dict.status'),
   },
 ]);
 
@@ -77,7 +75,7 @@ const [QueryForm, formApi] = useVbenForm(
     schema: formSchema,
     showCollapseButton: isMobile,
     submitButtonOptions: {
-      content: computed(() => $t('zen.common.query')),
+      content: computed(() => $t('page.query')),
     },
     wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
   }),

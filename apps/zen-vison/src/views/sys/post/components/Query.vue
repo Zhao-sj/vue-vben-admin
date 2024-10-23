@@ -25,29 +25,27 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.post.code')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.post.code')]),
     },
     fieldName: 'code',
-    label: $t('zen.service.post.code'),
+    label: $t('sys.post.code'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.post.name')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.post.name')]),
     },
     fieldName: 'name',
-    label: $t('zen.service.post.name'),
+    label: $t('sys.post.name'),
   },
   {
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.STATUS),
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.post.status'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.post.status')]),
     },
     fieldName: 'status',
-    label: $t('zen.service.post.status'),
+    label: $t('sys.post.status'),
   },
 ]);
 
@@ -67,7 +65,7 @@ const [QueryForm, formApi] = useVbenForm(
     schema: formSchema,
     showCollapseButton: isMobile,
     submitButtonOptions: {
-      content: computed(() => $t('zen.common.query')),
+      content: computed(() => $t('page.query')),
     },
     wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
   }),

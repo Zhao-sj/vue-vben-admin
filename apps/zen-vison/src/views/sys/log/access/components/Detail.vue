@@ -29,125 +29,93 @@ function onOpenChange(isOpen: boolean) {
   <Modal
     :close-on-click-modal="false"
     :footer="false"
-    :title="$t('zen.service.log.common.detail')"
+    :title="$t('sys.log.detail')"
     class="w-11/12 2xl:w-3/5"
     draggable
   >
     <div class="flex flex-col gap-3">
-      <ElDescriptions
-        :column="2"
-        :title="$t('zen.service.log.common.basicInfo')"
-        border
-      >
-        <ElDescriptionsItem
-          :label="$t('zen.service.log.common.appName')"
-          width="25%"
-        >
+      <ElDescriptions :column="2" :title="$t('sys.log.basicInfo')" border>
+        <ElDescriptionsItem :label="$t('sys.log.appName')" width="25%">
           {{ log?.appName }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem
-          :label="$t('zen.service.log.common.code')"
-          width="25%"
-        >
+        <ElDescriptionsItem :label="$t('sys.log.id')" width="25%">
           {{ log?.id }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.common.traceId')">
+        <ElDescriptionsItem :label="$t('sys.log.traceId')">
           {{ log?.traceId || '-' }}
         </ElDescriptionsItem>
       </ElDescriptions>
 
-      <ElDescriptions
-        :column="2"
-        :title="$t('zen.service.log.common.userInfo')"
-        border
-      >
-        <ElDescriptionsItem
-          :label="$t('zen.service.log.common.userId')"
-          width="25%"
-        >
+      <ElDescriptions :column="2" :title="$t('sys.log.userInfo')" border>
+        <ElDescriptionsItem :label="$t('sys.log.userId')" width="25%">
           {{ log?.userId }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem
-          :label="$t('zen.service.log.common.userType')"
-          width="25%"
-        >
+        <ElDescriptionsItem :label="$t('sys.log.userType')" width="25%">
           <ElTag :type="dictStore.getUserType(log?.userType!)?.color">
             {{ dictStore.getUserType(log?.userType!)?.label }}
           </ElTag>
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem
-          :label="$t('zen.service.log.common.ip')"
-          width="25%"
-        >
+        <ElDescriptionsItem :label="$t('sys.log.ip')" width="25%">
           {{ log?.ip }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem
-          :label="$t('zen.service.log.common.location')"
-          width="25%"
-        >
+        <ElDescriptionsItem :label="$t('sys.log.location')" width="25%">
           {{ log?.location }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.common.ua')">
+        <ElDescriptionsItem :label="$t('sys.log.ua')">
           <DeviceInfo :ua="log?.ua!" />
         </ElDescriptionsItem>
       </ElDescriptions>
 
-      <ElDescriptions
-        :column="1"
-        :title="$t('zen.service.log.common.requestInfo')"
-      >
-        <ElDescriptionsItem
-          :label="$t('zen.service.log.common.requestMethod')"
-          :span="8"
-        >
+      <ElDescriptions :column="1" :title="$t('sys.log.requestInfo')">
+        <ElDescriptionsItem :label="$t('sys.log.requestMethod')" :span="8">
           {{ log?.requestMethod }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.common.requestUrl')">
+        <ElDescriptionsItem :label="$t('sys.log.requestUrl')">
           {{ log?.requestUrl }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.common.requestParams')">
+        <ElDescriptionsItem :label="$t('sys.log.requestParams')">
           {{ log?.requestParams }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.access.responseBody')">
+        <ElDescriptionsItem :label="$t('sys.log.access.responseBody')">
           {{ log?.responseBody || '-' }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.access.beginTime')">
+        <ElDescriptionsItem :label="$t('sys.log.access.beginTime')">
           {{ formatToDateTime(log?.beginTime) }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.access.endTime')">
+        <ElDescriptionsItem :label="$t('sys.log.access.endTime')">
           {{ formatToDateTime(log?.endTime) }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.access.duration')">
+        <ElDescriptionsItem :label="$t('sys.log.access.duration')">
           {{ log?.duration }}ms
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.access.operateModule')">
+        <ElDescriptionsItem :label="$t('sys.log.access.operateModule')">
           {{ log?.operateModule || '-' }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.access.operateName')">
+        <ElDescriptionsItem :label="$t('sys.log.access.operateName')">
           {{ log?.operateName || '-' }}
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.access.operateType')">
+        <ElDescriptionsItem :label="$t('sys.log.access.operateType')">
           <ElTag :type="dictStore.getOperaType(log?.operateType!)?.color">
             {{ dictStore.getOperaType(log?.operateType!)?.label }}
           </ElTag>
         </ElDescriptionsItem>
 
-        <ElDescriptionsItem :label="$t('zen.service.log.access.resultMsg')">
+        <ElDescriptionsItem :label="$t('sys.log.access.resultMsg')">
           {{ log?.resultMsg || '-' }}
         </ElDescriptionsItem>
       </ElDescriptions>

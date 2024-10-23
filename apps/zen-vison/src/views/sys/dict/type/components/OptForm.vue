@@ -16,20 +16,20 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.dict.name')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.dict.type.name')]),
     },
     fieldName: 'name',
-    label: $t('zen.service.dict.name'),
+    label: $t('sys.dict.type.name'),
     rules: 'required',
   },
   {
     component: 'Input',
     componentProps: {
       disabled: props.edit,
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.dict.type')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.dict.type.title')]),
     },
     fieldName: 'type',
-    label: $t('zen.service.dict.type'),
+    label: $t('sys.dict.type.title'),
     rules: 'required',
   },
   {
@@ -43,7 +43,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     defaultValue: 0,
     fieldName: 'status',
-    label: $t('zen.service.dict.status'),
+    label: $t('sys.dict.status'),
   },
   {
     component: 'Input',
@@ -52,12 +52,12 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         maxRows: 5,
         minRows: 3,
       },
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.common.remark')]),
+      placeholder: $t('page.pleaseInput', [$t('page.remark')]),
       resize: 'none',
       type: 'textarea',
     },
     fieldName: 'remark',
-    label: $t('zen.common.remark'),
+    label: $t('page.remark'),
     labelClass: 'self-start h-8',
   },
 ]);

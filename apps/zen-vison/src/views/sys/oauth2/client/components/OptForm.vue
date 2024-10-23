@@ -9,18 +9,18 @@ import SelectCreate from './SelectCreate.vue';
 const dictStore = useDictStore();
 
 const authorizedGrantTypes = [
-  { label: $t('zen.service.oauth2.client.passwordMode'), value: 'password' },
+  { label: $t('sys.oauth2.client.passwordMode'), value: 'password' },
   {
-    label: $t('zen.service.oauth2.client.authorizationCodeMode'),
+    label: $t('sys.oauth2.client.authorizationCodeMode'),
     value: 'authorization_code',
   },
-  { label: $t('zen.service.oauth2.client.implicitMode'), value: 'implicit' },
+  { label: $t('sys.oauth2.client.implicitMode'), value: 'implicit' },
   {
-    label: $t('zen.service.oauth2.client.clientCredentialsMode'),
+    label: $t('sys.oauth2.client.clientCredentialsMode'),
     value: 'client_credentials',
   },
   {
-    label: $t('zen.service.oauth2.client.refreshTokenMode'),
+    label: $t('sys.oauth2.client.refreshTokenMode'),
     value: 'refresh_token',
   },
 ];
@@ -34,18 +34,16 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     fieldName: 'logo',
-    label: $t('zen.service.oauth2.client.logo'),
+    label: $t('sys.oauth2.client.logo'),
     formItemClass: 'lg:col-span-2',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.oauth2.client.name'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.oauth2.client.name')]),
     },
     fieldName: 'name',
-    label: $t('zen.service.oauth2.client.name'),
+    label: $t('sys.oauth2.client.name'),
     rules: 'required',
   },
   {
@@ -59,28 +57,24 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     defaultValue: 0,
     fieldName: 'status',
-    label: $t('zen.service.oauth2.client.status'),
+    label: $t('sys.oauth2.client.status'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.oauth2.client.clientId'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.oauth2.client.clientId')]),
     },
     fieldName: 'clientId',
-    label: $t('zen.service.oauth2.client.clientId'),
+    label: $t('sys.oauth2.client.clientId'),
     rules: 'required',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.oauth2.client.secret'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.oauth2.client.secret')]),
     },
     fieldName: 'secret',
-    label: $t('zen.service.oauth2.client.secret'),
+    label: $t('sys.oauth2.client.secret'),
     rules: 'required',
   },
   {
@@ -89,14 +83,14 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 1,
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.oauth2.client.accessTokenValiditySeconds', [
-          $t('zen.service.oauth2.client.unit'),
+      placeholder: $t('page.pleaseInput', [
+        $t('sys.oauth2.client.accessTokenValiditySeconds', [
+          $t('sys.oauth2.client.unit'),
         ]),
       ]),
     },
     fieldName: 'accessTokenValiditySeconds',
-    label: $t('zen.service.oauth2.client.accessTokenValiditySeconds'),
+    label: $t('sys.oauth2.client.accessTokenValiditySeconds'),
     rules: 'required',
   },
   {
@@ -105,14 +99,14 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 1,
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.oauth2.client.refreshTokenValiditySeconds', [
-          $t('zen.service.oauth2.client.unit'),
+      placeholder: $t('page.pleaseInput', [
+        $t('sys.oauth2.client.refreshTokenValiditySeconds', [
+          $t('sys.oauth2.client.unit'),
         ]),
       ]),
     },
     fieldName: 'refreshTokenValiditySeconds',
-    label: $t('zen.service.oauth2.client.refreshTokenValiditySeconds'),
+    label: $t('sys.oauth2.client.refreshTokenValiditySeconds'),
     rules: 'required',
   },
   {
@@ -122,28 +116,28 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         maxRows: 5,
         minRows: 3,
       },
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.oauth2.client.description'),
+      placeholder: $t('page.pleaseInput', [
+        $t('sys.oauth2.client.description'),
       ]),
       resize: 'none',
       type: 'textarea',
     },
     fieldName: 'description',
     formItemClass: 'lg:col-span-2',
-    label: $t('zen.service.oauth2.client.description'),
+    label: $t('sys.oauth2.client.description'),
   },
   {
     component: 'Select',
     componentProps: {
       multiple: true,
       options: authorizedGrantTypes,
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.oauth2.client.authorizedGrantTypes'),
+      placeholder: $t('page.pleaseSelect', [
+        $t('sys.oauth2.client.authorizedGrantTypes'),
       ]),
     },
     fieldName: 'authorizedGrantTypes',
     formItemClass: 'lg:col-span-2',
-    label: $t('zen.service.oauth2.client.authorizedGrantTypes'),
+    label: $t('sys.oauth2.client.authorizedGrantTypes'),
     rules: 'selectRequired',
   },
   {
@@ -151,61 +145,59 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     componentProps: {
       multiple: true,
       options: scopes,
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.oauth2.client.scopes'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.oauth2.client.scopes')]),
     },
     fieldName: 'scopes',
     formItemClass: 'lg:col-span-2',
-    label: $t('zen.service.oauth2.client.scopes'),
+    label: $t('sys.oauth2.client.scopes'),
   },
   {
     component: 'Select',
     componentProps: {
       multiple: true,
       options: scopes,
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.oauth2.client.autoApproveScopes'),
+      placeholder: $t('page.pleaseSelect', [
+        $t('sys.oauth2.client.autoApproveScopes'),
       ]),
     },
     fieldName: 'autoApproveScopes',
     formItemClass: 'lg:col-span-2',
-    label: $t('zen.service.oauth2.client.autoApproveScopes'),
+    label: $t('sys.oauth2.client.autoApproveScopes'),
   },
   {
     component: shallowRef(SelectCreate),
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.oauth2.client.redirectUris'),
+      placeholder: $t('page.pleaseInput', [
+        $t('sys.oauth2.client.redirectUris'),
       ]),
     },
     fieldName: 'redirectUris',
     formItemClass: 'lg:col-span-2',
-    label: $t('zen.service.oauth2.client.redirectUris'),
+    label: $t('sys.oauth2.client.redirectUris'),
   },
   {
     component: 'Select',
     componentProps: {
       multiple: true,
       options: scopes,
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.oauth2.client.authorities'),
+      placeholder: $t('page.pleaseSelect', [
+        $t('sys.oauth2.client.authorities'),
       ]),
     },
     fieldName: 'authorities',
     formItemClass: 'lg:col-span-2',
-    label: $t('zen.service.oauth2.client.authorities'),
+    label: $t('sys.oauth2.client.authorities'),
   },
   {
     component: shallowRef(SelectCreate),
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.oauth2.client.resourceIds'),
+      placeholder: $t('page.pleaseInput', [
+        $t('sys.oauth2.client.resourceIds'),
       ]),
     },
     fieldName: 'resourceIds',
     formItemClass: 'lg:col-span-2',
-    label: $t('zen.service.oauth2.client.resourceIds'),
+    label: $t('sys.oauth2.client.resourceIds'),
   },
   {
     component: 'Input',
@@ -214,9 +206,9 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         maxRows: 5,
         minRows: 3,
       },
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.oauth2.client.additionalInformation', [
-          $t('zen.service.oauth2.client.jsonFormatter'),
+      placeholder: $t('page.pleaseInput', [
+        $t('sys.oauth2.client.additionalInformation', [
+          $t('sys.oauth2.client.jsonFormatter'),
         ]),
       ]),
       resize: 'none',
@@ -224,7 +216,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     fieldName: 'additionalInformation',
     formItemClass: 'lg:col-span-2',
-    label: $t('zen.service.oauth2.client.additionalInformation'),
+    label: $t('sys.oauth2.client.additionalInformation'),
   },
 ]);
 

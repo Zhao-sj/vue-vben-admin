@@ -25,56 +25,48 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.tenant.name'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.name')]),
     },
     fieldName: 'name',
-    label: $t('zen.service.tenant.name'),
+    label: $t('sys.tenant.list.name'),
   },
   {
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.STATUS),
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.tenant.status'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.tenant.list.status')]),
     },
     fieldName: 'status',
-    label: $t('zen.service.tenant.status'),
+    label: $t('sys.tenant.list.status'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.tenant.contact'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.contact')]),
     },
     fieldName: 'contactName',
-    label: $t('zen.service.tenant.contact'),
+    label: $t('sys.tenant.list.contact'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.tenant.contactPhone'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.contactPhone')]),
     },
     fieldName: 'contactMobile',
     formItemClass: 'lg:pb-0',
-    label: $t('zen.service.tenant.contactPhone'),
+    label: $t('sys.tenant.list.contactPhone'),
   },
   {
     component: 'DatePicker',
     componentProps: {
       class: '!w-full 2xl:!w-80',
-      endPlaceholder: $t('zen.common.endDate'),
-      startPlaceholder: $t('zen.common.startDate'),
+      endPlaceholder: $t('page.endDate'),
+      startPlaceholder: $t('page.startDate'),
       type: 'daterange',
     },
     fieldName: 'createTime',
     formItemClass: 'lg:pb-0',
-    label: $t('zen.common.createTime'),
+    label: $t('page.createTime'),
   },
 ]);
 
@@ -94,7 +86,7 @@ const [QueryForm, formApi] = useVbenForm(
     schema: formSchema,
     showCollapseButton: isMobile,
     submitButtonOptions: {
-      content: computed(() => $t('zen.common.query')),
+      content: computed(() => $t('page.query')),
     },
     wrapperClass: 'grid-cols-1 lg:grid-cols-3 2xl:grid-cols-6',
   }),

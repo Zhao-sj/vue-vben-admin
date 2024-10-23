@@ -11,20 +11,15 @@ export function useBatchSelect<T>(options: {
   query?: Record<string, any>;
   type?: string;
 }) {
-  const {
-    handleBatch,
-    gridApi,
-    query,
-    type = $t('zen.common.delete'),
-  } = options;
+  const { handleBatch, gridApi, query, type = $t('page.delete') } = options;
   const selectedRecords: T[] = gridApi.grid.getCheckboxRecords();
   if (selectedRecords.length === 0) {
-    ElMessage.warning($t('zen.common.selectTip'));
+    ElMessage.warning($t('page.selectTip'));
     return;
   }
 
-  const title = $t('zen.common.systemTitle');
-  const message = $t('zen.common.batchConfirm', [type]);
+  const title = $t('page.systemTip');
+  const message = $t('page.batchConfirm', [type]);
   ElMessageBox.confirm(message, title, {
     closeOnClickModal: false,
     draggable: true,
@@ -33,7 +28,7 @@ export function useBatchSelect<T>(options: {
     try {
       gridApi.setLoading(true);
       await handleBatch(selectedRecords);
-      ElMessage.success($t('zen.common.successTip'));
+      ElMessage.success($t('page.successTip'));
       gridApi.reload(query);
     } finally {
       gridApi.setLoading(false);

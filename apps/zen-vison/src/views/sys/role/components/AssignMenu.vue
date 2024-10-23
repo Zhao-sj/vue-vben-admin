@@ -61,7 +61,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       disabled: true,
     },
     fieldName: 'name',
-    label: $t('zen.service.role.name'),
+    label: $t('sys.role.name'),
   },
   {
     component: 'Input',
@@ -69,12 +69,12 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       disabled: true,
     },
     fieldName: 'code',
-    label: $t('zen.service.role.code'),
+    label: $t('sys.role.code'),
   },
   {
     component: 'Input',
     fieldName: 'menuIds',
-    label: $t('zen.service.role.menuPermission'),
+    label: $t('sys.role.menuPermission'),
     labelClass: 'self-start h-8',
   },
 ]);
@@ -131,7 +131,7 @@ async function onOpenChange(isOpen: boolean) {
 async function onConfirm() {
   const menuIds = treeRef.value!.getCheckedKeys() as number[];
   await runAsync({ menuIds, roleId: role.value.id });
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   modal.close();
 }
 </script>
@@ -141,7 +141,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="roleLoading || menuLoading || menuIdsLoading"
-    :title="$t('zen.service.role.assignMenu')"
+    :title="$t('sys.role.assignMenu')"
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
   >
@@ -150,12 +150,12 @@ async function onConfirm() {
         <div class="w-full">
           <div>
             <ElCheckbox
-              :label="`${$t('zen.common.expand')} / ${$t('zen.common.collapsed')}`"
+              :label="`${$t('page.expand')} / ${$t('page.collapsed')}`"
               @change="handleExpand"
             />
             <ElCheckbox
               v-model="isCheckAll"
-              :label="`${$t('zen.common.selectAll')} / ${$t('zen.common.unselectAll')}`"
+              :label="`${$t('page.selectAll')} / ${$t('page.unselectAll')}`"
               @change="handleChooseAll"
             />
           </div>

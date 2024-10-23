@@ -11,13 +11,11 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.notice.title'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.message.notice.title')]),
     },
     fieldName: 'title',
     formItemClass: 'col-span-2',
-    label: $t('zen.service.notice.title'),
+    label: $t('sys.message.notice.title'),
     rules: 'required',
   },
   {
@@ -29,12 +27,10 @@ const formSchema = computed<VbenFormSchema[]>(() => [
           ...item,
           value: +item.value,
         })),
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.notice.type'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.message.notice.type')]),
     },
     fieldName: 'type',
-    label: $t('zen.service.notice.type'),
+    label: $t('sys.message.notice.type'),
     rules: 'selectRequired',
   },
   {
@@ -48,22 +44,20 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     defaultValue: 0,
     fieldName: 'status',
-    label: $t('zen.service.notice.status'),
+    label: $t('sys.message.notice.status'),
   },
   {
     component: 'Input',
     componentProps: {
       options: {
         menubar: false,
-        placeholder: $t('zen.common.pleaseInput', [
-          $t('zen.service.notice.content'),
-        ]),
+        placeholder: $t('page.pleaseInput', [$t('sys.message.notice.content')]),
       },
       width: '100%',
     },
     fieldName: 'content',
     formItemClass: 'col-span-2 flex-col items-start',
-    label: $t('zen.service.notice.content'),
+    label: $t('sys.message.notice.content'),
     labelClass: 'mb-2',
     rules: 'required',
   },

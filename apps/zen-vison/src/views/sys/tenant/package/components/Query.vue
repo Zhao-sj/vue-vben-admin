@@ -25,34 +25,30 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.package.name'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.tenant.package.name')]),
     },
     fieldName: 'name',
-    label: $t('zen.service.package.name'),
+    label: $t('sys.tenant.package.name'),
   },
   {
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.STATUS),
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.package.status'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.tenant.package.status')]),
     },
     fieldName: 'status',
-    label: $t('zen.service.package.status'),
+    label: $t('sys.tenant.package.status'),
   },
   {
     component: 'DatePicker',
     componentProps: {
       class: '!w-full lg:!w-80',
-      endPlaceholder: $t('zen.common.endDate'),
-      startPlaceholder: $t('zen.common.startDate'),
+      endPlaceholder: $t('page.endDate'),
+      startPlaceholder: $t('page.startDate'),
       type: 'daterange',
     },
     fieldName: 'createTime',
-    label: $t('zen.common.createTime'),
+    label: $t('page.createTime'),
   },
 ]);
 
@@ -72,7 +68,7 @@ const [QueryForm, formApi] = useVbenForm(
     schema: formSchema,
     showCollapseButton: isMobile,
     submitButtonOptions: {
-      content: computed(() => $t('zen.common.query')),
+      content: computed(() => $t('page.query')),
     },
     wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
   }),

@@ -9,7 +9,7 @@ const routes: RouteRecordRaw[] = [
     meta: {
       icon: 'lucide:bolt',
       order: 999,
-      title: $t('zen.menu.manage.system'),
+      title: $t('menu.sys.title'),
     },
     name: 'SystemManage',
     path: '/sys',
@@ -19,7 +19,7 @@ const routes: RouteRecordRaw[] = [
         path: '/sys/tenant',
         meta: {
           icon: 'lucide:users',
-          title: $t('zen.menu.manage.tenant'),
+          title: $t('menu.sys.tenant.title'),
         },
         children: [
           {
@@ -28,7 +28,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('#/views/sys/tenant/list/index.vue'),
             meta: {
               icon: 'lucide:book-user',
-              title: $t('zen.menu.manage.tenantList'),
+              title: $t('menu.sys.tenant.list'),
             },
           },
           {
@@ -37,7 +37,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('#/views/sys/tenant/package/index.vue'),
             meta: {
               icon: 'lucide:combine',
-              title: $t('zen.menu.manage.tenantPackage'),
+              title: $t('menu.sys.tenant.package'),
             },
           },
         ],
@@ -48,7 +48,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('#/views/sys/user/index.vue'),
         meta: {
           icon: 'lucide:user-cog',
-          title: $t('zen.menu.manage.user'),
+          title: $t('menu.sys.user'),
         },
       },
       {
@@ -57,7 +57,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('#/views/sys/role/index.vue'),
         meta: {
           icon: 'lucide:contact-round',
-          title: $t('zen.menu.manage.role'),
+          title: $t('menu.sys.role'),
         },
       },
       {
@@ -66,7 +66,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('#/views/sys/menu/index.vue'),
         meta: {
           icon: 'lucide:menu',
-          title: $t('zen.menu.manage.menu'),
+          title: $t('menu.sys.menu'),
         },
       },
       {
@@ -75,7 +75,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('#/views/sys/dept/index.vue'),
         meta: {
           icon: 'lucide:layers',
-          title: $t('zen.menu.manage.dept'),
+          title: $t('menu.sys.dept'),
         },
       },
       {
@@ -84,7 +84,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('#/views/sys/post/index.vue'),
         meta: {
           icon: 'lucide:network',
-          title: $t('zen.menu.manage.post'),
+          title: $t('menu.sys.post'),
         },
       },
       {
@@ -93,7 +93,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('#/views/sys/dict/type/index.vue'),
         meta: {
           icon: 'streamline:dictionary-language-book',
-          title: $t('zen.menu.manage.dict'),
+          title: $t('menu.sys.dict.title'),
         },
       },
       {
@@ -104,7 +104,7 @@ const routes: RouteRecordRaw[] = [
           activePath: '/sys/dict/type',
           hideInMenu: true,
           icon: 'lucide:text-search',
-          title: $t('zen.menu.manage.dictData'),
+          title: $t('menu.sys.dict.data'),
         },
       },
       {
@@ -112,7 +112,7 @@ const routes: RouteRecordRaw[] = [
         path: '/sys/message',
         meta: {
           icon: 'lucide:bot-message-square',
-          title: $t('zen.menu.manage.message'),
+          title: $t('menu.sys.message.title'),
         },
         children: [
           {
@@ -121,7 +121,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('#/views/sys/notice/index.vue'),
             meta: {
               icon: 'icon-park-outline:volume-notice',
-              title: $t('zen.menu.manage.notice'),
+              title: $t('menu.sys.message.notice'),
             },
           },
         ],
@@ -131,7 +131,7 @@ const routes: RouteRecordRaw[] = [
         path: '/sys/log',
         meta: {
           icon: 'lucide:logs',
-          title: $t('zen.menu.manage.log'),
+          title: $t('menu.sys.log.title'),
         },
         children: [
           {
@@ -140,7 +140,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('#/views/sys/log/login/index.vue'),
             meta: {
               icon: 'lucide:log-in',
-              title: $t('zen.menu.manage.loginLog'),
+              title: $t('menu.sys.log.login'),
             },
           },
           {
@@ -149,7 +149,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('#/views/sys/log/access/index.vue'),
             meta: {
               icon: 'lucide:scroll-text',
-              title: $t('zen.menu.manage.accessLog'),
+              title: $t('menu.sys.log.access'),
             },
           },
           {
@@ -158,7 +158,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('#/views/sys/log/error/index.vue'),
             meta: {
               icon: 'lucide:triangle-alert',
-              title: $t('zen.menu.manage.errorLog'),
+              title: $t('menu.sys.log.error'),
             },
           },
         ],
@@ -168,7 +168,7 @@ const routes: RouteRecordRaw[] = [
         path: '/sys/oauth2',
         meta: {
           icon: 'lucide:shield-check',
-          title: $t('zen.menu.manage.oauth2'),
+          title: $t('menu.sys.oauth2.title'),
         },
         children: [
           {
@@ -177,7 +177,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('#/views/sys/oauth2/client/index.vue'),
             meta: {
               icon: 'lucide:layout-grid',
-              title: $t('zen.menu.manage.oauth2Client'),
+              title: $t('menu.sys.oauth2.client'),
             },
           },
           {
@@ -186,7 +186,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('#/views/sys/oauth2/token/index.vue'),
             meta: {
               icon: 'lucide:key-round',
-              title: $t('zen.menu.manage.oauth2Token'),
+              title: $t('menu.sys.oauth2.token'),
             },
           },
         ],
@@ -197,7 +197,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('#/views/sys/area/index.vue'),
         meta: {
           icon: 'lucide:map-pinned',
-          title: $t('zen.menu.manage.area'),
+          title: $t('menu.sys.area'),
         },
       },
       {
@@ -207,7 +207,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           hideInMenu: true,
           icon: 'lucide:user-round-pen',
-          title: $t('zen.menu.account.profile'),
+          title: $t('menu.account.profile'),
         },
       },
     ],

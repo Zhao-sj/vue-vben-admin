@@ -29,11 +29,11 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Input',
     componentProps: {
       clearable: true,
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.export.fileName')]),
+      placeholder: $t('page.pleaseInput', [$t('page.export.fileName')]),
     },
     defaultValue: props.defaultName,
     fieldName: 'fileName',
-    label: $t('zen.export.fileName'),
+    label: $t('page.export.fileName'),
     rules: 'required',
   },
   {
@@ -46,7 +46,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     defaultValue: 'xlsx',
     fieldName: 'fileType',
-    label: $t('zen.export.fileType'),
+    label: $t('page.export.fileType'),
   },
 ]);
 
@@ -84,7 +84,7 @@ async function onConfirm() {
   <Modal
     :close-on-click-modal="false"
     :confirm-loading="loading"
-    :title="$t('zen.export.title')"
+    :title="$t('page.export.title')"
     class="w-11/12 md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/5"
     draggable
   >

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAccess } from '@vben/access';
 import { Page, useVbenModal } from '@vben/common-ui';
-import { Icon } from '@vben/icons';
+import { IconifyIcon } from '@vben/icons';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
 import {
@@ -107,62 +107,62 @@ const columns: UserColumns = [
   {
     field: 'id',
     minWidth: 80,
-    title: $t('zen.service.user.code'),
+    title: $t('sys.user.id'),
   },
   {
     field: 'avatar',
     minWidth: 80,
     slots: { default: 'avatar' },
-    title: $t('zen.service.user.avatar'),
+    title: $t('sys.user.avatar'),
     visible: false,
   },
   {
     field: 'username',
     minWidth: 120,
-    title: $t('zen.service.user.username'),
+    title: $t('sys.user.username'),
   },
   {
     field: 'nickname',
     formatter: ({ cellValue }) => cellValue || '-',
     minWidth: 120,
-    title: $t('zen.service.user.nickname'),
+    title: $t('sys.user.nickname'),
   },
   {
     field: 'sex',
     minWidth: 100,
     slots: { default: 'sex' },
-    title: $t('zen.service.user.sex'),
+    title: $t('sys.user.sex'),
   },
   {
     field: 'deptName',
     formatter: ({ cellValue }) => cellValue || '-',
     minWidth: 150,
-    title: $t('zen.service.user.deptName'),
+    title: $t('sys.user.deptName'),
   },
   {
     field: 'mobile',
     formatter: ({ cellValue }) => cellValue || '-',
     minWidth: 150,
-    title: $t('zen.service.user.mobile'),
+    title: $t('sys.user.mobile'),
   },
   {
     field: 'email',
     formatter: ({ cellValue }) => cellValue || '-',
     minWidth: 150,
-    title: $t('zen.service.user.email'),
+    title: $t('sys.user.email'),
     visible: false,
   },
   {
     field: 'status',
     minWidth: 100,
     slots: { default: 'status' },
-    title: $t('zen.service.user.status'),
+    title: $t('sys.user.status'),
   },
   {
     field: 'loginIp',
     formatter: ({ cellValue }) => cellValue || '-',
     minWidth: 150,
-    title: $t('zen.service.user.loginIp'),
+    title: $t('sys.user.loginIp'),
     visible: false,
   },
   {
@@ -170,19 +170,19 @@ const columns: UserColumns = [
     formatter: ({ cellValue }) =>
       cellValue ? formatToDateTime(cellValue) : '-',
     minWidth: 150,
-    title: $t('zen.service.user.loginDate'),
+    title: $t('sys.user.loginDate'),
     visible: false,
   },
   {
     field: 'createTime',
     formatter: 'formatDateTime',
     minWidth: 150,
-    title: $t('zen.common.createTime'),
+    title: $t('page.createTime'),
   },
   {
     fixed: 'right',
     slots: { default: 'opt' },
-    title: $t('zen.common.opt'),
+    title: $t('page.options'),
     width: 120,
   },
 ];
@@ -226,28 +226,28 @@ const toolbarActions = computed<ActionItem[]>(() => [
         query: userQuery,
       });
     },
-    title: $t('zen.common.batchDelete'),
+    title: $t('page.batchDelete'),
     type: 'danger',
   },
   {
     auth: 'system:user:create',
     icon: 'ep:plus',
     onClick: () => addModal.open(),
-    title: $t('zen.common.create'),
+    title: $t('page.create'),
     type: 'primary',
   },
   {
     auth: 'system:user:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
     onClick: () => exportModal.open(),
-    title: $t('zen.common.export'),
+    title: $t('page.export.title'),
     type: 'warning',
   },
   {
     auth: 'system:user:import',
     icon: importLoading.value ? 'eos-icons:bubble-loading' : 'ep:upload',
     onClick: () => importModal.open(),
-    title: $t('zen.common.import'),
+    title: $t('page.import'),
     type: 'info',
   },
 ]);
@@ -262,7 +262,7 @@ function createActions(row: UserApi.User) {
         editModal.open();
       },
       tooltip: {
-        content: $t('zen.common.edit'),
+        content: $t('page.edit'),
       },
       type: 'primary',
     },
@@ -276,10 +276,10 @@ function createActions(row: UserApi.User) {
             deleteUserApi(row.id).then(requestAfter);
           },
         },
-        title: $t('zen.common.confirmDelete'),
+        title: $t('page.confirmDelete'),
       },
       tooltip: {
-        content: $t('zen.common.delete'),
+        content: $t('page.delete'),
       },
       type: 'danger',
     },
@@ -289,7 +289,7 @@ function createActions(row: UserApi.User) {
     {
       auth: 'system:user:update-password',
       icon: 'carbon:password',
-      label: $t('zen.service.user.resetPassword'),
+      label: $t('sys.user.resetPassword'),
       onClick: () => {
         resetPassword(row);
       },
@@ -297,7 +297,7 @@ function createActions(row: UserApi.User) {
     {
       auth: 'system:permission:assign-user-role',
       icon: 'clarity:assign-user-line',
-      label: $t('zen.service.user.assignRole'),
+      label: $t('sys.user.assignRole'),
       onClick: () => {
         assignRoleModal.setData({ id: row.id });
         assignRoleModal.open();
@@ -309,9 +309,8 @@ function createActions(row: UserApi.User) {
 }
 
 function resetPassword(row: UserApi.User) {
-  const title = $t('zen.common.systemTitle');
-  const message = `${$t('zen.common.pleaseInput')}【${row.username}】${$t('zen.service.user.joinNewPassword')}`;
-
+  const title = $t('page.systemTip');
+  const message = $t('sys.user.confirm.password', [row.username]);
   ElMessageBox.prompt(message, title, {
     closeOnClickModal: false,
     draggable: true,
@@ -340,13 +339,10 @@ function handleFilterDept(deptId?: number) {
 function handleStatusChange(row: UserApi.User) {
   const { DISABLE, ENABLE } = DictStatus;
 
-  const label =
-    row.status === ENABLE
-      ? $t('zen.common.joinEnable')
-      : $t('zen.common.joinDisable');
+  const label = row.status === ENABLE ? $t('page.enable') : $t('page.disable');
 
-  const title = $t('zen.common.systemTitle');
-  const message = `${$t('zen.common.confirm')}${label}【${row.username}】${$t('zen.service.user.joinUser')} ?`;
+  const title = $t('page.systemTip');
+  const message = $t('sys.user.confirm.status', [label, row.username]);
   const resetStatus = () => {
     row.status = row.status === ENABLE ? DISABLE : ENABLE;
   };
@@ -365,7 +361,7 @@ function handleStatusChange(row: UserApi.User) {
 }
 
 function requestAfter(reload = true) {
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   reload && reloadTable();
 }
 
@@ -381,7 +377,7 @@ async function handleExport(fileName: string) {
   const { data } = await exportUser(userQuery);
   downloadExcel(data, fileName);
   exportModal.close();
-  ElMessage.success($t('zen.export.success'));
+  ElMessage.success($t('page.export.success'));
 }
 
 async function handleImport(file: File, updateSupport: boolean) {
@@ -422,7 +418,7 @@ function reloadTable() {
             <TableAddModal @success="reloadTable" />
             <TableEditModal @success="reloadTable" />
             <TableExportModal
-              :default-name="$t('zen.service.user.title')"
+              :default-name="$t('sys.user.title')"
               @confirm="handleExport"
             />
             <UserImportModal @confirm="handleImport" />
@@ -439,7 +435,7 @@ function reloadTable() {
 
           <template #sex="{ row: { sex } }">
             <div class="flex items-center justify-center gap-1">
-              <Icon
+              <IconifyIcon
                 v-if="sex === DictSex.MALE || sex === DictSex.FEMALE"
                 v-bind="createSex(sex)"
               />

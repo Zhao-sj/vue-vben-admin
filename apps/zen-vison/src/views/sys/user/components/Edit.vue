@@ -73,7 +73,7 @@ async function onConfirm() {
 
   const values = await optFormRef.value.formApi.getValues();
   await runAsync({ id: user.value.id, ...values } as UserApi.UpdateModel);
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   modal.close();
   emit('success');
 }
@@ -84,7 +84,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="deptLoading || postLoading || userLoading"
-    :title="$t('zen.service.user.edit')"
+    :title="$t('sys.user.edit')"
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
   >

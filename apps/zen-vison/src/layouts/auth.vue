@@ -12,8 +12,8 @@ const logo = computed(() => preferences.logo.source);
   <AuthPageLayout
     :app-name="appName"
     :logo="logo"
-    :page-description="$t('zen.core.pageDesc')"
-    :page-title="$t('zen.core.pageTitle')"
+    :page-description="$t('page.core.pageDesc')"
+    :page-title="$t('page.core.pageTitle')"
   >
     <!-- 自定义工具栏 -->
     <!-- <template #toolbar></template> -->

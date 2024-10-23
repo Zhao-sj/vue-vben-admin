@@ -68,65 +68,65 @@ const columns: TenantColumns = [
   {
     field: 'id',
     minWidth: 80,
-    title: $t('zen.service.tenant.code'),
+    title: $t('sys.tenant.list.id'),
   },
   {
     field: 'name',
     minWidth: 150,
-    title: $t('zen.service.tenant.name'),
+    title: $t('sys.tenant.list.name'),
   },
   {
     field: 'packageId',
     minWidth: 120,
     slots: { default: 'package' },
-    title: $t('zen.service.tenant.package'),
+    title: $t('sys.tenant.list.package'),
   },
   {
     field: 'contactName',
     minWidth: 100,
-    title: $t('zen.service.tenant.contact'),
+    title: $t('sys.tenant.list.contact'),
   },
   {
     field: 'contactMobile',
     minWidth: 120,
-    title: $t('zen.service.tenant.contactPhone'),
+    title: $t('sys.tenant.list.contactPhone'),
   },
   {
     field: 'accountCount',
     formatter: ({ cellValue }) => formatToThousand(cellValue),
     minWidth: 150,
     sortable: true,
-    title: $t('zen.service.tenant.accountLimit'),
+    title: $t('sys.tenant.list.accountLimit'),
   },
   {
     field: 'expireTime',
     minWidth: 150,
     slots: { default: 'expire' },
     sortable: true,
-    title: $t('zen.service.tenant.expireTime'),
+    title: $t('sys.tenant.list.expireTime'),
   },
   {
     field: 'website',
     minWidth: 150,
     slots: { default: 'website' },
-    title: $t('zen.service.tenant.website'),
+    title: $t('sys.tenant.list.website'),
   },
   {
     field: 'status',
     minWidth: 100,
     slots: { default: 'status' },
-    title: $t('zen.service.tenant.status'),
+    title: $t('sys.tenant.list.status'),
   },
   {
     field: 'createTime',
     formatter: 'formatDateTime',
     minWidth: 150,
-    title: $t('zen.common.createTime'),
+    title: $t('page.createTime'),
   },
   {
     fixed: 'right',
     slots: { default: 'opt' },
-    title: $t('zen.common.opt'),
+    title: $t('page.options'),
     width: 120,
   },
 ];
@@ -174,21 +174,21 @@ const toolbarActions = computed<ActionItem[]>(() => [
         query: tenantQuery,
       });
     },
-    title: $t('zen.common.batchDelete'),
+    title: $t('page.batchDelete'),
     type: 'danger',
   },
   {
     auth: 'system:tenant:create',
     icon: 'ep:plus',
     onClick: () => addModal.open(),
-    title: $t('zen.common.create'),
+    title: $t('page.create'),
     type: 'primary',
   },
   {
     auth: 'system:tenant:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
     onClick: () => exportModal.open(),
-    title: $t('zen.common.export'),
+    title: $t('page.export.title'),
     type: 'warning',
   },
 ]);
@@ -206,7 +206,7 @@ function createActions(row: TenantApi.Tenant) {
         editModal.open();
       },
       tooltip: {
-        content: $t('zen.common.edit'),
+        content: $t('page.edit'),
       },
       type: 'primary',
     },
@@ -218,15 +218,15 @@ function createActions(row: TenantApi.Tenant) {
         on: {
           confirm: () => {
             deleteTenantApi(row.id).then(() => {
-              ElMessage.success($t('zen.common.successTip'));
+              ElMessage.success($t('page.successTip'));
               reloadTable();
             });
           },
         },
-        title: $t('zen.common.confirmDelete'),
+        title: $t('page.confirmDelete'),
       },
       tooltip: {
-        content: $t('zen.common.delete'),
+        content: $t('page.delete'),
       },
       type: 'danger',
     },
@@ -241,7 +241,7 @@ function isExpire(expireTime: number) {
 
 function getPackageNameById(id: number) {
   if (id === 0) {
-    return $t('zen.service.tenant.systemTenant');
+    return $t('sys.tenant.list.systemTenant');
   }
 
   return packageList.value.find((item) => item.id === id)?.name || '-';
@@ -254,7 +254,7 @@ async function handleExport(fileName: string) {
   const { data } = await exportTenant(tenantQuery);
   downloadExcel(data, fileName);
   exportModal.close();
-  ElMessage.success($t('zen.export.success'));
+  ElMessage.success($t('page.export.success'));
 }
 
 function handleQuery(query: TenantApi.PageQuery) {
@@ -286,7 +286,7 @@ function reloadTable() {
         <TableEditModal @success="reloadTable" />
 
         <TableExportModal
-          :default-name="$t('zen.menu.manage.tenantList')"
+          :default-name="$t('sys.tenant.list.title')"
           @confirm="handleExport"
         />
       </template>

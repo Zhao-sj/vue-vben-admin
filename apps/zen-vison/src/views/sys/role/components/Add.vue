@@ -32,7 +32,7 @@ async function onConfirm() {
   const values = await optFormRef.value.formApi.getValues();
 
   await runAsync(values as RoleApi.AddModel);
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   modalApi.close();
   emit('success');
 }
@@ -42,7 +42,7 @@ async function onConfirm() {
   <Modal
     :close-on-click-modal="false"
     :confirm-loading="loading"
-    :title="$t('zen.service.role.create')"
+    :title="$t('sys.role.create')"
     class="w-11/12 lg:w-1/3 2xl:w-1/4"
     draggable
   >

@@ -72,7 +72,7 @@ const columns: LogColumns = [
   {
     field: 'id',
     minWidth: 80,
-    title: $t('zen.service.log.common.code'),
+    title: $t('sys.log.id'),
   },
   ...(hasTenantPermission
     ? [
@@ -80,59 +80,59 @@ const columns: LogColumns = [
           field: 'tenantId',
           minWidth: 150,
           slots: { default: 'tenant' },
-          title: $t('zen.service.log.error.tenant'),
+          title: $t('sys.log.error.tenant'),
         },
       ]
     : []),
   {
     field: 'userId',
     minWidth: 80,
-    title: $t('zen.service.log.common.userId'),
+    title: $t('sys.log.userId'),
   },
   {
     field: 'userType',
     minWidth: 100,
     slots: { default: 'userType' },
-    title: $t('zen.service.log.common.userType'),
+    title: $t('sys.log.userType'),
   },
   {
     field: 'appName',
     minWidth: 150,
-    title: $t('zen.service.log.common.appName'),
+    title: $t('sys.log.appName'),
     visible: false,
   },
   {
     field: 'requestMethod',
     minWidth: 80,
-    title: $t('zen.service.log.common.requestMethod'),
+    title: $t('sys.log.requestMethod'),
   },
   {
     field: 'requestUrl',
     align: 'left',
     headerAlign: 'center',
     minWidth: 250,
-    title: $t('zen.service.log.common.requestUrl'),
+    title: $t('sys.log.requestUrl'),
   },
   {
     field: 'exTime',
     formatter: 'formatDateTime',
     minWidth: 150,
-    title: $t('zen.service.log.error.exTime'),
+    title: $t('sys.log.error.exTime'),
   },
   {
     field: 'exName',
     minWidth: 300,
-    title: $t('zen.service.log.error.exName'),
+    title: $t('sys.log.error.exName'),
   },
   {
     field: 'processStatus',
     minWidth: 100,
     slots: { default: 'processStatus' },
-    title: $t('zen.service.log.error.status'),
+    title: $t('sys.log.error.status'),
   },
   {
     slots: { default: 'opt' },
-    title: $t('zen.common.opt'),
+    title: $t('page.options'),
     width: 240,
   },
 ];
@@ -169,21 +169,21 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'system:error-log:update-status',
     icon: 'ep:close',
     onClick: () => handleBatchProcess(DictLogProcess.IGNORE),
-    title: $t('zen.service.log.error.batchIgnore'),
+    title: $t('sys.log.error.batchIgnore'),
     type: 'info',
   },
   {
     auth: 'system:error-log:update-status',
     icon: 'ep:check',
     onClick: () => handleBatchProcess(DictLogProcess.PROCESSED),
-    title: $t('zen.service.log.error.batchProcess'),
+    title: $t('sys.log.error.batchProcess'),
     type: 'success',
   },
   {
     auth: 'system:error-log:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
     onClick: () => exportModal.open(),
-    title: $t('zen.common.export'),
+    title: $t('page.export.title'),
     type: 'warning',
   },
 ]);
@@ -194,7 +194,7 @@ function createActions(row: LogApi.Error) {
   const actions: ActionItem[] = [
     {
       icon: 'ep:view',
-      label: $t('zen.common.detail'),
+      label: $t('page.detail'),
       onClick: () => {
         detailModal.setData(row);
         detailModal.open();
@@ -205,7 +205,7 @@ function createActions(row: LogApi.Error) {
       auth: 'system:error-log:update-status',
       disabled,
       icon: 'ep:circle-check',
-      label: $t('zen.service.log.error.processed'),
+      label: $t('sys.log.error.processed'),
       popConfirm: {
         on: {
           confirm: () => {
@@ -215,7 +215,7 @@ function createActions(row: LogApi.Error) {
             }).then(requestAfter);
           },
         },
-        title: $t('zen.service.log.error.processTip'),
+        title: $t('sys.log.error.processTip'),
       },
       type: 'success',
     },
@@ -223,7 +223,7 @@ function createActions(row: LogApi.Error) {
       auth: 'system:error-log:update-status',
       disabled,
       icon: 'ep:circle-close',
-      label: $t('zen.service.log.error.ignored'),
+      label: $t('sys.log.error.ignored'),
       popConfirm: {
         on: {
           confirm: () => {
@@ -233,7 +233,7 @@ function createActions(row: LogApi.Error) {
             }).then(requestAfter);
           },
         },
-        title: $t('zen.service.log.error.ignoreTip'),
+        title: $t('sys.log.error.ignoreTip'),
       },
       type: 'info',
     },
@@ -248,7 +248,7 @@ function handleQuery(query: LogApi.ErrorQuery) {
 }
 
 function requestAfter(reload = true) {
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   reload && reloadTable();
 }
 
@@ -263,7 +263,7 @@ async function handleExport(fileName: string) {
   const { data } = await exportLog(logQuery);
   downloadExcel(data, fileName);
   exportModal.close();
-  ElMessage.success($t('zen.export.success'));
+  ElMessage.success($t('page.export.success'));
 }
 
 function handleBatchProcess(status: DictLogProcess) {
@@ -275,7 +275,7 @@ function handleBatchProcess(status: DictLogProcess) {
         processStatus: status,
       }),
     query: logQuery,
-    type: $t('zen.common.update'),
+    type: $t('page.update'),
   });
 }
 </script>
@@ -300,7 +300,7 @@ function handleBatchProcess(status: DictLogProcess) {
         />
 
         <TableExportModal
-          :default-name="$t('zen.service.log.error.title')"
+          :default-name="$t('sys.log.error.title')"
           @confirm="handleExport"
         />
         <TableDetailModal />

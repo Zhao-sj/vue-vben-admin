@@ -24,33 +24,27 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.oauth2.token.clientId'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.oauth2.token.clientId')]),
     },
     fieldName: 'clientId',
-    label: $t('zen.service.oauth2.token.clientId'),
+    label: $t('sys.oauth2.token.clientId'),
   },
   {
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.USER_TYPE),
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.oauth2.token.userType'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.oauth2.token.userType')]),
     },
     fieldName: 'userType',
-    label: $t('zen.service.oauth2.token.userType'),
+    label: $t('sys.oauth2.token.userType'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.oauth2.token.userId'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.oauth2.token.userId')]),
     },
     fieldName: 'userId',
-    label: $t('zen.service.oauth2.token.userId'),
+    label: $t('sys.oauth2.token.userId'),
   },
 ]);
 
@@ -70,7 +64,7 @@ const [QueryForm, formApi] = useVbenForm(
     schema: formSchema,
     showCollapseButton: isMobile,
     submitButtonOptions: {
-      content: computed(() => $t('zen.common.query')),
+      content: computed(() => $t('page.query')),
     },
     wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6 gap-4',
   }),

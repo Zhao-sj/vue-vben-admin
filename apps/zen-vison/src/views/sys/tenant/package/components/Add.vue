@@ -55,7 +55,7 @@ async function onConfirm() {
   state.menuIds = keys;
 
   await runAsync(state);
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   modal.close();
   emit('success');
 }
@@ -66,7 +66,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="menuLoading"
-    :title="$t('zen.service.package.create')"
+    :title="$t('sys.tenant.package.create')"
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
   >

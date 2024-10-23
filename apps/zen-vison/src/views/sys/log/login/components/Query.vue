@@ -30,15 +30,13 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Select',
     componentProps: {
       options: [
-        { label: $t('zen.service.log.login.success'), value: true },
-        { label: $t('zen.service.log.login.fail'), value: false },
+        { label: $t('sys.log.login.success'), value: true },
+        { label: $t('sys.log.login.fail'), value: false },
       ],
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.log.login.result'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.log.login.result')]),
     },
     fieldName: 'status',
-    label: $t('zen.service.log.login.result'),
+    label: $t('sys.log.login.result'),
   },
   {
     component: 'Select',
@@ -47,12 +45,10 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item.name,
         value: item.id,
       })),
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.log.login.tenant'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.log.login.tenant')]),
     },
     fieldName: 'tenantId',
-    label: $t('zen.service.log.login.tenant'),
+    label: $t('sys.log.login.tenant'),
     dependencies: {
       if: () => props.showTenant,
       triggerFields: ['tenantId'],
@@ -61,33 +57,29 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.log.common.ip'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.log.ip')]),
     },
     fieldName: 'ip',
-    label: $t('zen.service.log.common.ip'),
+    label: $t('sys.log.ip'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.log.login.username'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.log.login.username')]),
     },
     fieldName: 'username',
-    label: $t('zen.service.log.login.username'),
+    label: $t('sys.log.login.username'),
   },
   {
     component: 'DatePicker',
     componentProps: {
       class: '!w-full 2xl:!w-80',
-      endPlaceholder: $t('zen.common.endDate'),
-      startPlaceholder: $t('zen.common.startDate'),
+      endPlaceholder: $t('page.endDate'),
+      startPlaceholder: $t('page.startDate'),
       type: 'daterange',
     },
     fieldName: 'createTime',
-    label: $t('zen.service.log.login.createTime'),
+    label: $t('sys.log.login.createTime'),
   },
 ]);
 
@@ -107,7 +99,7 @@ const [QueryForm, formApi] = useVbenForm(
     schema: formSchema,
     showCollapseButton: isMobile,
     submitButtonOptions: {
-      content: computed(() => $t('zen.common.query')),
+      content: computed(() => $t('page.query')),
     },
     wrapperClass: 'grid-cols-1 lg:grid-cols-3 2xl:grid-cols-6 gap-4',
   }),

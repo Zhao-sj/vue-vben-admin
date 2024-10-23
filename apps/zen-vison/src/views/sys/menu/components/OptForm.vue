@@ -25,16 +25,16 @@ const type = ref(MenuType.MENU);
 
 const componentList = [{ value: 'BasicLayout' }];
 const menuTypeOpts = [
-  { label: $t('zen.service.menu.dir'), value: MenuType.DIR },
-  { label: $t('zen.service.menu.menu'), value: MenuType.MENU },
-  { label: $t('zen.service.menu.button'), value: MenuType.BUTTON },
+  { label: $t('sys.menu.dir'), value: MenuType.DIR },
+  { label: $t('sys.menu.menu'), value: MenuType.MENU },
+  { label: $t('sys.menu.button'), value: MenuType.BUTTON },
 ];
 
 const menuTree = computed(() => {
   const menuList = props.menus.filter((item) => item.type !== MenuType.BUTTON);
   menuList.push({
     id: MENU_ROOT,
-    name: $t('zen.service.menu.root'),
+    name: $t('sys.menu.root'),
     parentId: -1,
     type: MenuType.DIR,
   });
@@ -65,15 +65,15 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     fieldName: 'type',
     formItemClass: 'lg:col-span-2',
-    label: $t('zen.service.menu.type'),
+    label: $t('sys.menu.type'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.menu.name')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.menu.name')]),
     },
     fieldName: 'name',
-    label: $t('zen.service.menu.name'),
+    label: $t('sys.menu.name'),
     rules: 'required',
   },
   {
@@ -83,16 +83,14 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       data: menuTree,
       expandOnClickNode: false,
       nodeKey: 'id',
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.menu.parent'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.menu.parent')]),
       props: {
         label: 'name',
         children: 'children',
       },
     },
     fieldName: 'parentId',
-    label: $t('zen.service.menu.parent'),
+    label: $t('sys.menu.parent'),
     rules: 'selectRequired',
   },
   {
@@ -101,16 +99,16 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 0,
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.menu.sort')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.menu.sort')]),
     },
     fieldName: 'sort',
-    label: $t('zen.service.menu.sort'),
+    label: $t('sys.menu.sort'),
     rules: 'required',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.menu.icon')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.menu.icon')]),
     },
     dependencies: {
       if(values) {
@@ -119,13 +117,13 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       triggerFields: ['type'],
     },
     fieldName: 'icon',
-    help: $t('zen.service.menu.iconTip'),
-    label: $t('zen.service.menu.icon'),
+    help: $t('sys.menu.tip.icon'),
+    label: $t('sys.menu.icon'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.menu.path')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.menu.path')]),
     },
     dependencies: {
       if(values) {
@@ -134,16 +132,14 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       triggerFields: ['type'],
     },
     fieldName: 'path',
-    help: $t('zen.service.menu.pathTip'),
-    label: $t('zen.service.menu.path'),
+    help: $t('sys.menu.tip.path'),
+    label: $t('sys.menu.path'),
     rules: 'required',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.menu.componentName'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.menu.componentName')]),
     },
     dependencies: {
       if(values) {
@@ -152,17 +148,15 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       triggerFields: ['type'],
     },
     fieldName: 'componentName',
-    help: $t('zen.service.menu.componentNameTip'),
-    label: $t('zen.service.menu.componentName'),
+    help: $t('sys.menu.tip.componentName'),
+    label: $t('sys.menu.componentName'),
     rules: 'required', // TODO: 异步校验唯一性验证
   },
   {
     component: 'Autocomplete',
     componentProps: {
       fetchSuggestions: querySearch,
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.menu.component'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.menu.component')]),
       teleported: false,
     },
     dependencies: {
@@ -172,15 +166,13 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       triggerFields: ['type'],
     },
     fieldName: 'component',
-    help: $t('zen.service.menu.componentTip'),
-    label: $t('zen.service.menu.component'),
+    help: $t('sys.menu.tip.component'),
+    label: $t('sys.menu.component'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.menu.permission'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.menu.permission')]),
     },
     dependencies: {
       if(values) {
@@ -189,7 +181,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       triggerFields: ['type'],
     },
     fieldName: 'permission',
-    label: $t('zen.service.menu.permission'),
+    label: $t('sys.menu.permission'),
   },
   {
     component: 'RadioGroup',
@@ -202,7 +194,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     defaultValue: 0,
     fieldName: 'status',
-    label: $t('zen.service.menu.status'),
+    label: $t('sys.menu.status'),
   },
 ]);
 

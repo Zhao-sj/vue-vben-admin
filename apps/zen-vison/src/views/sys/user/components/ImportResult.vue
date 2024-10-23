@@ -47,13 +47,16 @@ function onConfirm() {
 <template>
   <Modal
     :close-on-click-modal="false"
-    :title="$t('zen.service.user.importResult')"
+    :title="$t('sys.user.upload.result')"
     draggable
   >
     <div class="flex flex-col gap-2">
       <div>
         <ElDescriptions :column="1" border>
-          <ElDescriptionsItem label="创建成功数量" width="50%">
+          <ElDescriptionsItem
+            :label="$t('sys.user.upload.createTotal')"
+            width="50%"
+          >
             {{ data.createUserList.length }}
           </ElDescriptionsItem>
         </ElDescriptions>
@@ -69,7 +72,10 @@ function onConfirm() {
 
       <div>
         <ElDescriptions :column="1" border>
-          <ElDescriptionsItem label="更新成功数量" width="50%">
+          <ElDescriptionsItem
+            :label="$t('sys.user.upload.updateTotal')"
+            width="50%"
+          >
             {{ data.updateUserList.length }}
           </ElDescriptionsItem>
         </ElDescriptions>
@@ -89,7 +95,10 @@ function onConfirm() {
 
       <div>
         <ElDescriptions :column="1" border>
-          <ElDescriptionsItem label="失败数量" width="50%">
+          <ElDescriptionsItem
+            :label="$t('sys.user.upload.failTotal')"
+            width="50%"
+          >
             {{ failList.length }}
           </ElDescriptionsItem>
         </ElDescriptions>

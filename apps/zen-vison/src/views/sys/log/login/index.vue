@@ -50,7 +50,7 @@ const columns: LogColumns = [
   {
     field: 'id',
     minWidth: 80,
-    title: $t('zen.service.log.common.code'),
+    title: $t('sys.log.id'),
   },
   ...(hasTenantPermission
     ? [
@@ -58,7 +58,7 @@ const columns: LogColumns = [
           field: 'tenantId',
           minWidth: 150,
           slots: { default: 'tenant' },
-          title: $t('zen.service.log.login.tenant'),
+          title: $t('sys.log.login.tenant'),
         },
       ]
     : []),
@@ -66,40 +66,40 @@ const columns: LogColumns = [
     field: 'type',
     minWidth: 150,
     slots: { default: 'type' },
-    title: $t('zen.service.log.login.type'),
+    title: $t('sys.log.login.type'),
   },
   {
     field: 'username',
     minWidth: 150,
-    title: $t('zen.service.log.login.username'),
+    title: $t('sys.log.login.username'),
   },
   {
     field: 'ip',
     minWidth: 150,
-    title: $t('zen.service.log.common.ip'),
+    title: $t('sys.log.ip'),
   },
   {
     field: 'location',
     minWidth: 150,
-    title: $t('zen.service.log.common.location'),
+    title: $t('sys.log.location'),
   },
   {
     field: 'ua',
     minWidth: 300,
     slots: { default: 'ua' },
-    title: $t('zen.service.log.common.ua'),
+    title: $t('sys.log.ua'),
   },
   {
     field: 'result',
     minWidth: 100,
     slots: { default: 'result' },
-    title: $t('zen.service.log.login.result'),
+    title: $t('sys.log.login.result'),
   },
   {
     field: 'createTime',
     formatter: 'formatDateTime',
     minWidth: 150,
-    title: $t('zen.service.log.login.createTime'),
+    title: $t('sys.log.login.createTime'),
   },
 ];
 
@@ -130,7 +130,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'system:login-log:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
     onClick: () => exportModal.open(),
-    title: $t('zen.common.export'),
+    title: $t('page.export.title'),
     type: 'warning',
   },
 ]);
@@ -147,7 +147,7 @@ async function handleExport(fileName: string) {
   const { data } = await exportLog(logQuery);
   downloadExcel(data, fileName);
   exportModal.close();
-  ElMessage.success($t('zen.export.success'));
+  ElMessage.success($t('page.export.success'));
 }
 </script>
 
@@ -171,7 +171,7 @@ async function handleExport(fileName: string) {
         />
 
         <TableExportModal
-          :default-name="$t('zen.service.log.login.title')"
+          :default-name="$t('sys.log.login.title')"
           @confirm="handleExport"
         />
       </template>

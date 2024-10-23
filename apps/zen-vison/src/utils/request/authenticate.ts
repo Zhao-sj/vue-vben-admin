@@ -27,7 +27,7 @@ export async function authenticateResponseHandler({
   // 如果没有启用或者已经是重试请求了，直接跳转到重新登录
   if (!enableRefreshToken || (config as Record<string, any>).__isRetryRequest) {
     await doReAuthenticate();
-    throw new Error($t('zen.request.requestExpire'));
+    throw new Error($t('page.request.expire'));
   }
   // 如果正在刷新 token，则将请求加入队列，等待刷新完成
   if (client.isRefreshing) {
@@ -58,7 +58,7 @@ export async function authenticateResponseHandler({
     client.refreshTokenQueue = [];
     console.error('Refresh token failed, please login again.');
     await doReAuthenticate();
-    throw new Error($t('zen.request.requestExpire'));
+    throw new Error($t('page.request.expire'));
   } finally {
     client.isRefreshing = false;
   }

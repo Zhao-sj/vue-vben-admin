@@ -3,10 +3,7 @@ import type { Nullable } from '@vben/types';
 
 import { computed, ref } from 'vue';
 
-import {
-  AuthenticationLoginExpiredModal,
-  type LoginAndRegisterParams,
-} from '@vben/common-ui';
+import { AuthenticationLoginExpiredModal } from '@vben/common-ui';
 import { useRefresh, useWatermark } from '@vben/hooks';
 import { UserRoundPen } from '@vben/icons';
 import {
@@ -83,7 +80,7 @@ const menus = computed(() => [
       router.push({ name: ACCOUNT_SETTING });
     },
     icon: UserRoundPen,
-    text: $t('zen.menu.account.profile'),
+    text: $t('menu.account.profile'),
   },
 ]);
 
@@ -104,7 +101,7 @@ wsStore.emitter.on('notice-push', (notice) => {
   }
 });
 
-const handleLogin = useDebounceFn((params: LoginAndRegisterParams) => {
+const handleLogin = useDebounceFn((params: Record<string, any>) => {
   loginState = params as AuthApi.LoginModel;
   accessStore.setLoginExpired(false);
   showCaptcha.value = true;

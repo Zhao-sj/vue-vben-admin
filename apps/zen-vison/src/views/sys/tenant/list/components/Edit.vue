@@ -68,7 +68,7 @@ async function onConfirm() {
   state.id = tenant.value.id;
   state.expireTime = dayjs(state.expireTime).valueOf();
   await runAsync(state as TenantApi.UpdateModel);
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   modal.close();
   emit('success');
 }
@@ -79,7 +79,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="pckLoading || tentantLoading"
-    :title="$t('zen.service.tenant.edit')"
+    :title="$t('sys.tenant.list.edit')"
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
   >

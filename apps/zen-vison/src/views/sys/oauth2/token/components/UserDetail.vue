@@ -2,7 +2,7 @@
 import type { UserApi } from '#/api';
 
 import { useIsMobile } from '@vben/hooks';
-import { Icon } from '@vben/icons';
+import { IconifyIcon } from '@vben/icons';
 
 import { DictSex } from '#/enums';
 import { $t } from '#/locales';
@@ -31,20 +31,20 @@ const dataList = computed(() => {
       rowspan: 2,
       width: 140,
       align: 'center',
-      label: $t('zen.service.user.avatar'),
+      label: $t('sys.user.avatar'),
       value: avatar,
       slots: { default: 'avatar' },
     },
-    { label: $t('zen.service.user.username'), value: username },
-    { label: $t('zen.service.user.nickname'), value: nickname },
+    { label: $t('sys.user.username'), value: username },
+    { label: $t('sys.user.nickname'), value: nickname },
     {
-      label: $t('zen.service.user.sex'),
+      label: $t('sys.user.sex'),
       value: sex,
       slots: { default: 'sex' },
     },
-    { label: $t('zen.service.user.deptName'), value: deptName || '-' },
-    { label: $t('zen.service.user.mobile'), value: mobile || '-' },
-    { label: $t('zen.service.user.email'), value: email || '-' },
+    { label: $t('sys.user.deptName'), value: deptName || '-' },
+    { label: $t('sys.user.mobile'), value: mobile || '-' },
+    { label: $t('sys.user.email'), value: email || '-' },
   ];
 
   return list;
@@ -69,7 +69,7 @@ function createSex(sex: number) {
       <template v-if="item.slots?.default === 'avatar'">
         <ElAvatar v-if="item.value" :size="100" :src="`${item.value}`" />
         <ElAvatar v-else :size="100">
-          <Icon class="text-5xl" icon="lucide:user-round" />
+          <IconifyIcon class="text-5xl" icon="lucide:user-round" />
         </ElAvatar>
       </template>
 
@@ -77,7 +77,7 @@ function createSex(sex: number) {
         v-else-if="item.slots?.default === 'sex'"
         class="flex items-center gap-1"
       >
-        <Icon
+        <IconifyIcon
           v-if="user?.sex === MALE || user?.sex === FEMALE"
           v-bind="createSex(user.sex)"
         />

@@ -33,23 +33,21 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   // {
   //   component: 'Input',
   //   componentProps: {
-  //     placeholder: $t('zen.common.pleaseInput', [
-  //       $t('zen.service.log.common.appName'),
+  //     placeholder: $t('page.pleaseInput', [
+  //       $t('sys.log.appName'),
   //     ]),
   //   },
   //   fieldName: 'appName',
-  //   label: $t('zen.service.log.common.appName'),
+  //   label: $t('sys.log.appName'),
   // },
   {
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.USER_TYPE),
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.log.common.userType'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.log.userType')]),
     },
     fieldName: 'userType',
-    label: $t('zen.service.log.common.userType'),
+    label: $t('sys.log.userType'),
   },
   {
     component: 'Select',
@@ -58,12 +56,10 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item.name,
         value: item.id,
       })),
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.log.error.tenant'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.log.error.tenant')]),
     },
     fieldName: 'tenantId',
-    label: $t('zen.service.log.error.tenant'),
+    label: $t('sys.log.error.tenant'),
     dependencies: {
       if: () => props.showTenant,
       triggerFields: ['tenantId'],
@@ -72,44 +68,38 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.log.common.userId'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.log.userId')]),
     },
     fieldName: 'userId',
-    label: $t('zen.service.log.common.userId'),
+    label: $t('sys.log.userId'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.log.common.requestUrl'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.log.requestUrl')]),
     },
     fieldName: 'requestUrl',
-    label: $t('zen.service.log.common.requestUrl'),
+    label: $t('sys.log.requestUrl'),
   },
   {
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.ERROR_LOG_PROCESS_STATUS),
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.log.error.status'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.log.error.status')]),
     },
     fieldName: 'processStatus',
-    label: $t('zen.service.log.error.status'),
+    label: $t('sys.log.error.status'),
   },
   {
     component: 'DatePicker',
     componentProps: {
       class: '!w-full lg:!w-80',
-      endPlaceholder: $t('zen.common.endDate'),
-      startPlaceholder: $t('zen.common.startDate'),
+      endPlaceholder: $t('page.endDate'),
+      startPlaceholder: $t('page.startDate'),
       type: 'daterange',
     },
     fieldName: 'exTime',
-    label: $t('zen.service.log.error.exTime'),
+    label: $t('sys.log.error.exTime'),
   },
 ]);
 
@@ -129,7 +119,7 @@ const [QueryForm, formApi] = useVbenForm(
     schema: formSchema,
     showCollapseButton: isMobile,
     submitButtonOptions: {
-      content: computed(() => $t('zen.common.query')),
+      content: computed(() => $t('page.query')),
     },
     wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-7 gap-4',
   }),

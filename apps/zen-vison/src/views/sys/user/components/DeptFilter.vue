@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Icon } from '@vben/icons';
+import { IconifyIcon } from '@vben/icons';
 
 import { useDebounceFn } from '@vueuse/core';
 import { ElTree } from 'element-plus';
@@ -56,10 +56,6 @@ function filterNode(value: string, data: Tree) {
   if (!value) return true;
   return data.name.includes(value);
 }
-
-function joinLabel(prefix: string) {
-  return `${prefix}${$t('zen.common.joinAll')}`;
-}
 </script>
 
 <template>
@@ -74,14 +70,14 @@ function joinLabel(prefix: string) {
 
       <ElInput
         v-model="deptName"
-        :placeholder="$t('zen.common.search')"
+        :placeholder="$t('page.search')"
         class="2xl:!w-2/3"
         clearable
         size="small"
         @input="filterDept"
       >
         <template #prefix>
-          <Icon icon="ep:search" />
+          <IconifyIcon icon="ep:search" />
         </template>
       </ElInput>
 
@@ -89,15 +85,15 @@ function joinLabel(prefix: string) {
         <div
           class="flex h-full cursor-pointer items-center justify-center px-1"
         >
-          <Icon icon="akar-icons:more-vertical-fill" />
+          <IconifyIcon icon="akar-icons:more-vertical-fill" />
         </div>
         <template #dropdown>
           <ElDropdownMenu>
             <ElDropdownItem @click="handleExpandAll">
-              {{ joinLabel($t('zen.common.expand')) }}
+              {{ $t('page.expand', [$t('page.all')]) }}
             </ElDropdownItem>
             <ElDropdownItem @click="handleExpandAll(false)">
-              {{ joinLabel($t('zen.common.collapsed')) }}
+              {{ $t('page.collapsed', [$t('page.all')]) }}
             </ElDropdownItem>
           </ElDropdownMenu>
         </template>

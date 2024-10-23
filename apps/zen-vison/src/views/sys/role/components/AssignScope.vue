@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useVbenModal } from '@vben/common-ui';
-import { Icon } from '@vben/icons';
+import { IconifyIcon } from '@vben/icons';
 
 import { ElTree } from 'element-plus';
 import { cloneDeep } from 'lodash-es';
@@ -58,7 +58,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       disabled: true,
     },
     fieldName: 'name',
-    label: $t('zen.service.role.name'),
+    label: $t('sys.role.name'),
   },
   {
     component: 'Input',
@@ -66,7 +66,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       disabled: true,
     },
     fieldName: 'code',
-    label: $t('zen.service.role.code'),
+    label: $t('sys.role.code'),
   },
   {
     component: 'Select',
@@ -79,7 +79,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         })),
     },
     fieldName: 'dataScope',
-    label: $t('zen.service.role.dataScope'),
+    label: $t('sys.role.dataScope'),
   },
   {
     component: 'Input',
@@ -93,7 +93,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       triggerFields: ['dataScope'],
     },
     fieldName: 'dataScopeDeptIds',
-    label: $t('zen.service.role.customScope'),
+    label: $t('sys.role.customScope'),
     labelClass: 'self-start h-8',
   },
 ]);
@@ -158,7 +158,7 @@ async function onConfirm() {
     dataScopeDeptIds: dataScopeDeptIds || [],
     roleId: role.value.id,
   });
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   modal.close();
 }
 </script>
@@ -168,7 +168,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="dictStore.loading || roleLoading || deptLoading"
-    :title="$t('zen.service.role.assignScope')"
+    :title="$t('sys.role.assignScope')"
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
   >
@@ -178,23 +178,23 @@ async function onConfirm() {
           <div>
             <ElCheckbox v-model="checkStrictly">
               <div class="flex items-center gap-1">
-                <ElTooltip :content="$t('zen.service.role.strictlyTip')">
-                  <Icon
+                <ElTooltip :content="$t('sys.role.strictly.tip')">
+                  <IconifyIcon
                     class="cursor-help outline-none"
                     icon="lucide:circle-help"
                   />
                 </ElTooltip>
-                <span>{{ $t('zen.service.role.strictly') }}</span>
+                <span>{{ $t('sys.role.strictly.title') }}</span>
               </div>
             </ElCheckbox>
 
             <ElCheckbox
               v-model="isExpandAll"
-              :label="`${$t('zen.common.expand')} / ${$t('zen.common.collapsed')}`"
+              :label="`${$t('page.expand')} / ${$t('page.collapsed')}`"
               @change="handleExpand"
             />
             <ElCheckbox
-              :label="`${$t('zen.common.selectAll')} / ${$t('zen.common.unselectAll')}`"
+              :label="`${$t('page.selectAll')} / ${$t('page.unselectAll')}`"
               @change="handleChooseAll"
             />
           </div>

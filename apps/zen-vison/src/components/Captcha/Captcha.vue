@@ -130,12 +130,12 @@ watch(modelValue, (visible) => {
           v-loading="loading"
         >
           <div :class="{ 'mb-3': captchaType === CaptchaEnum.BLOCK_PUZZLE }">
-            <h2 class="text-sm">{{ $t('zen.captcha.title') }}</h2>
+            <h2 class="text-sm">{{ $t('page.captcha.title') }}</h2>
             <p
               v-if="captchaType === CaptchaEnum.CLICK_WORD"
               class="text-lg font-bold"
             >
-              {{ $t('zen.captcha.clickWordTip', [clickWordTip]) }}
+              {{ $t('page.captcha.clickWordTip', [clickWordTip]) }}
             </p>
           </div>
 

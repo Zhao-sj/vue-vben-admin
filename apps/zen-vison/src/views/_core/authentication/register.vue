@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { LoginAndRegisterParams, VbenFormSchema } from '@vben/common-ui';
+import type { VbenFormSchema } from '@vben/common-ui';
 
 import { computed, h, ref } from 'vue';
 
@@ -45,7 +45,7 @@ const formSchema = computed((): VbenFormSchema[] => {
         rules(values) {
           const { password } = values;
           return z
-            .string()
+            .string({ required_error: $t('authentication.passwordTip') })
             .min(1, { message: $t('authentication.passwordTip') })
             .refine((value) => value === password, {
               message: $t('authentication.confirmPasswordTip'),
@@ -55,7 +55,6 @@ const formSchema = computed((): VbenFormSchema[] => {
       },
       fieldName: 'confirmPassword',
       label: $t('authentication.confirmPassword'),
-      rules: z.string().min(1, { message: $t('authentication.passwordTip') }),
     },
     {
       component: 'VbenCheckbox',
@@ -67,15 +66,10 @@ const formSchema = computed((): VbenFormSchema[] => {
             h(
               'a',
               {
-                class:
-                  'cursor-pointer text-primary ml-1 hover:text-primary-hover',
+                class: 'vben-link ml-1 ',
                 href: '',
               },
-              [
-                $t('authentication.privacyPolicy'),
-                '&',
-                $t('authentication.terms'),
-              ],
+              `${$t('authentication.privacyPolicy')} & ${$t('authentication.terms')}`,
             ),
           ]),
       }),
@@ -86,7 +80,7 @@ const formSchema = computed((): VbenFormSchema[] => {
   ];
 });
 
-function handleSubmit(value: LoginAndRegisterParams) {
+function handleSubmit(value: Record<string, any>) {
   // eslint-disable-next-line no-console
   console.log('register submit:', value);
 }

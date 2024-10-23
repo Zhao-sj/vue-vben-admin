@@ -31,7 +31,7 @@ async function onConfirm() {
 
   const values = await optFormRef.value.formApi.getValues();
   await runAsync(values as NoticeApi.AddModel);
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   modal.close();
   emit('success');
 }
@@ -41,7 +41,7 @@ async function onConfirm() {
   <Modal
     :close-on-click-modal="false"
     :confirm-loading="loading"
-    :title="$t('zen.service.notice.create')"
+    :title="$t('sys.message.notice.create')"
     class="w-11/12 lg:w-1/2 2xl:w-1/3"
     draggable
   >

@@ -1,15 +1,11 @@
 <script lang="ts" setup>
 import type { Nullable } from '@vben/types';
 
-import {
-  AuthenticationLogin,
-  type LoginAndRegisterParams,
-  type VbenFormSchema,
-  z,
-} from '@vben/common-ui';
+import { AuthenticationLogin, type VbenFormSchema, z } from '@vben/common-ui';
 
 import { useDebounceFn } from '@vueuse/core';
 import { ElInput } from 'element-plus';
+import { cloneDeep } from 'lodash-es';
 
 import { type AuthApi } from '#/api';
 import { $t } from '#/locales';
@@ -44,50 +40,52 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: markRaw(TenantSelect),
     componentProps: {
       clearable: true,
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.login.tenant')]),
+      placeholder: $t('page.pleaseInput', [$t('page.login.tenant')]),
       size: 'large',
     },
     fieldName: 'tenant',
-    label: $t('zen.login.tenant'),
+    label: $t('page.login.tenant'),
     rules: z.string().min(1, {
-      message: $t('zen.common.pleaseInput', [$t('zen.login.tenant')]),
+      message: $t('page.pleaseInput', [$t('page.login.tenant')]),
     }),
   },
   {
     component: markRaw(ElInput),
     componentProps: {
       clearable: true,
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.login.username')]),
+      placeholder: $t('page.pleaseInput', [$t('page.login.username')]),
       size: 'large',
     },
     fieldName: 'username',
-    label: $t('zen.login.username'),
+    label: $t('page.login.username'),
     rules: z.string().min(1, {
-      message: $t('zen.common.pleaseInput', [$t('zen.login.username')]),
+      message: $t('page.pleaseInput', [$t('page.login.username')]),
     }),
   },
   {
     component: markRaw(ElInput),
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.login.password')]),
+      placeholder: $t('page.pleaseInput', [$t('page.login.password')]),
       showPassword: true,
       size: 'large',
       type: 'password',
     },
     fieldName: 'password',
-    label: $t('zen.login.password'),
+    label: $t('page.login.password'),
     rules: z.string().min(1, {
-      message: $t('zen.common.pleaseInput', [$t('zen.login.password')]),
+      message: $t('page.pleaseInput', [$t('page.login.password')]),
     }),
   },
 ]);
 
-const handleLogin = useDebounceFn((params: LoginAndRegisterParams) => {
+const handleLogin = useDebounceFn((params: Record<string, any>) => {
+  const state = cloneDeep(params) as AuthApi.LoginModel;
   if (props.modal) {
-    emit('submit', params as AuthApi.LoginModel);
+    emit('submit', state);
     return;
   }
-  loginState = params as AuthApi.LoginModel;
+
+  loginState = state;
   showCaptcha.value = true;
 });
 

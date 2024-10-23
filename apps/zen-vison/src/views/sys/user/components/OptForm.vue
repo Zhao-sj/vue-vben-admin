@@ -22,12 +22,10 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.user.nickname'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.user.nickname')]),
     },
     fieldName: 'nickname',
-    label: $t('zen.service.user.nickname'),
+    label: $t('sys.user.nickname'),
     rules: 'required',
   },
   {
@@ -36,44 +34,38 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       checkStrictly: true,
       data: buildMenuTree(props.deptList),
       nodeKey: 'id',
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.user.deptName'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.user.deptName')]),
       props: {
         label: 'name',
         children: 'children',
       },
     },
     fieldName: 'deptId',
-    label: $t('zen.service.user.deptName'),
+    label: $t('sys.user.deptName'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.user.mobile'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.user.mobile')]),
     },
     fieldName: 'mobile',
-    label: $t('zen.service.user.mobile'),
+    label: $t('sys.user.mobile'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.user.email')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.user.email')]),
     },
     fieldName: 'email',
-    label: $t('zen.service.user.email'),
+    label: $t('sys.user.email'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.user.username'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.user.username')]),
     },
     fieldName: 'username',
-    label: $t('zen.service.user.username'),
+    label: $t('sys.user.username'),
     rules: 'required',
   },
   ...(props.edit
@@ -82,14 +74,12 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         {
           component: 'Input',
           componentProps: {
-            placeholder: $t('zen.common.pleaseInput', [
-              $t('zen.service.user.password'),
-            ]),
+            placeholder: $t('page.pleaseInput', [$t('sys.user.password')]),
             showPassword: true,
             type: 'password',
           },
           fieldName: 'password',
-          label: $t('zen.service.user.password'),
+          label: $t('sys.user.password'),
           rules: 'required',
         },
       ]),
@@ -100,10 +90,10 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item.label,
         value: +item.value,
       })),
-      placeholder: $t('zen.common.pleaseSelect', [$t('zen.service.user.sex')]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.user.sex')]),
     },
     fieldName: 'sex',
-    label: $t('zen.service.user.sex'),
+    label: $t('sys.user.sex'),
   },
   {
     component: 'Select',
@@ -113,22 +103,22 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item.name,
         value: item.id,
       })),
-      placeholder: $t('zen.common.pleaseSelect', [$t('zen.service.user.post')]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.user.post')]),
     },
     fieldName: 'postIds',
-    label: $t('zen.service.user.post'),
+    label: $t('sys.user.post'),
   },
   {
     component: 'Input',
     componentProps: {
       autosize: { maxRows: 5, minRows: 3 },
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.common.remark')]),
+      placeholder: $t('page.pleaseInput', [$t('page.remark')]),
       resize: 'none',
       type: 'textarea',
     },
     fieldName: 'remark',
     formItemClass: 'lg:col-span-2',
-    label: $t('zen.common.remark'),
+    label: $t('page.remark'),
     labelClass: 'self-start h-8',
   },
 ]);

@@ -56,7 +56,7 @@ const columns: LogColumns = [
   {
     field: 'id',
     minWidth: 80,
-    title: $t('zen.service.log.common.code'),
+    title: $t('sys.log.id'),
   },
   ...(hasTenantPermission
     ? [
@@ -64,7 +64,7 @@ const columns: LogColumns = [
           field: 'tenantId',
           minWidth: 150,
           slots: { default: 'tenant' },
-          title: $t('zen.service.log.access.tenant'),
+          title: $t('sys.log.access.tenant'),
           visible: false,
         },
       ]
@@ -72,78 +72,78 @@ const columns: LogColumns = [
   {
     field: 'userId',
     minWidth: 80,
-    title: $t('zen.service.log.common.userId'),
+    title: $t('sys.log.userId'),
   },
   {
     field: 'userType',
     minWidth: 80,
     slots: { default: 'userType' },
-    title: $t('zen.service.log.common.userType'),
+    title: $t('sys.log.userType'),
   },
   {
     field: 'appName',
     minWidth: 150,
-    title: $t('zen.service.log.common.appName'),
+    title: $t('sys.log.appName'),
     visible: false,
   },
   {
     field: 'requestMethod',
     minWidth: 80,
-    title: $t('zen.service.log.common.requestMethod'),
+    title: $t('sys.log.requestMethod'),
   },
   {
     field: 'requestUrl',
     headerAlign: 'center',
     align: 'left',
     minWidth: 250,
-    title: $t('zen.service.log.common.requestUrl'),
+    title: $t('sys.log.requestUrl'),
   },
   {
     field: 'beginTime',
     formatter: 'formatDateTime',
     minWidth: 150,
-    title: $t('zen.service.log.access.createTime'),
+    title: $t('sys.log.access.createTime'),
   },
   {
     field: 'duration',
     formatter: ({ cellValue }) =>
       isNumber(cellValue) ? `${cellValue}ms` : cellValue,
     minWidth: 80,
-    title: $t('zen.service.log.access.duration'),
+    title: $t('sys.log.access.duration'),
   },
   {
     field: 'resultCode',
     minWidth: 100,
-    title: $t('zen.service.log.access.resultCode'),
+    title: $t('sys.log.access.resultCode'),
     visible: false,
   },
   {
     field: 'resultMsg',
     formatter: ({ cellValue }) => cellValue || '-',
     minWidth: 150,
-    title: $t('zen.service.log.access.resultMsg'),
+    title: $t('sys.log.access.resultMsg'),
   },
   {
     field: 'ip',
     minWidth: 150,
-    title: $t('zen.service.log.common.ip'),
+    title: $t('sys.log.ip'),
   },
   {
     field: 'location',
     minWidth: 150,
-    title: $t('zen.service.log.common.location'),
+    title: $t('sys.log.location'),
   },
   {
     field: 'ua',
     minWidth: 300,
     slots: { default: 'ua' },
-    title: $t('zen.service.log.common.ua'),
+    title: $t('sys.log.ua'),
     visible: false,
   },
   {
     fixed: 'right',
     slots: { default: 'opt' },
-    title: $t('zen.common.opt'),
+    title: $t('page.options'),
     width: 120,
   },
 ];
@@ -175,7 +175,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'system:access-log:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
     onClick: () => exportModal.open(),
-    title: $t('zen.common.export'),
+    title: $t('page.export.title'),
     type: 'warning',
   },
 ]);
@@ -184,7 +184,7 @@ function createActions(row: LogApi.Access) {
   const actions: ActionItem[] = [
     {
       icon: 'ep:view',
-      label: $t('zen.common.detail'),
+      label: $t('page.detail'),
 
       onClick: () => {
         detailModal.setData(row);
@@ -209,7 +209,7 @@ async function handleExport(fileName: string) {
   const { data } = await exportLog(logQuery);
   downloadExcel(data, fileName);
   exportModal.close();
-  ElMessage.success($t('zen.export.success'));
+  ElMessage.success($t('page.export.success'));
 }
 </script>
 
@@ -233,7 +233,7 @@ async function handleExport(fileName: string) {
         />
 
         <TableExportModal
-          :default-name="$t('zen.service.log.access.title')"
+          :default-name="$t('sys.log.access.title')"
           @confirm="handleExport"
         />
         <TableDetailModal />

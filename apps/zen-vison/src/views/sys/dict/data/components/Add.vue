@@ -53,7 +53,7 @@ async function onConfirm() {
   const state = omit(cloneDeep(values), ['type']);
 
   await runAsync(state as DictApi.DataAddModel);
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   modal.close();
   emit('success');
 }
@@ -64,7 +64,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="typeLoading"
-    :title="$t('zen.service.dict.createData')"
+    :title="$t('sys.dict.data.create')"
     class="w-11/12 lg:w-1/3 2xl:w-1/4"
     draggable
   >

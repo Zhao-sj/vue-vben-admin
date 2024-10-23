@@ -2,7 +2,7 @@
 import type { ActionDropdownItem, ActionItem } from '#/components/Table';
 
 import { useAccess } from '@vben/access';
-import { Icon } from '@vben/icons';
+import { IconifyIcon } from '@vben/icons';
 import { isString } from '@vben/utils';
 
 interface Props {
@@ -80,7 +80,7 @@ function hasDisabled(config?: Record<string, any>) {
               v-bind="item.tooltip || {}"
             >
               <ElButton :circle :link v-bind="{ ...item, icon: undefined }">
-                <Icon
+                <IconifyIcon
                   v-if="item.icon"
                   :class="{ 'mr-1': item.label }"
                   :icon="item.icon"
@@ -103,7 +103,7 @@ function hasDisabled(config?: Record<string, any>) {
     <ElDropdown v-if="showDropdown">
       <slot name="more">
         <ElButton link>
-          <Icon icon="ep:more-filled" />
+          <IconifyIcon icon="ep:more-filled" />
         </ElButton>
       </slot>
 
@@ -114,7 +114,7 @@ function hasDisabled(config?: Record<string, any>) {
             :key="i"
             v-bind="{ ...item, icon: undefined }"
           >
-            <Icon v-if="item.icon" :icon="item.icon" class="mr-1" />
+            <IconifyIcon v-if="item.icon" :icon="item.icon" class="mr-1" />
             <span>{{ item.label }}</span>
           </ElDropdownItem>
         </ElDropdownMenu>

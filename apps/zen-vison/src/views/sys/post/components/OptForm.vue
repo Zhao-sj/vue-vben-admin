@@ -10,19 +10,19 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.post.name')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.post.name')]),
     },
     fieldName: 'name',
-    label: $t('zen.service.post.name'),
+    label: $t('sys.post.name'),
     rules: 'required',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.post.code')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.post.code')]),
     },
     fieldName: 'code',
-    label: $t('zen.service.post.code'),
+    label: $t('sys.post.code'),
     rules: 'required',
   },
   {
@@ -31,10 +31,10 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 0,
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.post.sort')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.post.sort')]),
     },
     fieldName: 'sort',
-    label: $t('zen.service.post.sort'),
+    label: $t('sys.post.sort'),
     rules: 'required',
   },
   {
@@ -48,18 +48,18 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     defaultValue: 0,
     fieldName: 'status',
-    label: $t('zen.service.post.status'),
+    label: $t('sys.post.status'),
   },
   {
     component: 'Input',
     componentProps: {
       autosize: { maxRows: 5, minRows: 3 },
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.common.remark')]),
+      placeholder: $t('page.pleaseInput', [$t('page.remark')]),
       resize: 'none',
       type: 'textarea',
     },
     fieldName: 'remark',
-    label: $t('zen.common.remark'),
+    label: $t('page.remark'),
     labelClass: 'self-start h-8',
   },
 ]);

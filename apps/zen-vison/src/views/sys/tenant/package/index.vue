@@ -40,35 +40,35 @@ const columns: PackageColumns = [
   {
     field: 'id',
     minWidth: 80,
-    title: $t('zen.service.package.code'),
+    title: $t('sys.tenant.package.id'),
   },
   {
     field: 'name',
     minWidth: 150,
-    title: $t('zen.service.package.name'),
+    title: $t('sys.tenant.package.name'),
   },
   {
     field: 'status',
     minWidth: 100,
     slots: { default: 'status' },
-    title: $t('zen.service.package.status'),
+    title: $t('sys.tenant.package.status'),
   },
   {
     field: 'remark',
     formatter: ({ cellValue }) => cellValue || '-',
     minWidth: 150,
-    title: $t('zen.service.package.remark'),
+    title: $t('sys.tenant.package.remark'),
   },
   {
     field: 'createTime',
     formatter: 'formatDateTime',
     minWidth: 150,
-    title: $t('zen.common.createTime'),
+    title: $t('page.createTime'),
   },
   {
     fixed: 'right',
     slots: { default: 'opt' },
-    title: $t('zen.common.opt'),
+    title: $t('page.options'),
     width: 120,
   },
 ];
@@ -111,14 +111,14 @@ const toolbarActions = computed<ActionItem[]>(() => [
         query: packageQuery,
       });
     },
-    title: $t('zen.common.batchDelete'),
+    title: $t('page.batchDelete'),
     type: 'danger',
   },
   {
     auth: 'system:tenant-package:create',
     icon: 'ep:plus',
     onClick: () => addModal.open(),
-    title: $t('zen.common.create'),
+    title: $t('page.create'),
     type: 'primary',
   },
 ]);
@@ -133,7 +133,7 @@ function createActions(row: TenantApi.Package) {
         editModal.open();
       },
       tooltip: {
-        content: $t('zen.common.edit'),
+        content: $t('page.edit'),
       },
       type: 'primary',
     },
@@ -144,15 +144,15 @@ function createActions(row: TenantApi.Package) {
         on: {
           confirm: () => {
             deleteTenantPackageApi(row.id).then(() => {
-              ElMessage.success($t('zen.common.successTip'));
+              ElMessage.success($t('page.successTip'));
               reloadTable();
             });
           },
         },
-        title: $t('zen.common.confirmDelete'),
+        title: $t('page.confirmDelete'),
       },
       tooltip: {
-        content: $t('zen.common.delete'),
+        content: $t('page.delete'),
       },
       type: 'danger',
     },

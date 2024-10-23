@@ -44,7 +44,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       disabled: true,
     },
     fieldName: 'username',
-    label: $t('zen.service.user.username'),
+    label: $t('sys.user.username'),
   },
   {
     component: 'Input',
@@ -52,7 +52,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       disabled: true,
     },
     fieldName: 'nickname',
-    label: $t('zen.service.user.nickname'),
+    label: $t('sys.user.nickname'),
   },
   {
     component: 'Select',
@@ -63,12 +63,10 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item.name,
         value: item.id,
       })),
-      placeholder: $t('zen.common.pleaseSelect', [
-        $t('zen.service.user.userRole'),
-      ]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.user.role')]),
     },
     fieldName: 'roleIds',
-    label: $t('zen.service.user.userRole'),
+    label: $t('sys.user.role'),
   },
 ]);
 
@@ -108,7 +106,7 @@ async function onOpenChange(isOpen: boolean) {
 async function onConfirm() {
   const { roleIds } = await formApi.getValues();
   await runAsync({ roleIds, userId: user.value.id });
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   modal.close();
 }
 </script>
@@ -118,7 +116,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="roleLoading || roleIdsLoading || userLoading"
-    :title="$t('zen.service.user.assignRole')"
+    :title="$t('sys.user.assignRole')"
     class="w-11/12 md:w-1/3 2xl:w-1/5"
     draggable
   >

@@ -51,7 +51,7 @@ async function onConfirm() {
 
   const values = await optFormRef.value.formApi.getValues();
   await runAsync({ id: role.value.id, ...values } as RoleApi.UpdateModel);
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   modal.close();
   emit('success');
 }
@@ -62,7 +62,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="roleLoading"
-    :title="$t('zen.service.role.edit')"
+    :title="$t('sys.role.edit')"
     class="w-11/12 lg:w-1/3 2xl:w-1/4"
     draggable
   >

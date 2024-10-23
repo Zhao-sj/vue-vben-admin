@@ -56,41 +56,41 @@ const columns: DictColumns = [
   {
     field: 'id',
     minWidth: 80,
-    title: $t('zen.service.dict.code'),
+    title: $t('sys.dict.id'),
   },
   {
     field: 'name',
     minWidth: 150,
-    title: $t('zen.service.dict.name'),
+    title: $t('sys.dict.type.name'),
   },
   {
     field: 'type',
     minWidth: 200,
     slots: { default: 'type' },
-    title: $t('zen.service.dict.type'),
+    title: $t('sys.dict.type.title'),
   },
   {
     field: 'status',
     minWidth: 100,
     slots: { default: 'status' },
-    title: $t('zen.service.dict.status'),
+    title: $t('sys.dict.status'),
   },
   {
     field: 'remark',
     formatter: ({ cellValue }) => cellValue || '-',
     minWidth: 200,
-    title: $t('zen.common.remark'),
+    title: $t('page.remark'),
   },
   {
     field: 'createTime',
     formatter: 'formatDateTime',
     minWidth: 150,
-    title: $t('zen.common.createTime'),
+    title: $t('page.createTime'),
   },
   {
     fixed: 'right',
     slots: { default: 'opt' },
-    title: $t('zen.common.opt'),
+    title: $t('page.options'),
     width: 120,
   },
 ];
@@ -133,21 +133,21 @@ const toolbarActions = computed<ActionItem[]>(() => [
         query: dictQuery,
       });
     },
-    title: $t('zen.common.batchDelete'),
+    title: $t('page.batchDelete'),
     type: 'danger',
   },
   {
     auth: 'system:dict:create',
     icon: 'ep:plus',
     onClick: () => addModal.open(),
-    title: $t('zen.common.create'),
+    title: $t('page.create'),
     type: 'primary',
   },
   {
     auth: 'system:dict:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
     onClick: () => exportModal.open(),
-    title: $t('zen.common.export'),
+    title: $t('page.export.title'),
     type: 'warning',
   },
 ]);
@@ -162,7 +162,7 @@ function createActions(row: DictApi.Type) {
         editModal.open();
       },
       tooltip: {
-        content: $t('zen.common.edit'),
+        content: $t('page.edit'),
       },
       type: 'primary',
     },
@@ -173,10 +173,10 @@ function createActions(row: DictApi.Type) {
         on: {
           confirm: () => deleteDictTypeApi(row.id).then(requestAfter),
         },
-        title: $t('zen.common.confirmDelete'),
+        title: $t('page.confirmDelete'),
       },
       tooltip: {
-        content: $t('zen.common.delete'),
+        content: $t('page.delete'),
       },
       type: 'danger',
     },
@@ -195,7 +195,7 @@ function reloadTable() {
 }
 
 function requestAfter(reload = true) {
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   reload && reloadTable();
 }
 
@@ -206,7 +206,7 @@ async function handleExport(fileName: string) {
   const { data } = await exportDict(dictQuery);
   downloadExcel(data, fileName);
   exportModal.close();
-  ElMessage.success($t('zen.export.success'));
+  ElMessage.success($t('page.export.success'));
 }
 </script>
 
@@ -228,7 +228,7 @@ async function handleExport(fileName: string) {
         <TableAddModal @success="reloadTable" />
         <TableEditModal @success="reloadTable" />
         <TableExportModal
-          :default-name="$t('zen.service.dict.typeTitle')"
+          :default-name="$t('sys.dict.type.title')"
           @confirm="handleExport"
         />
       </template>

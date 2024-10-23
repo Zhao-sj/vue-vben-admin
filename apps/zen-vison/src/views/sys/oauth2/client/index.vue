@@ -39,13 +39,13 @@ const columns: ClientColumns = [
   {
     field: 'id',
     minWidth: 80,
-    title: $t('zen.service.oauth2.client.id'),
+    title: $t('sys.oauth2.client.id'),
     visible: false,
   },
   {
     field: 'logo',
     minWidth: 100,
-    title: $t('zen.service.oauth2.client.logo'),
+    title: $t('sys.oauth2.client.logo'),
     cellRender: {
       name: 'CellAvatar',
       props: { shape: 'square' },
@@ -56,47 +56,47 @@ const columns: ClientColumns = [
   {
     field: 'name',
     minWidth: 150,
-    title: $t('zen.service.oauth2.client.name'),
+    title: $t('sys.oauth2.client.name'),
   },
   {
     field: 'clientId',
     minWidth: 150,
-    title: $t('zen.service.oauth2.client.clientId'),
+    title: $t('sys.oauth2.client.clientId'),
   },
   {
     field: 'secret',
     minWidth: 150,
-    title: $t('zen.service.oauth2.client.secret'),
+    title: $t('sys.oauth2.client.secret'),
   },
   {
     field: 'accessTokenValiditySeconds',
     formatter: 'formatSeconds',
     minWidth: 150,
-    title: $t('zen.service.oauth2.client.accessTokenValiditySeconds'),
+    title: $t('sys.oauth2.client.accessTokenValiditySeconds'),
   },
   {
     field: 'refreshTokenValiditySeconds',
     formatter: 'formatSeconds',
     minWidth: 150,
-    title: $t('zen.service.oauth2.client.refreshTokenValiditySeconds'),
+    title: $t('sys.oauth2.client.refreshTokenValiditySeconds'),
   },
   {
     field: 'status',
     minWidth: 100,
     slots: { default: 'status' },
-    title: $t('zen.service.oauth2.client.status'),
+    title: $t('sys.oauth2.client.status'),
   },
   {
     field: 'authorizedGrantTypes',
     minWidth: 240,
-    title: $t('zen.service.oauth2.client.authorizedGrantTypes'),
+    title: $t('sys.oauth2.client.authorizedGrantTypes'),
     cellRender: { name: 'CellTags' },
     showOverflow: false,
   },
   {
     field: 'scopes',
     minWidth: 240,
-    title: $t('zen.service.oauth2.client.scopes'),
+    title: $t('sys.oauth2.client.scopes'),
     cellRender: { name: 'CellTags' },
     showOverflow: false,
     visible: false,
@@ -104,7 +104,7 @@ const columns: ClientColumns = [
   {
     field: 'autoApproveScopes',
     minWidth: 240,
-    title: $t('zen.service.oauth2.client.autoApproveScopes'),
+    title: $t('sys.oauth2.client.autoApproveScopes'),
     cellRender: { name: 'CellTags' },
     showOverflow: false,
     visible: false,
@@ -112,7 +112,7 @@ const columns: ClientColumns = [
   {
     field: 'redirectUris',
     minWidth: 240,
-    title: $t('zen.service.oauth2.client.redirectUris'),
+    title: $t('sys.oauth2.client.redirectUris'),
     slots: { default: 'redirectUris' },
     showOverflow: false,
     visible: false,
@@ -120,7 +120,7 @@ const columns: ClientColumns = [
   {
     field: 'authorities',
     minWidth: 240,
-    title: $t('zen.service.oauth2.client.authorities'),
+    title: $t('sys.oauth2.client.authorities'),
     cellRender: { name: 'CellTags' },
     showOverflow: false,
     visible: false,
@@ -128,7 +128,7 @@ const columns: ClientColumns = [
   {
     field: 'resourceIds',
     minWidth: 240,
-    title: $t('zen.service.oauth2.client.resourceIds'),
+    title: $t('sys.oauth2.client.resourceIds'),
     cellRender: { name: 'CellTags' },
     showOverflow: false,
     visible: false,
@@ -137,17 +137,17 @@ const columns: ClientColumns = [
     field: 'description',
     minWidth: 200,
     formatter: 'formatBlank',
-    title: $t('zen.service.oauth2.client.description'),
+    title: $t('sys.oauth2.client.description'),
     visible: false,
   },
   {
     field: 'createTime',
     formatter: 'formatDateTime',
     minWidth: 150,
-    title: $t('zen.common.createTime'),
+    title: $t('page.createTime'),
   },
   {
-    title: $t('zen.common.opt'),
+    title: $t('page.options'),
     width: 120,
     slots: { default: 'opt' },
     fixed: 'right',
@@ -188,14 +188,14 @@ const toolbarActions = computed<ActionItem[]>(() => [
         query: clientQuery,
       });
     },
-    title: $t('zen.common.batchDelete'),
+    title: $t('page.batchDelete'),
     type: 'danger',
   },
   {
     auth: 'system:oauth2-client:create',
     icon: 'ep:plus',
     onClick: () => addModal.open(),
-    title: $t('zen.common.create'),
+    title: $t('page.create'),
     type: 'primary',
   },
 ]);
@@ -210,7 +210,7 @@ function createActions(row: OAuth2Api.Client) {
         editModal.open();
       },
       tooltip: {
-        content: $t('zen.common.edit'),
+        content: $t('page.edit'),
       },
       type: 'primary',
     },
@@ -221,10 +221,10 @@ function createActions(row: OAuth2Api.Client) {
         on: {
           confirm: () => deleteOAuth2ClientApi(row.id).then(requestAfter),
         },
-        title: $t('zen.common.confirmDelete'),
+        title: $t('page.confirmDelete'),
       },
       tooltip: {
-        content: $t('zen.common.delete'),
+        content: $t('page.delete'),
       },
       type: 'danger',
     },
@@ -234,7 +234,7 @@ function createActions(row: OAuth2Api.Client) {
 }
 
 function requestAfter(reload = true) {
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   reload && reloadTable();
 }
 

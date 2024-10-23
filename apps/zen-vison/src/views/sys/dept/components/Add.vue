@@ -69,7 +69,7 @@ async function onConfirm() {
   state.parentId = state.parentId || 0;
 
   await runAsync(state);
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   modal.close();
   emit('success');
 }
@@ -80,7 +80,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="deptLoading || userLoading"
-    :title="$t('zen.service.dept.create')"
+    :title="$t('sys.dept.create')"
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
   >

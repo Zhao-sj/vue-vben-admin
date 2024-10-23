@@ -18,10 +18,10 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.area.ip')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.area.ip')]),
     },
     fieldName: 'ip',
-    label: $t('zen.service.area.ip'),
+    label: $t('sys.area.ip'),
     rules: 'required',
   },
   {
@@ -30,7 +30,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       disabled: true,
     },
     fieldName: 'location',
-    label: $t('zen.service.area.address'),
+    label: $t('sys.area.address'),
   },
 ]);
 
@@ -63,8 +63,8 @@ async function onConfirm() {
   <Modal
     :close-on-click-modal="false"
     :confirm-loading="loading"
-    :confirm-text="$t('zen.common.query')"
-    :title="$t('zen.service.area.search')"
+    :confirm-text="$t('page.query')"
+    :title="$t('sys.area.search')"
     class="w-11/12 lg:w-1/3 2xl:w-1/4"
     draggable
   >

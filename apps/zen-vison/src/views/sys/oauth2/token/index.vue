@@ -24,50 +24,50 @@ const columns: TokenColumns = [
   {
     field: 'id',
     minWidth: 80,
-    title: $t('zen.service.oauth2.token.id'),
+    title: $t('sys.oauth2.token.id'),
   },
   {
     field: 'clientId',
     minWidth: 150,
-    title: $t('zen.service.oauth2.token.clientId'),
+    title: $t('sys.oauth2.token.clientId'),
     visible: false,
   },
   {
     field: 'userId',
     minWidth: 80,
-    title: $t('zen.service.oauth2.token.userId'),
+    title: $t('sys.oauth2.token.userId'),
     slots: { default: 'userId' },
   },
   {
     field: 'userType',
     minWidth: 80,
     slots: { default: 'userType' },
-    title: $t('zen.service.oauth2.token.userType'),
+    title: $t('sys.oauth2.token.userType'),
   },
   {
     field: 'accessToken',
     minWidth: 250,
-    title: $t('zen.service.oauth2.token.accessToken'),
+    title: $t('sys.oauth2.token.accessToken'),
   },
   {
     field: 'refreshToken',
     minWidth: 250,
-    title: $t('zen.service.oauth2.token.refreshToken'),
+    title: $t('sys.oauth2.token.refreshToken'),
   },
   {
     field: 'createTime',
     formatter: 'formatDateTime',
     minWidth: 150,
-    title: $t('zen.service.oauth2.token.createTime'),
+    title: $t('sys.oauth2.token.createTime'),
   },
   {
     field: 'expiresTime',
     formatter: 'formatDateTime',
     minWidth: 150,
-    title: $t('zen.service.oauth2.token.expiresTime'),
+    title: $t('sys.oauth2.token.expiresTime'),
   },
   {
-    title: $t('zen.common.opt'),
+    title: $t('page.options'),
     width: 120,
     slots: { default: 'opt' },
   },
@@ -100,13 +100,13 @@ function createActions(row: OAuth2Api.AccessToken) {
     {
       auth: 'system:oauth2-token:delete',
       icon: 'lucide:log-out',
-      label: $t('zen.service.oauth2.token.kickout'),
+      label: $t('sys.oauth2.token.kickout'),
       popConfirm: {
         on: {
           confirm: () =>
             deleteAccessTokenApi(row.accessToken).then(requestAfter),
         },
-        title: $t('zen.service.oauth2.token.kickoutTip', [row.userId]),
+        title: $t('sys.oauth2.token.kickoutTip', [row.userId]),
         width: 240,
       },
       type: 'primary',
@@ -117,7 +117,7 @@ function createActions(row: OAuth2Api.AccessToken) {
 }
 
 function requestAfter(reload = true) {
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   reload && reloadTable();
 }
 

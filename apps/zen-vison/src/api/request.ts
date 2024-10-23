@@ -120,13 +120,13 @@ function createRequestClient(baseURL: string) {
         let successMsg = msg;
 
         if (!successMsg) {
-          successMsg = $t('zen.common.successTip');
+          successMsg = $t('page.success');
         }
 
         if (successMessageMode === 'message') {
           ElMessage.success(successMsg);
         } else if (successMessageMode === 'modal') {
-          ElMessageBox.alert(successMsg, $t('zen.common.successTitle'), {
+          ElMessageBox.alert(successMsg, $t('page.successTip'), {
             type: 'success',
           });
         }
@@ -148,10 +148,10 @@ function createRequestClient(baseURL: string) {
       if (errorMessageMode === 'message') {
         ElMessage.error(msg);
       } else if (errorMessageMode === 'modal') {
-        ElMessageBox.alert(msg, $t('zen.common.errorTitle'), { type: 'error' });
+        ElMessageBox.alert(msg, $t('page.errorTip'), { type: 'error' });
       }
 
-      throw new Error(msg || $t('zen.request.requestError'));
+      throw new Error(msg || $t('page.request.error'));
     },
   });
 

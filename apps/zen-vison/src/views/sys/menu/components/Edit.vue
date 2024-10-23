@@ -65,7 +65,7 @@ async function onConfirm() {
 
   const values = await optFormRef.value.getValues();
   await runAsync({ id: menu.value.id, ...values } as MenuApi.UpdateModel);
-  ElMessage.success($t('zen.common.successTip'));
+  ElMessage.success($t('page.successTip'));
   modal.close();
   emit('success');
 }
@@ -76,7 +76,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="menuLoading || pckLoading"
-    :title="$t('zen.service.menu.edit')"
+    :title="$t('sys.menu.edit')"
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
   >

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Icon } from '@vben/icons';
+import { IconifyIcon } from '@vben/icons';
 
 import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
 import { MenuType } from '#/enums';
@@ -16,50 +16,44 @@ const props = defineProps<Props>();
 const show = ref(false);
 
 const chooseOpts = [
-  { label: $t('zen.common.no'), value: false },
-  { label: $t('zen.common.yes'), value: true },
+  { label: $t('page.no'), value: false },
+  { label: $t('page.yes'), value: true },
 ];
 
 const badgeTypeOpts = [
-  { label: $t('zen.service.menu.badgeDot'), value: 'dot' },
-  { label: $t('zen.service.menu.badgeNormal'), value: 'normal' },
+  { label: $t('sys.menu.meta.badgeDot'), value: 'dot' },
+  { label: $t('sys.menu.meta.badgeNormal'), value: 'normal' },
 ];
 
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.menu.metaTitle'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.menu.meta.title')]),
     },
     defaultValue: '',
     fieldName: 'title',
     formItemClass: 'lg:col-span-2',
-    help: $t('zen.service.menu.titleTip'),
-    label: $t('zen.service.menu.metaTitle'),
+    help: $t('sys.menu.tip.title'),
+    label: $t('sys.menu.meta.title'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.menu.activePath'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.menu.meta.activePath')]),
     },
     fieldName: 'activePath',
-    help: $t('zen.service.menu.activePathTip'),
-    label: $t('zen.service.menu.activePath'),
+    help: $t('sys.menu.tip.activePath'),
+    label: $t('sys.menu.meta.activePath'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.menu.activeIcon'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.menu.meta.activeIcon')]),
     },
     fieldName: 'activeIcon',
-    help: $t('zen.service.menu.iconTip'),
-    label: $t('zen.service.menu.activeIcon'),
+    help: $t('sys.menu.tip.icon'),
+    label: $t('sys.menu.meta.activeIcon'),
   },
   ...(props.type === MenuType.MENU
     ? [
@@ -71,8 +65,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
           },
           defaultValue: false,
           fieldName: 'keepAlive',
-          help: $t('zen.service.menu.keepAliveTip'),
-          label: $t('zen.service.menu.keepAlive'),
+          help: $t('sys.menu.tip.keepAlive'),
+          label: $t('sys.menu.meta.keepAlive'),
         },
       ]
     : []),
@@ -84,8 +78,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     defaultValue: false,
     fieldName: 'hideInMenu',
-    help: $t('zen.service.menu.hideInMenuTip'),
-    label: $t('zen.service.menu.hideInMenu'),
+    help: $t('sys.menu.tip.hideInMenu'),
+    label: $t('sys.menu.meta.hideInMenu'),
   },
   {
     component: 'RadioGroup',
@@ -95,8 +89,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     defaultValue: false,
     fieldName: 'hideInTab',
-    help: $t('zen.service.menu.hideInTabTip'),
-    label: $t('zen.service.menu.hideInTab'),
+    help: $t('sys.menu.tip.hideInTab'),
+    label: $t('sys.menu.meta.hideInTab'),
   },
   {
     component: 'RadioGroup',
@@ -106,8 +100,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     defaultValue: false,
     fieldName: 'hideInBreadcrumb',
-    help: $t('zen.service.menu.hideInBreadcrumbTip'),
-    label: $t('zen.service.menu.hideInBreadcrumb'),
+    help: $t('sys.menu.tip.hideInBreadcrumb'),
+    label: $t('sys.menu.meta.hideInBreadcrumb'),
   },
   {
     component: 'RadioGroup',
@@ -117,8 +111,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     defaultValue: false,
     fieldName: 'hideChildrenInMenu',
-    help: $t('zen.service.menu.hideChildrenInMenuTip'),
-    label: $t('zen.service.menu.hideChildrenInMenu'),
+    help: $t('sys.menu.tip.hideChildrenInMenu'),
+    label: $t('sys.menu.meta.hideChildrenInMenu'),
   },
   {
     component: 'RadioGroup',
@@ -128,13 +122,13 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     defaultValue: 'normal',
     fieldName: 'badgeType',
-    help: $t('zen.service.menu.badgeTypeTip'),
-    label: $t('zen.service.menu.badgeType'),
+    help: $t('sys.menu.tip.badgeType'),
+    label: $t('sys.menu.meta.badgeType'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.menu.badge')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.menu.meta.badge')]),
     },
     dependencies: {
       if(values) {
@@ -143,20 +137,18 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       triggerFields: ['badgeType'],
     },
     fieldName: 'badge',
-    help: $t('zen.service.menu.badgeTip'),
-    label: $t('zen.service.menu.badge'),
+    help: $t('sys.menu.tip.badge'),
+    label: $t('sys.menu.meta.badge'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.menu.badgeVariants'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.menu.meta.badgeVariants')]),
     },
     defaultValue: 'success',
     fieldName: 'badgeVariants',
-    help: $t('zen.service.menu.badgeVariantsTip'),
-    label: $t('zen.service.menu.badgeVariants'),
+    help: $t('sys.menu.tip.badgeVariants'),
+    label: $t('sys.menu.meta.badgeVariants'),
   },
   {
     component: 'RadioGroup',
@@ -166,8 +158,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     defaultValue: false,
     fieldName: 'affixTab',
-    help: $t('zen.service.menu.affixTabTip'),
-    label: $t('zen.service.menu.affixTab'),
+    help: $t('sys.menu.tip.affixTab'),
+    label: $t('sys.menu.meta.affixTab'),
   },
   {
     component: 'InputNumber',
@@ -175,20 +167,16 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 0,
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.menu.affixTabOrder'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.menu.meta.affixTabOrder')]),
     },
     fieldName: 'affixTabOrder',
-    help: $t('zen.service.menu.affixTabOrderTip'),
-    label: $t('zen.service.menu.affixTabOrder'),
+    help: $t('sys.menu.tip.affixTabOrder'),
+    label: $t('sys.menu.meta.affixTabOrder'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [
-        $t('zen.service.menu.iframeSrc'),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.menu.meta.iframeSrc')]),
     },
     dependencies: {
       if(values) {
@@ -198,13 +186,13 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     fieldName: 'iframeSrc',
     formItemClass: 'lg:col-span-2',
-    help: $t('zen.service.menu.iframeSrcTip'),
-    label: $t('zen.service.menu.iframeSrc'),
+    help: $t('sys.menu.tip.iframeSrc'),
+    label: $t('sys.menu.meta.iframeSrc'),
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: $t('zen.common.pleaseInput', [$t('zen.service.menu.link')]),
+      placeholder: $t('page.pleaseInput', [$t('sys.menu.meta.link')]),
     },
     dependencies: {
       if(values) {
@@ -214,8 +202,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     fieldName: 'link',
     formItemClass: 'lg:col-span-2',
-    help: $t('zen.service.menu.linkTip'),
-    label: $t('zen.service.menu.link'),
+    help: $t('sys.menu.tip.link'),
+    label: $t('sys.menu.meta.link'),
   },
   ...(props.type === MenuType.MENU
     ? [
@@ -227,8 +215,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
           },
           defaultValue: false,
           fieldName: 'menuVisibleWithForbidden',
-          help: $t('zen.service.menu.menuVisibleWithForbiddenTip'),
-          label: $t('zen.service.menu.menuVisibleWithForbidden'),
+          help: $t('sys.menu.tip.menuVisibleWithForbidden'),
+          label: $t('sys.menu.meta.menuVisibleWithForbidden'),
         },
       ]
     : []),
@@ -260,8 +248,8 @@ defineExpose({ close, formApi });
   <div>
     <ElDivider>
       <div class="flex cursor-pointer items-center gap-1" @click="show = !show">
-        <span>{{ $t('zen.service.menu.otherConf') }}</span>
-        <Icon :icon="show ? 'ep:arrow-up' : 'ep:arrow-down'" />
+        <span>{{ $t('sys.menu.other') }}</span>
+        <IconifyIcon :icon="show ? 'ep:arrow-up' : 'ep:arrow-down'" />
       </div>
     </ElDivider>
 

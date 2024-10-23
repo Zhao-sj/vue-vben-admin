@@ -45,10 +45,10 @@ const basemapStyles = computed(() => ({
 
 const verifyTip = computed(() =>
   state.isPassing
-    ? $t('zen.captcha.blockPuzzleSuccessTip', [
+    ? $t('page.captcha.blockPuzzleSuccessTip', [
         ((state.endTime - state.startTime) / 1000).toFixed(1),
       ])
-    : $t('zen.captcha.fail'),
+    : $t('page.captcha.fail'),
 );
 
 function handleDragStart() {
@@ -138,7 +138,7 @@ function handleRefresh() {
           {{ verifyTip }}
         </div>
         <div v-if="!state.dragging" class="bg-black/30">
-          {{ $t('zen.captcha.blockPuzzleDefaultTip') }}
+          {{ $t('page.captcha.blockPuzzleDefaultTip') }}
         </div>
       </div>
     </div>
