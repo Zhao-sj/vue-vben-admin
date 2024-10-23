@@ -55,7 +55,7 @@ const columns: PackageColumns = [
   },
   {
     field: 'remark',
-    formatter: ({ cellValue }) => cellValue || '-',
+    formatter: 'formatBlank',
     minWidth: 150,
     title: $t('sys.tenant.package.remark'),
   },

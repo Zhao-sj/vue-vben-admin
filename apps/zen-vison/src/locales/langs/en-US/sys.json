@@ -63,7 +63,7 @@
     },
     "confirm": {
       "password": "Please enter the new password for user [{0}]",
-      "status": "confirm {0} [{1}] user?"
+      "status": "Confirm {0} [{1}] user?"
     }
   },
   "role": {
@@ -86,7 +86,7 @@
       "tip": "Select the parent node to automatically select all child nodes."
     },
     "confirm": {
-      "status": "confirm {0} [{1}] role?"
+      "status": "Confirm {0} [{1}] role?"
     }
   },
   "post": {

@@ -24,12 +24,7 @@ import { DictSex, DictStatus, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore, useUserStore } from '#/store';
-import {
-  downloadExcel,
-  encryptBySha256,
-  formatToDateTime,
-  useBatchSelect,
-} from '#/utils';
+import { downloadExcel, encryptBySha256, useBatchSelect } from '#/utils';
 
 import {
   AssignRole,
@@ -123,7 +118,7 @@ const columns: UserColumns = [
   },
   {
     field: 'nickname',
-    formatter: ({ cellValue }) => cellValue || '-',
+    formatter: 'formatBlank',
     minWidth: 120,
     title: $t('sys.user.nickname'),
   },
@@ -135,19 +130,19 @@ const columns: UserColumns = [
   },
   {
     field: 'deptName',
-    formatter: ({ cellValue }) => cellValue || '-',
+    formatter: 'formatBlank',
     minWidth: 150,
     title: $t('sys.user.deptName'),
   },
   {
     field: 'mobile',
-    formatter: ({ cellValue }) => cellValue || '-',
+    formatter: 'formatBlank',
     minWidth: 150,
     title: $t('sys.user.mobile'),
   },
   {
     field: 'email',
-    formatter: ({ cellValue }) => cellValue || '-',
+    formatter: 'formatBlank',
     minWidth: 150,
     title: $t('sys.user.email'),
     visible: false,
@@ -160,15 +155,14 @@ const columns: UserColumns = [
   },
   {
     field: 'loginIp',
-    formatter: ({ cellValue }) => cellValue || '-',
+    formatter: 'formatBlank',
     minWidth: 150,
     title: $t('sys.user.loginIp'),
     visible: false,
   },
   {
     field: 'loginDate',
-    formatter: ({ cellValue }) =>
-      cellValue ? formatToDateTime(cellValue) : '-',
+    formatter: 'formatDateTimeBlank',
     minWidth: 150,
     title: $t('sys.user.loginDate'),
     visible: false,

@@ -122,7 +122,7 @@ const columns: RoleColumns = [
   },
   {
     field: 'remark',
-    formatter: ({ cellValue }) => cellValue || '-',
+    formatter: 'formatBlank',
     minWidth: 200,
     title: $t('page.remark'),
   },

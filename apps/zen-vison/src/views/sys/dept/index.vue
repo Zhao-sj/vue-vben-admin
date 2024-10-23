@@ -51,13 +51,13 @@ const columns: DeptColumns = [
   },
   {
     field: 'phone',
-    formatter: ({ cellValue }) => cellValue || '-',
+    formatter: 'formatBlank',
     minWidth: 150,
     title: $t('sys.dept.phone'),
   },
   {
     field: 'email',
-    formatter: ({ cellValue }) => cellValue || '-',
+    formatter: 'formatBlank',
     minWidth: 150,
     title: $t('sys.dept.email'),
   },

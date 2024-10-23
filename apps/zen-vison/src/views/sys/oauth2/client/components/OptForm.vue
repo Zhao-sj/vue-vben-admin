@@ -226,7 +226,7 @@ const [Form, formApi] = useVbenForm(
       componentProps: {
         clearable: true,
       },
-      labelClass: 'justify-end',
+      labelClass: 'justify-start',
       labelWidth: 150,
       formItemClass: 'flex-col items-start',
     },

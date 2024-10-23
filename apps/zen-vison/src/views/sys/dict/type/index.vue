@@ -77,7 +77,7 @@ const columns: DictColumns = [
   },
   {
     field: 'remark',
-    formatter: ({ cellValue }) => cellValue || '-',
+    formatter: 'formatBlank',
     minWidth: 200,
     title: $t('page.remark'),
   },

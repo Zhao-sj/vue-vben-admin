@@ -119,7 +119,7 @@ const columns: LogColumns = [
   },
   {
     field: 'resultMsg',
-    formatter: ({ cellValue }) => cellValue || '-',
+    formatter: 'formatBlank',
     minWidth: 150,
     title: $t('sys.log.access.resultMsg'),
   },

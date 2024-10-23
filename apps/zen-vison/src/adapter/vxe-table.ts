@@ -4,7 +4,7 @@ import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
 
 import { ElAvatar, ElButton, ElImage, ElTag } from 'element-plus';
 
-import { formatToSeconds } from '#/utils';
+import { formatToDate, formatToDateTime, formatToSeconds } from '#/utils';
 
 import { useVbenForm } from './form';
 
@@ -109,6 +109,18 @@ setupVbenVxeTable({
     vxeUI.formats.add('formatBlank', {
       tableCellFormatMethod({ cellValue }) {
         return cellValue || '-';
+      },
+    });
+
+    vxeUI.formats.add('formatDateBlank', {
+      tableCellFormatMethod({ cellValue }) {
+        return cellValue ? formatToDate(cellValue) : '-';
+      },
+    });
+
+    vxeUI.formats.add('formatDateTimeBlank', {
+      tableCellFormatMethod({ cellValue }) {
+        return cellValue ? formatToDateTime(cellValue) : '-';
       },
     });
   },

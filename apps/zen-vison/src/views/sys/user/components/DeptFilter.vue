@@ -65,7 +65,7 @@ function filterNode(value: string, data: Tree) {
   >
     <div class="flex items-center justify-between gap-3 border-b p-2">
       <label class="hidden whitespace-nowrap 2xl:block">
-        {{ $t('zen.menu.manage.dept') }}
+        {{ $t('menu.sys.dept') }}
       </label>
 
       <ElInput
