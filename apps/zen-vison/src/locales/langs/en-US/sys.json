@@ -282,11 +282,6 @@
       "additionalInformation": "Additional Information {0}",
       "create": "Create OAuth2 Client",
       "edit": "Edit OAuth2 Client",
-      "passwordMode": "Password Mode",
-      "authorizationCodeMode": "Code Mode",
-      "implicitMode": "Simple Mode",
-      "clientCredentialsMode": "Client Mode",
-      "refreshTokenMode": "Refresh Mode",
       "jsonFormatter": "(JSON format data)",
       "unit": "(Unit: seconds)"
     },

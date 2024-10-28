@@ -144,7 +144,7 @@ function createActions(row: TenantApi.Package) {
         on: {
           confirm: () => {
             deleteTenantPackageApi(row.id).then(() => {
-              ElMessage.success($t('page.successTip'));
+              ElMessage.success($t('page.success'));
               reloadTable();
             });
           },

@@ -158,7 +158,7 @@ async function onConfirm() {
     dataScopeDeptIds: dataScopeDeptIds || [],
     roleId: role.value.id,
   });
-  ElMessage.success($t('page.successTip'));
+  ElMessage.success($t('page.success'));
   modal.close();
 }
 </script>

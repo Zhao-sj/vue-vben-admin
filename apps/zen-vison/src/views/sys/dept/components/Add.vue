@@ -69,7 +69,7 @@ async function onConfirm() {
   state.parentId = state.parentId || 0;
 
   await runAsync(state);
-  ElMessage.success($t('page.successTip'));
+  ElMessage.success($t('page.success'));
   modal.close();
   emit('success');
 }

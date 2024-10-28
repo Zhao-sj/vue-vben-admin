@@ -60,6 +60,18 @@ export const useDictStore = defineStore('zen-dict', {
       return this.getDictData(DictTypeEnum.USER_TYPE, value.toString());
     },
 
+    getMenuType(value: number | string) {
+      return this.getDictData(DictTypeEnum.MENU_TYPE, value.toString());
+    },
+
+    getOAuth2Grant(value: number | string) {
+      return this.getDictData(DictTypeEnum.OAUTH2_GRANT_TYPE, value.toString());
+    },
+
+    getFileStorage(value: number | string) {
+      return this.getDictData(DictTypeEnum.FILE_STORAGE, value.toString());
+    },
+
     initDictData(...types: DictTypeEnum[]) {
       const dictTypes = types.filter(
         (item) => !Reflect.has(this.dictData, item),

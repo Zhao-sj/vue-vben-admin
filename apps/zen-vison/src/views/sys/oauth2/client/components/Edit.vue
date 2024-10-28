@@ -55,7 +55,7 @@ async function onConfirm() {
 
   const values = await optFormRef.value.formApi.getValues();
   await runAsync({ id: client.value.id, ...values } as OAuth2Api.UpdateModel);
-  ElMessage.success($t('page.successTip'));
+  ElMessage.success($t('page.success'));
   modal.close();
   emit('success');
 }

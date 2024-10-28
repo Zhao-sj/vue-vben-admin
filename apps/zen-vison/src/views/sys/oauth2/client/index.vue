@@ -234,7 +234,7 @@ function createActions(row: OAuth2Api.Client) {
 }
 
 function requestAfter(reload = true) {
-  ElMessage.success($t('page.successTip'));
+  ElMessage.success($t('page.success'));
   reload && reloadTable();
 }
 

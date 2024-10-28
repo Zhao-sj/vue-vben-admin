@@ -68,7 +68,7 @@ async function onConfirm() {
   state.id = tenant.value.id;
   state.expireTime = dayjs(state.expireTime).valueOf();
   await runAsync(state as TenantApi.UpdateModel);
-  ElMessage.success($t('page.successTip'));
+  ElMessage.success($t('page.success'));
   modal.close();
   emit('success');
 }

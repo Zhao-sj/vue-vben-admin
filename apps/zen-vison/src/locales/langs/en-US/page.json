@@ -36,6 +36,9 @@
     "empty": "File name cannot be empty",
     "success": "Export Success"
   },
+  "upload": {
+    "title": "Upload File"
+  },
   "systemTip": "System Tips",
   "successTip": "Success Tips",
   "errorTip": "Error Tips",

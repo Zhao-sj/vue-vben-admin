@@ -4,7 +4,13 @@ import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
 
 import { ElAvatar, ElButton, ElImage, ElTag } from 'element-plus';
 
-import { formatToDate, formatToDateTime, formatToSeconds } from '#/utils';
+import {
+  formatFileSize,
+  formatThousand,
+  formatToDate,
+  formatToDateTime,
+  formatToSeconds,
+} from '#/utils';
 
 import { useVbenForm } from './form';
 
@@ -100,6 +106,18 @@ setupVbenVxeTable({
     });
 
     // 这里可以自行扩展 vxe-table 的全局配置，比如自定义格式化
+    vxeUI.formats.add('formatThousand', {
+      tableCellFormatMethod({ cellValue }) {
+        return formatThousand(cellValue);
+      },
+    });
+
+    vxeUI.formats.add('formatFileSize', {
+      tableCellFormatMethod({ cellValue }) {
+        return formatFileSize(cellValue);
+      },
+    });
+
     vxeUI.formats.add('formatSeconds', {
       tableCellFormatMethod({ cellValue }) {
         return formatToSeconds(cellValue);

@@ -92,7 +92,12 @@ export const useWsStore = defineStore('zen-ws', () => {
     }
   }
 
+  function $reset() {
+    disconnect();
+  }
+
   return {
+    $reset,
     emitter,
     connect,
     disconnect,

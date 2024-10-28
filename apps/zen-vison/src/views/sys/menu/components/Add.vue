@@ -56,7 +56,7 @@ async function onConfirm() {
 
   const values = await optFormRef.value.getValues();
   await runAsync(values as MenuApi.AddModel);
-  ElMessage.success($t('page.successTip'));
+  ElMessage.success($t('page.success'));
   modal.close();
   emit('success');
 }

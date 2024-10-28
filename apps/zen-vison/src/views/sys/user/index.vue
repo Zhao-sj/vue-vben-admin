@@ -355,7 +355,7 @@ function handleStatusChange(row: UserApi.User) {
 }
 
 function requestAfter(reload = true) {
-  ElMessage.success($t('page.successTip'));
+  ElMessage.success($t('page.success'));
   reload && reloadTable();
 }
 

@@ -283,11 +283,6 @@
       "additionalInformation": "附加信息{0}",
       "create": "新增 OAuth2 客户端",
       "edit": "编辑 OAuth2 客户端",
-      "passwordMode": "密码模式",
-      "authorizationCodeMode": "授权码模式",
-      "implicitMode": "简化模式",
-      "clientCredentialsMode": "客户端模式",
-      "refreshTokenMode": "刷新模式",
       "jsonFormatter": "（JSON 格式数据）",
       "unit": "（单位：秒）"
     },

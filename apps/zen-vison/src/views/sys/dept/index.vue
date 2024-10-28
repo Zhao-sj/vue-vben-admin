@@ -164,7 +164,7 @@ function createActions(row: DeptApi.Dept) {
         on: {
           confirm: () => {
             deleteDeptApi(row.id).then(() => {
-              ElMessage.success($t('page.successTip'));
+              ElMessage.success($t('page.success'));
               reloadTable();
             });
           },

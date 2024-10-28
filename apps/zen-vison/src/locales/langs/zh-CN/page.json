@@ -36,6 +36,9 @@
     "empty": "文件名不能为空",
     "success": "导出成功"
   },
+  "upload": {
+    "title": "上传文件"
+  },
   "systemTip": "系统提示",
   "successTip": "成功提示",
   "errorTip": "错误提示",

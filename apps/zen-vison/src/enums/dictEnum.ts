@@ -1,9 +1,12 @@
 export enum DictTypeEnum {
   DATA_SCOPE = 'system_data_scope',
   ERROR_LOG_PROCESS_STATUS = 'system_error_log_process_status',
+  FILE_STORAGE = 'infra_file_storage',
   LOGIN_RESULT = 'system_login_result',
   LOGIN_TYPE = 'system_login_type',
+  MENU_TYPE = 'system_menu_type',
   NOTICE_TYPE = 'system_notice_type',
+  OAUTH2_GRANT_TYPE = 'system_oauth2_grant_type',
   OPERATE_TYPE = 'system_operate_type',
   ROLE_TYPE = 'system_role_type',
   SEX = 'system_user_sex',
@@ -48,6 +51,14 @@ export enum NoticeType {
 
   /** 公告 */
   REMIND = 2,
+}
+
+export enum FileStorageEnum {
+  DB = 1,
+  FTP = 11,
+  LOCAL = 10,
+  S3 = 20,
+  SFTP = 12,
 }
 
 export const DICT_DATA_NAME = 'DictDataManage';

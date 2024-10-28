@@ -1,0 +1,50 @@
+{
+  "file": {
+    "config": {
+      "id": "ID",
+      "name": "Name",
+      "storage": "Storage",
+      "master": "Master",
+      "remark": "Remark",
+      "create": "Create File Config",
+      "edit": "Edit File Config",
+      "test": "Test",
+      "domain": "Domain",
+      "basePath": "Base Path",
+      "host": "Host",
+      "port": "Port",
+      "username": "Username",
+      "password": "Password",
+      "mode": {
+        "title": "Mode",
+        "active": "Active",
+        "passive": "Passive"
+      },
+      "endpoint": "Endpoint",
+      "bucket": "Bucket",
+      "accessKey": "Access Key",
+      "accessSecret": "Secret",
+      "confirm": {
+        "master": "Confirm to set the configuration with ID [{0}] as the master configuration?",
+        "test": {
+          "title": "Confirm to test the configuration?",
+          "success": "Test passed, file upload successful!",
+          "download": "Click to download"
+        }
+      }
+    },
+    "list": {
+      "id": "ID",
+      "name": "Name",
+      "path": "Path",
+      "url": "URL",
+      "type": "Type",
+      "size": "Size",
+      "preview": "Preview",
+      "createTime": "Upload Time",
+      "upload": {
+        "tip": "Only supports uploading image format files"
+      }
+    }
+  }
+}

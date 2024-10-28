@@ -142,7 +142,7 @@ function createActions(row: MenuApi.Menu) {
         on: {
           confirm: () => {
             deleteMenuApi(row.id).then(() => {
-              ElMessage.success($t('page.successTip'));
+              ElMessage.success($t('page.success'));
               reloadTable();
             });
           },

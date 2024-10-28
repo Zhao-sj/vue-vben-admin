@@ -278,7 +278,7 @@ function handleStatusChange(row: RoleApi.Role) {
 }
 
 function requestAfter(reload = true) {
-  ElMessage.success($t('page.successTip'));
+  ElMessage.success($t('page.success'));
   reload && reloadTable();
 }
 

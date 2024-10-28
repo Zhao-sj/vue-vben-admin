@@ -60,7 +60,7 @@ async function onConfirm() {
   state.password = encryptBySha256(state.password);
 
   await runAsync(state);
-  ElMessage.success($t('page.successTip'));
+  ElMessage.success($t('page.success'));
   modal.close();
   emit('success');
 }

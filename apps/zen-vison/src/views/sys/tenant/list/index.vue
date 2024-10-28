@@ -19,8 +19,8 @@ import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 import {
   downloadExcel,
+  formatThousand,
   formatToDateTime,
-  formatToThousand,
   useBatchSelect,
 } from '#/utils';
 
@@ -93,7 +93,7 @@ const columns: TenantColumns = [
   },
   {
     field: 'accountCount',
-    formatter: ({ cellValue }) => formatToThousand(cellValue),
+    formatter: ({ cellValue }) => formatThousand(cellValue),
     minWidth: 150,
     sortable: true,
     title: $t('sys.tenant.list.accountLimit'),
@@ -218,7 +218,7 @@ function createActions(row: TenantApi.Tenant) {
         on: {
           confirm: () => {
             deleteTenantApi(row.id).then(() => {
-              ElMessage.success($t('page.successTip'));
+              ElMessage.success($t('page.success'));
               reloadTable();
             });
           },

@@ -1,4 +1,5 @@
 export enum ModuleEnum {
+  INFRA = 'infra',
   SYSTEM = 'system',
 }
 

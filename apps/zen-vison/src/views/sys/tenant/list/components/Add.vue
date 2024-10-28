@@ -55,7 +55,7 @@ async function onConfirm() {
   state.expireTime = dayjs(state.expireTime).valueOf();
 
   await runAsync(state);
-  ElMessage.success($t('page.successTip'));
+  ElMessage.success($t('page.success'));
   modal.close();
   emit('success');
 }

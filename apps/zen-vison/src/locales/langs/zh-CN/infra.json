@@ -1,0 +1,50 @@
+{
+  "file": {
+    "config": {
+      "id": "配置编号",
+      "name": "配置名称",
+      "storage": "存储器",
+      "master": "主配置",
+      "remark": "配置描述",
+      "create": "新增文件配置",
+      "edit": "编辑文件配置",
+      "test": "测试",
+      "domain": "自定义域名",
+      "basePath": "基础路径",
+      "host": "主机地址",
+      "port": "主机端口",
+      "username": "登录账号",
+      "password": "登录密码",
+      "mode": {
+        "title": "连接模式",
+        "active": "主动模式",
+        "passive": "被动模式"
+      },
+      "endpoint": "节点地址",
+      "bucket": "Bucket",
+      "accessKey": "Access Key",
+      "accessSecret": "Secret",
+      "confirm": {
+        "master": "确定将编号为【{0}】的配置设置为主配置吗？",
+        "test": {
+          "title": "是否测试该配置？",
+          "success": "测试通过，上传文件成功！",
+          "download": "点击下载"
+        }
+      }
+    },
+    "list": {
+      "id": "文件编号",
+      "name": "文件名称",
+      "path": "文件路径",
+      "url": "文件URL",
+      "type": "文件类型",
+      "size": "文件大小",
+      "preview": "文件预览",
+      "createTime": "上传时间",
+      "upload": {
+        "tip": "仅支持上传图片格式文件"
+      }
+    }
+  }
+}

@@ -37,6 +37,18 @@
     },
     "area": "地区管理"
   },
+  "infra": {
+    "title": "基础设施",
+    "file": {
+      "title": "文件管理",
+      "config": {
+        "title": "文件配置"
+      },
+      "list": {
+        "title": "文件列表"
+      }
+    }
+  },
   "account": {
     "profile": "个人设置"
   }

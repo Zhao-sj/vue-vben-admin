@@ -131,7 +131,7 @@ async function onOpenChange(isOpen: boolean) {
 async function onConfirm() {
   const menuIds = treeRef.value!.getCheckedKeys() as number[];
   await runAsync({ menuIds, roleId: role.value.id });
-  ElMessage.success($t('page.successTip'));
+  ElMessage.success($t('page.success'));
   modal.close();
 }
 </script>

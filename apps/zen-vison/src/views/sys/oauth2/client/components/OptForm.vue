@@ -7,23 +7,7 @@ import { useDictStore } from '#/store';
 import SelectCreate from './SelectCreate.vue';
 
 const dictStore = useDictStore();
-
-const authorizedGrantTypes = [
-  { label: $t('sys.oauth2.client.passwordMode'), value: 'password' },
-  {
-    label: $t('sys.oauth2.client.authorizationCodeMode'),
-    value: 'authorization_code',
-  },
-  { label: $t('sys.oauth2.client.implicitMode'), value: 'implicit' },
-  {
-    label: $t('sys.oauth2.client.clientCredentialsMode'),
-    value: 'client_credentials',
-  },
-  {
-    label: $t('sys.oauth2.client.refreshTokenMode'),
-    value: 'refresh_token',
-  },
-];
+dictStore.initDictData(DictTypeEnum.OAUTH2_GRANT_TYPE);
 
 const scopes = ['user.read', 'user.write'].map((item) => ({
   label: item,
@@ -130,7 +114,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Select',
     componentProps: {
       multiple: true,
-      options: authorizedGrantTypes,
+      options: dictStore.getDictDataList(DictTypeEnum.OAUTH2_GRANT_TYPE),
       placeholder: $t('page.pleaseSelect', [
         $t('sys.oauth2.client.authorizedGrantTypes'),
       ]),

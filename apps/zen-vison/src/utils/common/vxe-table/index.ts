@@ -28,7 +28,7 @@ export function useBatchSelect<T>(options: {
     try {
       gridApi.setLoading(true);
       await handleBatch(selectedRecords);
-      ElMessage.success($t('page.successTip'));
+      ElMessage.success($t('page.success'));
       gridApi.reload(query);
     } finally {
       gridApi.setLoading(false);

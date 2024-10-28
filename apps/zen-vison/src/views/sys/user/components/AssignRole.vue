@@ -106,7 +106,7 @@ async function onOpenChange(isOpen: boolean) {
 async function onConfirm() {
   const { roleIds } = await formApi.getValues();
   await runAsync({ roleIds, userId: user.value.id });
-  ElMessage.success($t('page.successTip'));
+  ElMessage.success($t('page.success'));
   modal.close();
 }
 </script>

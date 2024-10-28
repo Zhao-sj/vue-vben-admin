@@ -53,7 +53,7 @@ async function onConfirm() {
   const state = omit(cloneDeep(values), ['type']);
 
   await runAsync(state as DictApi.DataAddModel);
-  ElMessage.success($t('page.successTip'));
+  ElMessage.success($t('page.success'));
   modal.close();
   emit('success');
 }

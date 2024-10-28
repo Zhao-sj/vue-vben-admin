@@ -37,6 +37,18 @@
     },
     "area": "Area Manage"
   },
+  "infra": {
+    "title": "Infra",
+    "file": {
+      "title": "File Manage",
+      "config": {
+        "title": "File Config"
+      },
+      "list": {
+        "title": "File List"
+      }
+    }
+  },
   "account": {
     "profile": "Profile"
   }

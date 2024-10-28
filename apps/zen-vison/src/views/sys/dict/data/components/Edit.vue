@@ -68,7 +68,7 @@ async function onConfirm() {
   state.dictTypeId = dictType.value.id;
 
   await runAsync(state as DictApi.DataUpdateModel);
-  ElMessage.success($t('page.successTip'));
+  ElMessage.success($t('page.success'));
   modal.close();
   emit('success');
 }

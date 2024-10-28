@@ -49,8 +49,19 @@ export function formatToSeconds(seconds: number) {
   return result.replaceAll(/零+/g, '零');
 }
 
+/** 文件大小 */
+export function formatFileSize(size: number) {
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let unitIndex = 0;
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024;
+    unitIndex++;
+  }
+  return size.toFixed(2) + units[unitIndex];
+}
+
 /** 千分位 */
-export function formatToThousand(val: number | string) {
+export function formatThousand(val: number | string) {
   if (!isNumber(+val)) {
     return val.toString();
   }

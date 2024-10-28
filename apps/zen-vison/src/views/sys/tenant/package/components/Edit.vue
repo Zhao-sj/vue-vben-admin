@@ -83,7 +83,7 @@ async function onConfirm() {
   state.menuIds = keys;
 
   await runAsync(state);
-  ElMessage.success($t('page.successTip'));
+  ElMessage.success($t('page.success'));
   modal.close();
   emit('success');
 }
