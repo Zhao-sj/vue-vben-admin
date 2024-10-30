@@ -4,7 +4,7 @@ import type { Router, RouteRecordNormalized } from 'vue-router';
 import { toRaw } from 'vue';
 
 import {
-  openWindow,
+  openRouteInNewWindow,
   startProgress,
   stopProgress,
 } from '@vben-core/shared/utils';
@@ -245,11 +245,11 @@ export const useTabbarStore = defineStore('core-tabbar', {
 
       // 下一个tab存在，跳转到下一个
       if (after) {
-        this._close(currentRoute.value);
+        this._close(tab);
         await this._goToTab(after, router);
         // 上一个tab存在，跳转到上一个
       } else if (before) {
-        this._close(currentRoute.value);
+        this._close(tab);
         await this._goToTab(before, router);
       } else {
         console.error('Failed to close the tab; only one tab remains open.');
@@ -290,11 +290,7 @@ export const useTabbarStore = defineStore('core-tabbar', {
      * @param tab
      */
     async openTabInNewWindow(tab: TabDefinition) {
-      const { hash, origin } = location;
-      const path = tab.fullPath || tab.path;
-      const fullPath = path.startsWith('/') ? path : `/${path}`;
-      const url = `${origin}${hash ? '/#' : ''}${fullPath}`;
-      openWindow(url, { target: '_blank' });
+      openRouteInNewWindow(tab.fullPath || tab.path);
     },
 
     /**
