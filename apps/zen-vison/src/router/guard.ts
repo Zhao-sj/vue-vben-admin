@@ -1,6 +1,6 @@
 import type { Router } from 'vue-router';
 
-import { LOGIN_PATH } from '@vben/constants';
+import { DEFAULT_HOME_PATH, LOGIN_PATH } from '@vben/constants';
 import { preferences } from '@vben/preferences';
 import { useAccessStore } from '@vben/stores';
 import { startProgress, stopProgress } from '@vben/utils';
@@ -8,7 +8,7 @@ import { startProgress, stopProgress } from '@vben/utils';
 import { useTitle } from '@vueuse/core';
 
 import { $t } from '#/locales';
-import { coreRouteNames, dynamicRoutes } from '#/router/routes';
+import { accessRoutes, coreRouteNames } from '#/router/routes';
 import { useAuthStore, useUserStore } from '#/store';
 
 import { generateAccess } from './access';
@@ -60,20 +60,25 @@ function setupAccessGuard(router: Router) {
     const userStore = useUserStore();
     const authStore = useAuthStore();
 
+    // 基本路由，这些路由不需要进入权限拦截
+    if (coreRouteNames.includes(to.name as string)) {
+      if (to.path === LOGIN_PATH && accessStore.accessToken) {
+        return decodeURIComponent(
+          (to.query?.redirect as string) || DEFAULT_HOME_PATH,
+        );
+      }
+      return true;
+    }
+
     // accessToken 检查
     if (!accessStore.accessToken) {
-      if (
-        // 基本路由，这些路由不需要进入权限拦截
-        coreRouteNames.includes(to.name as string) ||
-        // 明确声明忽略权限访问权限，则可以访问
-        to.meta.ignoreAccess
-      ) {
+      // 明确声明忽略权限访问权限，则可以访问
+      if (to.meta.ignoreAccess) {
         return true;
       }
 
       // 没有访问权限，跳转登录页面
       if (to.fullPath !== LOGIN_PATH) {
-        accessStore.setLoginExpired(false);
         return {
           path: LOGIN_PATH,
           // 如不需要，直接删除 query
@@ -85,10 +90,8 @@ function setupAccessGuard(router: Router) {
       return to;
     }
 
-    const accessRoutes = accessStore.accessRoutes;
-
     // 是否已经生成过动态路由
-    if (accessRoutes && accessRoutes.length > 0) {
+    if (accessStore.isAccessChecked) {
       return true;
     }
 
@@ -105,7 +108,7 @@ function setupAccessGuard(router: Router) {
         roles: userStore.roles,
         router,
         // 则会在菜单中显示，但是访问会被重定向到403
-        routes: dynamicRoutes,
+        routes: accessRoutes,
       },
       resp?.menus,
     );
