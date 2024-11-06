@@ -26,6 +26,7 @@ const failList = computed(() =>
 
 function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
+    handleConfirm();
     return;
   }
 
@@ -36,18 +37,24 @@ function onOpenChange(isOpen: boolean) {
 }
 
 function onConfirm() {
+  handleConfirm();
+  modal.close();
+}
+
+function handleConfirm() {
   const { createUserList, updateUserList } = data.value;
   if (createUserList.length > 0 || updateUserList.length > 0) {
     emit('confirm');
   }
-  modal.close();
 }
 </script>
 
 <template>
   <Modal
     :close-on-click-modal="false"
+    :show-cancel-button="false"
     :title="$t('sys.user.upload.result')"
+    class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
   >
     <div class="flex flex-col gap-2">
@@ -62,7 +69,7 @@ function onConfirm() {
         </ElDescriptions>
         <div
           v-if="data.createUserList.length > 0"
-          class="flex max-h-20 flex-wrap gap-1 overflow-y-auto border border-t-0 p-2"
+          class="flex max-h-60 flex-wrap gap-1 overflow-y-auto border border-t-0 p-2"
         >
           <ElTag v-for="(item, i) in data.createUserList" :key="i">
             {{ item }}
@@ -81,7 +88,7 @@ function onConfirm() {
         </ElDescriptions>
         <div
           v-if="data.updateUserList.length > 0"
-          class="flex max-h-20 flex-wrap gap-1 overflow-y-auto border border-t-0 p-2"
+          class="flex max-h-60 flex-wrap gap-1 overflow-y-auto border border-t-0 p-2"
         >
           <ElTag
             v-for="(item, i) in data.updateUserList"
@@ -104,7 +111,7 @@ function onConfirm() {
         </ElDescriptions>
         <div
           v-if="failList.length > 0"
-          class="flex max-h-20 flex-wrap gap-1 overflow-y-auto border border-t-0 p-2"
+          class="flex max-h-60 flex-wrap gap-1 overflow-y-auto border border-t-0 p-2"
         >
           <ElTag v-for="(item, i) in failList" :key="i" type="danger">
             {{ item.name }}: {{ item.reason }}

@@ -203,7 +203,10 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
+      clearable: false,
       placeholder: $t('page.pleaseInput', [$t('infra.file.config.accessKey')]),
+      showPassword: true,
+      type: 'password',
     },
     fieldName: 'config.accessKey',
     label: $t('infra.file.config.accessKey'),
@@ -216,9 +219,12 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
+      clearable: false,
       placeholder: $t('page.pleaseInput', [
         $t('infra.file.config.accessSecret'),
       ]),
+      showPassword: true,
+      type: 'password',
     },
     fieldName: 'config.accessSecret',
     label: $t('infra.file.config.accessSecret'),
