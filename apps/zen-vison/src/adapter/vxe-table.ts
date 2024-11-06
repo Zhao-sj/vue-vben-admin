@@ -20,6 +20,10 @@ setupVbenVxeTable({
       grid: {
         align: 'center',
         minHeight: 500,
+        formConfig: {
+          // 全局禁用vxe-table的表单配置，使用formOptions
+          enabled: false,
+        },
         toolbarConfig: {
           custom: true,
           zoom: true,
@@ -56,7 +60,7 @@ setupVbenVxeTable({
 
     // 表格配置项可以用 cellRender: { name: 'CellImage' },
     vxeUI.renderer.add('CellImage', {
-      renderDefault(_renderOpts, params) {
+      renderTableDefault(_renderOpts, params) {
         const { column, row } = params;
         const src = row[column.field];
         return h(ElImage, { src, previewSrcList: [src] });
@@ -65,7 +69,7 @@ setupVbenVxeTable({
 
     // 表格配置项可以用 cellRender: { name: 'CellAvatar' },
     vxeUI.renderer.add('CellAvatar', {
-      renderDefault(renderOpts, params) {
+      renderTableDefault(renderOpts, params) {
         const { props, attrs } = renderOpts;
         const { column, row } = params;
         const src = row[column.field];
@@ -77,7 +81,7 @@ setupVbenVxeTable({
 
     // 表格配置项可以用 cellRender: { name: 'CellLink' },
     vxeUI.renderer.add('CellLink', {
-      renderDefault(renderOpts) {
+      renderTableDefault(renderOpts) {
         const { props } = renderOpts;
         return h(
           ElButton,
@@ -89,7 +93,7 @@ setupVbenVxeTable({
 
     // 表格配置项可以用 cellRender: { name: 'CellTags' },
     vxeUI.renderer.add('CellTags', {
-      renderDefault(_renderOpts, params) {
+      renderTableDefault(_renderOpts, params) {
         const { column, row } = params;
         const children: any[] = row[column.field];
         const node = h(
