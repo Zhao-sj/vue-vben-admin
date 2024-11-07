@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+
 import { Page, useVbenModal } from '@vben/common-ui';
+import { useIsMobile } from '@vben/hooks';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
 import {
@@ -16,14 +19,11 @@ import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 import { downloadExcel, useBatchSelect } from '#/utils';
 
-import { TableAdd, TableEdit, TableQuery } from './components';
+import { TableAdd, TableEdit } from './components';
 
-type RoleColumns = VxeGridProps<PostApi.Post>['columns'];
-
+const { isMobile } = useIsMobile();
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.STATUS);
-
-let postQuery: PostApi.PageQuery = {};
 
 const requestConfig = {
   loadingDelay: 200,
@@ -47,11 +47,53 @@ const [TableExportModal, exportModal] = useVbenModal({
   connectedComponent: TableExport,
 });
 
-const columns: RoleColumns = [
+const formSchema = computed<VbenFormSchema[]>(() => [
   {
-    fixed: 'left',
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.post.code')]),
+    },
+    fieldName: 'code',
+    label: $t('sys.post.code'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.post.name')]),
+    },
+    fieldName: 'name',
+    label: $t('sys.post.name'),
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.STATUS),
+      placeholder: $t('page.pleaseSelect', [$t('sys.post.status')]),
+    },
+    fieldName: 'status',
+    label: $t('sys.post.status'),
+  },
+]);
+
+const formOptions = computed<VbenFormProps>(() => ({
+  collapsed: isMobile.value,
+  commonConfig: {
+    componentProps: {
+      clearable: true,
+    },
+    labelWidth: 80,
+  },
+  schema: formSchema.value,
+  submitOnEnter: true,
+  showCollapseButton: isMobile.value,
+  wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
+}));
+
+const columns: VxeGridProps<PostApi.Post>['columns'] = [
+  {
     type: 'checkbox',
     width: 50,
+    fixed: isMobile.value ? null : 'left',
   },
   {
     field: 'id',
@@ -76,26 +118,31 @@ const columns: RoleColumns = [
   {
     field: 'status',
     minWidth: 100,
-    slots: { default: 'status' },
     title: $t('sys.post.status'),
+    cellRender: {
+      name: 'CellDict',
+      props: {
+        type: DictTypeEnum.STATUS,
+      },
+    },
   },
   {
     field: 'remark',
-    formatter: 'formatBlank',
     minWidth: 200,
     title: $t('page.remark'),
+    formatter: 'formatBlank',
   },
   {
     field: 'createTime',
-    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('page.createTime'),
+    formatter: 'formatDateTime',
   },
   {
-    fixed: 'right',
-    slots: { default: 'opt' },
     title: $t('page.options'),
     width: 120,
+    fixed: isMobile.value ? null : 'right',
+    slots: { default: 'opt' },
   },
 ];
 
@@ -110,11 +157,11 @@ const gridOptions: VxeGridProps<PostApi.Post> = {
   height: 'auto',
   proxyConfig: {
     ajax: {
-      query: ({ page: { currentPage, pageSize } }) =>
+      query: ({ page }, formValues) =>
         getPostPageListApi({
-          pageNum: currentPage,
-          pageSize,
-          ...postQuery,
+          pageNum: page.currentPage,
+          pageSize: page.pageSize,
+          ...formValues,
         }),
     },
   },
@@ -123,18 +170,19 @@ const gridOptions: VxeGridProps<PostApi.Post> = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:post:delete',
     icon: 'ep:delete',
-    onClick: () => {
+    onClick: async () => {
+      const values = await gridApi.formApi.getValues();
       useBatchSelect<PostApi.Post>({
         gridApi,
         handleBatch: (records) =>
           batchDeletePostApi(records.map((item) => item.id)),
-        query: postQuery,
+        query: values,
       });
     },
     title: $t('page.batchDelete'),
@@ -189,13 +237,9 @@ function createActions(row: PostApi.Post) {
   return actions;
 }
 
-function handleQuery(query: PostApi.PageQuery) {
-  postQuery = query;
-  gridApi.query();
-}
-
-function reloadTable() {
-  gridApi.reload(postQuery);
+async function reloadTable() {
+  const values = await gridApi.formApi.getValues();
+  gridApi.reload(values);
 }
 
 function requestAfter(reload = true) {
@@ -207,7 +251,8 @@ async function handleExport(fileName: string) {
   if (exportLoading.value) {
     return;
   }
-  const { data } = await exportPost(postQuery);
+  const values = await gridApi.formApi.getValues();
+  const { data } = await exportPost(values);
   downloadExcel(data, fileName);
   exportModal.close();
   ElMessage.success($t('page.export.success'));
@@ -216,11 +261,7 @@ async function handleExport(fileName: string) {
 
 <template>
   <Page auto-content-height>
-    <Grid>
-      <template #form>
-        <TableQuery @query="handleQuery" />
-      </template>
-
+    <Grid :form-options="formOptions">
       <template #toolbar-actions>
         <TableAction
           :actions="toolbarActions"
@@ -235,12 +276,6 @@ async function handleExport(fileName: string) {
           :default-name="$t('sys.post.title')"
           @confirm="handleExport"
         />
-      </template>
-
-      <template #status="{ row: { status } }">
-        <ElTag :type="dictStore.getStatus(status)?.color">
-          {{ dictStore.getStatus(status)?.label }}
-        </ElTag>
       </template>
 
       <template #opt="{ row }">

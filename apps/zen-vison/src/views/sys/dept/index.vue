@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+
 import { Page, useVbenModal } from '@vben/common-ui';
+import { useIsMobile } from '@vben/hooks';
 import { IconifyIcon } from '@vben/icons';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
@@ -15,14 +18,11 @@ import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 
-import { TableAdd, TableEdit, TableQuery } from './components';
+import { TableAdd, TableEdit } from './components';
 
-type DeptColumns = VxeGridProps<DeptApi.Dept>['columns'];
-
+const { isMobile } = useIsMobile();
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.STATUS);
-
-let deptQuery: DeptApi.Query = {};
 
 const { data: userList } = useRequest(getUserSimpleListApi);
 
@@ -34,7 +34,41 @@ const [TableEditModal, editModal] = useVbenModal({
   connectedComponent: TableEdit,
 });
 
-const columns: DeptColumns = [
+const formSchema = computed<VbenFormSchema[]>(() => [
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.dept.name')]),
+    },
+    fieldName: 'name',
+    label: $t('sys.dept.name'),
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.STATUS),
+      placeholder: $t('page.pleaseSelect', [$t('sys.dept.status')]),
+    },
+    fieldName: 'status',
+    label: $t('sys.dept.status'),
+  },
+]);
+
+const formOptions = computed<VbenFormProps>(() => ({
+  collapsed: isMobile.value,
+  commonConfig: {
+    componentProps: {
+      clearable: true,
+    },
+    labelWidth: 80,
+  },
+  schema: formSchema.value,
+  submitOnEnter: true,
+  showCollapseButton: isMobile.value,
+  wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
+}));
+
+const columns: VxeGridProps<DeptApi.Dept>['columns'] = [
   {
     field: 'name',
     headerAlign: 'center',
@@ -45,21 +79,21 @@ const columns: DeptColumns = [
   },
   {
     field: 'leaderId',
-    formatter: ({ cellValue }) => getUserName(cellValue),
     minWidth: 150,
     title: $t('sys.dept.leader'),
+    formatter: ({ cellValue }) => getUserName(cellValue),
   },
   {
     field: 'phone',
-    formatter: 'formatBlank',
     minWidth: 150,
     title: $t('sys.dept.phone'),
+    formatter: 'formatBlank',
   },
   {
     field: 'email',
-    formatter: 'formatBlank',
     minWidth: 150,
     title: $t('sys.dept.email'),
+    formatter: 'formatBlank',
   },
   {
     field: 'sort',
@@ -69,20 +103,25 @@ const columns: DeptColumns = [
   {
     field: 'status',
     minWidth: 100,
-    slots: { default: 'status' },
     title: $t('sys.dept.status'),
+    cellRender: {
+      name: 'CellDict',
+      props: {
+        type: DictTypeEnum.STATUS,
+      },
+    },
   },
   {
     field: 'createTime',
-    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('page.createTime'),
+    formatter: 'formatDateTime',
   },
   {
-    fixed: 'right',
-    slots: { default: 'opt' },
     title: $t('page.options'),
     width: 120,
+    fixed: isMobile.value ? null : 'right',
+    slots: { default: 'opt' },
   },
 ];
 
@@ -97,7 +136,7 @@ const gridOptions: VxeGridProps<DeptApi.Dept> = {
   },
   proxyConfig: {
     ajax: {
-      query: () => getDeptList(deptQuery),
+      query: (_, formValues) => getDeptList(formValues),
     },
   },
   height: 'auto',
@@ -116,7 +155,7 @@ const gridOptions: VxeGridProps<DeptApi.Dept> = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
@@ -194,13 +233,9 @@ function getUserName(id: number) {
   return userList.value.find((item) => item.id === id)?.nickname || '-';
 }
 
-function handleQuery(query: DeptApi.Query) {
-  deptQuery = query;
-  reloadTable();
-}
-
 async function reloadTable() {
-  await gridApi.reload(deptQuery);
+  const values = await gridApi.formApi.getValues();
+  await gridApi.reload(values);
   gridApi.grid.setAllTreeExpand(true);
 }
 
@@ -212,11 +247,7 @@ function toggleExpandAll() {
 
 <template>
   <Page auto-content-height>
-    <Grid>
-      <template #form>
-        <TableQuery @query="handleQuery" />
-      </template>
-
+    <Grid :form-options="formOptions">
       <template #toolbar-actions>
         <TableAction
           :actions="toolbarActions"
@@ -230,7 +261,7 @@ function toggleExpandAll() {
       </template>
 
       <template #toolbar-tools>
-        <div class="mr-3">
+        <div>
           <ElButton
             :title="`${$t('page.expand')} / ${$t('page.collapsed')}`"
             circle
@@ -241,12 +272,6 @@ function toggleExpandAll() {
             <IconifyIcon icon="ep:sort" />
           </ElButton>
         </div>
-      </template>
-
-      <template #status="{ row: { status } }">
-        <ElTag :type="dictStore.getStatus(status)?.color">
-          {{ dictStore.getStatus(status)?.label }}
-        </ElTag>
       </template>
 
       <template #opt="{ row }">

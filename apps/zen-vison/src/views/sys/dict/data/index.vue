@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+
 import { Page, useVbenModal } from '@vben/common-ui';
+import { useIsMobile } from '@vben/hooks';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
 import {
@@ -8,6 +11,7 @@ import {
   type DictApi,
   exportDictDataApi,
   getDictDataPageListApi,
+  getDictTypeSimpleListApi,
 } from '#/api';
 import { type ActionItem, TableAction, TableExport } from '#/components';
 import { DictTypeEnum } from '#/enums';
@@ -16,22 +20,19 @@ import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 import { downloadExcel, useBatchSelect } from '#/utils';
 
-import { TableAdd, TableEdit, TableQuery } from './components';
-
-type DictColumns = VxeGridProps<DictApi.Data>['columns'];
+import { TableAdd, TableEdit } from './components';
 
 const { currentRoute } = useRouter();
+const { isMobile } = useIsMobile();
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.STATUS);
-
-let dictQuery: DictApi.DataPageQuery = {
-  dictTypeId: +currentRoute.value.params.id!,
-};
 
 const requestConfig = {
   loadingDelay: 200,
   manual: true,
 };
+
+const { data: dictTypeList, loading } = useRequest(getDictTypeSimpleListApi);
 
 const { loading: exportLoading, runAsync: exportDict } = useRequest(
   exportDictDataApi,
@@ -50,11 +51,61 @@ const [TableExportModal, exportModal] = useVbenModal({
   connectedComponent: TableExport,
 });
 
-const columns: DictColumns = [
+const formSchema = computed<VbenFormSchema[]>(() => [
   {
-    fixed: 'left',
+    component: 'Select',
+    componentProps: {
+      clearable: false,
+      loading,
+      placeholder: $t('page.pleaseSelect', [$t('sys.dict.type.title')]),
+      options: dictTypeList.value?.map((item) => ({
+        label: item.name,
+        value: item.id,
+      })),
+      onChange: reloadTable,
+    },
+    defaultValue: +currentRoute.value.params.id!,
+    fieldName: 'dictTypeId',
+    label: $t('sys.dict.type.title'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.dict.data.label')]),
+    },
+    fieldName: 'label',
+    label: $t('sys.dict.data.label'),
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.STATUS),
+      placeholder: $t('page.pleaseSelect', [$t('sys.dict.status')]),
+    },
+    fieldName: 'status',
+    label: $t('sys.dict.status'),
+  },
+]);
+
+const formOptions = computed<VbenFormProps>(() => ({
+  collapsed: isMobile.value,
+  commonConfig: {
+    componentProps: {
+      clearable: true,
+    },
+    labelWidth: 80,
+  },
+  schema: formSchema.value,
+  submitOnEnter: true,
+  showCollapseButton: isMobile.value,
+  wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
+}));
+
+const columns: VxeGridProps<DictApi.Data>['columns'] = [
+  {
     type: 'checkbox',
     width: 50,
+    fixed: isMobile.value ? null : 'left',
   },
   {
     field: 'id',
@@ -84,26 +135,31 @@ const columns: DictColumns = [
   {
     field: 'status',
     minWidth: 100,
-    slots: { default: 'status' },
     title: $t('sys.dict.status'),
+    cellRender: {
+      name: 'CellDict',
+      props: {
+        type: DictTypeEnum.STATUS,
+      },
+    },
   },
   {
     field: 'remark',
-    formatter: 'formatBlank',
     minWidth: 200,
     title: $t('page.remark'),
+    formatter: 'formatBlank',
   },
   {
     field: 'createTime',
-    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('page.createTime'),
+    formatter: 'formatDateTime',
   },
   {
-    fixed: 'right',
-    slots: { default: 'opt' },
     title: $t('page.options'),
     width: 120,
+    fixed: isMobile.value ? null : 'right',
+    slots: { default: 'opt' },
   },
 ];
 
@@ -118,15 +174,11 @@ const gridOptions: VxeGridProps<DictApi.Data> = {
   id: 'dict_data_manage',
   proxyConfig: {
     ajax: {
-      delete: ({ body: { removeRecords } }) => {
-        const ids = removeRecords.map((item) => item.id);
-        return batchDeleteDictDataApi(ids);
-      },
-      query: ({ page: { currentPage, pageSize } }) =>
+      query: ({ page }, formValues) =>
         getDictDataPageListApi({
-          pageNum: currentPage,
-          pageSize,
-          ...dictQuery,
+          pageNum: page.currentPage,
+          pageSize: page.pageSize,
+          ...formValues,
         }),
     },
   },
@@ -135,18 +187,19 @@ const gridOptions: VxeGridProps<DictApi.Data> = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:dict:delete',
     icon: 'ep:delete',
-    onClick: () => {
+    onClick: async () => {
+      const formValues = await gridApi.formApi.getValues();
       useBatchSelect<DictApi.Data>({
         gridApi,
         handleBatch: (records) =>
           batchDeleteDictDataApi(records.map((item) => item.id)),
-        query: dictQuery,
+        query: formValues,
       });
     },
     title: $t('page.batchDelete'),
@@ -155,8 +208,9 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:dict:create',
     icon: 'ep:plus',
-    onClick: () => {
-      addModal.setData({ typeId: dictQuery.dictTypeId });
+    onClick: async () => {
+      const formValues = await gridApi.formApi.getValues();
+      addModal.setData({ typeId: formValues.dictTypeId });
       addModal.open();
     },
     title: $t('page.create'),
@@ -204,13 +258,9 @@ function createActions(row: DictApi.Data) {
   return actions;
 }
 
-function handleQuery(query: DictApi.DataPageQuery) {
-  dictQuery = query;
-  gridApi.query();
-}
-
-function reloadTable() {
-  gridApi.reload(dictQuery);
+async function reloadTable() {
+  const formValues = await gridApi.formApi.getValues();
+  gridApi.reload(formValues);
 }
 
 function requestAfter(reload = true) {
@@ -222,7 +272,8 @@ async function handleExport(fileName: string) {
   if (exportLoading.value) {
     return;
   }
-  const { data } = await exportDict(dictQuery);
+  const formValues = await gridApi.formApi.getValues();
+  const { data } = await exportDict(formValues as DictApi.DataPageQuery);
   downloadExcel(data, fileName);
   exportModal.close();
   ElMessage.success($t('page.export.success'));
@@ -231,11 +282,7 @@ async function handleExport(fileName: string) {
 
 <template>
   <Page auto-content-height>
-    <Grid>
-      <template #form>
-        <TableQuery @query="handleQuery" />
-      </template>
-
+    <Grid :form-options="formOptions">
       <template #toolbar-actions>
         <TableAction
           :actions="toolbarActions"
@@ -250,12 +297,6 @@ async function handleExport(fileName: string) {
           :default-name="$t('sys.dict.data.title')"
           @confirm="handleExport"
         />
-      </template>
-
-      <template #status="{ row: { status } }">
-        <ElTag :type="dictStore.getStatus(status)?.color">
-          {{ dictStore.getStatus(status)?.label }}
-        </ElTag>
       </template>
 
       <template #opt="{ row }">

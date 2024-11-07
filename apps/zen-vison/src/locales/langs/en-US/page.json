@@ -39,6 +39,19 @@
   "upload": {
     "title": "Upload File"
   },
+  "date": {
+    "select": "Select Date",
+    "monday": "Mo",
+    "tuesday": "Tu",
+    "wednesday": "We",
+    "thursday": "Th",
+    "friday": "Fr",
+    "saturday": "Sa",
+    "sunday": "Su",
+    "placeholder": {
+      "between": "Start Date - End Date"
+    }
+  },
   "systemTip": "System Tips",
   "successTip": "Success Tips",
   "errorTip": "Error Tips",

@@ -39,6 +39,19 @@
   "upload": {
     "title": "上传文件"
   },
+  "date": {
+    "select": "选择日期",
+    "monday": "一",
+    "tuesday": "二",
+    "wednesday": "三",
+    "thursday": "四",
+    "friday": "五",
+    "saturday": "六",
+    "sunday": "日",
+    "placeholder": {
+      "between": "开始日期 - 结束日期"
+    }
+  },
   "systemTip": "系统提示",
   "successTip": "成功提示",
   "errorTip": "错误提示",

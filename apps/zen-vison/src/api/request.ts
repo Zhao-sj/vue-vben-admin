@@ -8,10 +8,17 @@ import { preferences } from '@vben/preferences';
 import { errorMessageResponseInterceptor } from '@vben/request';
 import { useAccessStore } from '@vben/stores';
 
+import dayjs from 'dayjs';
+import { isArray, isNull, isUndefined } from 'lodash-es';
+
 import { ResultEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useAuthStore, useUserStore, useWsStore } from '#/store';
-import { authenticateResponseHandler, ZenRequestClient } from '#/utils';
+import {
+  authenticateResponseHandler,
+  formatToDateTime,
+  ZenRequestClient,
+} from '#/utils';
 
 import { refreshTokenApi } from './core/auth';
 
@@ -20,6 +27,49 @@ const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
 function createRequestClient(baseURL: string) {
   const client = new ZenRequestClient({
     baseURL,
+    paramsSerializer: {
+      // 自定义params参数序列化（日期格式化，支持时间范围）
+      serialize: (params) => {
+        const queryString = new URLSearchParams();
+
+        Object.entries(params).forEach(([key, value]) => {
+          if (isUndefined(value) || isNull(value)) return;
+
+          if (isArray(value)) {
+            value
+              .filter((item) => !isUndefined(item))
+              .forEach((item, i) => {
+                let formattedValue = item;
+                if (item instanceof Date) {
+                  if (i === 0) {
+                    formattedValue = dayjs(item)
+                      .set('hour', 0)
+                      .set('minute', 0)
+                      .set('second', 0);
+                  }
+                  if (i === 1) {
+                    formattedValue = dayjs(item)
+                      .set('hour', 23)
+                      .set('minute', 59)
+                      .set('second', 59);
+                  }
+                  formattedValue = formatToDateTime(formattedValue);
+                }
+
+                queryString.append(key, formattedValue);
+              });
+            return;
+          }
+
+          let formattedValue = value;
+          if (value instanceof Date) {
+            formattedValue = formatToDateTime(value);
+          }
+          queryString.append(key, formattedValue);
+        });
+        return queryString.toString();
+      },
+    },
   });
 
   /**

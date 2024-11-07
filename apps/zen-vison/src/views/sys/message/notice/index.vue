@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+
 import { Page, useVbenModal } from '@vben/common-ui';
+import { useIsMobile } from '@vben/hooks';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
 import {
@@ -16,14 +19,11 @@ import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 import { useBatchSelect } from '#/utils';
 
-import { TableAdd, TableEdit, TableQuery } from './components';
+import { TableAdd, TableEdit } from './components';
 
-type DictColumns = VxeGridProps<NoticeApi.Notice>['columns'];
-
+const { isMobile } = useIsMobile();
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.STATUS, DictTypeEnum.NOTICE_TYPE);
-
-let noticeQuery: NoticeApi.PageQuery = {};
 
 const requestConfig = {
   loadingDelay: 200,
@@ -40,11 +40,45 @@ const [TableEditModal, editModal] = useVbenModal({
   connectedComponent: TableEdit,
 });
 
-const columns: DictColumns = [
+const formSchema = computed<VbenFormSchema[]>(() => [
   {
-    fixed: 'left',
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.message.notice.title')]),
+    },
+    fieldName: 'title',
+    label: $t('sys.message.notice.title'),
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.STATUS),
+      placeholder: $t('page.pleaseSelect', [$t('sys.message.notice.status')]),
+    },
+    fieldName: 'status',
+    label: $t('sys.message.notice.status'),
+  },
+]);
+
+const formOptions = computed<VbenFormProps>(() => ({
+  collapsed: isMobile.value,
+  commonConfig: {
+    componentProps: {
+      clearable: true,
+    },
+    labelWidth: 80,
+  },
+  schema: formSchema.value,
+  submitOnEnter: true,
+  showCollapseButton: isMobile.value,
+  wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
+}));
+
+const columns: VxeGridProps<NoticeApi.Notice>['columns'] = [
+  {
     type: 'checkbox',
     width: 50,
+    fixed: isMobile.value ? null : 'left',
   },
   {
     field: 'id',
@@ -59,26 +93,36 @@ const columns: DictColumns = [
   {
     field: 'type',
     minWidth: 100,
-    slots: { default: 'type' },
     title: $t('sys.message.notice.type'),
+    cellRender: {
+      name: 'CellDict',
+      props: {
+        type: DictTypeEnum.NOTICE_TYPE,
+      },
+    },
   },
   {
     field: 'status',
     minWidth: 100,
-    slots: { default: 'status' },
     title: $t('sys.message.notice.status'),
+    cellRender: {
+      name: 'CellDict',
+      props: {
+        type: DictTypeEnum.STATUS,
+      },
+    },
   },
   {
     field: 'createTime',
-    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('page.createTime'),
+    formatter: 'formatDateTime',
   },
   {
-    fixed: 'right',
-    slots: { default: 'opt' },
     title: $t('page.options'),
     width: 120,
+    fixed: isMobile.value ? null : 'right',
+    slots: { default: 'opt' },
   },
 ];
 
@@ -93,11 +137,11 @@ const gridOptions: VxeGridProps<NoticeApi.Notice> = {
   id: 'dict_data_manage',
   proxyConfig: {
     ajax: {
-      query: ({ page: { currentPage, pageSize } }) =>
+      query: ({ page }, formValues) =>
         getNoticePageListApi({
-          pageNum: currentPage,
-          pageSize,
-          ...noticeQuery,
+          pageNum: page.currentPage,
+          pageSize: page.pageSize,
+          ...formValues,
         }),
     },
   },
@@ -106,18 +150,19 @@ const gridOptions: VxeGridProps<NoticeApi.Notice> = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:notice:delete',
     icon: 'ep:delete',
-    onClick: () => {
+    onClick: async () => {
+      const formValues = await gridApi.formApi.getValues();
       useBatchSelect<NoticeApi.Notice>({
         gridApi,
         handleBatch: (records) =>
           batchDeleteNoticeApi(records.map((item) => item.id)),
-        query: noticeQuery,
+        query: formValues,
       });
     },
     title: $t('page.batchDelete'),
@@ -167,10 +212,10 @@ function createActions(row: NoticeApi.Notice) {
         on: {
           confirm: () => pushNotice(row.id).then(() => requestAfter(false)),
         },
-        title: $t('sys.message.notice.push.title'),
+        title: $t('sys.message.notice.push.tip'),
       },
       tooltip: {
-        content: $t('sys.message.notice.push.tip'),
+        content: $t('sys.message.notice.push.title'),
       },
       type: 'warning',
     },
@@ -179,13 +224,9 @@ function createActions(row: NoticeApi.Notice) {
   return actions;
 }
 
-function handleQuery(query: NoticeApi.PageQuery) {
-  noticeQuery = query;
-  gridApi.query();
-}
-
-function reloadTable() {
-  gridApi.reload(noticeQuery);
+async function reloadTable() {
+  const formValues = await gridApi.formApi.getValues();
+  gridApi.reload(formValues);
 }
 
 function requestAfter(reload = true) {
@@ -196,11 +237,7 @@ function requestAfter(reload = true) {
 
 <template>
   <Page auto-content-height>
-    <Grid>
-      <template #form>
-        <TableQuery @query="handleQuery" />
-      </template>
-
+    <Grid :form-options="formOptions">
       <template #toolbar-actions>
         <TableAction
           :actions="toolbarActions"
@@ -211,18 +248,6 @@ function requestAfter(reload = true) {
 
         <TableAddModal @success="reloadTable" />
         <TableEditModal @success="reloadTable" />
-      </template>
-
-      <template #type="{ row: { type } }">
-        <ElTag :type="dictStore.getNoticeType(type)?.color">
-          {{ dictStore.getNoticeType(type)?.label }}
-        </ElTag>
-      </template>
-
-      <template #status="{ row: { status } }">
-        <ElTag :type="dictStore.getStatus(status)?.color">
-          {{ dictStore.getStatus(status)?.label }}
-        </ElTag>
       </template>
 
       <template #opt="{ row }">

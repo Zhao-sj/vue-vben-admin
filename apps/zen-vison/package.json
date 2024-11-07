@@ -1,6 +1,6 @@
 {
   "name": "zen-vision",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "build": "pnpm vite build --mode production",
@@ -27,6 +27,7 @@
     "@vben/styles": "workspace:*",
     "@vben/types": "workspace:*",
     "@vben/utils": "workspace:*",
+    "@vuepic/vue-datepicker": "^10.0.0",
     "@vueuse/core": "catalog:",
     "crypto-js": "^4.2.0",
     "dayjs": "catalog:",

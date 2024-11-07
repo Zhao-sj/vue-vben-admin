@@ -35,16 +35,3 @@ export function useBatchSelect<T>(options: {
     }
   });
 }
-
-/** 重置 useVbenVxeGrid 的 默认表单插槽 */
-export function useResetVbenVxeForm<T extends HTMLElement>(
-  queryWrapper: ReturnType<typeof useTemplateRef<T>>,
-) {
-  onMounted(() => {
-    const parent = queryWrapper.value?.parentElement;
-    if (parent) {
-      parent.classList.remove(...parent.classList);
-      parent.replaceChildren(queryWrapper.value);
-    }
-  });
-}

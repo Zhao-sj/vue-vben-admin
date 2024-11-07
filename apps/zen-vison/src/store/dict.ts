@@ -12,6 +12,10 @@ interface DictState {
 }
 
 export const useDictStore = defineStore('zen-dict', {
+  state: (): DictState => ({
+    dictData: {} as DictData,
+    loading: false,
+  }),
   actions: {
     getDictData(type: DictTypeEnum, value: string) {
       return this.getDictDataList(type).find((item) => item.value === value);
@@ -21,14 +25,6 @@ export const useDictStore = defineStore('zen-dict', {
       return this.dictData[type] || [];
     },
 
-    getLoginResult(value: number | string) {
-      return this.getDictData(DictTypeEnum.LOGIN_RESULT, value.toString());
-    },
-
-    getLoginType(value: number | string) {
-      return this.getDictData(DictTypeEnum.LOGIN_TYPE, value.toString());
-    },
-
     getLogProcess(value: number | string) {
       return this.getDictData(
         DictTypeEnum.ERROR_LOG_PROCESS_STATUS,
@@ -36,40 +32,16 @@ export const useDictStore = defineStore('zen-dict', {
       );
     },
 
-    getNoticeType(value: number | string) {
-      return this.getDictData(DictTypeEnum.NOTICE_TYPE, value.toString());
-    },
-
     getOperaType(value: number | string) {
       return this.getDictData(DictTypeEnum.OPERATE_TYPE, value.toString());
-    },
-
-    getRoleType(value: number | string) {
-      return this.getDictData(DictTypeEnum.ROLE_TYPE, value.toString());
     },
 
     getSex(value: number | string) {
       return this.getDictData(DictTypeEnum.SEX, value.toString());
     },
 
-    getStatus(value: number | string) {
-      return this.getDictData(DictTypeEnum.STATUS, value.toString());
-    },
-
     getUserType(value: number | string) {
       return this.getDictData(DictTypeEnum.USER_TYPE, value.toString());
-    },
-
-    getMenuType(value: number | string) {
-      return this.getDictData(DictTypeEnum.MENU_TYPE, value.toString());
-    },
-
-    getOAuth2Grant(value: number | string) {
-      return this.getDictData(DictTypeEnum.OAUTH2_GRANT_TYPE, value.toString());
-    },
-
-    getFileStorage(value: number | string) {
-      return this.getDictData(DictTypeEnum.FILE_STORAGE, value.toString());
     },
 
     initDictData(...types: DictTypeEnum[]) {
@@ -89,8 +61,4 @@ export const useDictStore = defineStore('zen-dict', {
       );
     },
   },
-  state: (): DictState => ({
-    dictData: {} as DictData,
-    loading: false,
-  }),
 });

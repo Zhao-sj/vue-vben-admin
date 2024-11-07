@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+
 import { Page } from '@vben/common-ui';
+import { useIsMobile } from '@vben/hooks';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
 import {
@@ -12,15 +15,55 @@ import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 
-import { TableQuery, UserInfo } from './components';
+import { UserInfo } from './components';
 
-type TokenColumns = VxeGridProps<OAuth2Api.AccessToken>['columns'];
-
+const { isMobile } = useIsMobile();
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.USER_TYPE, DictTypeEnum.SEX);
-let accessTokenQuery: OAuth2Api.TokenPageQuery = {};
 
-const columns: TokenColumns = [
+const formSchema = computed<VbenFormSchema[]>(() => [
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.oauth2.token.clientId')]),
+    },
+    fieldName: 'clientId',
+    label: $t('sys.oauth2.token.clientId'),
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.USER_TYPE),
+      placeholder: $t('page.pleaseSelect', [$t('sys.oauth2.token.userType')]),
+    },
+    fieldName: 'userType',
+    label: $t('sys.oauth2.token.userType'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.oauth2.token.userId')]),
+    },
+    fieldName: 'userId',
+    label: $t('sys.oauth2.token.userId'),
+  },
+]);
+
+const formOptions = computed<VbenFormProps>(() => ({
+  collapsed: isMobile.value,
+  commonConfig: {
+    componentProps: {
+      clearable: true,
+    },
+    labelWidth: 80,
+  },
+  schema: formSchema.value,
+  submitOnEnter: true,
+  showCollapseButton: isMobile.value,
+  wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
+}));
+
+const columns: VxeGridProps<OAuth2Api.AccessToken>['columns'] = [
   {
     field: 'id',
     minWidth: 80,
@@ -41,8 +84,13 @@ const columns: TokenColumns = [
   {
     field: 'userType',
     minWidth: 80,
-    slots: { default: 'userType' },
     title: $t('sys.oauth2.token.userType'),
+    cellRender: {
+      name: 'CellDict',
+      props: {
+        type: DictTypeEnum.USER_TYPE,
+      },
+    },
   },
   {
     field: 'accessToken',
@@ -56,19 +104,20 @@ const columns: TokenColumns = [
   },
   {
     field: 'createTime',
-    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('sys.oauth2.token.createTime'),
+    formatter: 'formatDateTime',
   },
   {
     field: 'expiresTime',
-    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('sys.oauth2.token.expiresTime'),
+    formatter: 'formatDateTime',
   },
   {
     title: $t('page.options'),
     width: 120,
+    fixed: isMobile.value ? null : 'right',
     slots: { default: 'opt' },
   },
 ];
@@ -80,11 +129,11 @@ const gridOptions: VxeGridProps<OAuth2Api.AccessToken> = {
   id: 'oauth2_token_manage',
   proxyConfig: {
     ajax: {
-      query: ({ page: { currentPage, pageSize } }) =>
+      query: ({ page }, formValues) =>
         getOAuth2TokenPageApi({
-          pageNum: currentPage,
-          pageSize,
-          ...accessTokenQuery,
+          pageNum: page.currentPage,
+          pageSize: page.pageSize,
+          ...formValues,
         }),
     },
   },
@@ -93,7 +142,7 @@ const gridOptions: VxeGridProps<OAuth2Api.AccessToken> = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 function createActions(row: OAuth2Api.AccessToken) {
   const actions: ActionItem[] = [
@@ -121,35 +170,21 @@ function requestAfter(reload = true) {
   reload && reloadTable();
 }
 
-function reloadTable() {
-  gridApi.reload(accessTokenQuery);
-}
-
-function handleQuery(query: OAuth2Api.TokenPageQuery) {
-  accessTokenQuery = query;
-  gridApi.query();
+async function reloadTable() {
+  const values = gridApi.formApi.getValues();
+  gridApi.reload(values);
 }
 </script>
 
 <template>
   <Page auto-content-height>
-    <Grid>
-      <template #form>
-        <TableQuery @query="handleQuery" />
-      </template>
-
+    <Grid :form-options="formOptions">
       <template #toolbar-actions>
         <div></div>
       </template>
 
       <template #userId="{ row }">
         <UserInfo :id="row.userId" />
-      </template>
-
-      <template #userType="{ row: { userType } }">
-        <ElTag :type="dictStore.getUserType(userType)?.color">
-          {{ dictStore.getUserType(userType)?.label }}
-        </ElTag>
       </template>
 
       <template #opt="{ row }">

@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+
 import { Page, useVbenModal } from '@vben/common-ui';
+import { useIsMobile } from '@vben/hooks';
 
 import dayjs from 'dayjs';
 
@@ -17,21 +20,18 @@ import { DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
-import {
-  downloadExcel,
-  formatThousand,
-  formatToDateTime,
-  useBatchSelect,
-} from '#/utils';
+import { downloadExcel, formatToDateTime, useBatchSelect } from '#/utils';
 
-import { TableAdd, TableEdit, TableQuery } from './components';
+import { TableAdd, TableEdit } from './components';
 
-type TenantColumns = VxeGridProps<TenantApi.Tenant>['columns'];
-
+const { isMobile } = useIsMobile();
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.STATUS);
 
-let tenantQuery: TenantApi.PageQuery = {};
+const requestConfig = {
+  loadingDelay: 200,
+  manual: true,
+};
 
 const [TableAddModal, addModal] = useVbenModal({
   connectedComponent: TableAdd,
@@ -47,23 +47,80 @@ const [TableExportModal, exportModal] = useVbenModal({
 
 const { data: packageList, runAsync: getPackageList } = useRequest(
   getTenantPackageSimpleListApi,
-  {
-    manual: true,
-  },
+  requestConfig,
 );
 
 const { loading: exportLoading, runAsync: exportTenant } = useRequest(
   exportTenantApi,
-  {
-    manual: true,
-  },
+  requestConfig,
 );
 
-const columns: TenantColumns = [
+const formSchema = computed<VbenFormSchema[]>(() => [
   {
-    fixed: 'left',
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.name')]),
+    },
+    fieldName: 'name',
+    label: $t('sys.tenant.list.name'),
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.STATUS),
+      placeholder: $t('page.pleaseSelect', [$t('sys.tenant.list.status')]),
+    },
+    fieldName: 'status',
+    label: $t('sys.tenant.list.status'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.contact')]),
+    },
+    fieldName: 'contactName',
+    label: $t('sys.tenant.list.contact'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.contactPhone')]),
+    },
+    fieldName: 'contactMobile',
+    label: $t('sys.tenant.list.contactPhone'),
+  },
+  {
+    component: 'DatePicker',
+    componentProps: {
+      placeholder: $t('page.date.placeholder.between'),
+      range: true,
+      multiCalendars: {
+        solo: true,
+      },
+    },
+    fieldName: 'createTime',
+    label: $t('page.createTime'),
+  },
+]);
+
+const formOptions = computed<VbenFormProps>(() => ({
+  collapsed: isMobile.value,
+  commonConfig: {
+    componentProps: {
+      clearable: true,
+    },
+    labelWidth: 80,
+  },
+  schema: formSchema.value,
+  submitOnEnter: true,
+  wrapperClass: 'grid-cols-1 lg:grid-cols-3 2xl:grid-cols-4',
+}));
+
+const columns: VxeGridProps<TenantApi.Tenant>['columns'] = [
+  {
     type: 'checkbox',
     width: 50,
+    fixed: isMobile.value ? null : 'left',
   },
   {
     field: 'id',
@@ -78,8 +135,8 @@ const columns: TenantColumns = [
   {
     field: 'packageId',
     minWidth: 120,
-    slots: { default: 'package' },
     title: $t('sys.tenant.list.package'),
+    slots: { default: 'package' },
   },
   {
     field: 'contactName',
@@ -90,44 +147,50 @@ const columns: TenantColumns = [
     field: 'contactMobile',
     minWidth: 120,
     title: $t('sys.tenant.list.contactPhone'),
+    formatter: 'formatBlank',
   },
   {
     field: 'accountCount',
-    formatter: ({ cellValue }) => formatThousand(cellValue),
     minWidth: 150,
-    sortable: true,
     title: $t('sys.tenant.list.accountLimit'),
+    formatter: 'formatThousand',
+    sortable: true,
   },
   {
     field: 'expireTime',
     minWidth: 150,
+    title: $t('sys.tenant.list.expireTime'),
     slots: { default: 'expire' },
     sortable: true,
-    title: $t('sys.tenant.list.expireTime'),
   },
   {
     field: 'website',
-    minWidth: 150,
-    slots: { default: 'website' },
+    minWidth: 200,
     title: $t('sys.tenant.list.website'),
+    cellRender: { name: 'CellLink' },
   },
   {
     field: 'status',
     minWidth: 100,
-    slots: { default: 'status' },
     title: $t('sys.tenant.list.status'),
+    cellRender: {
+      name: 'CellDict',
+      props: {
+        type: DictTypeEnum.STATUS,
+      },
+    },
   },
   {
     field: 'createTime',
-    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('page.createTime'),
+    formatter: 'formatDateTime',
   },
   {
-    fixed: 'right',
-    slots: { default: 'opt' },
     title: $t('page.options'),
     width: 120,
+    fixed: isMobile.value ? null : 'right',
+    slots: { default: 'opt' },
   },
 ];
 
@@ -143,14 +206,14 @@ const gridOptions: VxeGridProps<TenantApi.Tenant> = {
   height: 'auto',
   proxyConfig: {
     ajax: {
-      query: async ({ page: { currentPage, pageSize } }) => {
+      query: async ({ page }, formValues) => {
         if (!packageList.value) {
           await getPackageList();
         }
         return getTenantPageListApi({
-          pageNum: currentPage,
-          pageSize,
-          ...tenantQuery,
+          pageNum: page.currentPage,
+          pageSize: page.pageSize,
+          ...formValues,
         });
       },
     },
@@ -160,18 +223,19 @@ const gridOptions: VxeGridProps<TenantApi.Tenant> = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:tenant:delete',
     icon: 'ep:delete',
-    onClick: () => {
+    onClick: async () => {
+      const values = await gridApi.formApi.getValues();
       useBatchSelect<TenantApi.Tenant>({
         gridApi,
         handleBatch: (records) =>
           batchDeleteTenantApi(records.map((item) => item.id)),
-        query: tenantQuery,
+        query: values,
       });
     },
     title: $t('page.batchDelete'),
@@ -199,7 +263,6 @@ function createActions(row: TenantApi.Tenant) {
   const actions: ActionItem[] = [
     {
       auth: 'system:tenant:update',
-      disabled,
       icon: 'ep:edit',
       onClick: () => {
         editModal.setData({ id: row.id });
@@ -251,29 +314,22 @@ async function handleExport(fileName: string) {
   if (exportLoading.value) {
     return;
   }
-  const { data } = await exportTenant(tenantQuery);
+  const values = await gridApi.formApi.getValues();
+  const { data } = await exportTenant(values);
   downloadExcel(data, fileName);
   exportModal.close();
   ElMessage.success($t('page.export.success'));
 }
 
-function handleQuery(query: TenantApi.PageQuery) {
-  tenantQuery = query;
-  gridApi.query();
-}
-
-function reloadTable() {
-  gridApi.reload(tenantQuery);
+async function reloadTable() {
+  const values = await gridApi.formApi.getValues();
+  gridApi.reload(values);
 }
 </script>
 
 <template>
   <Page auto-content-height>
-    <Grid>
-      <template #form>
-        <TableQuery @query="handleQuery" />
-      </template>
-
+    <Grid :form-options="formOptions">
       <template #toolbar-actions>
         <TableAction
           :actions="toolbarActions"
@@ -304,19 +360,6 @@ function reloadTable() {
         >
           {{ formatToDateTime(expireTime) }}
         </ElText>
-      </template>
-
-      <template #website="{ row: { website } }">
-        <ElLink v-if="website" :href="website" target="_blank" type="primary">
-          {{ website }}
-        </ElLink>
-        <span v-else>-</span>
-      </template>
-
-      <template #status="{ row: { status } }">
-        <ElTag :type="dictStore.getStatus(status)?.color">
-          {{ dictStore.getStatus(status)?.label }}
-        </ElTag>
       </template>
 
       <template #opt="{ row }">

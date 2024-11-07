@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+
 import { Page, useVbenModal } from '@vben/common-ui';
+import { useIsMobile } from '@vben/hooks';
 import { IconifyIcon } from '@vben/icons';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
@@ -7,17 +10,60 @@ import { deleteFileApi, type FileApi, getFilePageApi } from '#/api';
 import { type ActionItem, TableAction } from '#/components';
 import { $t } from '#/locales';
 
-import { FileUpload, TableQuery } from './components';
+import { FileUpload } from './components';
 
-type FileColumns = VxeGridProps<FileApi.FileItem>['columns'];
-
-let fileQuery: FileApi.PageQuery = {};
+const { isMobile } = useIsMobile();
 
 const [FileUploadModal, uploadModal] = useVbenModal({
   connectedComponent: FileUpload,
 });
 
-const columns: FileColumns = [
+const formSchema = computed<VbenFormSchema[]>(() => [
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('infra.file.list.path')]),
+    },
+    fieldName: 'path',
+    label: $t('infra.file.list.path'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('infra.file.list.type')]),
+    },
+    fieldName: 'type',
+    label: $t('infra.file.list.type'),
+  },
+  {
+    component: 'DatePicker',
+    componentProps: {
+      placeholder: $t('page.date.placeholder.between'),
+      range: true,
+      multiCalendars: {
+        solo: true,
+      },
+    },
+    fieldName: 'createTime',
+    label: $t('page.createTime'),
+  },
+]);
+
+const formOptions = computed<VbenFormProps>(() => ({
+  collapsed: isMobile.value,
+  commonConfig: {
+    componentProps: {
+      clearable: true,
+    },
+    labelWidth: 80,
+  },
+  schema: formSchema.value,
+  submitOnEnter: true,
+  showCollapseButton: isMobile.value,
+  wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-5',
+}));
+
+const columns: VxeGridProps<FileApi.FileItem>['columns'] = [
   {
     field: 'id',
     minWidth: 80,
@@ -58,15 +104,15 @@ const columns: FileColumns = [
   },
   {
     field: 'createTime',
-    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('infra.file.list.createTime'),
+    formatter: 'formatDateTime',
   },
   {
-    fixed: 'right',
-    slots: { default: 'opt' },
     title: $t('page.options'),
     width: 120,
+    slots: { default: 'opt' },
+    fixed: isMobile.value ? null : 'right',
   },
 ];
 
@@ -81,11 +127,11 @@ const gridOptions: VxeGridProps<FileApi.FileItem> = {
   height: 'auto',
   proxyConfig: {
     ajax: {
-      query: ({ page: { currentPage, pageSize } }) =>
+      query: ({ page }, formValues) =>
         getFilePageApi({
-          pageNum: currentPage,
-          pageSize,
-          ...fileQuery,
+          pageNum: page.currentPage,
+          pageSize: page.pageSize,
+          ...formValues,
         }),
     },
   },
@@ -94,7 +140,7 @@ const gridOptions: VxeGridProps<FileApi.FileItem> = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
@@ -136,23 +182,15 @@ function isImageUrl(url: string) {
   return imageExtensions.some((ext) => url.endsWith(ext));
 }
 
-function reloadTable() {
-  gridApi.query(fileQuery);
-}
-
-function handleQuery(query: FileApi.PageQuery) {
-  fileQuery = query;
-  gridApi.query();
+async function reloadTable() {
+  const values = await gridApi.formApi.getValues();
+  gridApi.query(values);
 }
 </script>
 
 <template>
   <Page auto-content-height>
-    <Grid>
-      <template #form>
-        <TableQuery @query="handleQuery" />
-      </template>
-
+    <Grid :form-options="formOptions">
       <template #toolbar-actions>
         <TableAction
           :actions="toolbarActions"

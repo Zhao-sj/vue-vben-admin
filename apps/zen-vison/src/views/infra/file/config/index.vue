@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+
 import { Page, useVbenModal } from '@vben/common-ui';
+import { useIsMobile } from '@vben/hooks';
 
 import { ElLink } from 'element-plus';
 
@@ -17,14 +20,11 @@ import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 
-import { TableAdd, TableEdit, TableQuery } from './components';
+import { TableAdd, TableEdit } from './components';
 
-type FileConfigColumns = VxeGridProps<FileApi.Config>['columns'];
-
+const { isMobile } = useIsMobile();
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.FILE_STORAGE);
-
-let fileConfigQuery: FileApi.ConfigPageQuery = {};
 
 const requestConfig = {
   loadingDelay: 200,
@@ -44,7 +44,53 @@ const [TableEditModal, editModal] = useVbenModal({
   connectedComponent: TableEdit,
 });
 
-const columns: FileConfigColumns = [
+const formSchema = computed<VbenFormSchema[]>(() => [
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('infra.file.config.name')]),
+    },
+    fieldName: 'name',
+    label: $t('infra.file.config.name'),
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.FILE_STORAGE),
+      placeholder: $t('page.pleaseSelect', [$t('infra.file.config.storage')]),
+    },
+    fieldName: 'storage',
+    label: $t('infra.file.config.storage'),
+  },
+  {
+    component: 'DatePicker',
+    componentProps: {
+      placeholder: $t('page.date.placeholder.between'),
+      range: true,
+      multiCalendars: {
+        solo: true,
+      },
+    },
+    fieldName: 'createTime',
+    label: $t('page.createTime'),
+  },
+]);
+
+const formOptions = computed<VbenFormProps>(() => ({
+  collapsed: isMobile.value,
+  commonConfig: {
+    componentProps: {
+      clearable: true,
+    },
+    labelWidth: 80,
+  },
+  schema: formSchema.value,
+  submitOnEnter: true,
+  showCollapseButton: isMobile.value,
+  wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-5',
+}));
+
+const columns: VxeGridProps<FileApi.Config>['columns'] = [
   {
     field: 'id',
     minWidth: 80,
@@ -58,32 +104,37 @@ const columns: FileConfigColumns = [
   {
     field: 'storage',
     minWidth: 150,
-    slots: { default: 'storage' },
     title: $t('infra.file.config.storage'),
+    cellRender: {
+      name: 'CellDict',
+      props: {
+        type: DictTypeEnum.FILE_STORAGE,
+      },
+    },
   },
   {
     field: 'master',
     minWidth: 100,
-    slots: { default: 'master' },
     title: $t('infra.file.config.master'),
+    slots: { default: 'master' },
   },
   {
     field: 'remark',
-    formatter: 'formatBlank',
     minWidth: 150,
     title: $t('infra.file.config.remark'),
+    formatter: 'formatBlank',
   },
   {
     field: 'createTime',
-    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('page.createTime'),
+    formatter: 'formatDateTime',
   },
   {
-    fixed: 'right',
-    slots: { default: 'opt' },
     title: $t('page.options'),
     width: 120,
+    fixed: isMobile.value ? null : 'right',
+    slots: { default: 'opt' },
   },
 ];
 
@@ -98,11 +149,11 @@ const gridOptions: VxeGridProps<FileApi.Config> = {
   height: 'auto',
   proxyConfig: {
     ajax: {
-      query: ({ page: { currentPage, pageSize } }) =>
+      query: ({ page }, formValues) =>
         getFileConfigPageApi({
-          pageNum: currentPage,
-          pageSize,
-          ...fileConfigQuery,
+          pageNum: page.currentPage,
+          pageSize: page.pageSize,
+          ...formValues,
         }),
     },
   },
@@ -111,7 +162,7 @@ const gridOptions: VxeGridProps<FileApi.Config> = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
@@ -222,23 +273,15 @@ function requestAfter(reload = true) {
   reload && reloadTable();
 }
 
-function reloadTable() {
-  gridApi.query(fileConfigQuery);
-}
-
-function handleQuery(query: FileApi.ConfigPageQuery) {
-  fileConfigQuery = query;
-  gridApi.query();
+async function reloadTable() {
+  const values = gridApi.formApi.getValues();
+  await gridApi.reload(values);
 }
 </script>
 
 <template>
   <Page auto-content-height>
-    <Grid>
-      <template #form>
-        <TableQuery @query="handleQuery" />
-      </template>
-
+    <Grid :form-options="formOptions">
       <template #toolbar-actions>
         <TableAction
           :actions="toolbarActions"
@@ -249,12 +292,6 @@ function handleQuery(query: FileApi.ConfigPageQuery) {
 
         <TableAddModal @success="reloadTable" />
         <TableEditModal @success="reloadTable" />
-      </template>
-
-      <template #storage="{ row: { storage } }">
-        <ElTag :type="dictStore.getFileStorage(storage)?.color">
-          {{ dictStore.getFileStorage(storage)?.label }}
-        </ElTag>
       </template>
 
       <template #master="{ row }">

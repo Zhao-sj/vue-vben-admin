@@ -1,2 +1,1 @@
-export * from './basic';
-export * from './sys';
+export * from './vxe-table';

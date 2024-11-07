@@ -58,35 +58,35 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     label: $t('sys.tenant.list.contactPhone'),
     rules: 'required',
   },
-  ...(props.edit
-    ? []
-    : [
-        {
-          component: 'Input',
-          componentProps: {
-            placeholder: $t('page.pleaseInput', [
-              $t('sys.tenant.list.username'),
-            ]),
-          },
-          fieldName: 'username',
-          label: $t('sys.tenant.list.username'),
-          rules: 'required',
-        },
-        {
-          component: 'Input',
-          componentProps: {
-            clearable: false,
-            placeholder: $t('page.pleaseInput', [
-              $t('sys.tenant.list.password'),
-            ]),
-            showPassword: true,
-            type: 'password',
-          },
-          fieldName: 'password',
-          label: $t('sys.tenant.list.password'),
-          rules: 'required',
-        },
-      ]),
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.username')]),
+    },
+    fieldName: 'username',
+    label: $t('sys.tenant.list.username'),
+    rules: 'required',
+    dependencies: {
+      if: () => !props.edit,
+      triggerFields: ['username'],
+    },
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      clearable: false,
+      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.password')]),
+      showPassword: true,
+      type: 'password',
+    },
+    fieldName: 'password',
+    label: $t('sys.tenant.list.password'),
+    rules: 'required',
+    dependencies: {
+      if: () => !props.edit,
+      triggerFields: ['password'],
+    },
+  },
   {
     component: 'InputNumber',
     componentProps: {
@@ -102,9 +102,10 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'DatePicker',
     componentProps: {
-      class: '!w-full',
       placeholder: $t('page.pleaseSelect', [$t('sys.tenant.list.expireTime')]),
-      type: 'datetime',
+      format: 'yyyy/MM/dd HH:mm:ss',
+      enableSeconds: true,
+      enableTimePicker: true,
     },
     fieldName: 'expireTime',
     label: $t('sys.tenant.list.expireTime'),

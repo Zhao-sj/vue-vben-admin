@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+
 import { Page, useVbenModal } from '@vben/common-ui';
+import { useIsMobile } from '@vben/hooks';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
 import {
@@ -14,14 +17,11 @@ import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 import { useBatchSelect } from '#/utils';
 
-import { TableAdd, TableEdit, TableQuery } from './components';
+import { TableAdd, TableEdit } from './components';
 
-type PackageColumns = VxeGridProps<TenantApi.Package>['columns'];
-
+const { isMobile } = useIsMobile();
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.STATUS);
-
-let packageQuery: TenantApi.PackagePageQuery = {};
 
 const [TableAddModal, addModal] = useVbenModal({
   connectedComponent: TableAdd,
@@ -31,11 +31,57 @@ const [TableEditModal, editModal] = useVbenModal({
   connectedComponent: TableEdit,
 });
 
-const columns: PackageColumns = [
+const formSchema = computed<VbenFormSchema[]>(() => [
   {
-    fixed: 'left',
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.tenant.package.name')]),
+    },
+    fieldName: 'name',
+    label: $t('sys.tenant.package.name'),
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.STATUS),
+      placeholder: $t('page.pleaseSelect', [$t('sys.tenant.package.status')]),
+    },
+    fieldName: 'status',
+    label: $t('sys.tenant.package.status'),
+  },
+  {
+    component: 'DatePicker',
+    componentProps: {
+      placeholder: $t('page.date.placeholder.between'),
+      range: true,
+      multiCalendars: {
+        solo: true,
+      },
+    },
+    fieldName: 'createTime',
+    label: $t('page.createTime'),
+  },
+]);
+
+const formOptions = computed<VbenFormProps>(() => ({
+  collapsed: isMobile.value,
+  commonConfig: {
+    componentProps: {
+      clearable: true,
+    },
+    labelWidth: 80,
+  },
+  schema: formSchema.value,
+  submitOnEnter: true,
+  showCollapseButton: isMobile.value,
+  wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-5',
+}));
+
+const columns: VxeGridProps<TenantApi.Package>['columns'] = [
+  {
     type: 'checkbox',
     width: 50,
+    fixed: isMobile.value ? null : 'left',
   },
   {
     field: 'id',
@@ -50,8 +96,13 @@ const columns: PackageColumns = [
   {
     field: 'status',
     minWidth: 100,
-    slots: { default: 'status' },
     title: $t('sys.tenant.package.status'),
+    cellRender: {
+      name: 'CellDict',
+      props: {
+        type: DictTypeEnum.STATUS,
+      },
+    },
   },
   {
     field: 'remark',
@@ -66,10 +117,10 @@ const columns: PackageColumns = [
     title: $t('page.createTime'),
   },
   {
-    fixed: 'right',
-    slots: { default: 'opt' },
     title: $t('page.options'),
     width: 120,
+    slots: { default: 'opt' },
+    fixed: isMobile.value ? null : 'right',
   },
 ];
 
@@ -84,11 +135,11 @@ const gridOptions: VxeGridProps<TenantApi.Package> = {
   height: 'auto',
   proxyConfig: {
     ajax: {
-      query: ({ page: { currentPage, pageSize } }) =>
+      query: ({ page }, formValues) =>
         getTenantPackagePageListApi({
-          pageNum: currentPage,
-          pageSize,
-          ...packageQuery,
+          pageNum: page.currentPage,
+          pageSize: page.pageSize,
+          ...formValues,
         }),
     },
   },
@@ -97,18 +148,19 @@ const gridOptions: VxeGridProps<TenantApi.Package> = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:tenant-package:delete',
     icon: 'ep:delete',
-    onClick: () => {
+    onClick: async () => {
+      const values = await gridApi.formApi.getValues();
       useBatchSelect<TenantApi.Package>({
         gridApi,
         handleBatch: (records) =>
           batchDeleteTenantPackageApi(records.map((item) => item.id)),
-        query: packageQuery,
+        query: values,
       });
     },
     title: $t('page.batchDelete'),
@@ -161,23 +213,15 @@ function createActions(row: TenantApi.Package) {
   return actions;
 }
 
-function handleQuery(query: TenantApi.PackagePageQuery) {
-  packageQuery = query;
-  gridApi.query();
-}
-
-function reloadTable() {
-  gridApi.query(packageQuery);
+async function reloadTable() {
+  const values = await gridApi.formApi.getValues();
+  gridApi.reload(values);
 }
 </script>
 
 <template>
   <Page auto-content-height>
-    <Grid>
-      <template #form>
-        <TableQuery @query="handleQuery" />
-      </template>
-
+    <Grid :form-options="formOptions">
       <template #toolbar-actions>
         <TableAction
           :actions="toolbarActions"
@@ -188,12 +232,6 @@ function reloadTable() {
 
         <TableAddModal @success="reloadTable" />
         <TableEditModal @success="reloadTable" />
-      </template>
-
-      <template #status="{ row: { status } }">
-        <ElTag :type="dictStore.getStatus(status)?.color">
-          {{ dictStore.getStatus(status)?.label }}
-        </ElTag>
       </template>
 
       <template #opt="{ row }">

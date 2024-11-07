@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+
 import { useAccess } from '@vben/access';
 import { Page, useVbenModal } from '@vben/common-ui';
+import { useIsMobile } from '@vben/hooks';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
 import {
@@ -23,16 +26,9 @@ import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 import { downloadExcel, useBatchSelect } from '#/utils';
 
-import {
-  AsignMenu,
-  AssignScope,
-  TableAdd,
-  TableEdit,
-  TableQuery,
-} from './components';
+import { AsignMenu, AssignScope, TableAdd, TableEdit } from './components';
 
-type RoleColumns = VxeGridProps<RoleApi.Role>['columns'];
-
+const { isMobile } = useIsMobile();
 const { hasAccessByCodes } = useAccess();
 const dictStore = useDictStore();
 dictStore.initDictData(
@@ -40,8 +36,6 @@ dictStore.initDictData(
   DictTypeEnum.ROLE_TYPE,
   DictTypeEnum.DATA_SCOPE,
 );
-
-let roleQuery: RoleApi.PageQuery = {};
 
 const requestConfig = {
   loadingDelay: 200,
@@ -82,11 +76,64 @@ const statusDisabled = computed(
   () => !hasAccessByCodes(['system:role:update']),
 );
 
-const columns: RoleColumns = [
+const formSchema = computed<VbenFormSchema[]>(() => [
   {
-    fixed: 'left',
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.role.name')]),
+    },
+    fieldName: 'name',
+    label: $t('sys.role.name'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.role.code')]),
+    },
+    fieldName: 'code',
+    label: $t('sys.role.code'),
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.STATUS),
+      placeholder: $t('page.pleaseSelect', [$t('sys.role.status')]),
+    },
+    fieldName: 'status',
+    label: $t('sys.role.status'),
+  },
+  {
+    component: 'DatePicker',
+    componentProps: {
+      placeholder: $t('page.date.placeholder.between'),
+      range: true,
+      multiCalendars: {
+        solo: true,
+      },
+    },
+    fieldName: 'createTime',
+    label: $t('page.createTime'),
+  },
+]);
+
+const formOptions = computed<VbenFormProps>(() => ({
+  collapsed: isMobile.value,
+  commonConfig: {
+    componentProps: {
+      clearable: true,
+    },
+    labelWidth: 80,
+  },
+  schema: formSchema.value,
+  submitOnEnter: true,
+  wrapperClass: 'grid-cols-1 lg:grid-cols-3',
+}));
+
+const columns: VxeGridProps<RoleApi.Role>['columns'] = [
+  {
     type: 'checkbox',
     width: 50,
+    fixed: isMobile.value ? null : 'left',
   },
   {
     field: 'id',
@@ -106,8 +153,13 @@ const columns: RoleColumns = [
   {
     field: 'type',
     minWidth: 150,
-    slots: { default: 'type' },
     title: $t('sys.role.type'),
+    cellRender: {
+      name: 'CellDict',
+      props: {
+        type: DictTypeEnum.ROLE_TYPE,
+      },
+    },
   },
   {
     field: 'sort',
@@ -117,26 +169,26 @@ const columns: RoleColumns = [
   {
     field: 'status',
     minWidth: 100,
-    slots: { default: 'status' },
     title: $t('sys.role.status'),
+    slots: { default: 'status' },
   },
   {
     field: 'remark',
-    formatter: 'formatBlank',
     minWidth: 200,
     title: $t('page.remark'),
+    formatter: 'formatBlank',
   },
   {
     field: 'createTime',
-    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('page.createTime'),
+    formatter: 'formatDateTime',
   },
   {
-    fixed: 'right',
-    slots: { default: 'opt' },
     title: $t('page.options'),
     width: 120,
+    fixed: isMobile.value ? null : 'right',
+    slots: { default: 'opt' },
   },
 ];
 
@@ -152,11 +204,11 @@ const gridOptions: VxeGridProps<RoleApi.Role> = {
   height: 'auto',
   proxyConfig: {
     ajax: {
-      query: ({ page: { currentPage, pageSize } }) =>
+      query: ({ page }, formValues) =>
         getRolePageListApi({
-          pageNum: currentPage,
-          pageSize,
-          ...roleQuery,
+          pageNum: page.currentPage,
+          pageSize: page.pageSize,
+          ...formValues,
         }),
     },
   },
@@ -165,18 +217,19 @@ const gridOptions: VxeGridProps<RoleApi.Role> = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:role:delete',
     icon: 'ep:delete',
-    onClick: () => {
+    onClick: async () => {
+      const values = await gridApi.formApi.getValues();
       useBatchSelect<RoleApi.Role>({
         gridApi,
         handleBatch: (records) =>
           batchDeleteRoleApi(records.map((item) => item.id)),
-        query: roleQuery,
+        query: values,
       });
     },
     title: $t('page.batchDelete'),
@@ -282,20 +335,17 @@ function requestAfter(reload = true) {
   reload && reloadTable();
 }
 
-function handleQuery(query: RoleApi.PageQuery) {
-  roleQuery = query;
-  gridApi.query();
-}
-
-function reloadTable() {
-  gridApi.reload(roleQuery);
+async function reloadTable() {
+  const values = await gridApi.formApi.getValues();
+  gridApi.reload(values);
 }
 
 async function handleExport(fileName: string) {
   if (exportLoading.value) {
     return;
   }
-  const { data } = await exportRole(roleQuery);
+  const values = await gridApi.formApi.getValues();
+  const { data } = await exportRole(values);
   downloadExcel(data, fileName);
   exportModal.close();
   ElMessage.success($t('page.export.success'));
@@ -304,11 +354,7 @@ async function handleExport(fileName: string) {
 
 <template>
   <Page auto-content-height>
-    <Grid>
-      <template #form>
-        <TableQuery @query="handleQuery" />
-      </template>
-
+    <Grid :form-options="formOptions">
       <template #toolbar-actions>
         <TableAction
           :actions="toolbarActions"
@@ -325,12 +371,6 @@ async function handleExport(fileName: string) {
         />
         <AsignMenuModal />
         <AssignScopeModal />
-      </template>
-
-      <template #type="{ row: { type } }">
-        <ElTag :type="dictStore.getRoleType(type)?.color">
-          {{ dictStore.getRoleType(type)?.label }}
-        </ElTag>
       </template>
 
       <template #status="{ row }">

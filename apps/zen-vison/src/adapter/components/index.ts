@@ -16,7 +16,6 @@ import {
   ElButton,
   ElCheckbox,
   ElCheckboxGroup,
-  ElDatePicker,
   ElDivider,
   ElInput,
   ElInputNumber,
@@ -27,6 +26,8 @@ import {
   ElTreeSelect,
   ElUpload,
 } from 'element-plus';
+
+import { VueDatePicker } from '#/components/Datepicker';
 
 import AdapterRadioGroup from './RadioGroup.vue';
 import AdapterSelect from './Select.vue';
@@ -67,7 +68,7 @@ async function initComponentAdapter() {
     Autocomplete: ElAutocomplete,
     Checkbox: ElCheckbox,
     CheckboxGroup: ElCheckboxGroup,
-    DatePicker: ElDatePicker,
+    DatePicker: VueDatePicker,
     // 自定义默认的重置按钮
     DefaultResetActionButton: (_props, { slots }) => {
       return h(ElButton, { class: '!mr-0', type: 'default' }, slots);

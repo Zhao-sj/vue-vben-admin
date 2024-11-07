@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+
 import { Page, useVbenModal } from '@vben/common-ui';
+import { useIsMobile } from '@vben/hooks';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
 import {
@@ -16,14 +19,11 @@ import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 import { downloadExcel, useBatchSelect } from '#/utils';
 
-import { TableAdd, TableEdit, TableQuery } from './components';
+import { TableAdd, TableEdit } from './components';
 
-type DictColumns = VxeGridProps<DictApi.Type>['columns'];
-
+const { isMobile } = useIsMobile();
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.STATUS);
-
-let dictQuery: DictApi.TypePageQuery = {};
 
 const requestConfig = {
   loadingDelay: 200,
@@ -47,11 +47,64 @@ const [TableExportModal, exportModal] = useVbenModal({
   connectedComponent: TableExport,
 });
 
-const columns: DictColumns = [
+const formSchema = computed<VbenFormSchema[]>(() => [
   {
-    fixed: 'left',
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.dict.type.name')]),
+    },
+    fieldName: 'name',
+    label: $t('sys.dict.type.name'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.dict.type.title')]),
+    },
+    fieldName: 'type',
+    label: $t('sys.dict.type.title'),
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.STATUS),
+      placeholder: $t('page.pleaseSelect', [$t('sys.dict.status')]),
+    },
+    fieldName: 'status',
+    label: $t('sys.dict.status'),
+  },
+  {
+    component: 'DatePicker',
+    componentProps: {
+      placeholder: $t('page.date.placeholder.between'),
+      range: true,
+      multiCalendars: {
+        solo: true,
+      },
+    },
+    fieldName: 'createTime',
+    label: $t('page.createTime'),
+  },
+]);
+
+const formOptions = computed<VbenFormProps>(() => ({
+  collapsed: isMobile.value,
+  commonConfig: {
+    componentProps: {
+      clearable: true,
+    },
+    labelWidth: 80,
+  },
+  schema: formSchema.value,
+  submitOnEnter: true,
+  wrapperClass: 'grid-cols-1 lg:grid-cols-3',
+}));
+
+const columns: VxeGridProps<DictApi.Type>['columns'] = [
+  {
     type: 'checkbox',
     width: 50,
+    fixed: isMobile.value ? null : 'left',
   },
   {
     field: 'id',
@@ -66,32 +119,37 @@ const columns: DictColumns = [
   {
     field: 'type',
     minWidth: 200,
-    slots: { default: 'type' },
     title: $t('sys.dict.type.title'),
+    slots: { default: 'type' },
   },
   {
     field: 'status',
     minWidth: 100,
-    slots: { default: 'status' },
     title: $t('sys.dict.status'),
+    cellRender: {
+      name: 'CellDict',
+      props: {
+        type: DictTypeEnum.STATUS,
+      },
+    },
   },
   {
     field: 'remark',
-    formatter: 'formatBlank',
     minWidth: 200,
     title: $t('page.remark'),
+    formatter: 'formatBlank',
   },
   {
     field: 'createTime',
-    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('page.createTime'),
+    formatter: 'formatDateTime',
   },
   {
-    fixed: 'right',
-    slots: { default: 'opt' },
     title: $t('page.options'),
     width: 120,
+    fixed: isMobile.value ? null : 'right',
+    slots: { default: 'opt' },
   },
 ];
 
@@ -106,11 +164,11 @@ const gridOptions: VxeGridProps<DictApi.Type> = {
   id: 'dict_type_manage',
   proxyConfig: {
     ajax: {
-      query: ({ page: { currentPage, pageSize } }) =>
+      query: ({ page }, formValues) =>
         getDictTypePageListApi({
-          pageNum: currentPage,
-          pageSize,
-          ...dictQuery,
+          pageNum: page.currentPage,
+          pageSize: page.pageSize,
+          ...formValues,
         }),
     },
   },
@@ -119,18 +177,19 @@ const gridOptions: VxeGridProps<DictApi.Type> = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:dict:delete',
     icon: 'ep:delete',
-    onClick: () => {
+    onClick: async () => {
+      const values = await gridApi.formApi.getValues();
       useBatchSelect<DictApi.Type>({
         gridApi,
         handleBatch: (records) =>
           batchDeleteDictTypeApi(records.map((item) => item.id)),
-        query: dictQuery,
+        query: values,
       });
     },
     title: $t('page.batchDelete'),
@@ -185,13 +244,9 @@ function createActions(row: DictApi.Type) {
   return actions;
 }
 
-function handleQuery(query: DictApi.TypePageQuery) {
-  dictQuery = query;
-  gridApi.query();
-}
-
-function reloadTable() {
-  gridApi.reload(dictQuery);
+async function reloadTable() {
+  const values = await gridApi.formApi.getValues();
+  gridApi.reload(values);
 }
 
 function requestAfter(reload = true) {
@@ -203,7 +258,8 @@ async function handleExport(fileName: string) {
   if (exportLoading.value) {
     return;
   }
-  const { data } = await exportDict(dictQuery);
+  const values = await gridApi.formApi.getValues();
+  const { data } = await exportDict(values);
   downloadExcel(data, fileName);
   exportModal.close();
   ElMessage.success($t('page.export.success'));
@@ -212,11 +268,7 @@ async function handleExport(fileName: string) {
 
 <template>
   <Page auto-content-height>
-    <Grid>
-      <template #form>
-        <TableQuery @query="handleQuery" />
-      </template>
-
+    <Grid :form-options="formOptions">
       <template #toolbar-actions>
         <TableAction
           :actions="toolbarActions"
@@ -244,12 +296,6 @@ async function handleExport(fileName: string) {
         >
           {{ row.type }}
         </ElText>
-      </template>
-
-      <template #status="{ row: { status } }">
-        <ElTag :type="dictStore.getStatus(status)?.color">
-          {{ dictStore.getStatus(status)?.label }}
-        </ElTag>
       </template>
 
       <template #opt="{ row }">

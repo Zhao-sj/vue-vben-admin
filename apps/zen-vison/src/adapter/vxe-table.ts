@@ -2,8 +2,9 @@ import { h } from 'vue';
 
 import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
 
-import { ElAvatar, ElButton, ElImage, ElTag } from 'element-plus';
+import { ElAvatar, ElImage, ElLink, ElTag } from 'element-plus';
 
+import { useDictStore } from '#/store';
 import {
   formatFileSize,
   formatThousand,
@@ -81,13 +82,15 @@ setupVbenVxeTable({
 
     // 表格配置项可以用 cellRender: { name: 'CellLink' },
     vxeUI.renderer.add('CellLink', {
-      renderTableDefault(renderOpts) {
-        const { props } = renderOpts;
-        return h(
-          ElButton,
-          { size: 'small', link: true },
-          { default: () => props?.text },
+      renderTableDefault(_renderOpts, params) {
+        const { column, row } = params;
+        const href = row[column.field];
+        const node = h(
+          ElLink,
+          { type: 'primary', href, target: '_blank' },
+          { default: () => href },
         );
+        return href ? node : '-';
       },
     });
 
@@ -106,6 +109,29 @@ setupVbenVxeTable({
         );
 
         return children?.length > 0 ? node : '-';
+      },
+    });
+
+    // 表格配置项可以用 cellRender: { name: 'CellDict' },
+    vxeUI.renderer.add('CellDict', {
+      renderTableDefault(renderOpts, params) {
+        const { props } = renderOpts;
+        const { column, row } = params;
+        const value: number = row[column.field];
+        const dictStore = useDictStore();
+
+        let data = null;
+        if (props) {
+          data = dictStore.getDictData(props.type, value.toString());
+        }
+
+        return h(
+          ElTag,
+          { type: data?.color },
+          {
+            default: () => data?.label,
+          },
+        );
       },
     });
 

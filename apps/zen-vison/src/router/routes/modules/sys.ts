@@ -118,7 +118,7 @@ const routes: RouteRecordRaw[] = [
           {
             name: 'NoticeManage',
             path: '/sys/message/notice',
-            component: () => import('#/views/sys/notice/index.vue'),
+            component: () => import('#/views/sys/message/notice/index.vue'),
             meta: {
               icon: 'icon-park-outline:volume-notice',
               title: $t('menu.sys.message.notice'),

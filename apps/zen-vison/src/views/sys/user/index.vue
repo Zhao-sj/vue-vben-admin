@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+
 import { useAccess } from '@vben/access';
 import { Page, useVbenModal } from '@vben/common-ui';
+import { useIsMobile } from '@vben/hooks';
 import { IconifyIcon } from '@vben/icons';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
@@ -32,18 +35,14 @@ import {
   ImportResult,
   TableAdd,
   TableEdit,
-  TableQuery,
   UserImport,
 } from './components';
 
-type UserColumns = VxeGridProps<UserApi.User>['columns'];
-
+const { isMobile } = useIsMobile();
 const { hasAccessByCodes } = useAccess();
 const userStore = useUserStore();
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.STATUS, DictTypeEnum.SEX);
-
-let userQuery: UserApi.PageQuery = {};
 
 const requestConfig = {
   loadingDelay: 200,
@@ -93,11 +92,64 @@ const statusDisabled = computed(
   () => !hasAccessByCodes(['system:user:update']),
 );
 
-const columns: UserColumns = [
+const formSchema = computed<VbenFormSchema[]>(() => [
   {
-    fixed: 'left',
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.user.username')]),
+    },
+    fieldName: 'username',
+    label: $t('sys.user.username'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.user.mobile')]),
+    },
+    fieldName: 'mobile',
+    label: $t('sys.user.mobile'),
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.STATUS),
+      placeholder: $t('page.pleaseSelect', [$t('sys.user.status')]),
+    },
+    fieldName: 'status',
+    label: $t('sys.user.status'),
+  },
+  {
+    component: 'DatePicker',
+    componentProps: {
+      placeholder: $t('page.date.placeholder.between'),
+      range: true,
+      multiCalendars: {
+        solo: true,
+      },
+    },
+    fieldName: 'createTime',
+    label: $t('page.createTime'),
+  },
+]);
+
+const formOptions = computed<VbenFormProps>(() => ({
+  collapsed: isMobile.value,
+  commonConfig: {
+    componentProps: {
+      clearable: true,
+    },
+    labelWidth: 80,
+  },
+  schema: formSchema.value,
+  submitOnEnter: true,
+  wrapperClass: 'grid-cols-1 lg:grid-cols-3',
+}));
+
+const columns: VxeGridProps<UserApi.User>['columns'] = [
+  {
     type: 'checkbox',
     width: 50,
+    fixed: isMobile.value ? null : 'left',
   },
   {
     field: 'id',
@@ -107,8 +159,9 @@ const columns: UserColumns = [
   {
     field: 'avatar',
     minWidth: 80,
-    slots: { default: 'avatar' },
     title: $t('sys.user.avatar'),
+    cellRender: { name: 'CellAvatar' },
+    showOverflow: false,
     visible: false,
   },
   {
@@ -118,66 +171,66 @@ const columns: UserColumns = [
   },
   {
     field: 'nickname',
-    formatter: 'formatBlank',
     minWidth: 120,
     title: $t('sys.user.nickname'),
+    formatter: 'formatBlank',
   },
   {
     field: 'sex',
     minWidth: 100,
-    slots: { default: 'sex' },
     title: $t('sys.user.sex'),
+    slots: { default: 'sex' },
   },
   {
     field: 'deptName',
-    formatter: 'formatBlank',
     minWidth: 150,
     title: $t('sys.user.deptName'),
+    formatter: 'formatBlank',
   },
   {
     field: 'mobile',
-    formatter: 'formatBlank',
     minWidth: 150,
     title: $t('sys.user.mobile'),
+    formatter: 'formatBlank',
   },
   {
     field: 'email',
-    formatter: 'formatBlank',
     minWidth: 150,
     title: $t('sys.user.email'),
+    formatter: 'formatBlank',
     visible: false,
   },
   {
     field: 'status',
     minWidth: 100,
-    slots: { default: 'status' },
     title: $t('sys.user.status'),
+    slots: { default: 'status' },
   },
   {
     field: 'loginIp',
-    formatter: 'formatBlank',
     minWidth: 150,
     title: $t('sys.user.loginIp'),
+    formatter: 'formatBlank',
     visible: false,
   },
   {
     field: 'loginDate',
-    formatter: 'formatDateTimeBlank',
     minWidth: 150,
     title: $t('sys.user.loginDate'),
+    formatter: 'formatDateTimeBlank',
     visible: false,
   },
   {
     field: 'createTime',
-    formatter: 'formatDateTime',
     minWidth: 150,
+    formatter: 'formatDateTime',
     title: $t('page.createTime'),
   },
   {
-    fixed: 'right',
-    slots: { default: 'opt' },
     title: $t('page.options'),
     width: 120,
+    fixed: isMobile.value ? null : 'right',
+    slots: { default: 'opt' },
   },
 ];
 
@@ -193,11 +246,11 @@ const gridOptions: VxeGridProps<UserApi.User> = {
   height: 'auto',
   proxyConfig: {
     ajax: {
-      query: ({ page: { currentPage, pageSize } }) =>
+      query: ({ page }, formValues) =>
         getUserPageListApi({
-          pageNum: currentPage,
-          pageSize,
-          ...userQuery,
+          pageNum: page.currentPage,
+          pageSize: page.pageSize,
+          ...formValues,
         }),
     },
   },
@@ -206,18 +259,19 @@ const gridOptions: VxeGridProps<UserApi.User> = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:user:delete',
     icon: 'ep:delete',
-    onClick: () => {
+    onClick: async () => {
+      const values = await gridApi.formApi.getValues();
       useBatchSelect<UserApi.User>({
         gridApi,
         handleBatch: (records) =>
           batchDeleteUserApi(records.map((item) => item.id)),
-        query: userQuery,
+        query: values,
       });
     },
     title: $t('page.batchDelete'),
@@ -325,11 +379,6 @@ function createSex(sex: number) {
   };
 }
 
-function handleFilterDept(deptId?: number) {
-  userQuery = { ...userQuery, deptId };
-  gridApi.query();
-}
-
 function handleStatusChange(row: UserApi.User) {
   const { DISABLE, ENABLE } = DictStatus;
 
@@ -359,16 +408,12 @@ function requestAfter(reload = true) {
   reload && reloadTable();
 }
 
-function handleQuery(query: UserApi.PageQuery) {
-  userQuery = query;
-  gridApi.query();
-}
-
 async function handleExport(fileName: string) {
   if (exportLoading.value) {
     return;
   }
-  const { data } = await exportUser(userQuery);
+  const values = await gridApi.formApi.getValues();
+  const { data } = await exportUser(values);
   downloadExcel(data, fileName);
   exportModal.close();
   ElMessage.success($t('page.export.success'));
@@ -384,8 +429,10 @@ async function handleImport(file: File, updateSupport: boolean) {
   }, 250);
 }
 
-function reloadTable() {
-  gridApi.reload(userQuery);
+async function reloadTable(deptId?: number) {
+  await gridApi.formApi.setFieldValue('deptId', deptId);
+  const values = await gridApi.formApi.getValues();
+  gridApi.query({ ...values, deptId });
 }
 </script>
 
@@ -393,15 +440,11 @@ function reloadTable() {
   <Page auto-content-height>
     <div class="flex h-full gap-4">
       <div class="hidden w-1/5 xl:block">
-        <DeptFilter @query="handleFilterDept" />
+        <DeptFilter @query="reloadTable" />
       </div>
 
-      <div class="w-full xl:w-4/5">
-        <Grid>
-          <template #form>
-            <TableQuery @query="handleQuery" />
-          </template>
-
+      <div class="w-full overflow-hidden xl:w-4/5">
+        <Grid :form-options="formOptions">
           <template #toolbar-actions>
             <TableAction
               :actions="toolbarActions"
@@ -418,13 +461,6 @@ function reloadTable() {
             <UserImportModal @confirm="handleImport" />
             <ImportResultModal @confirm="reloadTable" />
             <AssignRoleModal />
-          </template>
-
-          <template #avatar="{ row: { avatar } }">
-            <div class="flex justify-center">
-              <ElAvatar v-if="avatar" :src="avatar" />
-              <span v-else>-</span>
-            </div>
           </template>
 
           <template #sex="{ row: { sex } }">

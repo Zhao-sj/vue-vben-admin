@@ -1,0 +1,100 @@
+/* stylelint-disable */
+
+.dp__theme_light {
+  --dp-background-color: hsl(var(--background));
+  --dp-text-color: hsl(var(--foreground));
+  --dp-hover-color: hsl(var(--primary-50));
+  --dp-hover-text-color: hsl(var(--foreground));
+  --dp-hover-icon-color: hsl(var(--foreground));
+  --dp-primary-color: hsl(var(--primary));
+  --dp-primary-text-color: hsl(var(--primary-foreground));
+  --dp-primary-disabled-color: hsl(var(--primary-300));
+  --dp-secondary-color: hsl(var(--foreground) / 30%);
+  --dp-border-color: hsl(var(--border));
+  --dp-menu-border-color: hsl(var(--border));
+  --dp-border-color-hover: hsl(var(--border) / 50%);
+  --dp-border-color-focus: hsl(var(--primary));
+  --dp-disabled-color: hsl(var(--accent) / 60%);
+  --dp-disabled-color-text: hsl(var(--foreground) / 50%);
+  --dp-scroll-bar-background: hsl(var(--border) / 60%);
+  --dp-scroll-bar-color: hsl(var(--border));
+  --dp-success-color: hsl(var(--success));
+  --dp-success-color-disabled: hsl(var(--success-200));
+  --dp-icon-color: hsl(var(--foreground) / 30%);
+  --dp-danger-color: hsl(var(--destructive));
+  --dp-marker-color: hsl(var(--primary-400));
+  --dp-tooltip-color: hsl(var(--info));
+  --dp-highlight-color: hsl(var(--primary-50));
+}
+
+.dp__theme_dark {
+  --dp-background-color: hsl(var(--background));
+  --dp-text-color: hsl(var(--foreground));
+  --dp-hover-color: hsl(var(--primary-400));
+  --dp-hover-text-color: hsl(var(--foreground));
+  --dp-hover-icon-color: hsl(var(--foreground));
+  --dp-primary-color: hsl(var(--primary));
+  --dp-primary-text-color: hsl(var(--primary-foreground));
+  --dp-secondary-color: hsl(var(--foreground) / 30%);
+  --dp-border-color: hsl(var(--border));
+  --dp-menu-border-color: hsl(var(--border));
+  --dp-border-color-hover: hsl(var(--border) / 50%);
+  --dp-disabled-color: hsl(var(--accent) / 60%);
+  --dp-disabled-color-text: hsl(var(--foreground) / 50%);
+  --dp-scroll-bar-background: hsl(var(--border) / 60%);
+  --dp-scroll-bar-color: hsl(var(--border));
+  --dp-success-color: hsl(var(--success));
+  --dp-success-color-disabled: hsl(var(--success-200));
+  --dp-icon-color: hsl(var(--foreground) / 30%);
+  --dp-danger-color: hsl(var(--destructive));
+  --dp-marker-color: hsl(var(--primary-400));
+  --dp-tooltip-color: hsl(var(--info));
+  --dp-highlight-color: hsl(var(--primary-400));
+}
+
+.#{$namespace}-datepicker {
+  .dp__input_wrap {
+    &:hover {
+      .dp__input:not(.dp__disabled) {
+        border-color: hsl(var(--border) / 50%);
+      }
+    }
+
+    .dp__input {
+      height: var(--el-component-size, 32px);
+      font-size: var(--el-font-size-base, 14px);
+      line-height: calc(var(--el-component-size, 32px) - 2px);
+      color: hsl(var(--foreground));
+      background-color: hsl(var(--background));
+      border: 1px solid hsl(var(--border));
+      border-radius: var(--radius);
+
+      &::placeholder {
+        color: hsl(var(--foreground) / 50%);
+      }
+
+      &:focus {
+        border-color: hsl(var(--primary));
+      }
+
+      &.dp__disabled {
+        cursor: not-allowed;
+        background-color: hsl(var(--accent));
+      }
+    }
+
+    .dp--clear-btn {
+      color: hsl(var(--foreground) / 50%);
+
+      &:hover {
+        color: hsl(var(--foreground) / 60%);
+      }
+    }
+  }
+}
+
+.dp__menu {
+  box-shadow:
+    0 0 12px -3px hsl(var(--border) / 70%),
+    0 0 8px -2px hsl(var(--border) / 60%);
+}

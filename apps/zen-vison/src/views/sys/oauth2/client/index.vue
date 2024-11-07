@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+
 import { Page, useVbenModal } from '@vben/common-ui';
+import { useIsMobile } from '@vben/hooks';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
 import {
@@ -14,13 +17,11 @@ import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 import { useBatchSelect } from '#/utils';
 
-import { TableAdd, TableEdit, TableQuery } from './components';
+import { TableAdd, TableEdit } from './components';
 
-type ClientColumns = VxeGridProps<OAuth2Api.Client>['columns'];
-
+const { isMobile } = useIsMobile();
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.STATUS);
-let clientQuery: OAuth2Api.ClientPageQuery = {};
 
 const [TableAddModal, addModal] = useVbenModal({
   connectedComponent: TableAdd,
@@ -30,11 +31,45 @@ const [TableEditModal, editModal] = useVbenModal({
   connectedComponent: TableEdit,
 });
 
-const columns: ClientColumns = [
+const formSchema = computed<VbenFormSchema[]>(() => [
   {
-    fixed: 'left',
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('sys.oauth2.client.name')]),
+    },
+    fieldName: 'name',
+    label: $t('sys.oauth2.client.name'),
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: dictStore.getDictDataList(DictTypeEnum.STATUS),
+      placeholder: $t('page.pleaseSelect', [$t('sys.oauth2.client.status')]),
+    },
+    fieldName: 'status',
+    label: $t('sys.oauth2.client.status'),
+  },
+]);
+
+const formOptions = computed<VbenFormProps>(() => ({
+  collapsed: isMobile.value,
+  commonConfig: {
+    componentProps: {
+      clearable: true,
+    },
+    labelWidth: 80,
+  },
+  schema: formSchema.value,
+  submitOnEnter: true,
+  showCollapseButton: isMobile.value,
+  wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
+}));
+
+const columns: VxeGridProps<OAuth2Api.Client>['columns'] = [
+  {
     type: 'checkbox',
     width: 50,
+    fixed: isMobile.value ? null : 'left',
   },
   {
     field: 'id',
@@ -70,21 +105,26 @@ const columns: ClientColumns = [
   },
   {
     field: 'accessTokenValiditySeconds',
-    formatter: 'formatSeconds',
     minWidth: 150,
     title: $t('sys.oauth2.client.accessTokenValiditySeconds'),
+    formatter: 'formatSeconds',
   },
   {
     field: 'refreshTokenValiditySeconds',
-    formatter: 'formatSeconds',
     minWidth: 150,
     title: $t('sys.oauth2.client.refreshTokenValiditySeconds'),
+    formatter: 'formatSeconds',
   },
   {
     field: 'status',
     minWidth: 100,
-    slots: { default: 'status' },
     title: $t('sys.oauth2.client.status'),
+    cellRender: {
+      name: 'CellDict',
+      props: {
+        type: DictTypeEnum.STATUS,
+      },
+    },
   },
   {
     field: 'authorizedGrantTypes',
@@ -136,21 +176,21 @@ const columns: ClientColumns = [
   {
     field: 'description',
     minWidth: 200,
-    formatter: 'formatBlank',
     title: $t('sys.oauth2.client.description'),
+    formatter: 'formatBlank',
     visible: false,
   },
   {
     field: 'createTime',
-    formatter: 'formatDateTime',
     minWidth: 150,
     title: $t('page.createTime'),
+    formatter: 'formatDateTime',
   },
   {
     title: $t('page.options'),
     width: 120,
+    fixed: isMobile.value ? null : 'right',
     slots: { default: 'opt' },
-    fixed: 'right',
   },
 ];
 
@@ -161,11 +201,11 @@ const gridOptions: VxeGridProps<OAuth2Api.Client> = {
   id: 'oauth2_client_manage',
   proxyConfig: {
     ajax: {
-      query: ({ page: { currentPage, pageSize } }) =>
+      query: ({ page }, formValues) =>
         getOAuth2ClientPageApi({
-          pageNum: currentPage,
-          pageSize,
-          ...clientQuery,
+          pageNum: page.currentPage,
+          pageSize: page.pageSize,
+          ...formValues,
         }),
     },
   },
@@ -174,18 +214,19 @@ const gridOptions: VxeGridProps<OAuth2Api.Client> = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({ formOptions: {}, gridOptions });
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:oauth2-client:delete',
     icon: 'ep:delete',
-    onClick: () => {
+    onClick: async () => {
+      const values = await gridApi.formApi.getValues();
       useBatchSelect<OAuth2Api.Client>({
         gridApi,
         handleBatch: (records) =>
           batchDeleteOAuth2ClientApi(records.map((item) => item.id)),
-        query: clientQuery,
+        query: values,
       });
     },
     title: $t('page.batchDelete'),
@@ -238,23 +279,15 @@ function requestAfter(reload = true) {
   reload && reloadTable();
 }
 
-function reloadTable() {
-  gridApi.reload(clientQuery);
-}
-
-function handleQuery(query: OAuth2Api.ClientPageQuery) {
-  clientQuery = query;
-  gridApi.query();
+async function reloadTable() {
+  const values = await gridApi.formApi.getValues();
+  gridApi.reload(values);
 }
 </script>
 
 <template>
   <Page auto-content-height>
-    <Grid>
-      <template #form>
-        <TableQuery @query="handleQuery" />
-      </template>
-
+    <Grid :form-options="formOptions">
       <template #toolbar-actions>
         <TableAction
           :actions="toolbarActions"
@@ -265,12 +298,6 @@ function handleQuery(query: OAuth2Api.ClientPageQuery) {
 
         <TableAddModal @success="reloadTable" />
         <TableEditModal @success="reloadTable" />
-      </template>
-
-      <template #status="{ row: { status } }">
-        <ElTag :type="dictStore.getStatus(status)?.color">
-          {{ dictStore.getStatus(status)?.label }}
-        </ElTag>
       </template>
 
       <template #redirectUris="{ row: { redirectUris } }">
