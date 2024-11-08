@@ -66,6 +66,7 @@ export default defineConfig(async () => {
               'vben-ui': ['@vben/common-ui'],
               'vben-utils': ['@vben/utils', '@vben/request', '@vben/types'],
               'vben-vxe-table': ['@vben/plugins/vxe-table'],
+              'vue-datepicker': ['@vuepic/vue-datepicker'],
               'zen-utils': ['lodash-es', 'ua-parser-js', 'dayjs', 'mitt'],
             },
           },
