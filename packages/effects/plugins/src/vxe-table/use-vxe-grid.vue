@@ -11,6 +11,7 @@ import {
   computed,
   nextTick,
   onMounted,
+  onUnmounted,
   toRaw,
   useSlots,
   useTemplateRef,
@@ -136,10 +137,6 @@ const options = computed(() => {
     mergedOptions.proxyConfig.autoLoad = false;
   }
 
-  if (!showToolbar.value && mergedOptions.toolbarConfig) {
-    mergedOptions.toolbarConfig.enabled = false;
-  }
-
   if (mergedOptions.pagerConfig) {
     const mobileLayouts = [
       'PrevJump',
@@ -255,6 +252,11 @@ watch(
 onMounted(() => {
   props.api?.mount?.(gridRef.value, formApi);
   init();
+});
+
+onUnmounted(() => {
+  formApi?.unmount?.();
+  props.api?.unmount?.();
 });
 </script>
 

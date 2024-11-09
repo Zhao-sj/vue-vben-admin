@@ -1,4 +1,5 @@
 import type { VbenButtonProps } from '@vben-core/shadcn-ui';
+import type { ClassType } from '@vben-core/typings';
 import type { FieldOptions, FormContext, GenericObject } from 'vee-validate';
 import type { ZodTypeAny } from 'zod';
 
@@ -205,6 +206,12 @@ export type HandleResetFn = (
   values: Record<string, any>,
 ) => Promise<void> | void;
 
+export type FieldMapToTime = [
+  string,
+  [string, string],
+  ([string, string] | string)?,
+][];
+
 export interface FormSchema<
   T extends BaseFormComponentType = BaseFormComponentType,
 > extends FormCommonConfig {
@@ -266,6 +273,10 @@ export interface FormRenderProps<
    */
   componentMap: Record<BaseFormComponentType, Component>;
   /**
+   * 表单字段映射成时间格式
+   */
+  fieldMapToTime?: FieldMapToTime;
+  /**
    * 表单实例
    */
   form?: FormContext<GenericObject>;
@@ -303,7 +314,7 @@ export interface VbenFormProps<
   /**
    * 表单操作区域class
    */
-  actionWrapperClass?: any;
+  actionWrapperClass?: ClassType;
   /**
    * 表单重置回调
    */
