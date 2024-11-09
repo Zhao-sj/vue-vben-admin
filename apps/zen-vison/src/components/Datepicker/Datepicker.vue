@@ -3,7 +3,6 @@ import type { VueDatePickerProps } from '@vuepic/vue-datepicker';
 
 import { computed } from 'vue';
 
-import { useNamespace } from '@vben/hooks';
 import { IconifyIcon } from '@vben/icons';
 import { usePreferences } from '@vben/preferences';
 
@@ -17,7 +16,6 @@ import { $t } from '#/locales';
 import '@vuepic/vue-datepicker/dist/main.css';
 import './index.scss';
 
-const ns = useNamespace('datepicker');
 const { isDark, locale } = usePreferences();
 
 const datepickerLocale = computed(() =>
@@ -45,12 +43,7 @@ const defaultConf = computed<VueDatePickerProps>(() => ({
 </script>
 
 <template>
-  <VueDatePicker
-    :class="[ns.b()]"
-    v-bind="defaultConf"
-    :dark="isDark"
-    :locale="datepickerLocale"
-  >
+  <VueDatePicker v-bind="defaultConf" :dark="isDark" :locale="datepickerLocale">
     <template #clear-icon="{ clear }">
       <div class="p-2">
         <IconifyIcon class="text-sm" icon="ep:circle-close" @click="clear" />
