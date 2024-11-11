@@ -132,7 +132,7 @@ function handleFocusOutside(e: Event) {
       @pointer-down-outside="pointerDownOutside"
     >
       <SheetHeader
-        v-show="showHeader"
+        v-if="showHeader"
         :class="
           cn(
             '!flex flex-row items-center justify-between border-b px-6 py-5',
