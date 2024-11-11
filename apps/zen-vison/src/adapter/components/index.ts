@@ -27,7 +27,7 @@ import {
   ElUpload,
 } from 'element-plus';
 
-import { VueDatePicker } from '#/components/Datepicker';
+import { IconPicker, VueDatePicker } from '#/components';
 
 import AdapterRadioGroup from './RadioGroup.vue';
 import AdapterSelect from './Select.vue';
@@ -48,6 +48,7 @@ export type ComponentType =
   | 'CheckboxGroup'
   | 'DatePicker'
   | 'Divider'
+  | 'IconPicker'
   | 'Input'
   | 'InputNumber'
   | 'RadioGroup'
@@ -87,6 +88,7 @@ async function initComponentAdapter() {
     TimePicker: ElTimePicker,
     TreeSelect: withDefaultPlaceholder(ElTreeSelect, 'select'),
     Upload: ElUpload,
+    IconPicker,
   };
 
   // 将组件注册到全局共享状态中

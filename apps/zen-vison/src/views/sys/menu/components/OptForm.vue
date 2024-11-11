@@ -106,9 +106,9 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     rules: 'required',
   },
   {
-    component: 'Input',
+    component: 'IconPicker',
     componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.menu.icon')]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.menu.icon')]),
     },
     dependencies: {
       if(values) {

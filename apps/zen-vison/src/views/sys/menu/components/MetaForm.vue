@@ -47,9 +47,9 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     label: $t('sys.menu.meta.activePath'),
   },
   {
-    component: 'Input',
+    component: 'IconPicker',
     componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.menu.meta.activeIcon')]),
+      placeholder: $t('page.pleaseSelect', [$t('sys.menu.meta.activeIcon')]),
     },
     fieldName: 'activeIcon',
     help: $t('sys.menu.tip.icon'),
