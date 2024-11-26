@@ -49,6 +49,18 @@
       }
     }
   },
+  "cms": {
+    "title": "CMS 系统",
+    "article": {
+      "title": "内容管理"
+    },
+    "category": {
+      "title": "分类管理"
+    },
+    "tag": {
+      "title": "标签管理"
+    }
+  },
   "account": {
     "profile": "个人设置"
   }

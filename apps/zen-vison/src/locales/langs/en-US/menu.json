@@ -49,6 +49,18 @@
       }
     }
   },
+  "cms": {
+    "title": "CMS System",
+    "article": {
+      "title": "Content Manage"
+    },
+    "category": {
+      "title": "Category Manage"
+    },
+    "tag": {
+      "title": "Tag Manage"
+    }
+  },
   "account": {
     "profile": "Profile"
   }

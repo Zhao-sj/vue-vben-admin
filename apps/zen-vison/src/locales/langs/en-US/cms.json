@@ -1,0 +1,36 @@
+{
+  "category": {
+    "name": "Name",
+    "parent": "Parent",
+    "code": "Code",
+    "sort": "Sort",
+    "status": "Status",
+    "create": "Create Category",
+    "edit": "Edit Category"
+  },
+  "tag": {
+    "id": "ID",
+    "name": "Name",
+    "status": "Status",
+    "create": "Create Tag",
+    "edit": "Edit Tag"
+  },
+  "article": {
+    "id": "ID",
+    "banner": "Banner",
+    "title": "Title",
+    "description": "Description",
+    "content": "Content",
+    "category": "Category",
+    "tag": "Tag",
+    "author": "Author",
+    "status": "Status",
+    "viewCount": "View Count",
+    "likeCount": "Like Count",
+    "commentCount": "Comment Count",
+    "favoriteCount": "Favorite Count",
+    "forwardCount": "Forward Count",
+    "create": "Create Article",
+    "edit": "Edit Article"
+  }
+}

@@ -8,7 +8,7 @@ const routes: RouteRecordRaw[] = [
     component: BasicLayout,
     meta: {
       icon: 'lucide:bolt',
-      order: 911,
+      order: 11,
       title: $t('menu.sys.title'),
     },
     name: 'SystemManage',

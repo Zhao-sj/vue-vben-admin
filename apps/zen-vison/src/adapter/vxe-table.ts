@@ -61,10 +61,11 @@ setupVbenVxeTable({
 
     // 表格配置项可以用 cellRender: { name: 'CellImage' },
     vxeUI.renderer.add('CellImage', {
-      renderTableDefault(_renderOpts, params) {
+      renderTableDefault(renderOpts, params) {
+        const { props, attrs } = renderOpts;
         const { column, row } = params;
         const src = row[column.field];
-        return h(ElImage, { src, previewSrcList: [src] });
+        return h(ElImage, { src, previewSrcList: [src], ...props, ...attrs });
       },
     });
 
@@ -96,15 +97,20 @@ setupVbenVxeTable({
 
     // 表格配置项可以用 cellRender: { name: 'CellTags' },
     vxeUI.renderer.add('CellTags', {
-      renderTableDefault(_renderOpts, params) {
+      renderTableDefault(renderOpts, params) {
+        const { props } = renderOpts;
         const { column, row } = params;
+
+        const label: string = props?.label;
         const children: any[] = row[column.field];
         const node = h(
           'div',
           { class: 'flex flex-wrap justify-center gap-1' },
           {
             default: () =>
-              children?.map((item) => h(ElTag, {}, { default: () => item })),
+              children?.map((item) =>
+                h(ElTag, {}, { default: () => (label ? item[label] : item) }),
+              ),
           },
         );
 

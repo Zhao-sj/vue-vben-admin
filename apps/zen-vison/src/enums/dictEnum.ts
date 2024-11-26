@@ -1,4 +1,5 @@
 export enum DictTypeEnum {
+  ARTICLE_STATUS = 'cms_article_status',
   DATA_SCOPE = 'system_data_scope',
   ERROR_LOG_PROCESS_STATUS = 'system_error_log_process_status',
   FILE_STORAGE = 'infra_file_storage',

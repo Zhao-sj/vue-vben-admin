@@ -14,6 +14,7 @@ import { $t } from '@vben/locales';
 import {
   ElAutocomplete,
   ElButton,
+  ElCascader,
   ElCheckbox,
   ElCheckboxGroup,
   ElDivider,
@@ -44,6 +45,7 @@ const withDefaultPlaceholder = <T extends Component>(
 
 // 这里需要自行根据业务组件库进行适配，需要用到的组件都需要在这里类型说明
 export type ComponentType =
+  | 'Cascader'
   | 'Checkbox'
   | 'CheckboxGroup'
   | 'DatePicker'
@@ -69,6 +71,7 @@ async function initComponentAdapter() {
     Autocomplete: ElAutocomplete,
     Checkbox: ElCheckbox,
     CheckboxGroup: ElCheckboxGroup,
+    Cascader: ElCascader,
     DatePicker: VueDatePicker,
     // 自定义默认的重置按钮
     DefaultResetActionButton: (_props, { slots }) => {

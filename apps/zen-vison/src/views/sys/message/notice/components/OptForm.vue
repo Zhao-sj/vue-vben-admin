@@ -49,11 +49,12 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
     componentProps: {
+      width: '100%',
       options: {
+        auto_focus: false,
         menubar: false,
         placeholder: $t('page.pleaseInput', [$t('sys.message.notice.content')]),
       },
-      width: '100%',
     },
     fieldName: 'content',
     formItemClass: 'col-span-2 flex-col items-start',
