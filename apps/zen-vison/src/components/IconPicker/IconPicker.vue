@@ -41,7 +41,7 @@ const currentList = computed(() => {
 });
 
 const triggerPopover = () => {
-  refIconPicker.value?.changeOpenState();
+  refIconPicker.value?.toggleOpenState();
 };
 
 const handleChange = (icon: string) => {
@@ -56,6 +56,7 @@ const handleChange = (icon: string) => {
         ref="refIconPicker"
         :icons="currentList"
         :page-size
+        :prefix
         :value="modelValue"
         @change="handleChange"
       />

@@ -8,7 +8,7 @@ import type { BaseFormComponentType } from '@vben/common-ui';
 import type { Component, SetupContext } from 'vue';
 import { h } from 'vue';
 
-import { globalShareState } from '@vben/common-ui';
+import { ApiSelect, globalShareState } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import {
@@ -21,6 +21,7 @@ import {
   ElInput,
   ElInputNumber,
   ElNotification,
+  ElSelectV2,
   ElSpace,
   ElSwitch,
   ElTimePicker,
@@ -45,6 +46,7 @@ const withDefaultPlaceholder = <T extends Component>(
 
 // 这里需要自行根据业务组件库进行适配，需要用到的组件都需要在这里类型说明
 export type ComponentType =
+  | 'ApiSelect'
   | 'Cascader'
   | 'Checkbox'
   | 'CheckboxGroup'
@@ -67,21 +69,39 @@ async function initComponentAdapter() {
     // 如果你的组件体积比较大，可以使用异步加载
     // Button: () =>
     // import('xxx').then((res) => res.Button),
+    ApiSelect: (props, { attrs, slots }) => {
+      return h(
+        ApiSelect,
+        {
+          ...props,
+          ...attrs,
+          component: ElSelectV2,
+          loadingSlot: 'loading',
+          visibleEvent: 'onDropdownVisibleChange',
+        },
+        slots,
+      );
+    },
 
     Autocomplete: ElAutocomplete,
     Checkbox: ElCheckbox,
     CheckboxGroup: ElCheckboxGroup,
     Cascader: ElCascader,
     DatePicker: VueDatePicker,
-    // 自定义默认的重置按钮
-    DefaultResetActionButton: (_props, { slots }) => {
-      return h(ElButton, { class: '!mr-0', type: 'default' }, slots);
+    // 自定义默认按钮
+    DefaultButton: (props, { attrs, slots }) => {
+      return h(
+        ElButton,
+        { ...props, class: '!mr-0', attrs, type: 'info' },
+        slots,
+      );
     },
-    // 自定义默认的提交按钮
-    DefaultSubmitActionButton: (_props, { slots }) => {
-      return h(ElButton, { type: 'primary' }, slots);
+    // 自定义主要按钮
+    PrimaryButton: (props, { attrs, slots }) => {
+      return h(ElButton, { ...props, attrs, type: 'primary' }, slots);
     },
     Divider: ElDivider,
+    IconPicker,
     Input: withDefaultPlaceholder(ElInput, 'input'),
     InputNumber: withDefaultPlaceholder(ElInputNumber, 'input'),
     RadioGroup: AdapterRadioGroup,
@@ -91,7 +111,6 @@ async function initComponentAdapter() {
     TimePicker: ElTimePicker,
     TreeSelect: withDefaultPlaceholder(ElTreeSelect, 'select'),
     Upload: ElUpload,
-    IconPicker,
   };
 
   // 将组件注册到全局共享状态中
