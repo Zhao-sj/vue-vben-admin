@@ -236,6 +236,9 @@ const gridOptions: VxeGridProps<NoticeApi.Notice> = {
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
+          categoryId: formValues.categoryId
+            ? formValues.categoryId[formValues.categoryId.length - 1]
+            : formValues.categoryId,
         }),
     },
   },

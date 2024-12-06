@@ -18,6 +18,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const dictStore = useDictStore();
 
+// TODO 富文本图片上传、表单图片上传
+
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',

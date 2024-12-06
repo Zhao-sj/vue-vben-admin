@@ -9,5 +9,5 @@ export const plugins = [
 
 export const toolbar = [
   'undo redo  fontsizeselect  bold italic underline strikethrough  alignleft aligncenter alignright alignjustify  lineheight forecolor backcolor  outdent indent bullist numlist  hr  subscript superscript  removeformat',
-  'anchor pagebreak insertdatetime  link image table media  blockquote code codesample  searchreplace preview fullscreen',
+  'indent2em anchor pagebreak insertdatetime  link image table media  blockquote code codesample  searchreplace preview fullscreen',
 ];

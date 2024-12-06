@@ -7,6 +7,7 @@ import { isNumber } from 'lodash-es';
 import tinymce from 'tinymce/tinymce';
 
 import { bindHandlers, buildShortUUID, onMountedOrActivated } from './helper';
+import { customRegistry } from './plugins';
 import {
   plugins as defaultPlugins,
   toolbar as defaultToolbar,
@@ -96,7 +97,7 @@ const langName = computed(() => {
 
 const initOptions = computed((): RawEditorSettings => {
   const { height, options, plugins, toolbar } = props;
-  const publicPath = import.meta.env.VITE_PUBLIC_PATH || '/';
+  const publicPath = import.meta.env.VITE_BASE || '/';
   return {
     auto_focus: true,
     branding: false,
@@ -117,6 +118,7 @@ const initOptions = computed((): RawEditorSettings => {
     toolbar,
     ...options,
     setup: (editor: Editor) => {
+      customRegistry(editor);
       editorRef.value = editor;
       editor.on('init', (e) => initSetup(e));
     },

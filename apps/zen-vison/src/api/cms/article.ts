@@ -39,6 +39,7 @@ export namespace ArticleApi {
   }
 
   export interface AddModel {
+    banner: string;
     title: string;
     description?: string;
     content: string;

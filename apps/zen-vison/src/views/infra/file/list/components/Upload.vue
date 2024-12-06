@@ -75,7 +75,7 @@ async function onConfirm() {
       v-model:file-list="fileList"
       :auto-upload="false"
       :limit="MAX_UPLOAD"
-      accept="image/*"
+      accept="image/*, video/*, audio/*, application/pdf, application/vnd.ms-word, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, application/vnd.wps-office.wps, application/vnd.wps-office.doc, application/vnd.wps-office.xls, application/vnd.wps-office.ppt"
       drag
       @exceed="handleExceed"
     >
@@ -89,13 +89,13 @@ async function onConfirm() {
         </p>
       </div>
 
-      <template #tip>
+      <!-- <template #tip>
         <div class="mt-2">
           <p class="text-sm text-gray-500">
             {{ $t('infra.file.list.upload.tip') }}
           </p>
         </div>
-      </template>
+      </template> -->
     </ElUpload>
   </Modal>
 </template>
