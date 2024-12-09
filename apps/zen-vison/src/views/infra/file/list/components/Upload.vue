@@ -89,6 +89,7 @@ async function onConfirm() {
         </p>
       </div>
 
+      <!-- TODO S3简单上传上限5G，其它上限32M -->
       <!-- <template #tip>
         <div class="mt-2">
           <p class="text-sm text-gray-500">

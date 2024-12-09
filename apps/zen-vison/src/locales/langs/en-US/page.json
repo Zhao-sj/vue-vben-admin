@@ -89,5 +89,6 @@
   "selectTip": "Please choose at least one piece of record",
   "batchConfirm": "Are you sure you want to batch {0} the select record?",
   "yes": "Yes",
-  "no": "No"
+  "no": "No",
+  "copied": "Copied to clipboard"
 }

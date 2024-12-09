@@ -6,6 +6,8 @@ import { preferences, usePreferences } from '@vben/preferences';
 import { isNumber } from 'lodash-es';
 import tinymce from 'tinymce/tinymce';
 
+import { uploadFileApi } from '#/api';
+
 import { bindHandlers, buildShortUUID, onMountedOrActivated } from './helper';
 import { customRegistry } from './plugins';
 import {
@@ -116,6 +118,8 @@ const initOptions = computed((): RawEditorSettings => {
     skin: skinName.value,
     skin_url: `${publicPath}resource/tinymce/skins/ui/${skinName.value}`,
     toolbar,
+    image_title: true,
+    file_picker_callback: filePicker,
     ...options,
     setup: (editor: Editor) => {
       customRegistry(editor);
@@ -180,6 +184,27 @@ function destory() {
   if (tinymce !== null) {
     tinymce?.remove?.(unref(initOptions).selector!);
   }
+}
+
+function filePicker(cb: Function, _val: any, meta: Record<string, any>) {
+  const input = document.createElement('input');
+  input.setAttribute('type', 'file');
+  if (meta.filetype === 'image') {
+    input.setAttribute('accept', 'image/*');
+  }
+  if (meta.filetype === 'media') {
+    input.setAttribute('accept', 'video/*');
+  }
+  input.addEventListener('change', async (e) => {
+    const files = (e.target as HTMLInputElement)?.files;
+    if (!files) return;
+    const file = files[0];
+    if (file) {
+      const url = await uploadFileApi({ file });
+      cb(url, { title: file.name });
+    }
+  });
+  input.click();
 }
 
 watch(modelValue, (val, prevVal) => {

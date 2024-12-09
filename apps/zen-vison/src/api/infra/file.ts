@@ -1,7 +1,10 @@
+import type { AxiosRequestConfig } from '@vben/request';
 import type { Nullable } from '@vben/types';
 
 import { ModuleEnum, type PageParam, type PageResult } from '#/api/common';
 import { requestClient } from '#/api/request';
+import { FileStorageEnum } from '#/enums';
+import { createFileChunks, createFileHash } from '#/utils';
 
 const { INFRA } = ModuleEnum;
 
@@ -65,6 +68,12 @@ export namespace FileApi {
     createTime: number;
   }
 
+  export interface Master {
+    id: number;
+    name: string;
+    storage: number;
+  }
+
   export interface AddConfigModel {
     name: string;
     storage: string;
@@ -93,26 +102,88 @@ export namespace FileApi {
     createTime: number;
   }
 
+  export interface PreSigned {
+    configId: number;
+    uploadUrl: string;
+    url: string;
+  }
+
   export interface AddModel {
-    configId: string;
+    configId: number;
     name: string;
     path: string;
     type?: string;
-    size?: string;
+    size?: number;
     url: string;
   }
 
   export interface UploadModel {
-    file: Blob | File;
+    file: File;
     path?: string;
   }
 }
 
 /**
- * 上传文件
+ * 上传文件，如果存储器是S3则默认前端直接上传
  */
-export function uploadFileApi(data: FileApi.UploadModel) {
-  return requestClient.upload<string>(`${INFRA}/file/upload`, data);
+export async function uploadFileApi(
+  data: FileApi.UploadModel,
+  config?: AxiosRequestConfig,
+) {
+  const { storage } = await requestClient.get<FileApi.Master>(
+    `${INFRA}/file-config/master`,
+  );
+
+  if (storage !== FileStorageEnum.S3) {
+    return await uploadFileByServerApi(data, config);
+  }
+
+  const file = data.file;
+  const fileChunks = createFileChunks(file);
+  const fileHash = await createFileHash(fileChunks);
+  const suffix = file.name.split('.').pop();
+  const fileName = suffix ? `${fileHash}.${suffix}` : fileHash;
+
+  const presignedInfo = await getFilePreSignedApi(fileName);
+  // S3前端直接上传
+  await requestClient.put(presignedInfo.uploadUrl, file, {
+    headers: {
+      'Content-Type': file.type,
+    },
+    timeout: 0,
+    ...config,
+  });
+
+  // 记录文件信息到后端
+  await addFileApi({
+    configId: presignedInfo.configId,
+    url: presignedInfo.url,
+    path: fileName,
+    name: file.name,
+    type: file.type,
+    size: file.size,
+  });
+
+  return presignedInfo.url;
+}
+
+/**
+ * 后端上传文件
+ */
+export function uploadFileByServerApi(
+  data: FileApi.UploadModel,
+  config?: AxiosRequestConfig,
+) {
+  return requestClient.upload<string>(`${INFRA}/file/upload`, data, config);
+}
+
+/**
+ * 获取文件预签名信息
+ */
+export function getFilePreSignedApi(path: string) {
+  return requestClient.get<FileApi.PreSigned>(`${INFRA}/file/pre-signed-url`, {
+    params: { path },
+  });
 }
 
 /**

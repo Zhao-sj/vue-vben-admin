@@ -195,6 +195,11 @@ function createRequestClient(baseURL: string) {
         });
       }
 
+      // 忽略第三方请求无响应情况。例如：阿里云 oss 上传
+      if (!responseData) {
+        return;
+      }
+
       if (errorMessageMode === 'message') {
         ElMessage.error(msg);
       } else if (errorMessageMode === 'modal') {
