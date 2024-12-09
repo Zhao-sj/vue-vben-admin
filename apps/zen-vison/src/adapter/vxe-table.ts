@@ -54,7 +54,6 @@ setupVbenVxeTable({
           isCurrent: true,
           isHover: true,
         },
-        showOverflow: true,
         stripe: true,
       },
     });

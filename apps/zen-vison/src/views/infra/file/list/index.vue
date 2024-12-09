@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
 
-import { Page, useVbenModal } from '@vben/common-ui';
+import { globalShareState, Page, useVbenModal } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 import { IconifyIcon } from '@vben/icons';
+
+import { useClipboard } from '@vueuse/core';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
 import { deleteFileApi, type FileApi, getFilePageApi } from '#/api';
@@ -13,6 +15,7 @@ import { $t } from '#/locales';
 import { FileUpload } from './components';
 
 const { isMobile } = useIsMobile();
+const { copy } = useClipboard({ legacy: true });
 
 const [FileUploadModal, uploadModal] = useVbenModal({
   connectedComponent: FileUpload,
@@ -73,21 +76,25 @@ const columns: VxeGridProps<FileApi.FileItem>['columns'] = [
     field: 'name',
     minWidth: 150,
     title: $t('infra.file.list.name'),
+    showOverflow: true,
   },
   {
     field: 'path',
     minWidth: 200,
     title: $t('infra.file.list.path'),
+    showOverflow: true,
   },
   {
     field: 'url',
     minWidth: 300,
     title: $t('infra.file.list.url'),
+    showOverflow: true,
   },
   {
     field: 'type',
     minWidth: 100,
     title: $t('infra.file.list.type'),
+    showOverflow: true,
   },
   {
     field: 'size',
@@ -138,9 +145,47 @@ const gridOptions: VxeGridProps<FileApi.FileItem> = {
   toolbarConfig: {
     refresh: true,
   },
+  menuConfig: {
+    body: {
+      options: [
+        [
+          {
+            code: 'copy',
+            name: '复制内容',
+            prefixConfig: { icon: 'vxe-icon-copy' },
+            visible: true,
+            disabled: false,
+          },
+        ],
+      ],
+    },
+  },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
+const [Grid, gridApi] = useVbenVxeGrid({
+  gridOptions,
+  gridEvents: {
+    cellMenu({ row }: any) {
+      gridApi.grid?.setCurrentRow(row);
+    },
+    menuClick({ menu, row, column }: any) {
+      switch (menu.code) {
+        case 'copy': {
+          if (row && column) {
+            copy(row[column.field]).then(() => {
+              const message = globalShareState.getMessage();
+              message.copyPreferencesSuccess?.(
+                $t('page.successTip'),
+                $t('page.copied'),
+              );
+            });
+          }
+          break;
+        }
+      }
+    },
+  },
+});
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
@@ -208,7 +253,7 @@ async function reloadTable() {
             v-if="isImageUrl(url)"
             :preview-src-list="[url]"
             :src="url"
-            class="h-16"
+            class="h-16 rounded-md"
           />
 
           <IconifyIcon

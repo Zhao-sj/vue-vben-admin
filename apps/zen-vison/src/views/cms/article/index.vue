@@ -125,18 +125,19 @@ const columns: VxeGridProps<NoticeApi.Notice>['columns'] = [
         fit: 'cover',
       },
     },
-    showOverflow: false,
   },
   {
     field: 'title',
     minWidth: 200,
     title: $t('cms.article.title'),
+    showOverflow: true,
   },
   {
     field: 'description',
     minWidth: 300,
     title: $t('cms.article.description'),
     formatter: 'formatBlank',
+    showOverflow: true,
   },
   {
     field: 'categoryName',
@@ -147,7 +148,6 @@ const columns: VxeGridProps<NoticeApi.Notice>['columns'] = [
     field: 'tagList',
     minWidth: 200,
     title: $t('cms.article.tag'),
-    showOverflow: false,
     cellRender: {
       name: 'CellTags',
       props: {

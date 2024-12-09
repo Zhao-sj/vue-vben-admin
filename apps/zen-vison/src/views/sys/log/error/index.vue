@@ -209,6 +209,7 @@ const columns: VxeGridProps<LogApi.Error>['columns'] = [
     headerAlign: 'center',
     minWidth: 250,
     title: $t('sys.log.requestUrl'),
+    showOverflow: true,
   },
   {
     field: 'exTime',
@@ -220,6 +221,7 @@ const columns: VxeGridProps<LogApi.Error>['columns'] = [
     field: 'exName',
     minWidth: 300,
     title: $t('sys.log.error.exName'),
+    showOverflow: true,
   },
   {
     field: 'processStatus',

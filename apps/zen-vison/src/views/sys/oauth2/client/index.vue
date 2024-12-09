@@ -86,7 +86,6 @@ const columns: VxeGridProps<OAuth2Api.Client>['columns'] = [
       props: { shape: 'square' },
       attrs: { class: '!rounded-none !bg-transparent' },
     },
-    showOverflow: false,
   },
   {
     field: 'name',
@@ -102,6 +101,7 @@ const columns: VxeGridProps<OAuth2Api.Client>['columns'] = [
     field: 'secret',
     minWidth: 150,
     title: $t('sys.oauth2.client.secret'),
+    showOverflow: true,
   },
   {
     field: 'accessTokenValiditySeconds',
@@ -131,14 +131,12 @@ const columns: VxeGridProps<OAuth2Api.Client>['columns'] = [
     minWidth: 240,
     title: $t('sys.oauth2.client.authorizedGrantTypes'),
     cellRender: { name: 'CellTags' },
-    showOverflow: false,
   },
   {
     field: 'scopes',
     minWidth: 240,
     title: $t('sys.oauth2.client.scopes'),
     cellRender: { name: 'CellTags' },
-    showOverflow: false,
     visible: false,
   },
   {
@@ -146,7 +144,6 @@ const columns: VxeGridProps<OAuth2Api.Client>['columns'] = [
     minWidth: 240,
     title: $t('sys.oauth2.client.autoApproveScopes'),
     cellRender: { name: 'CellTags' },
-    showOverflow: false,
     visible: false,
   },
   {
@@ -154,7 +151,6 @@ const columns: VxeGridProps<OAuth2Api.Client>['columns'] = [
     minWidth: 240,
     title: $t('sys.oauth2.client.redirectUris'),
     slots: { default: 'redirectUris' },
-    showOverflow: false,
     visible: false,
   },
   {
@@ -162,7 +158,6 @@ const columns: VxeGridProps<OAuth2Api.Client>['columns'] = [
     minWidth: 240,
     title: $t('sys.oauth2.client.authorities'),
     cellRender: { name: 'CellTags' },
-    showOverflow: false,
     visible: false,
   },
   {
@@ -170,7 +165,6 @@ const columns: VxeGridProps<OAuth2Api.Client>['columns'] = [
     minWidth: 240,
     title: $t('sys.oauth2.client.resourceIds'),
     cellRender: { name: 'CellTags' },
-    showOverflow: false,
     visible: false,
   },
   {

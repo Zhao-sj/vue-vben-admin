@@ -203,6 +203,7 @@ const columns: VxeGridProps<LogApi.Access>['columns'] = [
     align: 'left',
     minWidth: 250,
     title: $t('sys.log.requestUrl'),
+    showOverflow: true,
   },
   {
     field: 'beginTime',
