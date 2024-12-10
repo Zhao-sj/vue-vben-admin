@@ -1,10 +1,12 @@
 import type { AxiosRequestConfig } from '@vben/request';
 import type { Nullable } from '@vben/types';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import { ModuleEnum, type PageParam, type PageResult } from '#/api/common';
 import { requestClient } from '#/api/request';
 import { FileStorageEnum } from '#/enums';
-import { createFileChunks, createFileHash } from '#/utils';
+import { encryptBySha256 } from '#/utils';
 
 const { INFRA } = ModuleEnum;
 
@@ -130,19 +132,19 @@ export async function uploadFileApi(
   data: FileApi.UploadModel,
   config?: AxiosRequestConfig,
 ) {
-  const { storage } = await requestClient.get<FileApi.Master>(
-    `${INFRA}/file-config/master`,
-  );
-
+  const timeout = config?.timeout || 0;
+  const { storage } = await getMasterFileConfigApi();
   if (storage !== FileStorageEnum.S3) {
-    return await uploadFileByServerApi(data, config);
+    return await uploadFileByServerApi(data, {
+      ...config,
+      timeout,
+    });
   }
 
   const file = data.file;
-  const fileChunks = createFileChunks(file);
-  const fileHash = await createFileHash(fileChunks);
+  const hash = encryptBySha256(uuidv4());
   const suffix = file.name.split('.').pop();
-  const fileName = suffix ? `${fileHash}.${suffix}` : fileHash;
+  const fileName = suffix ? `${hash}.${suffix}` : hash;
 
   const presignedInfo = await getFilePreSignedApi(fileName);
   // S3前端直接上传
@@ -150,8 +152,8 @@ export async function uploadFileApi(
     headers: {
       'Content-Type': file.type,
     },
-    timeout: 0,
     ...config,
+    timeout,
   });
 
   // 记录文件信息到后端
@@ -242,6 +244,13 @@ export function updateFileConfigApi(data: FileApi.UpdateConfigModel) {
  */
 export function addFileConfigApi(data: FileApi.AddConfigModel) {
   return requestClient.post<number>(`${INFRA}/file-config`, data);
+}
+
+/**
+ * 获取 Master 文件配置信息
+ */
+export function getMasterFileConfigApi() {
+  return requestClient.get<FileApi.Master>(`${INFRA}/file-config/master`);
 }
 
 /**

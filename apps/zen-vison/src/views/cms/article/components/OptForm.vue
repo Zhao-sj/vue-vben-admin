@@ -18,41 +18,13 @@ const props = withDefaults(defineProps<Props>(), {
 
 const dictStore = useDictStore();
 
-// TODO 富文本图片上传、表单图片上传
-
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
-    component: 'Input',
+    component: 'ImageUpload',
     fieldName: 'banner',
     label: $t('cms.article.banner'),
-    formItemClass: 'col-span-2',
-    rules: 'required',
-  },
-  {
-    component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('cms.article.title')]),
-    },
-    fieldName: 'title',
-    formItemClass: 'col-span-2',
-    label: $t('cms.article.title'),
-    rules: 'required',
-  },
-  {
-    component: 'Input',
-    componentProps: {
-      autosize: {
-        maxRows: 5,
-        minRows: 3,
-      },
-      placeholder: $t('page.pleaseInput', [$t('cms.article.description')]),
-      resize: 'none',
-      type: 'textarea',
-    },
-    fieldName: 'description',
-    formItemClass: 'col-span-2',
-    label: $t('cms.article.description'),
-    labelClass: 'self-start h-8',
+    formItemClass: 'col-span-3 lg:col-span-1 lg:row-span-2',
+    rules: 'selectRequired',
   },
   {
     component: 'Cascader',
@@ -68,6 +40,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     fieldName: 'categoryId',
     label: $t('cms.article.category'),
+    formItemClass: 'col-span-3 lg:col-span-1',
     rules: 'selectRequired',
   },
   {
@@ -84,6 +57,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     defaultValue: 10,
     fieldName: 'status',
     label: $t('cms.article.status'),
+    formItemClass: 'col-span-3 lg:col-span-1',
   },
   {
     component: 'Select',
@@ -97,8 +71,34 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       placeholder: $t('page.pleaseSelect', [$t('cms.article.tag')]),
     },
     fieldName: 'tagIds',
-    formItemClass: 'col-span-2',
+    formItemClass: 'col-span-3 lg:col-span-2',
     label: $t('cms.article.tag'),
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      placeholder: $t('page.pleaseInput', [$t('cms.article.title')]),
+    },
+    fieldName: 'title',
+    formItemClass: 'col-span-3',
+    label: $t('cms.article.title'),
+    rules: 'required',
+  },
+  {
+    component: 'Input',
+    componentProps: {
+      autosize: {
+        maxRows: 5,
+        minRows: 3,
+      },
+      placeholder: $t('page.pleaseInput', [$t('cms.article.description')]),
+      resize: 'none',
+      type: 'textarea',
+    },
+    fieldName: 'description',
+    formItemClass: 'col-span-3',
+    label: $t('cms.article.description'),
+    labelClass: 'self-start h-8',
   },
   {
     component: 'Input',
@@ -111,7 +111,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       },
     },
     fieldName: 'content',
-    formItemClass: 'col-span-2 flex-col items-start',
+    formItemClass: 'col-span-3 flex-col items-start',
     label: $t('cms.article.content'),
     labelClass: 'mb-2',
     rules: 'required',
@@ -129,7 +129,7 @@ const [Form, formApi] = useVbenForm(
     },
     schema: formSchema,
     showDefaultActions: false,
-    wrapperClass: 'grid-cols-1 lg:grid-cols-2 gap-x-4',
+    wrapperClass: 'grid-cols-1 lg:grid-cols-3 gap-x-4',
   }),
 );
 

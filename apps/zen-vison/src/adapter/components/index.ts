@@ -26,11 +26,11 @@ import {
   ElSwitch,
   ElTimePicker,
   ElTreeSelect,
-  ElUpload,
 } from 'element-plus';
 
 import { IconPicker, VueDatePicker } from '#/components';
 
+import AdapterImageUpload from './ImageUpload.vue';
 import AdapterRadioGroup from './RadioGroup.vue';
 import AdapterSelect from './Select.vue';
 
@@ -47,12 +47,14 @@ const withDefaultPlaceholder = <T extends Component>(
 // 这里需要自行根据业务组件库进行适配，需要用到的组件都需要在这里类型说明
 export type ComponentType =
   | 'ApiSelect'
+  | 'ApiTreeSelect'
   | 'Cascader'
   | 'Checkbox'
   | 'CheckboxGroup'
   | 'DatePicker'
   | 'Divider'
   | 'IconPicker'
+  | 'ImageUpload'
   | 'Input'
   | 'InputNumber'
   | 'RadioGroup'
@@ -61,7 +63,6 @@ export type ComponentType =
   | 'Switch'
   | 'TimePicker'
   | 'TreeSelect'
-  | 'Upload'
   | BaseFormComponentType;
 
 async function initComponentAdapter() {
@@ -73,16 +74,33 @@ async function initComponentAdapter() {
       return h(
         ApiSelect,
         {
+          placeholder: $t('ui.placeholder.select'),
           ...props,
           ...attrs,
           component: ElSelectV2,
           loadingSlot: 'loading',
-          visibleEvent: 'onDropdownVisibleChange',
+          visibleEvent: 'onVisibleChange',
         },
         slots,
       );
     },
-
+    ApiTreeSelect: (props, { attrs, slots }) => {
+      return h(
+        ApiSelect,
+        {
+          placeholder: $t('ui.placeholder.select'),
+          ...props,
+          ...attrs,
+          component: ElTreeSelect,
+          props: { label: 'label', children: 'children' },
+          nodeKey: 'value',
+          loadingSlot: 'loading',
+          optionsPropName: 'data',
+          visibleEvent: 'onVisibleChange',
+        },
+        slots,
+      );
+    },
     Autocomplete: ElAutocomplete,
     Checkbox: ElCheckbox,
     CheckboxGroup: ElCheckboxGroup,
@@ -110,7 +128,7 @@ async function initComponentAdapter() {
     Switch: ElSwitch,
     TimePicker: ElTimePicker,
     TreeSelect: withDefaultPlaceholder(ElTreeSelect, 'select'),
-    Upload: ElUpload,
+    ImageUpload: AdapterImageUpload,
   };
 
   // 将组件注册到全局共享状态中
