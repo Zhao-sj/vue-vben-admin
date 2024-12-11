@@ -1,10 +1,8 @@
 <script lang="ts" setup>
-import type { Editor, RawEditorSettings } from 'tinymce';
-
 import { preferences, usePreferences } from '@vben/preferences';
 
 import { isNumber } from 'lodash-es';
-import tinymce from 'tinymce/tinymce';
+import tinymce, { Editor, type RawEditorSettings } from 'tinymce';
 
 import { uploadFileApi } from '#/api';
 
@@ -15,9 +13,9 @@ import {
   toolbar as defaultToolbar,
 } from './tinymce';
 
-import 'tinymce/themes/silver';
+import 'tinymce/icons/default';
+import 'tinymce/themes/silver/theme';
 import 'tinymce/plugins/image';
-import 'tinymce/icons/default/icons';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/anchor';
 import 'tinymce/plugins/autolink';

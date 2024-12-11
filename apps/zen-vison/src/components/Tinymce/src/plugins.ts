@@ -1,4 +1,4 @@
-import { type Editor } from 'tinymce/tinymce';
+import { type Editor } from 'tinymce';
 
 export function customRegistry(editor: Editor) {
   editor.ui.registry.addIcon(

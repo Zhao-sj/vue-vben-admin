@@ -92,6 +92,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         minRows: 3,
       },
       placeholder: $t('page.pleaseInput', [$t('cms.article.description')]),
+      showWordLimit: true,
+      maxlength: 200,
       resize: 'none',
       type: 'textarea',
     },

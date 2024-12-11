@@ -18,8 +18,8 @@ export default defineConfig(async () => {
             manualChunks: {
               'crypto-js': ['crypto-js'],
               'element-plus': ['element-plus'],
-              tinymce: ['tinymce'],
-              'tinymce-icons': ['tinymce/icons/default/icons'],
+              'tinymce-core': ['tinymce'],
+              'tinymce-icons': ['tinymce/icons/default'],
               'tinymce-plugin': [
                 'tinymce/plugins/image',
                 'tinymce/plugins/advlist',
@@ -51,7 +51,7 @@ export default defineConfig(async () => {
                 'tinymce/plugins/visualchars',
                 'tinymce/plugins/wordcount',
               ],
-              'tinymce-theme': ['tinymce/themes/silver'],
+              'tinymce-theme': ['tinymce/themes/silver/theme'],
               vben: [
                 '@vben/access',
                 '@vben/constants',
@@ -67,7 +67,13 @@ export default defineConfig(async () => {
               'vben-utils': ['@vben/utils', '@vben/request', '@vben/types'],
               'vben-vxe-table': ['@vben/plugins/vxe-table'],
               'vue-datepicker': ['@vuepic/vue-datepicker'],
-              'zen-utils': ['lodash-es', 'ua-parser-js', 'dayjs', 'mitt'],
+              'zen-utils': [
+                'lodash-es',
+                'ua-parser-js',
+                'dayjs',
+                'mitt',
+                'uuid',
+              ],
             },
           },
         },
