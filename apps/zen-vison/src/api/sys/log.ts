@@ -131,6 +131,7 @@ export function updateErrorLogStatusApi(data: LogApi.UpdateProcessStatusModel) {
 export function exporErrorLogApi(params: LogApi.ErrorQuery) {
   return requestClient.download(`${SYSTEM}/log/error/export`, {
     params,
+    timeout: 0,
   });
 }
 
@@ -149,6 +150,7 @@ export function getErrorLogPageListApi(params: LogApi.ErrorQuery & PageParam) {
 export function exporAccessLogApi(params: LogApi.AccessQuery) {
   return requestClient.download(`${SYSTEM}/log/access/export`, {
     params,
+    timeout: 0,
   });
 }
 
@@ -169,6 +171,7 @@ export function getAccessLogPageListApi(
 export function exporLoginLogApi(params: LogApi.LoginQuery) {
   return requestClient.download(`${SYSTEM}/log/login/export`, {
     params,
+    timeout: 0,
   });
 }
 

@@ -129,6 +129,7 @@ export function addRoleApi(data: RoleApi.AddModel) {
 export function exportRoleApi(params: RoleApi.PageQuery) {
   return requestClient.download(`${SYSTEM}/role/export`, {
     params,
+    timeout: 0,
   });
 }
 

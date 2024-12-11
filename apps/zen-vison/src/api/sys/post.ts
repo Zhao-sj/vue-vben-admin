@@ -74,6 +74,7 @@ export function addPostApi(data: PostApi.AddModel) {
 export function exportPostApi(params: PostApi.PageQuery) {
   return requestClient.download(`${SYSTEM}/post/export`, {
     params,
+    timeout: 0,
   });
 }
 

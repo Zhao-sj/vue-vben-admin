@@ -173,6 +173,7 @@ export function addTenantApi(data: TenantApi.AddModel) {
 export function exportTenantApi(params: TenantApi.PageQuery) {
   return requestClient.download(`${SYSTEM}/tenant/export`, {
     params,
+    timeout: 0,
   });
 }
 

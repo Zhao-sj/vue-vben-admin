@@ -149,6 +149,7 @@ export function addUserApi(data: UserApi.AddModel) {
 export function exportUserApi(params: UserApi.PageQuery) {
   return requestClient.download(`${SYSTEM}/user/export`, {
     params,
+    timeout: 0,
   });
 }
 
@@ -161,6 +162,7 @@ export function importUserApi(file: Blob | File, updateSupport: boolean) {
     { file },
     {
       params: { updateSupport },
+      timeout: 0,
     },
   );
 }

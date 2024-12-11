@@ -121,6 +121,7 @@ export function addDictDataApi(data: DictApi.DataAddModel) {
 export function exportDictDataApi(params: DictApi.DataPageQuery) {
   return requestClient.download(`${SYSTEM}/dict/data/export`, {
     params,
+    timeout: 0,
   });
 }
 
@@ -187,6 +188,7 @@ export function addDictTypeApi(data: DictApi.TypeAddModel) {
 export function exportDictTypeApi(params: DictApi.TypePageQuery) {
   return requestClient.download(`${SYSTEM}/dict/type/export`, {
     params,
+    timeout: 0,
   });
 }
 
