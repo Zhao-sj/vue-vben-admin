@@ -8,7 +8,7 @@ import type { BaseFormComponentType } from '@vben/common-ui';
 import type { Component, SetupContext } from 'vue';
 import { h } from 'vue';
 
-import { ApiSelect, globalShareState } from '@vben/common-ui';
+import { ApiComponent, globalShareState } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import {
@@ -72,7 +72,7 @@ async function initComponentAdapter() {
     // import('xxx').then((res) => res.Button),
     ApiSelect: (props, { attrs, slots }) => {
       return h(
-        ApiSelect,
+        ApiComponent,
         {
           placeholder: $t('ui.placeholder.select'),
           ...props,
@@ -86,7 +86,7 @@ async function initComponentAdapter() {
     },
     ApiTreeSelect: (props, { attrs, slots }) => {
       return h(
-        ApiSelect,
+        ApiComponent,
         {
           placeholder: $t('ui.placeholder.select'),
           ...props,
