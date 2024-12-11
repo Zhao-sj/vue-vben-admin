@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useVbenModal } from '@vben/common-ui';
+import { useVbenDrawer } from '@vben/common-ui';
 
 import { getNoticeApi, type NoticeApi, updateNoticeApi } from '#/api';
 import { useRequest } from '#/hooks';
@@ -28,7 +28,7 @@ const {
 
 const { loading, runAsync } = useRequest(updateNoticeApi, requestConf);
 
-const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
+const [Drawer, modal] = useVbenDrawer({ onConfirm, onOpenChange });
 
 async function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
@@ -58,14 +58,13 @@ async function onConfirm() {
 </script>
 
 <template>
-  <Modal
+  <Drawer
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="noticeLoading"
     :title="$t('sys.message.notice.edit')"
-    class="w-11/12 lg:w-1/2 2xl:w-1/3"
-    draggable
+    class="w-full lg:w-1/2"
   >
     <OptForm ref="optFormRef" />
-  </Modal>
+  </Drawer>
 </template>

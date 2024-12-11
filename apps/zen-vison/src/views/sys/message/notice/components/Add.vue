@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useVbenModal } from '@vben/common-ui';
+import { useVbenDrawer } from '@vben/common-ui';
 
 import { addNoticeApi, type NoticeApi } from '#/api';
 import { useRequest } from '#/hooks';
@@ -22,7 +22,7 @@ const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
 const { loading, runAsync } = useRequest(addNoticeApi, requestConf);
 
-const [Modal, modal] = useVbenModal({ onConfirm });
+const [Drawer, modal] = useVbenDrawer({ onConfirm });
 
 async function onConfirm() {
   if (!optFormRef.value) return;
@@ -38,13 +38,12 @@ async function onConfirm() {
 </script>
 
 <template>
-  <Modal
+  <Drawer
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :title="$t('sys.message.notice.create')"
-    class="w-11/12 lg:w-1/2 2xl:w-1/3"
-    draggable
+    class="w-full lg:w-1/2"
   >
     <OptForm ref="optFormRef" />
-  </Modal>
+  </Drawer>
 </template>

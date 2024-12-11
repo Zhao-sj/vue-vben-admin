@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
 
-import { Page, useVbenModal } from '@vben/common-ui';
+import { Page, useVbenDrawer } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 
 import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
@@ -32,11 +32,11 @@ const requestConfig = {
 
 const { runAsync: pushNotice } = useRequest(pushNoticeApi, requestConfig);
 
-const [TableAddModal, addModal] = useVbenModal({
+const [TableAddModal, addModal] = useVbenDrawer({
   connectedComponent: TableAdd,
 });
 
-const [TableEditModal, editModal] = useVbenModal({
+const [TableEditModal, editModal] = useVbenDrawer({
   connectedComponent: TableEdit,
 });
 
