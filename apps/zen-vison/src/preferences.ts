@@ -7,6 +7,9 @@ import { defineOverridesPreferences } from '@vben/preferences';
  */
 export const overridesPreferences = defineOverridesPreferences({
   // overrides
+  theme: {
+    mode: 'light',
+  },
   app: {
     accessMode: 'backend',
     loginExpiredMode: 'modal',
