@@ -40,10 +40,13 @@
       "url": "文件URL",
       "type": "文件类型",
       "size": "文件大小",
-      "preview": "文件预览",
+      "preview": {
+        "title": "文件预览",
+        "video": "视频预览"
+      },
       "createTime": "上传时间",
       "upload": {
-        "tip": "仅支持上传图片格式文件"
+        "tip": "文件大小不能超过 {0}"
       }
     }
   }

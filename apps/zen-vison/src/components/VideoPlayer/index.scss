@@ -1,0 +1,9 @@
+.xgplayer {
+  &-progress-played {
+    background: linear-gradient(
+      -90deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--primary) / 30%) 100%
+    ) !important;
+  }
+}

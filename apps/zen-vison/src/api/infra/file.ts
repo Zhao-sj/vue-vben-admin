@@ -156,8 +156,8 @@ export async function uploadFileApi(
     timeout,
   });
 
-  // 记录文件信息到后端
-  await addFileApi({
+  // 记录文件信息到后端（异步）
+  addFileApi({
     configId: presignedInfo.configId,
     url: presignedInfo.url,
     path: fileName,

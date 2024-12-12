@@ -123,6 +123,7 @@ const columns: VxeGridProps<NoticeApi.Notice>['columns'] = [
       props: {
         class: 'max-h-16 rounded-md',
         fit: 'cover',
+        lazy: true,
       },
     },
   },

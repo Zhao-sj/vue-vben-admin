@@ -40,10 +40,13 @@
       "url": "URL",
       "type": "Type",
       "size": "Size",
-      "preview": "Preview",
+      "preview": {
+        "title": "Preview",
+        "video": "Video Preview"
+      },
       "createTime": "Upload Time",
       "upload": {
-        "tip": "Only supports uploading image format files"
+        "tip": "The file size cannot exceed {0}"
       }
     }
   }

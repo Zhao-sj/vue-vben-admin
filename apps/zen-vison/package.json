@@ -39,7 +39,8 @@
     "ua-parser-js": "^1.0.38",
     "uuid": "^11.0.3",
     "vue": "catalog:",
-    "vue-router": "catalog:"
+    "vue-router": "catalog:",
+    "xgplayer": "^3.0.20"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",

@@ -26,7 +26,7 @@ function handleUpload() {
   <!-- TODO 后续实现图片预览和删除 -->
   <div
     :class="[{ 'border-dashed': !url }]"
-    class="flex h-24 w-36 cursor-pointer items-center justify-center overflow-hidden rounded-md border transition hover:border-gray-400"
+    class="border-border hover:border-primary flex h-24 w-36 cursor-pointer items-center justify-center overflow-hidden rounded-md border transition"
     @click="handleUpload"
   >
     <img v-if="url" :src="url" class="w-full" />

@@ -9,9 +9,11 @@ import {
   type UploadUserFile,
 } from 'element-plus';
 
-import { uploadFileApi } from '#/api';
+import { getMasterFileConfigApi, uploadFileApi } from '#/api';
+import { FileStorageEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
+import { formatFileSize } from '#/utils';
 
 interface Emits {
   (e: 'success'): void;
@@ -20,6 +22,8 @@ interface Emits {
 const emit = defineEmits<Emits>();
 
 const MAX_UPLOAD = 1;
+const S3_MAX_LIMIT = 1024 * 1024 * 1024 * 5; // 5G
+const OTHER_MAX_LIMIT = 1024 * 1024 * 32; // 32M
 const uploadRef = ref<UploadInstance>();
 const fileList = ref<UploadUserFile[]>([]);
 
@@ -28,15 +32,30 @@ const requestConf = {
   manual: true,
 };
 
+const {
+  loading: masterLoading,
+  data: masterConfig,
+  runAsync: getMasterConfig,
+} = useRequest(getMasterFileConfigApi, requestConf);
+
 const { loading, runAsync } = useRequest(uploadFileApi, requestConf);
 
 const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
 
+const limitSize = computed(() =>
+  masterConfig.value?.storage === FileStorageEnum.S3
+    ? S3_MAX_LIMIT
+    : OTHER_MAX_LIMIT,
+);
+
 function onOpenChange(isOpen: boolean) {
-  if (!isOpen) {
-    loading.value = false;
-    fileList.value = [];
+  if (isOpen) {
+    getMasterConfig();
+    return;
   }
+
+  loading.value = false;
+  fileList.value = [];
 }
 
 function handleExceed(files: File[]) {
@@ -55,6 +74,13 @@ async function onConfirm() {
   }
 
   const file = fileList.value[0]!.raw!;
+  if (file.size <= 0 || file.size > limitSize.value) {
+    ElMessage.error(
+      $t('infra.file.list.upload.tip', [formatFileSize(limitSize.value)]),
+    );
+    return;
+  }
+
   await runAsync({ file });
   ElMessage.success($t('page.success'));
   modal.close();
@@ -66,6 +92,7 @@ async function onConfirm() {
   <Modal
     :close-on-click-modal="false"
     :confirm-loading="loading"
+    :loading="masterLoading"
     :title="$t('page.upload.title')"
     class="w-11/12 lg:w-1/3 2xl:w-1/4"
     draggable
@@ -89,14 +116,13 @@ async function onConfirm() {
         </p>
       </div>
 
-      <!-- TODO S3简单上传上限5G，其它上限32M -->
-      <!-- <template #tip>
+      <template v-if="masterConfig" #tip>
         <div class="mt-2">
           <p class="text-sm text-gray-500">
-            {{ $t('infra.file.list.upload.tip') }}
+            {{ $t('infra.file.list.upload.tip', [formatFileSize(limitSize)]) }}
           </p>
         </div>
-      </template> -->
+      </template>
     </ElUpload>
   </Modal>
 </template>

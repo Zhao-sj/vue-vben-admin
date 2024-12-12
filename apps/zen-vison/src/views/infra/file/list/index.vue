@@ -12,7 +12,7 @@ import { deleteFileApi, type FileApi, getFilePageApi } from '#/api';
 import { type ActionItem, TableAction } from '#/components';
 import { $t } from '#/locales';
 
-import { FileUpload } from './components';
+import { FileUpload, VideoPreview } from './components';
 
 const { isMobile } = useIsMobile();
 const { copy } = useClipboard({ legacy: true });
@@ -105,7 +105,7 @@ const columns: VxeGridProps<FileApi.FileItem>['columns'] = [
   {
     field: 'preview',
     minWidth: 100,
-    title: $t('infra.file.list.preview'),
+    title: $t('infra.file.list.preview.title'),
     slots: { default: 'preview' },
     showOverflow: false,
   },
@@ -227,6 +227,19 @@ function isImageUrl(url: string) {
   return imageExtensions.some((ext) => url.endsWith(ext));
 }
 
+function isVideoUrl(url: string) {
+  const videoExtensions = [
+    '.mp4',
+    '.avi',
+    '.mov',
+    '.mkv',
+    '.flv',
+    '.wmv',
+    '.webm',
+  ];
+  return videoExtensions.some((ext) => url.endsWith(ext));
+}
+
 async function reloadTable() {
   const values = await gridApi.formApi.getValues();
   gridApi.query(values);
@@ -254,7 +267,10 @@ async function reloadTable() {
             :preview-src-list="[url]"
             :src="url"
             class="h-16 rounded-md"
+            lazy
           />
+
+          <VideoPreview v-else-if="isVideoUrl(url)" :url />
 
           <IconifyIcon
             v-else
