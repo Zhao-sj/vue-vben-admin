@@ -6,4 +6,15 @@
       hsl(var(--primary) / 30%) 100%
     ) !important;
   }
+
+  &-drag {
+    background: hsl(var(--primary)) !important;
+  }
+
+  .xg-options-list {
+    li:hover,
+    li.selected {
+      color: hsl(var(--primary));
+    }
+  }
 }

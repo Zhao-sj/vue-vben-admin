@@ -18,6 +18,7 @@ export default defineConfig(async () => {
             manualChunks: {
               'crypto-js': ['crypto-js'],
               'element-plus': ['element-plus'],
+              player: ['xgplayer'],
               'tinymce-core': ['tinymce'],
               'tinymce-icons': ['tinymce/icons/default'],
               'tinymce-plugin': [

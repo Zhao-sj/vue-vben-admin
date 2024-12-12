@@ -35,7 +35,7 @@ const [Modal, modal] = useVbenModal();
       class="lg:w-2/3 2xl:w-1/2"
       draggable
     >
-      <div class="aspect-video w-full overflow-hidden rounded-lg">
+      <div class="aspect-video w-full overflow-hidden rounded-xl">
         <VideoPlayer :options />
       </div>
     </Modal>
