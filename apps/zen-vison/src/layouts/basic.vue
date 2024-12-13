@@ -91,9 +91,8 @@ const avatar = computed(() => {
 wsStore.emitter.on('notice-push', (notice) => {
   if (notice.type === NoticeType.NOTICE) {
     ElNotification({
-      dangerouslyUseHTMLString: true,
       duration: 0,
-      message: notice.content,
+      message: h('div', { innerHTML: notice.content }),
       position: 'bottom-right',
       title: notice.title,
       type: 'info',
