@@ -229,6 +229,7 @@ const columns: VxeGridProps<LogApi.Access>['columns'] = [
     minWidth: 150,
     title: $t('sys.log.access.resultMsg'),
     formatter: 'formatBlank',
+    showOverflow: true,
   },
   {
     field: 'ip',
