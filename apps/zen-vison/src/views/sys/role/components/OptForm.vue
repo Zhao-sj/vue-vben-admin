@@ -5,18 +5,12 @@ import { $t } from '#/locales';
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.role.name')]),
-    },
     fieldName: 'name',
     label: $t('sys.role.name'),
     rules: 'required',
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.role.code')]),
-    },
     fieldName: 'code',
     label: $t('sys.role.code'),
     rules: 'required',
@@ -27,7 +21,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 0,
-      placeholder: $t('page.pleaseInput', [$t('sys.role.sort')]),
     },
     fieldName: 'sort',
     label: $t('sys.role.sort'),
@@ -37,7 +30,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Input',
     componentProps: {
       autosize: { maxRows: 5, minRows: 3 },
-      placeholder: $t('page.pleaseInput', [$t('page.remark')]),
       resize: 'none',
       type: 'textarea',
     },

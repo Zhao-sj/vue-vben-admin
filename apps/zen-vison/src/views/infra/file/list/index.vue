@@ -24,17 +24,11 @@ const [FileUploadModal, uploadModal] = useVbenModal({
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('infra.file.list.path')]),
-    },
     fieldName: 'path',
     label: $t('infra.file.list.path'),
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('infra.file.list.type')]),
-    },
     fieldName: 'type',
     label: $t('infra.file.list.type'),
   },

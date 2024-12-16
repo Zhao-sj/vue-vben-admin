@@ -43,9 +43,6 @@ const [TableEditModal, editModal] = useVbenDrawer({
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.message.notice.title')]),
-    },
     fieldName: 'title',
     label: $t('sys.message.notice.title'),
   },
@@ -53,7 +50,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.STATUS),
-      placeholder: $t('page.pleaseSelect', [$t('sys.message.notice.status')]),
     },
     fieldName: 'status',
     label: $t('sys.message.notice.status'),

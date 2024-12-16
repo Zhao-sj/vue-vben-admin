@@ -21,9 +21,6 @@ const dictStore = useDictStore();
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.user.nickname')]),
-    },
     fieldName: 'nickname',
     label: $t('sys.user.nickname'),
     rules: 'required',
@@ -34,7 +31,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       checkStrictly: true,
       data: buildMenuTree(props.deptList),
       nodeKey: 'id',
-      placeholder: $t('page.pleaseSelect', [$t('sys.user.deptName')]),
       props: {
         label: 'name',
         children: 'children',
@@ -45,25 +41,16 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.user.mobile')]),
-    },
     fieldName: 'mobile',
     label: $t('sys.user.mobile'),
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.user.email')]),
-    },
     fieldName: 'email',
     label: $t('sys.user.email'),
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.user.username')]),
-    },
     fieldName: 'username',
     label: $t('sys.user.username'),
     rules: 'required',
@@ -74,7 +61,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         {
           component: 'Input',
           componentProps: {
-            placeholder: $t('page.pleaseInput', [$t('sys.user.password')]),
             showPassword: true,
             type: 'password',
           },
@@ -90,7 +76,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item.label,
         value: +item.value,
       })),
-      placeholder: $t('page.pleaseSelect', [$t('sys.user.sex')]),
     },
     fieldName: 'sex',
     label: $t('sys.user.sex'),
@@ -103,7 +88,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item.name,
         value: item.id,
       })),
-      placeholder: $t('page.pleaseSelect', [$t('sys.user.post')]),
     },
     fieldName: 'postIds',
     label: $t('sys.user.post'),
@@ -112,7 +96,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Input',
     componentProps: {
       autosize: { maxRows: 5, minRows: 3 },
-      placeholder: $t('page.pleaseInput', [$t('page.remark')]),
       resize: 'none',
       type: 'textarea',
     },

@@ -68,9 +68,6 @@ const [TableDetailModal, detailModal] = useVbenModal({
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.log.appName')]),
-    },
     fieldName: 'appName',
     label: $t('sys.log.appName'),
     dependencies: {
@@ -82,7 +79,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.USER_TYPE),
-      placeholder: $t('page.pleaseSelect', [$t('sys.log.userType')]),
     },
     fieldName: 'userType',
     label: $t('sys.log.userType'),
@@ -94,7 +90,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item.name,
         value: item.id,
       })),
-      placeholder: $t('page.pleaseSelect', [$t('sys.log.error.tenant')]),
     },
     fieldName: 'tenantId',
     label: $t('sys.log.error.tenant'),
@@ -105,17 +100,11 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.log.userId')]),
-    },
     fieldName: 'userId',
     label: $t('sys.log.userId'),
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.log.requestUrl')]),
-    },
     fieldName: 'requestUrl',
     label: $t('sys.log.requestUrl'),
   },
@@ -123,7 +112,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.ERROR_LOG_PROCESS_STATUS),
-      placeholder: $t('page.pleaseSelect', [$t('sys.log.error.status')]),
     },
     fieldName: 'processStatus',
     label: $t('sys.log.error.status'),

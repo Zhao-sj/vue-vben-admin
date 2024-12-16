@@ -30,9 +30,6 @@ const menuTree = computed(() => buildMenuTree(cloneDeep(props.menus)));
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.tenant.package.name')]),
-    },
     fieldName: 'name',
     label: $t('sys.tenant.package.name'),
     rules: 'required',
@@ -63,7 +60,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         maxRows: 5,
         minRows: 3,
       },
-      placeholder: $t('page.pleaseInput', [$t('sys.tenant.package.remark')]),
       resize: 'none',
       type: 'textarea',
     },

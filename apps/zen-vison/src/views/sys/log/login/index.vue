@@ -53,7 +53,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         { label: $t('sys.log.login.success'), value: true },
         { label: $t('sys.log.login.fail'), value: false },
       ],
-      placeholder: $t('page.pleaseSelect', [$t('sys.log.login.result')]),
     },
     fieldName: 'status',
     label: $t('sys.log.login.result'),
@@ -65,7 +64,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item.name,
         value: item.id,
       })),
-      placeholder: $t('page.pleaseSelect', [$t('sys.log.login.tenant')]),
     },
     fieldName: 'tenantId',
     label: $t('sys.log.login.tenant'),
@@ -76,17 +74,11 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.log.ip')]),
-    },
     fieldName: 'ip',
     label: $t('sys.log.ip'),
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.log.login.username')]),
-    },
     fieldName: 'username',
     label: $t('sys.log.login.username'),
   },

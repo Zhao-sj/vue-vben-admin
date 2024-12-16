@@ -36,9 +36,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.dept.name')]),
-    },
     fieldName: 'name',
     label: $t('sys.dept.name'),
     rules: 'required',
@@ -49,7 +46,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 0,
-      placeholder: $t('page.pleaseInput', [$t('sys.dept.sort')]),
     },
     fieldName: 'sort',
     label: $t('sys.dept.sort'),
@@ -62,24 +58,17 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item.nickname || item.id,
         value: item.id,
       })),
-      placeholder: $t('page.pleaseSelect', [$t('sys.dept.leader')]),
     },
     fieldName: 'leaderId',
     label: $t('sys.dept.leader'),
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.dept.phone')]),
-    },
     fieldName: 'phone',
     label: $t('sys.dept.phone'),
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.dept.email')]),
-    },
     fieldName: 'email',
     label: $t('sys.dept.email'),
   },

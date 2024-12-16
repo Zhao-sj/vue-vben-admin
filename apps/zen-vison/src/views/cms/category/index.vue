@@ -33,9 +33,6 @@ const [TableEditModal, editModal] = useVbenModal({
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('cms.category.name')]),
-    },
     fieldName: 'name',
     label: $t('cms.category.name'),
   },
@@ -43,7 +40,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.STATUS),
-      placeholder: $t('page.pleaseSelect', [$t('cms.category.status')]),
     },
     fieldName: 'status',
     label: $t('cms.category.status'),

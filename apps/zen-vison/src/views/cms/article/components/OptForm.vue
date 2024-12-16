@@ -30,7 +30,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Cascader',
     componentProps: {
       options: buildMenuTree(props.categoryList),
-      placeholder: $t('page.pleaseSelect', [$t('cms.article.category')]),
       class: 'w-full',
       props: {
         label: 'name',
@@ -68,7 +67,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item.name,
         value: item.id,
       })),
-      placeholder: $t('page.pleaseSelect', [$t('cms.article.tag')]),
     },
     fieldName: 'tagIds',
     formItemClass: 'col-span-3 lg:col-span-2',
@@ -76,9 +74,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('cms.article.title')]),
-    },
     fieldName: 'title',
     formItemClass: 'col-span-3',
     label: $t('cms.article.title'),
@@ -91,7 +86,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         maxRows: 5,
         minRows: 3,
       },
-      placeholder: $t('page.pleaseInput', [$t('cms.article.description')]),
       showWordLimit: true,
       maxlength: 200,
       resize: 'none',
@@ -109,7 +103,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       options: {
         auto_focus: false,
         menubar: false,
-        placeholder: $t('page.pleaseInput', [$t('cms.article.content')]),
+        placeholder: $t('page.pleaseInput'),
       },
     },
     fieldName: 'content',

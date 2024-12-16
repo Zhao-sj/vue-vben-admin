@@ -47,9 +47,6 @@ const [TableEditModal, editModal] = useVbenModal({
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('infra.file.config.name')]),
-    },
     fieldName: 'name',
     label: $t('infra.file.config.name'),
   },
@@ -57,7 +54,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.FILE_STORAGE),
-      placeholder: $t('page.pleaseSelect', [$t('infra.file.config.storage')]),
     },
     fieldName: 'storage',
     label: $t('infra.file.config.storage'),

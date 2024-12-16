@@ -50,17 +50,11 @@ const [TableExportModal, exportModal] = useVbenModal({
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.post.code')]),
-    },
     fieldName: 'code',
     label: $t('sys.post.code'),
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.post.name')]),
-    },
     fieldName: 'name',
     label: $t('sys.post.name'),
   },
@@ -68,7 +62,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.STATUS),
-      placeholder: $t('page.pleaseSelect', [$t('sys.post.status')]),
     },
     fieldName: 'status',
     label: $t('sys.post.status'),

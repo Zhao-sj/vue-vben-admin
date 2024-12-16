@@ -29,18 +29,12 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.dict.data.label')]),
-    },
     fieldName: 'label',
     label: $t('sys.dict.data.label'),
     rules: 'required',
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.dict.data.value')]),
-    },
     fieldName: 'value',
     label: $t('sys.dict.data.value'),
     rules: 'required',
@@ -52,7 +46,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item,
         value: item,
       })),
-      placeholder: $t('page.pleaseInput', [$t('sys.dict.data.color')]),
     },
     fieldName: 'color',
     label: $t('sys.dict.data.color'),
@@ -63,7 +56,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 0,
-      placeholder: $t('page.pleaseInput', [$t('sys.dict.data.sort')]),
     },
     fieldName: 'sort',
     label: $t('sys.dict.data.sort'),
@@ -89,7 +81,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         maxRows: 5,
         minRows: 3,
       },
-      placeholder: $t('page.pleaseInput', [$t('page.remark')]),
       resize: 'none',
       type: 'textarea',
     },

@@ -28,9 +28,6 @@ const badgeTypeOpts = [
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.menu.meta.title')]),
-    },
     defaultValue: '',
     fieldName: 'title',
     formItemClass: 'lg:col-span-2',
@@ -39,18 +36,12 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.menu.meta.activePath')]),
-    },
     fieldName: 'activePath',
     help: $t('sys.menu.tip.activePath'),
     label: $t('sys.menu.meta.activePath'),
   },
   {
     component: 'IconPicker',
-    componentProps: {
-      placeholder: $t('page.pleaseSelect', [$t('sys.menu.meta.activeIcon')]),
-    },
     fieldName: 'activeIcon',
     help: $t('sys.menu.tip.icon'),
     label: $t('sys.menu.meta.activeIcon'),
@@ -127,9 +118,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.menu.meta.badge')]),
-    },
     dependencies: {
       if(values) {
         return values.badgeType === 'normal';
@@ -142,9 +130,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.menu.meta.badgeVariants')]),
-    },
     defaultValue: 'success',
     fieldName: 'badgeVariants',
     help: $t('sys.menu.tip.badgeVariants'),
@@ -167,7 +152,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 0,
-      placeholder: $t('page.pleaseInput', [$t('sys.menu.meta.affixTabOrder')]),
     },
     fieldName: 'affixTabOrder',
     help: $t('sys.menu.tip.affixTabOrder'),
@@ -175,9 +159,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.menu.meta.iframeSrc')]),
-    },
     dependencies: {
       if(values) {
         return !values.link;
@@ -191,9 +172,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.menu.meta.link')]),
-    },
     dependencies: {
       if(values) {
         return !values.iframeSrc;

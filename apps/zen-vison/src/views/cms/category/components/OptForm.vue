@@ -33,18 +33,12 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('cms.category.name')]),
-    },
     fieldName: 'name',
     label: $t('cms.category.name'),
     rules: 'required',
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('cms.category.code')]),
-    },
     fieldName: 'code',
     label: $t('cms.category.code'),
     rules: 'required',
@@ -55,7 +49,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 0,
-      placeholder: $t('page.pleaseInput', [$t('cms.category.sort')]),
     },
     fieldName: 'sort',
     label: $t('cms.category.sort'),

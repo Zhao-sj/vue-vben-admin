@@ -15,9 +15,6 @@ const dictStore = useDictStore();
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.dict.type.name')]),
-    },
     fieldName: 'name',
     label: $t('sys.dict.type.name'),
     rules: 'required',
@@ -26,7 +23,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Input',
     componentProps: {
       disabled: props.edit,
-      placeholder: $t('page.pleaseInput', [$t('sys.dict.type.title')]),
     },
     fieldName: 'type',
     label: $t('sys.dict.type.title'),
@@ -52,7 +48,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         maxRows: 5,
         minRows: 3,
       },
-      placeholder: $t('page.pleaseInput', [$t('page.remark')]),
       resize: 'none',
       type: 'textarea',
     },

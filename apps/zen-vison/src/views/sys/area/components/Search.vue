@@ -17,9 +17,6 @@ const [Modal] = useVbenModal({
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.area.ip')]),
-    },
     fieldName: 'ip',
     label: $t('sys.area.ip'),
     rules: 'required',
@@ -28,6 +25,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Input',
     componentProps: {
       disabled: true,
+      placeholder: ' ',
     },
     fieldName: 'location',
     label: $t('sys.area.address'),

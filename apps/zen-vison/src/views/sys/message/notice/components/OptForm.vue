@@ -10,9 +10,6 @@ const dictStore = useDictStore();
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.message.notice.title')]),
-    },
     fieldName: 'title',
     formItemClass: 'col-span-2',
     label: $t('sys.message.notice.title'),
@@ -27,7 +24,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
           ...item,
           value: +item.value,
         })),
-      placeholder: $t('page.pleaseSelect', [$t('sys.message.notice.type')]),
     },
     fieldName: 'type',
     label: $t('sys.message.notice.type'),
@@ -53,7 +49,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       options: {
         auto_focus: false,
         menubar: false,
-        placeholder: $t('page.pleaseInput', [$t('sys.message.notice.content')]),
+        placeholder: $t('page.pleaseInput'),
       },
     },
     fieldName: 'content',

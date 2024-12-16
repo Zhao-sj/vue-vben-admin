@@ -20,9 +20,6 @@ const modeOptions = [
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('infra.file.config.name')]),
-    },
     fieldName: 'name',
     label: $t('infra.file.config.name'),
     rules: 'required',
@@ -34,7 +31,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         maxRows: 5,
         minRows: 3,
       },
-      placeholder: $t('page.pleaseInput', [$t('infra.file.config.remark')]),
       resize: 'none',
       type: 'textarea',
     },
@@ -59,9 +55,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('infra.file.config.domain')]),
-    },
     fieldName: 'config.domain',
     label: $t('infra.file.config.domain'),
     dependencies: {
@@ -72,9 +65,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('infra.file.config.basePath')]),
-    },
     fieldName: 'config.basePath',
     label: $t('infra.file.config.basePath'),
     rules: 'required',
@@ -92,9 +82,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('infra.file.config.host')]),
-    },
     fieldName: 'config.host',
     formItemClass: 'lg:col-span-1',
     label: $t('infra.file.config.host'),
@@ -112,7 +99,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 1,
-      placeholder: $t('page.pleaseInput', [$t('infra.file.config.port')]),
     },
     fieldName: 'config.port',
     formItemClass: 'lg:col-span-1',
@@ -127,9 +113,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('infra.file.config.username')]),
-    },
     fieldName: 'config.username',
     formItemClass: 'lg:col-span-1',
     label: $t('infra.file.config.username'),
@@ -145,7 +128,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Input',
     componentProps: {
       clearable: false,
-      placeholder: $t('page.pleaseInput', [$t('infra.file.config.password')]),
       showPassword: true,
       type: 'password',
     },
@@ -176,9 +158,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('infra.file.config.endpoint')]),
-    },
     fieldName: 'config.endpoint',
     label: $t('infra.file.config.endpoint'),
     rules: 'required',
@@ -189,9 +168,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('infra.file.config.bucket')]),
-    },
     fieldName: 'config.bucket',
     label: $t('infra.file.config.bucket'),
     rules: 'required',
@@ -204,7 +180,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Input',
     componentProps: {
       clearable: false,
-      placeholder: $t('page.pleaseInput', [$t('infra.file.config.accessKey')]),
       showPassword: true,
       type: 'password',
     },
@@ -220,9 +195,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Input',
     componentProps: {
       clearable: false,
-      placeholder: $t('page.pleaseInput', [
-        $t('infra.file.config.accessSecret'),
-      ]),
       showPassword: true,
       type: 'password',
     },

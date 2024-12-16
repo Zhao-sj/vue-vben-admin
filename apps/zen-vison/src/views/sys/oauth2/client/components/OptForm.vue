@@ -23,9 +23,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.oauth2.client.name')]),
-    },
     fieldName: 'name',
     label: $t('sys.oauth2.client.name'),
     rules: 'required',
@@ -45,18 +42,12 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.oauth2.client.clientId')]),
-    },
     fieldName: 'clientId',
     label: $t('sys.oauth2.client.clientId'),
     rules: 'required',
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.oauth2.client.secret')]),
-    },
     fieldName: 'secret',
     label: $t('sys.oauth2.client.secret'),
     rules: 'required',
@@ -67,11 +58,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 1,
-      placeholder: $t('page.pleaseInput', [
-        $t('sys.oauth2.client.accessTokenValiditySeconds', [
-          $t('sys.oauth2.client.unit'),
-        ]),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.oauth2.client.unit')]),
     },
     fieldName: 'accessTokenValiditySeconds',
     label: $t('sys.oauth2.client.accessTokenValiditySeconds'),
@@ -83,11 +70,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 1,
-      placeholder: $t('page.pleaseInput', [
-        $t('sys.oauth2.client.refreshTokenValiditySeconds', [
-          $t('sys.oauth2.client.unit'),
-        ]),
-      ]),
+      placeholder: $t('page.pleaseInput', [$t('sys.oauth2.client.unit')]),
     },
     fieldName: 'refreshTokenValiditySeconds',
     label: $t('sys.oauth2.client.refreshTokenValiditySeconds'),
@@ -100,9 +83,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         maxRows: 5,
         minRows: 3,
       },
-      placeholder: $t('page.pleaseInput', [
-        $t('sys.oauth2.client.description'),
-      ]),
       resize: 'none',
       type: 'textarea',
     },
@@ -115,9 +95,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     componentProps: {
       multiple: true,
       options: dictStore.getDictDataList(DictTypeEnum.OAUTH2_GRANT_TYPE),
-      placeholder: $t('page.pleaseSelect', [
-        $t('sys.oauth2.client.authorizedGrantTypes'),
-      ]),
     },
     fieldName: 'authorizedGrantTypes',
     formItemClass: 'lg:col-span-2',
@@ -129,7 +106,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     componentProps: {
       multiple: true,
       options: scopes,
-      placeholder: $t('page.pleaseSelect', [$t('sys.oauth2.client.scopes')]),
     },
     fieldName: 'scopes',
     formItemClass: 'lg:col-span-2',
@@ -140,9 +116,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     componentProps: {
       multiple: true,
       options: scopes,
-      placeholder: $t('page.pleaseSelect', [
-        $t('sys.oauth2.client.autoApproveScopes'),
-      ]),
     },
     fieldName: 'autoApproveScopes',
     formItemClass: 'lg:col-span-2',
@@ -150,11 +123,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: shallowRef(SelectCreate),
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [
-        $t('sys.oauth2.client.redirectUris'),
-      ]),
-    },
     fieldName: 'redirectUris',
     formItemClass: 'lg:col-span-2',
     label: $t('sys.oauth2.client.redirectUris'),
@@ -164,9 +132,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     componentProps: {
       multiple: true,
       options: scopes,
-      placeholder: $t('page.pleaseSelect', [
-        $t('sys.oauth2.client.authorities'),
-      ]),
     },
     fieldName: 'authorities',
     formItemClass: 'lg:col-span-2',
@@ -174,11 +139,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: shallowRef(SelectCreate),
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [
-        $t('sys.oauth2.client.resourceIds'),
-      ]),
-    },
     fieldName: 'resourceIds',
     formItemClass: 'lg:col-span-2',
     label: $t('sys.oauth2.client.resourceIds'),
@@ -191,9 +151,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         minRows: 3,
       },
       placeholder: $t('page.pleaseInput', [
-        $t('sys.oauth2.client.additionalInformation', [
-          $t('sys.oauth2.client.jsonFormatter'),
-        ]),
+        $t('sys.oauth2.client.jsonFormatter'),
       ]),
       resize: 'none',
       type: 'textarea',

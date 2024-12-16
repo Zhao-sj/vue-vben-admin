@@ -95,17 +95,11 @@ const statusDisabled = computed(
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.user.username')]),
-    },
     fieldName: 'username',
     label: $t('sys.user.username'),
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.user.mobile')]),
-    },
     fieldName: 'mobile',
     label: $t('sys.user.mobile'),
   },
@@ -113,7 +107,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.STATUS),
-      placeholder: $t('page.pleaseSelect', [$t('sys.user.status')]),
     },
     fieldName: 'status',
     label: $t('sys.user.status'),

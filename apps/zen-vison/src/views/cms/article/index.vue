@@ -39,17 +39,11 @@ const [TableEditModal, editModal] = useVbenDrawer({
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('cms.article.title')]),
-    },
     fieldName: 'title',
     label: $t('cms.article.title'),
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('cms.article.description')]),
-    },
     fieldName: 'description',
     label: $t('cms.article.description'),
   },
@@ -57,7 +51,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Cascader',
     componentProps: {
       options: buildMenuTree(categoryList.value || []),
-      placeholder: $t('page.pleaseSelect', [$t('cms.article.category')]),
       props: {
         label: 'name',
         value: 'id',
@@ -76,7 +69,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item.name,
         value: item.id,
       })),
-      placeholder: $t('page.pleaseSelect', [$t('cms.article.tag')]),
     },
     fieldName: 'tagIds',
     label: $t('cms.article.tag'),

@@ -24,9 +24,6 @@ dictStore.initDictData(DictTypeEnum.USER_TYPE, DictTypeEnum.SEX);
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.oauth2.token.clientId')]),
-    },
     fieldName: 'clientId',
     label: $t('sys.oauth2.token.clientId'),
   },
@@ -34,16 +31,12 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.USER_TYPE),
-      placeholder: $t('page.pleaseSelect', [$t('sys.oauth2.token.userType')]),
     },
     fieldName: 'userType',
     label: $t('sys.oauth2.token.userType'),
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.oauth2.token.userId')]),
-    },
     fieldName: 'userId',
     label: $t('sys.oauth2.token.userId'),
   },

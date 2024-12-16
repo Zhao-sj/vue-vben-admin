@@ -63,7 +63,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item.name,
         value: item.id,
       })),
-      placeholder: $t('page.pleaseSelect', [$t('sys.user.role')]),
     },
     fieldName: 'roleIds',
     label: $t('sys.user.role'),

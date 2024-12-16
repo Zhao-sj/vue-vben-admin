@@ -58,9 +58,6 @@ const { loading: exportLoading, runAsync: exportTenant } = useRequest(
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.name')]),
-    },
     fieldName: 'name',
     label: $t('sys.tenant.list.name'),
   },
@@ -68,24 +65,17 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.STATUS),
-      placeholder: $t('page.pleaseSelect', [$t('sys.tenant.list.status')]),
     },
     fieldName: 'status',
     label: $t('sys.tenant.list.status'),
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.contact')]),
-    },
     fieldName: 'contactName',
     label: $t('sys.tenant.list.contact'),
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.contactPhone')]),
-    },
     fieldName: 'contactMobile',
     label: $t('sys.tenant.list.contactPhone'),
   },

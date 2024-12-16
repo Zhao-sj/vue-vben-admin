@@ -20,9 +20,6 @@ const dictStore = useDictStore();
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.name')]),
-    },
     fieldName: 'name',
     label: $t('sys.tenant.list.name'),
     rules: 'required',
@@ -34,7 +31,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         label: item.name,
         value: item.id,
       })),
-      placeholder: $t('page.pleaseSelect', [$t('sys.tenant.list.package')]),
     },
     fieldName: 'packageId',
     label: $t('sys.tenant.list.package'),
@@ -42,27 +38,18 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.contact')]),
-    },
     fieldName: 'contactName',
     label: $t('sys.tenant.list.contact'),
     rules: 'required',
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.contactPhone')]),
-    },
     fieldName: 'contactMobile',
     label: $t('sys.tenant.list.contactPhone'),
     rules: 'required',
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.username')]),
-    },
     fieldName: 'username',
     label: $t('sys.tenant.list.username'),
     rules: 'required',
@@ -75,7 +62,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Input',
     componentProps: {
       clearable: false,
-      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.password')]),
       showPassword: true,
       type: 'password',
     },
@@ -93,7 +79,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 1,
-      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.accountLimit')]),
     },
     fieldName: 'accountCount',
     label: $t('sys.tenant.list.accountLimit'),
@@ -102,7 +87,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'DatePicker',
     componentProps: {
-      placeholder: $t('page.pleaseSelect', [$t('sys.tenant.list.expireTime')]),
       format: 'yyyy/MM/dd HH:mm:ss',
       enableSeconds: true,
       enableTimePicker: true,
@@ -113,9 +97,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.tenant.list.website')]),
-    },
     fieldName: 'website',
     label: $t('sys.tenant.list.website'),
   },

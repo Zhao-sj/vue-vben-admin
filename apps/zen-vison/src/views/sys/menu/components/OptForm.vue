@@ -69,9 +69,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.menu.name')]),
-    },
     fieldName: 'name',
     label: $t('sys.menu.name'),
     rules: 'required',
@@ -83,7 +80,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       data: menuTree,
       expandOnClickNode: false,
       nodeKey: 'id',
-      placeholder: $t('page.pleaseSelect', [$t('sys.menu.parent')]),
       props: {
         label: 'name',
         children: 'children',
@@ -99,7 +95,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       class: '!w-full',
       controlsPosition: 'right',
       min: 0,
-      placeholder: $t('page.pleaseInput', [$t('sys.menu.sort')]),
     },
     fieldName: 'sort',
     label: $t('sys.menu.sort'),
@@ -107,9 +102,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'IconPicker',
-    componentProps: {
-      placeholder: $t('page.pleaseSelect', [$t('sys.menu.icon')]),
-    },
     dependencies: {
       if(values) {
         return values.type !== MenuType.BUTTON;
@@ -122,9 +114,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.menu.path')]),
-    },
     dependencies: {
       if(values) {
         return values.type !== MenuType.BUTTON;
@@ -138,9 +127,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.menu.componentName')]),
-    },
     dependencies: {
       if(values) {
         return values.type !== MenuType.BUTTON;
@@ -156,7 +142,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Autocomplete',
     componentProps: {
       fetchSuggestions: querySearch,
-      placeholder: $t('page.pleaseInput', [$t('sys.menu.component')]),
       teleported: false,
     },
     dependencies: {
@@ -171,9 +156,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.menu.permission')]),
-    },
     dependencies: {
       if(values) {
         return values.type !== MenuType.DIR;

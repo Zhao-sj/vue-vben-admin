@@ -9,9 +9,6 @@ const dictStore = useDictStore();
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('cms.tag.name')]),
-    },
     fieldName: 'name',
     label: $t('cms.tag.name'),
     rules: 'required',

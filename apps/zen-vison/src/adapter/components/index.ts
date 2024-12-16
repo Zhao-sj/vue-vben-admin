@@ -101,7 +101,7 @@ async function initComponentAdapter() {
         slots,
       );
     },
-    Autocomplete: ElAutocomplete,
+    Autocomplete: withDefaultPlaceholder(ElAutocomplete, 'input'),
     Checkbox: ElCheckbox,
     CheckboxGroup: ElCheckboxGroup,
     Cascader: ElCascader,
@@ -119,7 +119,7 @@ async function initComponentAdapter() {
       return h(ElButton, { ...props, attrs, type: 'primary' }, slots);
     },
     Divider: ElDivider,
-    IconPicker,
+    IconPicker: withDefaultPlaceholder(IconPicker, 'select'),
     Input: withDefaultPlaceholder(ElInput, 'input'),
     InputNumber: withDefaultPlaceholder(ElInputNumber, 'input'),
     RadioGroup: AdapterRadioGroup,

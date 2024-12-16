@@ -247,7 +247,7 @@ onDeactivated(destory);
 .tinymce__wrapper {
   .tox {
     &-tinymce {
-      @apply rounded-md;
+      @apply rounded-lg;
     }
   }
 }

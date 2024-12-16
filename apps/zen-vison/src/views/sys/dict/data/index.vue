@@ -57,7 +57,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     componentProps: {
       clearable: false,
       loading,
-      placeholder: $t('page.pleaseSelect', [$t('sys.dict.type.title')]),
       options: dictTypeList.value?.map((item) => ({
         label: item.name,
         value: item.id,
@@ -70,9 +69,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'Input',
-    componentProps: {
-      placeholder: $t('page.pleaseInput', [$t('sys.dict.data.label')]),
-    },
     fieldName: 'label',
     label: $t('sys.dict.data.label'),
   },
@@ -80,7 +76,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Select',
     componentProps: {
       options: dictStore.getDictDataList(DictTypeEnum.STATUS),
-      placeholder: $t('page.pleaseSelect', [$t('sys.dict.status')]),
     },
     fieldName: 'status',
     label: $t('sys.dict.status'),
