@@ -64,6 +64,7 @@ async function onConfirm() {
     :loading="noticeLoading"
     :title="$t('sys.message.notice.edit')"
     class="w-full lg:w-1/2"
+    footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" />
   </Drawer>

@@ -119,6 +119,7 @@ async function onConfirm() {
     :title="$t('sys.user.assignRole')"
     class="w-11/12 md:w-1/3 2xl:w-1/5"
     draggable
+    footer-class="gap-x-0"
   >
     <Form />
   </Modal>

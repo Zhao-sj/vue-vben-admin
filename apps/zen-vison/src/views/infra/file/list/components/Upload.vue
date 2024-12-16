@@ -96,6 +96,7 @@ async function onConfirm() {
     :title="$t('page.upload.title')"
     class="w-11/12 lg:w-1/3 2xl:w-1/4"
     draggable
+    footer-class="gap-x-0"
   >
     <ElUpload
       ref="uploadRef"

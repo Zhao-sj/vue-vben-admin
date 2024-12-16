@@ -43,6 +43,7 @@ async function onConfirm() {
     :confirm-loading="loading"
     :title="$t('sys.message.notice.create')"
     class="w-full lg:w-1/2"
+    footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" />
   </Drawer>

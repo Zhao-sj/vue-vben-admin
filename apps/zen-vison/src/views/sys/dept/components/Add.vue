@@ -83,6 +83,7 @@ async function onConfirm() {
     :title="$t('sys.dept.create')"
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
+    footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" :dept-list :user-list />
   </Modal>

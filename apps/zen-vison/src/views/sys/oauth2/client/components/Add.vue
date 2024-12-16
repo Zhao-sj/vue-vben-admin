@@ -44,6 +44,7 @@ async function onConfirm() {
     :title="$t('sys.oauth2.client.create')"
     class="w-11/12 lg:w-1/2 2xl:w-1/3"
     draggable
+    footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" />
   </Modal>

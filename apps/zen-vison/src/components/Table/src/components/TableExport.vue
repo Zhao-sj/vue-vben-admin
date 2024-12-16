@@ -87,6 +87,7 @@ async function onConfirm() {
     :title="$t('page.export.title')"
     class="w-11/12 md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/5"
     draggable
+    footer-class="gap-x-0"
   >
     <Form />
   </Modal>

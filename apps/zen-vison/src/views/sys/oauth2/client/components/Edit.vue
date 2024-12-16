@@ -69,6 +69,7 @@ async function onConfirm() {
     :title="$t('sys.oauth2.client.edit')"
     class="w-11/12 lg:w-1/2 2xl:w-1/3"
     draggable
+    footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" />
   </Modal>

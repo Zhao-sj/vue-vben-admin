@@ -56,6 +56,7 @@ function handleConfirm() {
     :title="$t('sys.user.upload.result')"
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
+    footer-class="gap-x-0"
   >
     <div class="flex flex-col gap-2">
       <div>

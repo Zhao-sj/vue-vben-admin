@@ -74,6 +74,7 @@ async function onConfirm() {
     :title="$t('cms.article.create')"
     class="w-full lg:w-1/2"
     draggable
+    footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" :category-list :tag-list />
   </Drawer>
