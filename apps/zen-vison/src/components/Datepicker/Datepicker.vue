@@ -23,14 +23,16 @@ const datepickerLocale = computed(() =>
 );
 
 const defaultConf = computed<VueDatePickerProps>(() => ({
+  yearFirst: true,
+  weekStart: 0,
   dayNames: [
+    $t('page.date.sunday'),
     $t('page.date.monday'),
     $t('page.date.tuesday'),
     $t('page.date.wednesday'),
     $t('page.date.thursday'),
     $t('page.date.friday'),
     $t('page.date.saturday'),
-    $t('page.date.sunday'),
   ],
   placeholder: $t('page.date.select'),
   format: 'yyyy/MM/dd',
