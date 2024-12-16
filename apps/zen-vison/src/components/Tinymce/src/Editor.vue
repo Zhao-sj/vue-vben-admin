@@ -234,7 +234,7 @@ onDeactivated(destory);
 </script>
 
 <template>
-  <div :style="{ width: containerWidth }">
+  <div :style="{ width: containerWidth }" class="tinymce__wrapper">
     <textarea
       :id="tinymceId"
       ref="elRef"
@@ -242,3 +242,13 @@ onDeactivated(destory);
     ></textarea>
   </div>
 </template>
+
+<style lang="scss">
+.tinymce__wrapper {
+  .tox {
+    &-tinymce {
+      @apply rounded-md;
+    }
+  }
+}
+</style>
