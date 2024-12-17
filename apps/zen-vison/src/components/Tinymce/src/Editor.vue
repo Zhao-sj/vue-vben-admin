@@ -88,7 +88,7 @@ const containerWidth = computed(() => {
   return width;
 });
 
-const skinName = computed(() => (isDark.value ? 'oxide-dark' : 'oxide'));
+const skinName = computed(() => (isDark.value ? 'dark' : 'default'));
 
 const langName = computed(() => {
   const lang = preferences.app.locale;
@@ -101,7 +101,7 @@ const initOptions = computed((): RawEditorSettings => {
   return {
     auto_focus: true,
     branding: false,
-    content_css: `${publicPath}resource/tinymce/skins/ui/${
+    content_css: `${publicPath}resource/tinymce/skins/content/${
       skinName.value
     }/content.min.css`,
     default_link_target: '_blank',
@@ -242,13 +242,3 @@ onDeactivated(destory);
     ></textarea>
   </div>
 </template>
-
-<style lang="scss">
-.tinymce__wrapper {
-  .tox {
-    &-tinymce {
-      @apply rounded-lg;
-    }
-  }
-}
-</style>
