@@ -48,7 +48,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       width: '100%',
       options: {
         auto_focus: false,
-        menubar: false,
         placeholder: $t('page.pleaseInput'),
       },
     },
