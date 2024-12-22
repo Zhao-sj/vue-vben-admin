@@ -37,7 +37,12 @@
     "success": "Export Success"
   },
   "upload": {
-    "title": "Upload File"
+    "title": "Upload File",
+    "start": "Start Uploading",
+    "loading": "Uploading",
+    "cancel": {
+      "tip": "Cancel upload?"
+    }
   },
   "date": {
     "select": "Select Date",
@@ -57,6 +62,7 @@
   "errorTip": "Error Tips",
   "success": "Success",
   "error": "Operation Failed",
+  "done": "Done",
   "confirm": "Confirm",
   "cancel": "Cancel",
   "options": "Operation",

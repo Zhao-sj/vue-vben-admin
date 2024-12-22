@@ -57,7 +57,7 @@ export function formatFileSize(size: number) {
     size /= 1024;
     unitIndex++;
   }
-  return size.toFixed(2) + units[unitIndex];
+  return `${Math.floor(size * 100) / 100}${units[unitIndex]}`;
 }
 
 /** 千分位 */

@@ -1,19 +1,13 @@
 <script setup lang="ts">
-import { useVbenModal } from '@vben/common-ui';
-import { IconifyIcon } from '@vben/icons';
-
-import {
-  genFileId,
-  type UploadInstance,
-  type UploadRawFile,
-  type UploadUserFile,
-} from 'element-plus';
+import { useVbenDrawer } from '@vben/common-ui';
 
 import { getMasterFileConfigApi, uploadFileApi } from '#/api';
 import { FileStorageEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
-import { formatFileSize } from '#/utils';
+import { formatFileSize, paralleTask } from '#/utils';
+
+import DragUpload, { type UploadFile } from './DragUpload.vue';
 
 interface Emits {
   (e: 'success'): void;
@@ -21,11 +15,10 @@ interface Emits {
 
 const emit = defineEmits<Emits>();
 
-const MAX_UPLOAD = 1;
 const S3_MAX_LIMIT = 1024 * 1024 * 1024 * 5; // 5G
 const OTHER_MAX_LIMIT = 1024 * 1024 * 32; // 32M
-const uploadRef = ref<UploadInstance>();
-const fileList = ref<UploadUserFile[]>([]);
+const fileList = ref<UploadFile[]>([]);
+const uploadTasks = ref<ReturnType<typeof getUploadTasks>>([]);
 
 const requestConf = {
   loadingDelay: 200,
@@ -38,9 +31,7 @@ const {
   runAsync: getMasterConfig,
 } = useRequest(getMasterFileConfigApi, requestConf);
 
-const { loading, runAsync } = useRequest(uploadFileApi, requestConf);
-
-const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
+const [Drawer, drawer] = useVbenDrawer({ onConfirm, onOpenChange, onCancel });
 
 const limitSize = computed(() =>
   masterConfig.value?.storage === FileStorageEnum.S3
@@ -48,82 +39,163 @@ const limitSize = computed(() =>
     : OTHER_MAX_LIMIT,
 );
 
+const totalSize = computed(() =>
+  fileList.value.reduce((acc, cur) => acc + cur.raw.size, 0),
+);
+
+const successCount = computed(
+  () => fileList.value.filter((item) => item.status === 'success').length,
+);
+
+const uploading = computed(() =>
+  uploadTasks.value.some((item) => unref(item.loading)),
+);
+
+const hasUploaded = computed(() => fileList.value.some((item) => item.status));
+
+const confirmText = computed(() => {
+  if (uploading.value) {
+    return $t('page.upload.loading');
+  }
+  return hasUploaded.value ? $t('page.done') : $t('page.upload.start');
+});
+
 function onOpenChange(isOpen: boolean) {
   if (isOpen) {
     getMasterConfig();
     return;
   }
 
-  loading.value = false;
   fileList.value = [];
 }
 
-function handleExceed(files: File[]) {
-  uploadRef.value!.clearFiles();
-  const uploadFiles = files.slice(-MAX_UPLOAD) as UploadRawFile[];
-  uploadFiles.forEach((file) => {
-    file.uid = genFileId();
-    uploadRef.value!.handleStart(file);
+function onCancel() {
+  if (!uploading.value) {
+    handleCancel();
+    return;
+  }
+
+  ElMessageBox.confirm($t('page.upload.cancel.tip'), $t('page.systemTip'), {
+    type: 'warning',
+  }).then(() => {
+    uploadTasks.value.forEach((item) => item.controller.abort());
+    handleCancel();
   });
 }
 
-async function onConfirm() {
+function onConfirm() {
   if (fileList.value.length === 0) {
     ElMessage.warning($t('sys.user.upload.empty'));
     return;
   }
 
-  const file = fileList.value[0]!.raw!;
-  if (file.size <= 0 || file.size > limitSize.value) {
+  if (fileList.value.some((item) => item.raw.size > limitSize.value)) {
     ElMessage.error(
       $t('infra.file.list.upload.tip', [formatFileSize(limitSize.value)]),
     );
     return;
   }
 
-  await runAsync({ file });
-  ElMessage.success($t('page.success'));
-  modal.close();
-  emit('success');
+  if (hasUploaded.value) {
+    drawer.close();
+    emit('success');
+  }
+
+  uploadTasks.value = getUploadTasks();
+  const tasks = uploadTasks.value.map((item) => item.task);
+  paralleTask(tasks, 3); // TODO 待优化：web worker
+}
+
+function handleCancel() {
+  if (fileList.value.some((item) => item.status === 'success')) {
+    emit('success');
+  }
+  drawer.close();
+}
+
+function handleUploadCancel(uid: number) {
+  const idx = fileList.value.findIndex((item) => item.uid === uid);
+  if (idx !== -1) {
+    const task = uploadTasks.value[idx];
+    if (task) {
+      task.controller.abort();
+    }
+    fileList.value.splice(idx, 1);
+  }
+}
+
+function getUploadTasks() {
+  return fileList.value.map((item) => {
+    const loading = ref(false);
+    const controller = new AbortController();
+    const task = () =>
+      new Promise<void>((resolve) => {
+        loading.value = true;
+        uploadFileApi(
+          { file: item.raw },
+          {
+            signal: controller.signal,
+            onUploadProgress(e) {
+              const { total = 0, loaded = 0 } = e;
+              const percentage = Math.round((loaded / total) * 100);
+              item.percentage = percentage;
+            },
+          },
+        )
+          .then(() => {
+            item.status = 'success';
+          })
+          .catch(() => {
+            item.status = 'exception';
+          })
+          .finally(() => {
+            loading.value = false;
+            resolve();
+          });
+      });
+
+    return { loading, controller, task };
+  });
 }
 </script>
 
 <template>
-  <Modal
+  <Drawer
+    :closable="false"
     :close-on-click-modal="false"
-    :confirm-loading="loading"
+    :confirm-loading="uploading"
+    :confirm-text
     :loading="masterLoading"
     :title="$t('page.upload.title')"
-    class="w-11/12 lg:w-1/3 2xl:w-1/4"
-    draggable
+    class="w-full lg:w-1/2 2xl:w-2/5"
     footer-class="gap-x-0"
   >
-    <ElUpload
-      ref="uploadRef"
-      v-model:file-list="fileList"
-      :auto-upload="false"
-      :limit="MAX_UPLOAD"
-      accept="image/*, video/*, audio/*, application/pdf, application/vnd.ms-word, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, application/vnd.wps-office.wps, application/vnd.wps-office.doc, application/vnd.wps-office.xls, application/vnd.wps-office.ppt"
-      drag
-      @exceed="handleExceed"
-    >
-      <div class="flex flex-col items-center gap-3">
-        <IconifyIcon class="text-6xl text-gray-300" icon="ep:upload-filled" />
-        <p>
-          <ElText>{{ $t('sys.user.upload.dragEnter') }}</ElText>
-          <ElText type="primary">
-            {{ $t('sys.user.upload.title') }}
-          </ElText>
-        </p>
-      </div>
-
-      <template v-if="masterConfig" #tip>
-        <div class="mt-2">
-          <p class="text-sm text-gray-500">
+    <DragUpload v-model:file-list="fileList" @cancel="handleUploadCancel">
+      <template #tip>
+        <div
+          class="mt-2 flex flex-col items-center justify-between gap-2 md:flex-row"
+        >
+          <p class="self-start text-sm text-gray-500">
             {{ $t('infra.file.list.upload.tip', [formatFileSize(limitSize)]) }}
           </p>
+
+          <div class="flex items-center gap-2 self-end">
+            <ElTag size="small" type="info">
+              {{ $t('infra.file.list.upload.count', [fileList.length]) }}
+            </ElTag>
+
+            <ElTag size="small" type="success">
+              {{ $t('infra.file.list.upload.success', [successCount]) }}
+            </ElTag>
+
+            <ElTag size="small" type="info">
+              {{
+                $t('infra.file.list.upload.size', [formatFileSize(totalSize)])
+              }}
+            </ElTag>
+          </div>
         </div>
       </template>
-    </ElUpload>
-  </Modal>
+    </DragUpload>
+  </Drawer>
 </template>

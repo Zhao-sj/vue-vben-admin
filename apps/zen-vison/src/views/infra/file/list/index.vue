@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
 
-import { globalShareState, Page, useVbenModal } from '@vben/common-ui';
+import { globalShareState, Page, useVbenDrawer } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 import { IconifyIcon } from '@vben/icons';
 
@@ -17,7 +17,7 @@ import { FileUpload, VideoPreview } from './components';
 const { isMobile } = useIsMobile();
 const { copy } = useClipboard({ legacy: true });
 
-const [FileUploadModal, uploadModal] = useVbenModal({
+const [FileUploadDrawer, uploadDrawer] = useVbenDrawer({
   connectedComponent: FileUpload,
 });
 
@@ -184,7 +184,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     icon: 'ep:upload',
-    onClick: () => uploadModal.open(),
+    onClick: () => uploadDrawer.open(),
     title: $t('page.create'),
     type: 'primary',
   },
@@ -251,7 +251,7 @@ async function reloadTable() {
           circle
         />
 
-        <FileUploadModal @success="reloadTable" />
+        <FileUploadDrawer @success="reloadTable" />
       </template>
 
       <template #preview="{ row: { url } }">

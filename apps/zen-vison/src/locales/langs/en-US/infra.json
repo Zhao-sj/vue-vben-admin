@@ -40,13 +40,18 @@
       "url": "URL",
       "type": "Type",
       "size": "Size",
+      "status": "Status",
       "preview": {
         "title": "Preview",
         "video": "Video Preview"
       },
       "createTime": "Upload Time",
       "upload": {
-        "tip": "The file size cannot exceed {0}"
+        "tip": "The size of a single file cannot exceed {0}",
+        "wait": "Wait",
+        "count": "Count: {0}",
+        "size": "Size: {0}",
+        "success": "Success: {0}"
       }
     }
   }

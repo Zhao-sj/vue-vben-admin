@@ -37,7 +37,12 @@
     "success": "导出成功"
   },
   "upload": {
-    "title": "上传文件"
+    "title": "上传文件",
+    "start": "开始上传",
+    "loading": "上传中",
+    "cancel": {
+      "tip": "是否取消上传"
+    }
   },
   "date": {
     "select": "选择日期",
@@ -57,6 +62,7 @@
   "errorTip": "错误提示",
   "success": "操作成功",
   "error": "操作失败",
+  "done": "完成",
   "confirm": "确认",
   "cancel": "取消",
   "options": "操作",

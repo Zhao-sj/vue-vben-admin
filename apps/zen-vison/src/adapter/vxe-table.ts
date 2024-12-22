@@ -20,7 +20,7 @@ setupVbenVxeTable({
     vxeUI.setConfig({
       grid: {
         align: 'center',
-        minHeight: 500,
+        minHeight: 300,
         formConfig: {
           // 全局禁用vxe-table的表单配置，使用formOptions
           enabled: false,
