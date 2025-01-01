@@ -1,25 +1,22 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { RoleApi } from '#/api';
+import type { ActionDropdownItem, ActionItem } from '#/components';
 
 import { useAccess } from '@vben/access';
 import { Page, useVbenModal } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 
-import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
   batchDeleteRoleApi,
   deleteRoleApi,
   exportRoleApi,
   getRolePageListApi,
-  type RoleApi,
   updateRoleStatusApi,
 } from '#/api';
-import {
-  type ActionDropdownItem,
-  type ActionItem,
-  TableAction,
-  TableExport,
-} from '#/components';
+import { TableAction, TableExport } from '#/components';
 import { DictRoleType, DictStatus, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';

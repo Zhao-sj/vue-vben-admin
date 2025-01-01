@@ -1,7 +1,7 @@
+import type { MaybeRef, Ref, WatchSource } from 'vue';
+
 import type Fetch from './Fetch';
 import type { CachedData } from './utils/cache';
-
-import type { MaybeRef, Ref, WatchSource } from 'vue';
 
 export type Service<TData, TParams extends any[]> = (
   ...args: TParams
@@ -18,10 +18,10 @@ export interface FetchState<TData, TParams extends any[]> {
 
 export interface PluginReturn<TData, TParams extends any[]> {
   onBefore?: (params: TParams) =>
-    | ({
+    | (Partial<FetchState<TData, TParams>> & {
         returnNow?: boolean;
         stopNow?: boolean;
-      } & Partial<FetchState<TData, TParams>>)
+      })
     | void;
 
   onRequest?: (

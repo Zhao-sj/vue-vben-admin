@@ -1,14 +1,11 @@
 <script setup lang="ts">
+import type { UserApi } from '#/api';
+
 import { useVbenModal } from '@vben/common-ui';
 
 import { cloneDeep } from 'lodash-es';
 
-import {
-  addUserApi,
-  getDeptSimpleListApi,
-  getPostSimpleListApi,
-  type UserApi,
-} from '#/api';
+import { addUserApi, getDeptSimpleListApi, getPostSimpleListApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { encryptBySha256 } from '#/utils';

@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { AreaApi } from '#/api';
+import type { ActionItem } from '#/components';
+
 import { Page, useVbenModal } from '@vben/common-ui';
 
-import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
-import { type AreaApi, getAreaListApi } from '#/api';
-import { type ActionItem, TableAction } from '#/components';
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { getAreaListApi } from '#/api';
+import { TableAction } from '#/components';
 import { $t } from '#/locales';
 
 import { IPSearch } from './components';

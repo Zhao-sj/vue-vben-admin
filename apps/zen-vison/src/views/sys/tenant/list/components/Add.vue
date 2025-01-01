@@ -1,14 +1,12 @@
 <script setup lang="ts">
+import type { TenantApi } from '#/api';
+
 import { useVbenModal } from '@vben/common-ui';
 
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash-es';
 
-import {
-  addTenantApi,
-  getTenantPackageSimpleListApi,
-  type TenantApi,
-} from '#/api';
+import { addTenantApi, getTenantPackageSimpleListApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { encryptBySha256 } from '#/utils';

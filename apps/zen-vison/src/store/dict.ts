@@ -1,6 +1,8 @@
+import type { DictApi } from '#/api';
+
 import { defineStore } from 'pinia';
 
-import { type DictApi, getDictDataSimpleListApi } from '#/api';
+import { getDictDataSimpleListApi } from '#/api';
 import { DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 

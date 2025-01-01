@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { MenuApi } from '#/api';
+
 import { useVbenModal } from '@vben/common-ui';
 
-import { addMenuApi, getMenuSimpleListApi, type MenuApi } from '#/api';
+import { addMenuApi, getMenuSimpleListApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 

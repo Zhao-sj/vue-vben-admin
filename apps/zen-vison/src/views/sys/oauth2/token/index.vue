@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { OAuth2Api } from '#/api';
+import type { ActionItem } from '#/components';
 
 import { Page } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 
-import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
-import {
-  deleteAccessTokenApi,
-  getOAuth2TokenPageApi,
-  type OAuth2Api,
-} from '#/api';
-import { type ActionItem, TableAction } from '#/components';
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { deleteAccessTokenApi, getOAuth2TokenPageApi } from '#/api';
+import { TableAction } from '#/components';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';

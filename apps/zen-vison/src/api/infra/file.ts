@@ -1,9 +1,11 @@
 import type { AxiosRequestConfig } from '@vben/request';
 import type { Nullable } from '@vben/types';
 
+import type { PageParam, PageResult } from '#/api/common';
+
 import { v4 as uuidv4 } from 'uuid';
 
-import { ModuleEnum, type PageParam, type PageResult } from '#/api/common';
+import { ModuleEnum } from '#/api/common';
 import { requestClient } from '#/api/request';
 import { FileStorageEnum } from '#/enums';
 import { encryptBySha256 } from '#/utils';

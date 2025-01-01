@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { VbenFormSchema } from '#/adapter/form';
 import type { BaseSimple } from '#/api';
 
-import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
+import { useVbenForm } from '#/adapter/form';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';

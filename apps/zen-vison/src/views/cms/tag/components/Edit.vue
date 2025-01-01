@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { TagApi } from '#/api';
+
 import { useVbenModal } from '@vben/common-ui';
 
-import { getCmsTagApi, type TagApi, updateCmsTagApi } from '#/api';
+import { getCmsTagApi, updateCmsTagApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 

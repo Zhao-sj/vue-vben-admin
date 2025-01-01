@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { RoleApi } from '#/api';
+
 import { useVbenModal } from '@vben/common-ui';
 
-import { addRoleApi, type RoleApi } from '#/api';
+import { addRoleApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 

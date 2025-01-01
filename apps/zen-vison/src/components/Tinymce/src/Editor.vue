@@ -1,8 +1,10 @@
 <script lang="ts" setup>
+import type { RawEditorSettings } from 'tinymce';
+
 import { preferences, usePreferences } from '@vben/preferences';
 
 import { isNumber } from 'lodash-es';
-import tinymce, { Editor, type RawEditorSettings } from 'tinymce';
+import tinymce, { Editor } from 'tinymce';
 
 import { uploadFileApi } from '#/api';
 

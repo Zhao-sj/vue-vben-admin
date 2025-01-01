@@ -1,13 +1,11 @@
 <script setup lang="ts">
+import type { TenantApi } from '#/api';
+
 import { useVbenModal } from '@vben/common-ui';
 
 import { cloneDeep } from 'lodash-es';
 
-import {
-  addTenantPackageApi,
-  getMenuSimpleListApi,
-  type TenantApi,
-} from '#/api';
+import { addTenantPackageApi, getMenuSimpleListApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 

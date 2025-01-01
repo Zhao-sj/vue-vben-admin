@@ -1,13 +1,15 @@
 <script lang="ts" setup>
+import type { VbenFormSchema } from '@vben/common-ui';
 import type { Nullable } from '@vben/types';
 
-import { AuthenticationLogin, type VbenFormSchema, z } from '@vben/common-ui';
+import type { AuthApi } from '#/api';
+
+import { AuthenticationLogin, z } from '@vben/common-ui';
 
 import { useDebounceFn } from '@vueuse/core';
 import { ElInput } from 'element-plus';
 import { cloneDeep } from 'lodash-es';
 
-import { type AuthApi } from '#/api';
 import { $t } from '#/locales';
 import { useAuthStore } from '#/store';
 import { encryptBySha256 } from '#/utils/cipher';

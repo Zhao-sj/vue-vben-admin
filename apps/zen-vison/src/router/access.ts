@@ -4,10 +4,11 @@ import type {
   RouteRecordStringComponent,
 } from '@vben/types';
 
+import type { AuthApi } from '#/api';
+
 import { generateAccessible } from '@vben/access';
 import { preferences } from '@vben/preferences';
 
-import { type AuthApi } from '#/api';
 import { BasicLayout, IFrameView } from '#/layouts';
 
 const forbiddenComponent = () => import('#/views/_core/fallback/forbidden.vue');

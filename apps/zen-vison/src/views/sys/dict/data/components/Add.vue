@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { DictApi } from '#/api';
+
 import { useVbenModal } from '@vben/common-ui';
 
 import { cloneDeep, omit } from 'lodash-es';
 
-import { addDictDataApi, type DictApi, getDictTypeApi } from '#/api';
+import { addDictDataApi, getDictTypeApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 

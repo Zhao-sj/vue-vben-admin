@@ -1,14 +1,15 @@
 <script setup lang="ts">
+import type {
+  UploadInstance,
+  UploadRawFile,
+  UploadUserFile,
+} from 'element-plus';
+
 import { useVbenModal } from '@vben/common-ui';
 import { IconifyIcon } from '@vben/icons';
 
 import { useDebounceFn } from '@vueuse/core';
-import {
-  genFileId,
-  type UploadInstance,
-  type UploadRawFile,
-  type UploadUserFile,
-} from 'element-plus';
+import { genFileId } from 'element-plus';
 
 import { getUserImportTemplateApi } from '#/api';
 import { useRequest } from '#/hooks';

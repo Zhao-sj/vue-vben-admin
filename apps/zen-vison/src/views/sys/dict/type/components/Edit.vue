@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { DictApi } from '#/api';
+
 import { useVbenModal } from '@vben/common-ui';
 
-import { type DictApi, getDictTypeApi, updateDictTypeApi } from '#/api';
+import { getDictTypeApi, updateDictTypeApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 

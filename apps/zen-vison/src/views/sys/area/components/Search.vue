@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { VbenFormSchema } from '#/adapter/form';
+
 import { useVbenModal } from '@vben/common-ui';
 
 import { useDebounceFn } from '@vueuse/core';
 
-import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
+import { useVbenForm } from '#/adapter/form';
 import { getAreaApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';

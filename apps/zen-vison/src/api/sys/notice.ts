@@ -1,4 +1,6 @@
-import { ModuleEnum, type PageParam, type PageResult } from '#/api/common';
+import type { PageParam, PageResult } from '#/api/common';
+
+import { ModuleEnum } from '#/api/common';
 import { requestClient } from '#/api/request';
 
 const { SYSTEM } = ModuleEnum;

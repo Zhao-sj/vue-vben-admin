@@ -1,6 +1,8 @@
 import type { Nullable } from '@vben/types';
 
-import { type BaseSimple, ModuleEnum } from '#/api/common';
+import type { BaseSimple } from '#/api/common';
+
+import { ModuleEnum } from '#/api/common';
 import { requestClient } from '#/api/request';
 
 const { SYSTEM } = ModuleEnum;

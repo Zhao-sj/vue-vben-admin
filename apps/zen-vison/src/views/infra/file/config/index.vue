@@ -1,20 +1,22 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { FileApi } from '#/api';
+import type { ActionItem } from '#/components';
 
 import { Page, useVbenModal } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 
 import { ElLink } from 'element-plus';
 
-import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
   deleteFileConfigApi,
-  type FileApi,
   getFileConfigPageApi,
   testFileConfigApi,
   updateFileConfigMasterApi,
 } from '#/api';
-import { type ActionItem, TableAction } from '#/components';
+import { TableAction } from '#/components';
 import { DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';

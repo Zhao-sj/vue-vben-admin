@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import {
-  SliderCaptcha,
-  type SliderRotateVerifyPassingData,
-} from '@vben/common-ui';
+import type { SliderRotateVerifyPassingData } from '@vben/common-ui';
 
-import { type AuthApi } from '#/api';
+import type { AuthApi } from '#/api';
+
+import { SliderCaptcha } from '@vben/common-ui';
+
 import { $t } from '#/locales';
 
 interface Props {

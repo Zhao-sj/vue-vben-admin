@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
-import { type BaseSimple, buildMenuTree, type CategoryApi } from '#/api';
+import type { VbenFormSchema } from '#/adapter/form';
+import type { BaseSimple, CategoryApi } from '#/api';
+
+import { useVbenForm } from '#/adapter/form';
+import { buildMenuTree } from '#/api';
 import { Tinymce } from '#/components';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';

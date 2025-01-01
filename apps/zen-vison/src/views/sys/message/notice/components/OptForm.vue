@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
+import type { VbenFormSchema } from '#/adapter/form';
+
+import { useVbenForm } from '#/adapter/form';
 import { Tinymce } from '#/components';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';

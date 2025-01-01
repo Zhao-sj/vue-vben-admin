@@ -1,11 +1,9 @@
 <script setup lang="ts">
+import type { OAuth2Api } from '#/api';
+
 import { useVbenModal } from '@vben/common-ui';
 
-import {
-  getOAuth2ClientApi,
-  type OAuth2Api,
-  updateOAuth2ClientApi,
-} from '#/api';
+import { getOAuth2ClientApi, updateOAuth2ClientApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 

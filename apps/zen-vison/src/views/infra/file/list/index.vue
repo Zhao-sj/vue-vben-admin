@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { FileApi } from '#/api';
+import type { ActionItem } from '#/components';
 
 import { globalShareState, Page, useVbenDrawer } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
@@ -7,9 +10,9 @@ import { IconifyIcon } from '@vben/icons';
 
 import { useClipboard } from '@vueuse/core';
 
-import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
-import { deleteFileApi, type FileApi, getFilePageApi } from '#/api';
-import { type ActionItem, TableAction } from '#/components';
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { deleteFileApi, getFilePageApi } from '#/api';
+import { TableAction } from '#/components';
 import { $t } from '#/locales';
 
 import { FileUpload, VideoPreview } from './components';

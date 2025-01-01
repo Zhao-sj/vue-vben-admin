@@ -1,14 +1,11 @@
 <script setup lang="ts">
+import type { DeptApi } from '#/api';
+
 import { useVbenModal } from '@vben/common-ui';
 
 import { cloneDeep } from 'lodash-es';
 
-import {
-  addDeptApi,
-  type DeptApi,
-  getDeptSimpleListApi,
-  getUserSimpleListApi,
-} from '#/api';
+import { addDeptApi, getDeptSimpleListApi, getUserSimpleListApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 

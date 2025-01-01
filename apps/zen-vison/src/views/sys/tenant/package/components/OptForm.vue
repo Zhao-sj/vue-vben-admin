@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import type { VbenFormSchema } from '#/adapter/form';
+import type { MenuApi } from '#/api';
+
 import { ElTree } from 'element-plus';
 import { cloneDeep } from 'lodash-es';
 
-import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
-import { buildMenuTree, type MenuApi } from '#/api';
+import { useVbenForm } from '#/adapter/form';
+import { buildMenuTree } from '#/api';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';

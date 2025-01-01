@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { NoticeApi } from '#/api';
+
 import { useVbenDrawer } from '@vben/common-ui';
 
-import { addNoticeApi, type NoticeApi } from '#/api';
+import { addNoticeApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 

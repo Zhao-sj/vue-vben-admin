@@ -1,13 +1,11 @@
 <script setup lang="ts">
+import type { CategoryApi } from '#/api';
+
 import { useVbenModal } from '@vben/common-ui';
 
 import { cloneDeep } from 'lodash-es';
 
-import {
-  addCmsCategoryApi,
-  type CategoryApi,
-  getCmsCategorySimpleApi,
-} from '#/api';
+import { addCmsCategoryApi, getCmsCategorySimpleApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 

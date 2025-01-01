@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { FileApi } from '#/api';
+
 import { useVbenModal } from '@vben/common-ui';
 
 import { cloneDeep } from 'lodash-es';
 
-import { addFileConfigApi, type FileApi } from '#/api';
+import { addFileConfigApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 

@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import type { ArticleApi } from '#/api';
+
 import { useVbenDrawer } from '@vben/common-ui';
 
 import { cloneDeep } from 'lodash-es';
 
 import {
-  type ArticleApi,
   getCmsArticleApi,
   getCmsCategorySimpleApi,
   getCmsTagSimpleApi,

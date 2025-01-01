@@ -1,5 +1,8 @@
 <script lang="ts" setup>
+import type { NotificationItem } from '@vben/layouts';
 import type { Nullable } from '@vben/types';
+
+import type { AuthApi } from '#/api';
 
 import { computed, ref } from 'vue';
 
@@ -10,7 +13,6 @@ import {
   BasicLayout,
   LockScreen,
   Notification,
-  type NotificationItem,
   UserDropdown,
 } from '@vben/layouts';
 import { preferences } from '@vben/preferences';
@@ -18,7 +20,6 @@ import { useAccessStore } from '@vben/stores';
 
 import { useDebounceFn } from '@vueuse/core';
 
-import { type AuthApi } from '#/api';
 import { ACCOUNT_SETTING, NoticeType } from '#/enums';
 import { $t } from '#/locales';
 import { useAuthStore, useUserStore, useWsStore } from '#/store';

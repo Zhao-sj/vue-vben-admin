@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { UserApi } from '#/api';
+
 import { useVbenModal } from '@vben/common-ui';
 
 import {
@@ -6,7 +8,6 @@ import {
   getPostSimpleListApi,
   getUserApi,
   updateUserApi,
-  type UserApi,
 } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';

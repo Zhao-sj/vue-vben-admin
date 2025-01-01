@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { PostApi } from '#/api';
+
 import { useVbenModal } from '@vben/common-ui';
 
-import { addPostApi, type PostApi } from '#/api';
+import { addPostApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 

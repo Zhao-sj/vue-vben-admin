@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { VbenFormSchema } from '#/adapter/form';
+
 import { IconifyIcon } from '@vben/icons';
 
-import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
+import { useVbenForm } from '#/adapter/form';
 import { MenuType } from '#/enums';
 import { $t } from '#/locales';
 

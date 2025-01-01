@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { FileApi } from '#/api';
+
 import { useVbenModal } from '@vben/common-ui';
 
-import { type FileApi, getFileConfigApi, updateFileConfigApi } from '#/api';
+import { getFileConfigApi, updateFileConfigApi } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 

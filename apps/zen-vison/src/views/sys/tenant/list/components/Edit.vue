@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { TenantApi } from '#/api';
+
 import { useVbenModal } from '@vben/common-ui';
 
 import dayjs from 'dayjs';
@@ -7,7 +9,6 @@ import { cloneDeep } from 'lodash-es';
 import {
   getTenantApi,
   getTenantPackageSimpleListApi,
-  type TenantApi,
   updateTenantApi,
 } from '#/api';
 import { useRequest } from '#/hooks';

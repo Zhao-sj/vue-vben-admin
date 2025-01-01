@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { ActionItem } from '#/components';
+
 import { useIsMobile } from '@vben/hooks';
 import { IconifyIcon } from '@vben/icons';
 
 import { genFileId } from 'element-plus';
 
-import { type VxeGridProps } from '#/adapter/vxe-table';
-import { type ActionItem, TableAction } from '#/components';
+import { TableAction } from '#/components';
 import { $t } from '#/locales';
 import { formatFileSize } from '#/utils';
 

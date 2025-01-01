@@ -1,17 +1,19 @@
 <script setup lang="ts">
+import type { VbenFormSchema } from '#/adapter/form';
+import type { RoleApi } from '#/api';
+
 import { useVbenModal } from '@vben/common-ui';
 
 import { ElTree } from 'element-plus';
 import { cloneDeep } from 'lodash-es';
 
-import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
+import { useVbenForm } from '#/adapter/form';
 import {
   assignRoleMenuApi,
   buildMenuTree,
   getMenuSimpleListApi,
   getRoleApi,
   getRoleMenuListApi,
-  type RoleApi,
 } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';

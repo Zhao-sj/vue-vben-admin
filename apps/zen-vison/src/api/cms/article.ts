@@ -1,11 +1,8 @@
 import type { Nullable } from '@vben/types';
 
-import {
-  type BaseSimple,
-  ModuleEnum,
-  type PageParam,
-  type PageResult,
-} from '#/api/common';
+import type { BaseSimple, PageParam, PageResult } from '#/api/common';
+
+import { ModuleEnum } from '#/api/common';
 import { requestClient } from '#/api/request';
 
 const { CMS } = ModuleEnum;

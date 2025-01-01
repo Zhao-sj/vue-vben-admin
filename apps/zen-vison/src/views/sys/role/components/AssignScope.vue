@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import type { VbenFormSchema } from '#/adapter/form';
+
 import { useVbenModal } from '@vben/common-ui';
 import { IconifyIcon } from '@vben/icons';
 
 import { ElTree } from 'element-plus';
 import { cloneDeep } from 'lodash-es';
 
-import { useVbenForm, type VbenFormSchema } from '#/adapter/form';
+import { useVbenForm } from '#/adapter/form';
 import {
   assignRoleDataScopeApi,
   buildMenuTree,

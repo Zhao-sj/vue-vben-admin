@@ -3,10 +3,12 @@ import type {
   VbenFormProps,
 } from '@vben/common-ui';
 
+import type { ComponentType } from './components';
+
 import { setupVbenForm, useVbenForm as useForm, z } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
-import { type ComponentType, initComponentAdapter } from './components';
+import { initComponentAdapter } from './components';
 
 // 初始化组件适配器
 initComponentAdapter().then(() => {

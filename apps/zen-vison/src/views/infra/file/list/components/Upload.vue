@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { UploadFile } from './DragUpload.vue';
+
 import { useVbenDrawer } from '@vben/common-ui';
 
 import { getMasterFileConfigApi, uploadFileApi } from '#/api';
@@ -7,7 +9,7 @@ import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { formatFileSize, paralleTask } from '#/utils';
 
-import DragUpload, { type UploadFile } from './DragUpload.vue';
+import DragUpload from './DragUpload.vue';
 
 interface Emits {
   (e: 'success'): void;

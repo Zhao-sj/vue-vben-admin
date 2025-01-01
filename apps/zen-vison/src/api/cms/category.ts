@@ -1,4 +1,6 @@
-import { type BaseSimple, ModuleEnum, type PageResult } from '#/api/common';
+import type { BaseSimple, PageResult } from '#/api/common';
+
+import { ModuleEnum } from '#/api/common';
 import { requestClient } from '#/api/request';
 
 const { CMS } = ModuleEnum;

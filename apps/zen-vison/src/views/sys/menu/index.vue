@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { MenuApi } from '#/api';
+import type { ActionItem } from '#/components';
 
 import { Page, useVbenModal } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 import { IconifyIcon } from '@vben/icons';
 
-import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
-import { deleteMenuApi, getMenuListApi, type MenuApi } from '#/api';
-import { type ActionItem, TableAction } from '#/components';
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { deleteMenuApi, getMenuListApi } from '#/api';
+import { TableAction } from '#/components';
 import { DictTypeEnum, MenuType } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';

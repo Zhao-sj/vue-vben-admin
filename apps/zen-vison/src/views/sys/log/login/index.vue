@@ -1,18 +1,20 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
+import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { LogApi } from '#/api';
+import type { ActionItem } from '#/components';
 
 import { useAccess } from '@vben/access';
 import { Page, useVbenModal } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 
-import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
   exporLoginLogApi,
   getLoginLogPageListApi,
   getTenantSimpleListApi,
-  type LogApi,
 } from '#/api';
-import { type ActionItem, TableAction, TableExport } from '#/components';
+import { TableAction, TableExport } from '#/components';
 import { DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';

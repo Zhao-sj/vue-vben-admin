@@ -22,7 +22,7 @@ export default function subscribe(listener: Listener) {
 
   return function unsubscribe() {
     const index = listeners.indexOf(listener);
-    if (index > -1) {
+    if (index !== -1) {
       listeners.splice(index, 1);
     }
   };

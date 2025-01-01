@@ -25,14 +25,6 @@ export class AesEncryption {
     }
   }
 
-  private getOptions() {
-    return {
-      iv: this.iv,
-      mode: ECB,
-      padding: Pkcs7,
-    };
-  }
-
   decryptByAES(cipherText: string) {
     if (!this.key) {
       return;
@@ -47,6 +39,14 @@ export class AesEncryption {
     }
 
     return encrypt(cipherText, this.key, this.getOptions()).toString();
+  }
+
+  private getOptions() {
+    return {
+      iv: this.iv,
+      mode: ECB,
+      padding: Pkcs7,
+    };
   }
 }
 

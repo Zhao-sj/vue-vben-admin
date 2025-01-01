@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { IPlayerOptions } from 'xgplayer';
+
 import type { Nullable } from '@vben/types';
 
 import { usePreferences } from '@vben/preferences';
 
-import Player, { type IPlayerOptions } from 'xgplayer';
+import Player from 'xgplayer';
 
 import 'xgplayer/dist/index.min.css';
 import './index.scss';
