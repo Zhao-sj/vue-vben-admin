@@ -72,7 +72,10 @@ function setupAccessGuard(router: Router) {
         return {
           path: LOGIN_PATH,
           // 如不需要，直接删除 query
-          query: { redirect: encodeURIComponent(to.fullPath) },
+          query:
+            to.fullPath === DEFAULT_HOME_PATH
+              ? {}
+              : { redirect: encodeURIComponent(to.fullPath) },
           // 携带当前跳转的页面，登录后重新跳转该页面
           replace: true,
         };
@@ -112,7 +115,10 @@ function setupAccessGuard(router: Router) {
     accessStore.setAccessMenus(accessibleMenus);
     accessStore.setAccessRoutes(accessibleRoutes);
     accessStore.setIsAccessChecked(true);
-    const redirectPath = (from.query.redirect ?? to.path) as string;
+    const redirectPath = (from.query.redirect ??
+      (to.path === DEFAULT_HOME_PATH
+        ? DEFAULT_HOME_PATH
+        : to.fullPath)) as string;
 
     return {
       path: decodeURIComponent(redirectPath),
