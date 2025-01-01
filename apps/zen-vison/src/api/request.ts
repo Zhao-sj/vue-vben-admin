@@ -176,7 +176,7 @@ function createRequestClient(baseURL: string) {
         if (successMessageMode === 'message') {
           ElMessage.success(successMsg);
         } else if (successMessageMode === 'modal') {
-          ElMessageBox.alert(successMsg, $t('page.success'), {
+          ElMessageBox.alert(successMsg, $t('page.successTip'), {
             type: 'success',
           });
         }
