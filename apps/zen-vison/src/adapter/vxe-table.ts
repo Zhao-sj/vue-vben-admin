@@ -26,8 +26,13 @@ setupVbenVxeTable({
           enabled: false,
         },
         toolbarConfig: {
-          custom: true,
+          custom: {
+            icon: 'vxe-icon-setting',
+          },
           zoom: true,
+          refresh: {
+            code: 'query',
+          },
         },
         size: 'small',
         proxyConfig: {
@@ -40,9 +45,11 @@ setupVbenVxeTable({
           showActiveMsg: true,
           showResponseMsg: false,
         },
+        pagerConfig: {
+          pageSizes: [10, 20, 50, 100],
+        },
       },
       table: {
-        border: true,
         columnConfig: {
           resizable: true,
         },

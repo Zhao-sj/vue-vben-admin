@@ -39,7 +39,6 @@ const columns: AreaColumns = [
 const gridOptions: VxeGridProps<AreaApi.Simple> = {
   columns,
   height: 'auto',
-  customConfig: {},
   id: 'area_manage',
   keyboardConfig: {
     isArrow: true,
@@ -55,9 +54,6 @@ const gridOptions: VxeGridProps<AreaApi.Simple> = {
     isCurrent: true,
   },
   stripe: false,
-  toolbarConfig: {
-    refresh: true,
-  },
   treeConfig: {
     childrenField: 'children',
     rowField: 'id',

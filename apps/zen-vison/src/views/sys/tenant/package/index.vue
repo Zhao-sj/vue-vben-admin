@@ -128,7 +128,6 @@ const gridOptions: VxeGridProps<TenantApi.Package> = {
     highlight: true,
     range: true,
   },
-  customConfig: {},
   id: 'tenant_package',
   height: 'auto',
   proxyConfig: {
@@ -140,9 +139,6 @@ const gridOptions: VxeGridProps<TenantApi.Package> = {
           ...formValues,
         }),
     },
-  },
-  toolbarConfig: {
-    refresh: true,
   },
 };
 

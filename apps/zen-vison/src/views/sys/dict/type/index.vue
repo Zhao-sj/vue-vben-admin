@@ -155,7 +155,6 @@ const gridOptions: VxeGridProps<DictApi.Type> = {
     highlight: true,
     range: true,
   },
-  customConfig: {},
   id: 'dict_type_manage',
   proxyConfig: {
     ajax: {
@@ -166,9 +165,6 @@ const gridOptions: VxeGridProps<DictApi.Type> = {
           ...formValues,
         }),
     },
-  },
-  toolbarConfig: {
-    refresh: true,
   },
 };
 

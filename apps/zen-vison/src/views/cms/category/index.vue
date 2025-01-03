@@ -105,7 +105,6 @@ const columns: VxeGridProps<CategoryApi.Category>['columns'] = [
 
 const gridOptions: VxeGridProps<CategoryApi.Category> = {
   columns,
-  customConfig: {},
   id: 'cms_category_manage',
   keyboardConfig: {
     isArrow: true,
@@ -119,9 +118,6 @@ const gridOptions: VxeGridProps<CategoryApi.Category> = {
   },
   height: 'auto',
   stripe: false,
-  toolbarConfig: {
-    refresh: true,
-  },
   pagerConfig: {
     enabled: false,
   },

@@ -222,7 +222,6 @@ const gridOptions: VxeGridProps<NoticeApi.Notice> = {
     highlight: true,
     range: true,
   },
-  customConfig: {},
   id: 'cms_article_manage',
   proxyConfig: {
     ajax: {
@@ -236,9 +235,6 @@ const gridOptions: VxeGridProps<NoticeApi.Notice> = {
             : formValues.categoryId,
         }),
     },
-  },
-  toolbarConfig: {
-    refresh: true,
   },
 };
 

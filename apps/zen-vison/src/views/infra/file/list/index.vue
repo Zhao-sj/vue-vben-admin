@@ -126,7 +126,6 @@ const gridOptions: VxeGridProps<FileApi.FileItem> = {
     highlight: true,
     range: true,
   },
-  customConfig: {},
   id: 'file_list',
   height: 'auto',
   proxyConfig: {
@@ -138,9 +137,6 @@ const gridOptions: VxeGridProps<FileApi.FileItem> = {
           ...formValues,
         }),
     },
-  },
-  toolbarConfig: {
-    refresh: true,
   },
   menuConfig: {
     body: {

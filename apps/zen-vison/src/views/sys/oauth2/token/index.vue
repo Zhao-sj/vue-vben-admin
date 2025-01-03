@@ -117,7 +117,6 @@ const columns: VxeGridProps<OAuth2Api.AccessToken>['columns'] = [
 const gridOptions: VxeGridProps<OAuth2Api.AccessToken> = {
   columns,
   height: 'auto',
-  customConfig: {},
   id: 'oauth2_token_manage',
   proxyConfig: {
     ajax: {
@@ -128,9 +127,6 @@ const gridOptions: VxeGridProps<OAuth2Api.AccessToken> = {
           ...formValues,
         }),
     },
-  },
-  toolbarConfig: {
-    refresh: true,
   },
 };
 

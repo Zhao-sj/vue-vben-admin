@@ -189,7 +189,6 @@ const gridOptions: VxeGridProps<RoleApi.Role> = {
     highlight: true,
     range: true,
   },
-  customConfig: {},
   id: 'role_manage',
   height: 'auto',
   proxyConfig: {
@@ -201,9 +200,6 @@ const gridOptions: VxeGridProps<RoleApi.Role> = {
           ...formValues,
         }),
     },
-  },
-  toolbarConfig: {
-    refresh: true,
   },
 };
 

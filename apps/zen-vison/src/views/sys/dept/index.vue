@@ -121,7 +121,6 @@ const columns: VxeGridProps<DeptApi.Dept>['columns'] = [
 
 const gridOptions: VxeGridProps<DeptApi.Dept> = {
   columns,
-  customConfig: {},
   id: 'dept_manage',
   keyboardConfig: {
     isArrow: true,
@@ -135,9 +134,6 @@ const gridOptions: VxeGridProps<DeptApi.Dept> = {
   },
   height: 'auto',
   stripe: false,
-  toolbarConfig: {
-    refresh: true,
-  },
   pagerConfig: {
     enabled: false,
   },
@@ -259,7 +255,6 @@ function toggleExpandAll() {
           <ElButton
             :title="`${$t('page.expand')} / ${$t('page.collapsed')}`"
             circle
-            class="scale-95"
             plain
             @click="toggleExpandAll"
           >

@@ -189,7 +189,6 @@ const columns: VxeGridProps<OAuth2Api.Client>['columns'] = [
 const gridOptions: VxeGridProps<OAuth2Api.Client> = {
   columns,
   height: 'auto',
-  customConfig: {},
   id: 'oauth2_client_manage',
   proxyConfig: {
     ajax: {
@@ -200,9 +199,6 @@ const gridOptions: VxeGridProps<OAuth2Api.Client> = {
           ...formValues,
         }),
     },
-  },
-  toolbarConfig: {
-    refresh: true,
   },
 };
 

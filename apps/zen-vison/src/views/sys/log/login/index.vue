@@ -181,7 +181,6 @@ const columns: VxeGridProps<LogApi.Login>['columns'] = [
 const gridOptions: VxeGridProps<LogApi.Login> = {
   columns,
   height: 'auto',
-  customConfig: {},
   id: 'log_login_manage',
   proxyConfig: {
     ajax: {
@@ -192,9 +191,6 @@ const gridOptions: VxeGridProps<LogApi.Login> = {
           ...formValues,
         }),
     },
-  },
-  toolbarConfig: {
-    refresh: true,
   },
 };
 

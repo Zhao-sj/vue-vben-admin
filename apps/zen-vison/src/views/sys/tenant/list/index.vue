@@ -193,7 +193,6 @@ const gridOptions: VxeGridProps<TenantApi.Tenant> = {
     highlight: true,
     range: true,
   },
-  customConfig: {},
   id: 'tenant_list',
   height: 'auto',
   proxyConfig: {
@@ -209,9 +208,6 @@ const gridOptions: VxeGridProps<TenantApi.Tenant> = {
         });
       },
     },
-  },
-  toolbarConfig: {
-    refresh: true,
   },
 };
 

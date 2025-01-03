@@ -240,7 +240,6 @@ const gridOptions: VxeGridProps<LogApi.Error> = {
     highlight: true,
     range: true,
   },
-  customConfig: {},
   id: 'log_error_manage',
   proxyConfig: {
     ajax: {
@@ -251,9 +250,6 @@ const gridOptions: VxeGridProps<LogApi.Error> = {
           ...formValues,
         }),
     },
-  },
-  toolbarConfig: {
-    refresh: true,
   },
 };
 

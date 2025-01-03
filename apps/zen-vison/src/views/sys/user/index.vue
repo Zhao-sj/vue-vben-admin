@@ -231,7 +231,6 @@ const gridOptions: VxeGridProps<UserApi.User> = {
     highlight: true,
     range: true,
   },
-  customConfig: {},
   id: 'user_manage',
   height: 'auto',
   proxyConfig: {
@@ -243,9 +242,6 @@ const gridOptions: VxeGridProps<UserApi.User> = {
           ...formValues,
         }),
     },
-  },
-  toolbarConfig: {
-    refresh: true,
   },
 };
 

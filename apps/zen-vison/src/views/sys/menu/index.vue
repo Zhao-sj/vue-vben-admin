@@ -119,12 +119,16 @@ const columns: VxeGridProps<MenuApi.Menu>['columns'] = [
 
 const gridOptions: VxeGridProps<MenuApi.Menu> = {
   columns,
-  customConfig: {},
   id: 'menu_manage',
   keyboardConfig: {
     isArrow: true,
     isBack: true,
     isEnter: true,
+  },
+  showOverflow: true,
+  scrollY: {
+    enabled: true,
+    gt: 0,
   },
   proxyConfig: {
     ajax: {
@@ -136,11 +140,7 @@ const gridOptions: VxeGridProps<MenuApi.Menu> = {
   },
   height: 'auto',
   stripe: false,
-  toolbarConfig: {
-    refresh: true,
-  },
   treeConfig: {
-    // expandAll: true,
     parentField: 'parentId',
     rowField: 'id',
     transform: true,
@@ -219,7 +219,6 @@ async function getMenuList(menuQuery: MenuApi.Query) {
 async function reloadTable() {
   const values = await gridApi.formApi.getValues();
   await gridApi.reload(values);
-  // gridApi.grid.setAllTreeExpand(true);
 }
 
 function toggleExpandAll() {
@@ -248,7 +247,6 @@ function toggleExpandAll() {
           <ElButton
             :title="`${$t('page.expand')} / ${$t('page.collapsed')}`"
             circle
-            class="scale-95"
             plain
             @click="toggleExpandAll"
           >

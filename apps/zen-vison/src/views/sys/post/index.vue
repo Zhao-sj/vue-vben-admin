@@ -147,7 +147,6 @@ const gridOptions: VxeGridProps<PostApi.Post> = {
     highlight: true,
     range: true,
   },
-  customConfig: {},
   id: 'post_manage',
   height: 'auto',
   proxyConfig: {
@@ -159,9 +158,6 @@ const gridOptions: VxeGridProps<PostApi.Post> = {
           ...formValues,
         }),
     },
-  },
-  toolbarConfig: {
-    refresh: true,
   },
 };
 
