@@ -16,8 +16,8 @@ import {
   getRolePageListApi,
   updateRoleStatusApi,
 } from '#/api';
-import { TableAction, TableExport } from '#/components';
-import { DictRoleType, DictStatus, DictTypeEnum } from '#/enums';
+import { TableAction, TableExport, TableSwitch } from '#/components';
+import { DictRoleType, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -292,30 +292,6 @@ function createActions(row: RoleApi.Role) {
   return { actions, dropdownActions };
 }
 
-function handleStatusChange(row: RoleApi.Role) {
-  const { DISABLE, ENABLE } = DictStatus;
-
-  const label = row.status === ENABLE ? $t('page.enable') : $t('page.disable');
-
-  const title = $t('page.systemTip');
-  const message = $t('sys.role.confirm.status', [label, row.code]);
-  const resetStatus = () => {
-    row.status = row.status === ENABLE ? DISABLE : ENABLE;
-  };
-
-  ElMessageBox.confirm(message, title, {
-    closeOnClickModal: false,
-    draggable: true,
-    type: 'warning',
-  })
-    .then(() => {
-      updateStatus({ id: row.id, status: row.status })
-        .then(requestAfter)
-        .catch(resetStatus);
-    })
-    .catch(resetStatus);
-}
-
 function requestAfter(reload = true) {
   ElMessage.success($t('page.success'));
   reload && reloadTable();
@@ -360,12 +336,13 @@ async function handleExport(fileName: string) {
       </template>
 
       <template #status="{ row }">
-        <ElSwitch
+        <TableSwitch
           v-model="row.status"
-          :active-value="0"
           :disabled="statusDisabled"
-          :inactive-value="1"
-          @change="handleStatusChange(row)"
+          :row
+          :tip="(action) => $t('sys.role.confirm.status', [action, row.code])"
+          :on-action="() => updateStatus({ id: row.id, status: row.status })"
+          :on-success="requestAfter"
         />
       </template>
 

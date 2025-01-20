@@ -19,8 +19,8 @@ import {
   resetUserPasswordApi,
   updateUserStatusApi,
 } from '#/api';
-import { TableAction, TableExport } from '#/components';
-import { DictSex, DictStatus, DictTypeEnum } from '#/enums';
+import { TableAction, TableExport, TableSwitch } from '#/components';
+import { DictSex, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore, useUserStore } from '#/store';
@@ -365,30 +365,6 @@ function createSex(sex: number) {
   };
 }
 
-function handleStatusChange(row: UserApi.User) {
-  const { DISABLE, ENABLE } = DictStatus;
-
-  const label = row.status === ENABLE ? $t('page.enable') : $t('page.disable');
-
-  const title = $t('page.systemTip');
-  const message = $t('sys.user.confirm.status', [label, row.username]);
-  const resetStatus = () => {
-    row.status = row.status === ENABLE ? DISABLE : ENABLE;
-  };
-
-  ElMessageBox.confirm(message, title, {
-    closeOnClickModal: false,
-    draggable: true,
-    type: 'warning',
-  })
-    .then(() => {
-      updateStatus({ id: row.id, status: row.status })
-        .then(requestAfter)
-        .catch(resetStatus);
-    })
-    .catch(resetStatus);
-}
-
 function requestAfter(reload = true) {
   ElMessage.success($t('page.success'));
   reload && reloadTable();
@@ -460,12 +436,18 @@ async function reloadTable(deptId?: number) {
           </template>
 
           <template #status="{ row }">
-            <ElSwitch
+            <TableSwitch
               v-model="row.status"
-              :active-value="0"
               :disabled="statusDisabled"
-              :inactive-value="1"
-              @change="handleStatusChange(row)"
+              :row
+              :tip="
+                (action) =>
+                  $t('sys.user.confirm.status', [action, row.username])
+              "
+              :on-action="
+                () => updateStatus({ id: row.id, status: row.status })
+              "
+              :on-success="requestAfter"
             />
           </template>
 
