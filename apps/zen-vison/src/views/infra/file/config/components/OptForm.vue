@@ -147,8 +147,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'RadioGroup',
     componentProps: {
+      isButton: true,
       options: modeOptions,
-      optionType: 'button',
     },
     fieldName: 'config.mode',
     label: $t('infra.file.config.mode.title'),

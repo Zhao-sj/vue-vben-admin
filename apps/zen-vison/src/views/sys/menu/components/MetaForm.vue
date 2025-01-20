@@ -53,8 +53,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         {
           component: 'RadioGroup',
           componentProps: {
+            isButton: true,
             options: chooseOpts,
-            optionType: 'button',
           },
           defaultValue: false,
           fieldName: 'keepAlive',
@@ -66,8 +66,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'RadioGroup',
     componentProps: {
+      isButton: true,
       options: chooseOpts,
-      optionType: 'button',
     },
     defaultValue: false,
     fieldName: 'hideInMenu',
@@ -77,8 +77,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'RadioGroup',
     componentProps: {
+      isButton: true,
       options: chooseOpts,
-      optionType: 'button',
     },
     defaultValue: false,
     fieldName: 'hideInTab',
@@ -88,8 +88,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'RadioGroup',
     componentProps: {
+      isButton: true,
       options: chooseOpts,
-      optionType: 'button',
     },
     defaultValue: false,
     fieldName: 'hideInBreadcrumb',
@@ -99,8 +99,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'RadioGroup',
     componentProps: {
+      isButton: true,
       options: chooseOpts,
-      optionType: 'button',
     },
     defaultValue: false,
     fieldName: 'hideChildrenInMenu',
@@ -110,8 +110,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'RadioGroup',
     componentProps: {
+      isButton: true,
       options: badgeTypeOpts,
-      optionType: 'button',
     },
     defaultValue: 'normal',
     fieldName: 'badgeType',
@@ -140,8 +140,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'RadioGroup',
     componentProps: {
+      isButton: true,
       options: chooseOpts,
-      optionType: 'button',
     },
     defaultValue: false,
     fieldName: 'affixTab',
@@ -190,8 +190,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
         {
           component: 'RadioGroup',
           componentProps: {
+            isButton: true,
             options: chooseOpts,
-            optionType: 'button',
           },
           defaultValue: false,
           fieldName: 'menuVisibleWithForbidden',

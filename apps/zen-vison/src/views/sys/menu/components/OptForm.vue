@@ -56,8 +56,8 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'RadioGroup',
     componentProps: {
+      isButton: true,
       options: menuTypeOpts,
-      optionType: 'button',
     },
     defaultValue: MenuType.MENU,
     dependencies: {
@@ -171,11 +171,11 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'RadioGroup',
     componentProps: {
+      isButton: true,
       options: dictStore.getDictDataList(DictTypeEnum.STATUS).map((item) => ({
         ...item,
         value: +item.value,
       })),
-      optionType: 'button',
     },
     defaultValue: 0,
     fieldName: 'status',

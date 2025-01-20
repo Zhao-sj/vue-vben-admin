@@ -48,13 +48,13 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'RadioGroup',
     componentProps: {
+      isButton: true,
       options: dictStore
         .getDictDataList(DictTypeEnum.ARTICLE_STATUS)
         .map((item) => ({
           ...item,
           value: +item.value,
         })),
-      optionType: 'button',
     },
     defaultValue: 10,
     fieldName: 'status',

@@ -22,6 +22,9 @@ import {
   ElInput,
   ElInputNumber,
   ElNotification,
+  ElRadio,
+  ElRadioButton,
+  ElRadioGroup,
   ElSelectV2,
   ElSpace,
   ElSwitch,
@@ -32,7 +35,6 @@ import {
 import { IconPicker, VueDatePicker } from '#/components';
 
 import AdapterImageUpload from './ImageUpload.vue';
-import AdapterRadioGroup from './RadioGroup.vue';
 import AdapterSelect from './Select.vue';
 
 const withDefaultPlaceholder = <T extends Component>(
@@ -123,7 +125,25 @@ async function initComponentAdapter() {
     IconPicker: withDefaultPlaceholder(IconPicker, 'select'),
     Input: withDefaultPlaceholder(ElInput, 'input'),
     InputNumber: withDefaultPlaceholder(ElInputNumber, 'input'),
-    RadioGroup: AdapterRadioGroup,
+    RadioGroup: (props, { attrs, slots }) => {
+      let defaultSlot;
+      if (Reflect.has(slots, 'default')) {
+        defaultSlot = slots.default;
+      } else {
+        const { options } = attrs;
+        if (Array.isArray(options)) {
+          defaultSlot = () =>
+            options.map((option) =>
+              h(attrs.isButton ? ElRadioButton : ElRadio, option),
+            );
+        }
+      }
+      return h(
+        ElRadioGroup,
+        { ...props, ...attrs },
+        { ...slots, default: defaultSlot },
+      );
+    },
     Select: withDefaultPlaceholder(AdapterSelect, 'select'),
     Space: ElSpace,
     Switch: ElSwitch,
