@@ -35,7 +35,6 @@ import {
 import { IconPicker, VueDatePicker } from '#/components';
 
 import AdapterImageUpload from './ImageUpload.vue';
-import AdapterSelect from './Select.vue';
 
 const withDefaultPlaceholder = <T extends Component>(
   component: T,
@@ -144,7 +143,9 @@ async function initComponentAdapter() {
         { ...slots, default: defaultSlot },
       );
     },
-    Select: withDefaultPlaceholder(AdapterSelect, 'select'),
+    Select: (props, { attrs, slots }) => {
+      return h(ElSelectV2, { ...props, attrs }, slots);
+    },
     Space: ElSpace,
     Switch: ElSwitch,
     TimePicker: ElTimePicker,
