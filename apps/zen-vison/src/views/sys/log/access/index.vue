@@ -76,10 +76,11 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Select',
     componentProps: {
-      options: tenantList.value?.map((item) => ({
-        label: item.name,
-        value: item.id,
-      })),
+      options:
+        tenantList.value?.map((item) => ({
+          label: item.name,
+          value: item.id,
+        })) || [],
     },
     fieldName: 'tenantId',
     label: $t('sys.log.access.tenant'),

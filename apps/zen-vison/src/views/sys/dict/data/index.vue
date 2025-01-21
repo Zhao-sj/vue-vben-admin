@@ -59,10 +59,11 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     componentProps: {
       clearable: false,
       loading,
-      options: dictTypeList.value?.map((item) => ({
-        label: item.name,
-        value: item.id,
-      })),
+      options:
+        dictTypeList.value?.map((item) => ({
+          label: item.name,
+          value: item.id,
+        })) || [],
       onChange: reloadTable,
     },
     defaultValue: +currentRoute.value.params.id!,

@@ -67,10 +67,11 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     componentProps: {
       multiple: true,
       multipleLimit: 3,
-      options: tagList.value?.map((item) => ({
-        label: item.name,
-        value: item.id,
-      })),
+      options:
+        tagList.value?.map((item) => ({
+          label: item.name,
+          value: item.id,
+        })) || [],
     },
     fieldName: 'tagIds',
     label: $t('cms.article.tag'),
