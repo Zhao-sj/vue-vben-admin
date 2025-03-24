@@ -103,6 +103,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Input',
     componentProps: {
       width: '100%',
+      height: 450,
       options: {
         auto_focus: false,
         placeholder: $t('page.pleaseInput'),

@@ -8,6 +8,6 @@ export const plugins = [
 ];
 
 export const toolbar = [
-  'undo redo | formatselect | fontsizeselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | lineheight forecolor backcolor | indent2em outdent indent | bullist numlist | hr  subscript superscript',
-  'removeformat searchreplace preview fullscreen  link image media  table insertdatetime  anchor pagebreak  blockquote code codesample',
+  'undo redo | bold italic underline strikethrough | fontsizeselect | formatselect | alignleft aligncenter alignright alignjustify | indent2em outdent indent | bullist numlist lineheight',
+  'forecolor backcolor | link image media | table insertdatetime | hr subscript superscript | removeformat preview fullscreen',
 ];
