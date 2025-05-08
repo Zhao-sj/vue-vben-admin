@@ -113,6 +113,7 @@ const columns: VxeGridProps<FileApi.FileItem>['columns'] = [
     formatter: 'formatDateTime',
   },
   {
+    field: 'opt',
     title: $t('page.options'),
     width: 120,
     slots: { default: 'opt' },

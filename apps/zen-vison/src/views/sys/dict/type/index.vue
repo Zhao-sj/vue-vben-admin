@@ -141,6 +141,7 @@ const columns: VxeGridProps<DictApi.Type>['columns'] = [
     formatter: 'formatDateTime',
   },
   {
+    field: 'opt',
     title: $t('page.options'),
     width: 120,
     fixed: isMobile.value ? null : 'right',

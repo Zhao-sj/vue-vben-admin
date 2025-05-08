@@ -115,6 +115,7 @@ const columns: VxeGridProps<TenantApi.Package>['columns'] = [
     title: $t('page.createTime'),
   },
   {
+    field: 'opt',
     title: $t('page.options'),
     width: 120,
     slots: { default: 'opt' },

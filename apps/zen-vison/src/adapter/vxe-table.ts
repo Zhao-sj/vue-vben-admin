@@ -61,6 +61,9 @@ setupVbenVxeTable({
           isCurrent: true,
           isHover: true,
         },
+        currentRowConfig: {
+          isFollowSelected: true,
+        },
         stripe: true,
       },
     });

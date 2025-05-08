@@ -117,6 +117,7 @@ const columns: VxeGridProps<NoticeApi.Notice>['columns'] = [
     formatter: 'formatDateTime',
   },
   {
+    field: 'opt',
     title: $t('page.options'),
     width: 120,
     fixed: isMobile.value ? null : 'right',

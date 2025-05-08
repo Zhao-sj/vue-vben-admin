@@ -237,6 +237,7 @@ const columns: VxeGridProps<LogApi.Access>['columns'] = [
     visible: false,
   },
   {
+    field: 'opt',
     title: $t('page.options'),
     width: 120,
     fixed: isMobile.value ? null : 'right',

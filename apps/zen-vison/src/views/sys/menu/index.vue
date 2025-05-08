@@ -69,6 +69,7 @@ const columns: VxeGridProps<MenuApi.Menu>['columns'] = [
     treeNode: true,
   },
   {
+    field: 'icon',
     minWidth: 80,
     title: $t('sys.menu.icon'),
     slots: { default: 'icon' },
@@ -110,6 +111,7 @@ const columns: VxeGridProps<MenuApi.Menu>['columns'] = [
     formatter: 'formatDateTime',
   },
   {
+    field: 'opt',
     title: $t('page.options'),
     width: 120,
     fixed: isMobile.value ? null : 'right',

@@ -217,6 +217,7 @@ const columns: VxeGridProps<UserApi.User>['columns'] = [
     title: $t('page.createTime'),
   },
   {
+    field: 'opt',
     title: $t('page.options'),
     width: 120,
     fixed: isMobile.value ? null : 'right',

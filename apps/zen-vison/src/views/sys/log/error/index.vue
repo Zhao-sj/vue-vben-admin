@@ -226,6 +226,7 @@ const columns: VxeGridProps<LogApi.Error>['columns'] = [
     },
   },
   {
+    field: 'opt',
     title: $t('page.options'),
     width: 240,
     fixed: isMobile.value ? null : 'right',
