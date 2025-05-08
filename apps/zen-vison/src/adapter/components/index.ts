@@ -40,10 +40,11 @@ import AdapterImageUpload from './ImageUpload.vue';
 const withDefaultPlaceholder = <T extends Component>(
   component: T,
   type: 'input' | 'select',
+  componentProps: Recordable<any> = {},
 ) => {
   return defineComponent({
-    inheritAttrs: false,
     name: component.name,
+    inheritAttrs: false,
     setup: (props: any, { attrs, expose, slots }) => {
       const placeholder =
         props?.placeholder ||
@@ -62,7 +63,11 @@ const withDefaultPlaceholder = <T extends Component>(
         }
       });
       return () =>
-        h(component, { ...props, ...attrs, placeholder, ref: innerRef }, slots);
+        h(
+          component,
+          { ...componentProps, placeholder, ...props, ...attrs, ref: innerRef },
+          slots,
+        );
     },
   });
 };
@@ -93,37 +98,33 @@ async function initComponentAdapter() {
     // 如果你的组件体积比较大，可以使用异步加载
     // Button: () =>
     // import('xxx').then((res) => res.Button),
-    ApiSelect: (props, { attrs, slots }) => {
-      return h(
-        ApiComponent,
-        {
-          placeholder: $t('ui.placeholder.select'),
-          ...props,
-          ...attrs,
-          component: ElSelectV2,
-          loadingSlot: 'loading',
-          visibleEvent: 'onVisibleChange',
-        },
-        slots,
-      );
-    },
-    ApiTreeSelect: (props, { attrs, slots }) => {
-      return h(
-        ApiComponent,
-        {
-          placeholder: $t('ui.placeholder.select'),
-          ...props,
-          ...attrs,
-          component: ElTreeSelect,
-          props: { label: 'label', children: 'children' },
-          nodeKey: 'value',
-          loadingSlot: 'loading',
-          optionsPropName: 'data',
-          visibleEvent: 'onVisibleChange',
-        },
-        slots,
-      );
-    },
+    ApiSelect: withDefaultPlaceholder(
+      {
+        ...ApiComponent,
+        name: 'ApiSelect',
+      },
+      'select',
+      {
+        component: ElSelectV2,
+        loadingSlot: 'loading',
+        visibleEvent: 'onVisibleChange',
+      },
+    ),
+    ApiTreeSelect: withDefaultPlaceholder(
+      {
+        ...ApiComponent,
+        name: 'ApiTreeSelect',
+      },
+      'select',
+      {
+        component: ElTreeSelect,
+        props: { label: 'label', children: 'children' },
+        nodeKey: 'value',
+        loadingSlot: 'loading',
+        optionsPropName: 'data',
+        visibleEvent: 'onVisibleChange',
+      },
+    ),
     Autocomplete: withDefaultPlaceholder(ElAutocomplete, 'input'),
     Checkbox: ElCheckbox,
     CheckboxGroup: ElCheckboxGroup,

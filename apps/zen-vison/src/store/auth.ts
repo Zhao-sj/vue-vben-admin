@@ -5,7 +5,8 @@ import type { AuthApi } from '#/api';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { DEFAULT_HOME_PATH, LOGIN_PATH } from '@vben/constants';
+import { LOGIN_PATH } from '@vben/constants';
+import { preferences } from '@vben/preferences';
 import { resetAllStores, useAccessStore, useUserStore } from '@vben/stores';
 
 import { ElNotification } from 'element-plus';
@@ -64,7 +65,7 @@ export const useAuthStore = defineStore('zen-auth', () => {
         } else {
           onSuccess
             ? await onSuccess?.()
-            : await router.push(DEFAULT_HOME_PATH);
+            : await router.push(preferences.app.defaultHomePath);
         }
 
         if (userInfo?.nickname) {
