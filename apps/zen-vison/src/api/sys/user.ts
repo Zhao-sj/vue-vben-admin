@@ -149,7 +149,7 @@ export function addUserApi(data: UserApi.AddModel) {
  * 导出用户
  */
 export function exportUserApi(params: UserApi.PageQuery) {
-  return requestClient.download(`${SYSTEM}/user/export`, {
+  return requestClient.download<{ data: Blob }>(`${SYSTEM}/user/export`, {
     params,
     timeout: 0,
   });
@@ -173,7 +173,9 @@ export function importUserApi(file: Blob | File, updateSupport: boolean) {
  * 获取用户导入模板
  */
 export function getUserImportTemplateApi() {
-  return requestClient.download(`${SYSTEM}/user/import/template`);
+  return requestClient.download<{ data: Blob }>(
+    `${SYSTEM}/user/import/template`,
+  );
 }
 
 /**

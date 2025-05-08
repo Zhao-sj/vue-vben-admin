@@ -168,7 +168,7 @@ export function addTenantApi(data: TenantApi.AddModel) {
  * 导出租户
  */
 export function exportTenantApi(params: TenantApi.PageQuery) {
-  return requestClient.download(`${SYSTEM}/tenant/export`, {
+  return requestClient.download<{ data: Blob }>(`${SYSTEM}/tenant/export`, {
     params,
     timeout: 0,
   });

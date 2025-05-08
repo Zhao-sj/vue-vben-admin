@@ -124,7 +124,7 @@ export function addRoleApi(data: RoleApi.AddModel) {
  * 导出角色
  */
 export function exportRoleApi(params: RoleApi.PageQuery) {
-  return requestClient.download(`${SYSTEM}/role/export`, {
+  return requestClient.download<{ data: Blob }>(`${SYSTEM}/role/export`, {
     params,
     timeout: 0,
   });

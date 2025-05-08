@@ -69,7 +69,7 @@ export function addPostApi(data: PostApi.AddModel) {
  * 导出岗位
  */
 export function exportPostApi(params: PostApi.PageQuery) {
-  return requestClient.download(`${SYSTEM}/post/export`, {
+  return requestClient.download<{ data: Blob }>(`${SYSTEM}/post/export`, {
     params,
     timeout: 0,
   });

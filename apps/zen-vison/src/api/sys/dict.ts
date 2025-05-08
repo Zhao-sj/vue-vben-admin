@@ -116,7 +116,7 @@ export function addDictDataApi(data: DictApi.DataAddModel) {
  * 导出字典数据
  */
 export function exportDictDataApi(params: DictApi.DataPageQuery) {
-  return requestClient.download(`${SYSTEM}/dict/data/export`, {
+  return requestClient.download<{ data: Blob }>(`${SYSTEM}/dict/data/export`, {
     params,
     timeout: 0,
   });
@@ -183,7 +183,7 @@ export function addDictTypeApi(data: DictApi.TypeAddModel) {
  * 导出字典类型
  */
 export function exportDictTypeApi(params: DictApi.TypePageQuery) {
-  return requestClient.download(`${SYSTEM}/dict/type/export`, {
+  return requestClient.download<{ data: Blob }>(`${SYSTEM}/dict/type/export`, {
     params,
     timeout: 0,
   });
