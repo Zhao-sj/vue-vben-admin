@@ -49,6 +49,12 @@
       }
     }
   },
+  "portal": {
+    "title": "官网管理",
+    "consult": {
+      "title": "业务咨询"
+    }
+  },
   "cms": {
     "title": "CMS 系统",
     "article": {

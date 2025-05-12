@@ -1,0 +1,22 @@
+{
+  "consult": {
+    "title": "业务咨询",
+    "id": "咨询编号",
+    "company": "咨询单位",
+    "name": "联系人",
+    "mobile": "联系方式",
+    "email": "邮箱",
+    "content": "咨询内容",
+    "status": "受理状态",
+    "createTime": "咨询时间",
+    "batchIgnore": "批量忽略",
+    "batchProcess": "批量受理",
+    "processed": "已受理",
+    "ignored": "已忽略",
+    "processTip": "是否已受理该咨询?",
+    "ignoreTip": "是否忽略该咨询?",
+    "processUser": "受理人员",
+    "processTime": "处理时间",
+    "detail": "咨询详情"
+  }
+}

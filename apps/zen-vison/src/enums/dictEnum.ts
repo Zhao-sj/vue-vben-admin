@@ -9,6 +9,7 @@ export enum DictTypeEnum {
   NOTICE_TYPE = 'system_notice_type',
   OAUTH2_GRANT_TYPE = 'system_oauth2_grant_type',
   OPERATE_TYPE = 'system_operate_type',
+  PORTAL_CONSULT_PROCESS_STATUS = 'portal_consult_process_status',
   ROLE_TYPE = 'system_role_type',
   SEX = 'system_user_sex',
   STATUS = 'system_status',
@@ -44,6 +45,17 @@ export enum DictLogProcess {
 
   /** 未处理 */
   UN_PROCESS = 0,
+}
+
+export enum DictConsultAccept {
+  /** 已处理 */
+  ACCEPT = 1,
+
+  /** 已忽略 */
+  IGNORE = 2,
+
+  /** 未处理 */
+  UN_ACCEPT = 0,
 }
 
 export enum NoticeType {

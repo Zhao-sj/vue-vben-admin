@@ -1,0 +1,22 @@
+{
+  "consult": {
+    "title": "Business Consult",
+    "id": "ID",
+    "company": "Conpany",
+    "name": "Contact",
+    "mobile": "Mobile",
+    "email": "Email",
+    "content": "Content",
+    "status": "Status",
+    "createTime": "Consult Time",
+    "batchIgnore": "Batch Ignore",
+    "batchProcess": "Batch Accept",
+    "processed": "Accept",
+    "ignored": "Ignored",
+    "processTip": "Has the consultation been accepted?",
+    "ignoreTip": "Ignore this consultation?",
+    "processUser": "AcceptUser",
+    "processTime": "AcceptTime",
+    "detail": "Detail"
+  }
+}

@@ -49,6 +49,12 @@
       }
     }
   },
+  "portal": {
+    "title": "Portal Manage",
+    "consult": {
+      "title": "Business Consult"
+    }
+  },
   "cms": {
     "title": "CMS System",
     "article": {

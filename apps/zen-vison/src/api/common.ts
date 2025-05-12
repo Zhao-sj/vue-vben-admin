@@ -1,6 +1,7 @@
 export enum ModuleEnum {
   CMS = 'cms',
   INFRA = 'infra',
+  PORTAL = 'portal',
   SYSTEM = 'system',
 }
 
