@@ -2,7 +2,7 @@
 import type { VbenFormSchema } from '@vben/common-ui';
 import type { Nullable } from '@vben/types';
 
-import type { AuthApi } from '#/api';
+import type { AuthApi, BaseSimple } from '#/api';
 
 import { AuthenticationLogin, z } from '@vben/common-ui';
 
@@ -10,11 +10,11 @@ import { useDebounceFn } from '@vueuse/core';
 import { ElInput } from 'element-plus';
 import { cloneDeep } from 'lodash-es';
 
+import { getTenantListByNameApi } from '#/api';
+import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useAuthStore } from '#/store';
 import { encryptBySha256 } from '#/utils/cipher';
-
-import TenantSelect from './tenant-select.vue';
 
 interface Props {
   modal?: boolean;
@@ -34,22 +34,44 @@ const Captcha = defineAsyncComponent(
 );
 
 const authStore = useAuthStore();
+const tenantName = ref('');
 const showCaptcha = ref(false);
 let loginState: Nullable<AuthApi.LoginModel> = null;
 
+const { loading, runAsync: fetchTenantList } = useRequest(
+  async ({ keyword }: Record<string, any>) => {
+    if (!keyword) return;
+    return getTenantListByNameApi(keyword);
+  },
+  { manual: true },
+);
+
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
-    component: markRaw(TenantSelect),
+    component: 'ApiSelect',
     componentProps: {
-      clearable: true,
+      api: fetchTenantList,
+      afterFetch: (data: BaseSimple[]) =>
+        data?.map((item) => ({ label: item.name, value: item.id })),
+      remoteMethod: useDebounceFn((value: string) => {
+        tenantName.value = value;
+      }),
+      params: {
+        keyword: tenantName.value || undefined,
+      },
+      loading: loading.value,
+      remote: true,
+      remoteShowSuffix: true,
+      filterable: true,
+      reserveKeyword: false,
+      appendTo: 'body',
+      popperClass: '!z-[9999999999]',
       placeholder: $t('page.pleaseInput', [$t('page.login.tenant')]),
       size: 'large',
     },
     fieldName: 'tenant',
     label: $t('page.login.tenant'),
-    rules: z.string().min(1, {
-      message: $t('page.pleaseInput', [$t('page.login.tenant')]),
-    }),
+    rules: 'selectRequired',
   },
   {
     component: markRaw(ElInput),
@@ -105,6 +127,7 @@ function handleValidateSuccess(captcah: string) {
 <template>
   <div>
     <AuthenticationLogin
+      class="h-[550px]"
       :form-schema="formSchema"
       :loading="authStore.loginLoading"
       @submit="handleLogin"
