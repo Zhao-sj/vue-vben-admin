@@ -10,7 +10,7 @@ import type { Recordable } from '@vben/types';
 
 import { defineComponent, getCurrentInstance, h, ref } from 'vue';
 
-import { ApiComponent, globalShareState } from '@vben/common-ui';
+import { ApiComponent, globalShareState, IconPicker } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import {
@@ -33,7 +33,7 @@ import {
   ElTreeSelect,
 } from 'element-plus';
 
-import { IconPicker, VueDatePicker } from '#/components';
+import { VueDatePicker } from '#/components';
 
 import AdapterImageUpload from './ImageUpload.vue';
 
@@ -143,7 +143,12 @@ async function initComponentAdapter() {
       return h(ElButton, { ...props, attrs, type: 'primary' }, slots);
     },
     Divider: ElDivider,
-    IconPicker: withDefaultPlaceholder(IconPicker, 'select'),
+    IconPicker: withDefaultPlaceholder(IconPicker, 'select', {
+      prefix: 'lucide',
+      iconSlot: 'append',
+      modelValueProp: 'model-value',
+      inputComponent: ElInput,
+    }),
     Input: withDefaultPlaceholder(ElInput, 'input'),
     InputNumber: withDefaultPlaceholder(ElInputNumber, 'input'),
     RadioGroup: (props, { attrs, slots }) => {
