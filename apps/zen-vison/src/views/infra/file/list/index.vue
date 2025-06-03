@@ -261,6 +261,7 @@ async function reloadTable() {
             :preview-src-list="[url]"
             :src="url"
             class="h-16 rounded-md"
+            preview-teleported
             lazy
           />
 

@@ -74,7 +74,13 @@ setupVbenVxeTable({
         const { props, attrs } = renderOpts;
         const { column, row } = params;
         const src = row[column.field];
-        return h(ElImage, { src, previewSrcList: [src], ...props, ...attrs });
+        return h(ElImage, {
+          src,
+          previewSrcList: [src],
+          previewTeleported: true,
+          ...props,
+          ...attrs,
+        });
       },
     });
 
