@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
-import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { VxeGridProps, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { RoleApi } from '#/api';
 import type { ActionDropdownItem, ActionItem } from '#/components';
 
@@ -16,8 +16,8 @@ import {
   getRolePageListApi,
   updateRoleStatusApi,
 } from '#/api';
-import { TableAction, TableExport, TableSwitch } from '#/components';
-import { DictRoleType, DictTypeEnum } from '#/enums';
+import { TableAction, TableExport } from '#/components';
+import { DictRoleType, DictStatus, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -68,10 +68,6 @@ const [AsignMenuModal, asignMenuModal] = useVbenModal({
 const [AssignScopeModal, assignScopeModal] = useVbenModal({
   connectedComponent: AssignScope,
 });
-
-const statusDisabled = computed(
-  () => !hasAccessByCodes(['system:role:update']),
-);
 
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
@@ -160,7 +156,11 @@ const columns: VxeGridProps<RoleApi.Role>['columns'] = [
     field: 'status',
     minWidth: 100,
     title: $t('sys.role.status'),
-    slots: { default: 'status' },
+    cellRender: {
+      name: 'CellSwitch',
+      props: { disabled: !hasAccessByCodes(['system:role:update']) },
+      attrs: { beforeChange: handleStatusChange },
+    },
   },
   {
     field: 'remark',
@@ -183,7 +183,7 @@ const columns: VxeGridProps<RoleApi.Role>['columns'] = [
   },
 ];
 
-const gridOptions: VxeGridProps<RoleApi.Role> = {
+const gridOptions: VxeTableGridOptions<RoleApi.Role> = {
   columns,
   checkboxConfig: {
     checkMethod: ({ row }) => row.type !== DictRoleType.ADMIN,
@@ -293,6 +293,29 @@ function createActions(row: RoleApi.Role) {
   return { actions, dropdownActions };
 }
 
+async function handleStatusChange(newStatus: number, row: RoleApi.Role) {
+  const action =
+    newStatus === DictStatus.ENABLE ? $t('page.enable') : $t('page.disable');
+
+  const message = $t('sys.role.confirm.status', [
+    action,
+    `${row.name} - ${row.code}`,
+  ]);
+
+  try {
+    await ElMessageBox.confirm(message, $t('page.systemTip'), {
+      closeOnClickModal: false,
+      draggable: true,
+      type: 'warning',
+    });
+    await updateStatus({ id: row.id, status: newStatus });
+    requestAfter(false);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function requestAfter(reload = true) {
   ElMessage.success($t('page.success'));
   reload && reloadTable();
@@ -334,17 +357,6 @@ async function handleExport(fileName: string) {
         />
         <AsignMenuModal />
         <AssignScopeModal />
-      </template>
-
-      <template #status="{ row }">
-        <TableSwitch
-          v-model="row.status"
-          :disabled="statusDisabled"
-          :row
-          :tip="(action) => $t('sys.role.confirm.status', [action, row.code])"
-          :on-action="(status) => updateStatus({ id: row.id, status })"
-          :on-success="() => requestAfter(false)"
-        />
       </template>
 
       <template #opt="{ row }">

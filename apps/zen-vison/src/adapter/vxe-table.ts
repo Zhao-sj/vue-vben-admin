@@ -2,8 +2,10 @@ import { h } from 'vue';
 
 import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
 
-import { ElAvatar, ElImage, ElLink, ElTag } from 'element-plus';
+import { ElAvatar, ElImage, ElLink, ElSwitch, ElTag } from 'element-plus';
 
+import { DictStatus } from '#/enums';
+import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 import {
   formatFileSize,
@@ -33,6 +35,8 @@ setupVbenVxeTable({
           refresh: {
             code: 'query',
           },
+          // @ts-ignore 全局开启表单搜索切换
+          search: true,
         },
         size: 'small',
         proxyConfig: {
@@ -130,6 +134,43 @@ setupVbenVxeTable({
         );
 
         return children?.length > 0 ? node : '-';
+      },
+    });
+
+    // 表格配置项可以用 cellRender: { name: 'CellSwitch' },
+    vxeUI.renderer.add('CellSwitch', {
+      renderTableDefault({ attrs, props }, { column, row }) {
+        const loadingKey = `__loading_${column.field}`;
+        const finallyProps = {
+          activeText: $t('page.enabled'),
+          inactiveText: $t('page.disabled'),
+          activeValue: 0,
+          inactiveValue: 1,
+          inlinePrompt: true,
+          style: {
+            '--el-switch-on-color': 'hsl(var(--success))',
+            '--el-switch-off-color': 'hsl(var(--destructive))',
+          },
+          ...props,
+          modelValue: row[column.field],
+          loading: row[loadingKey] ?? false,
+          beforeChange: onBeforeChange,
+        };
+        async function onBeforeChange() {
+          row[loadingKey] = true;
+          try {
+            const { DISABLE, ENABLE } = DictStatus;
+            const newVal = row[column.field] === ENABLE ? DISABLE : ENABLE;
+            const result = await attrs?.beforeChange?.(newVal, row);
+            if (result !== false) {
+              row[column.field] = newVal;
+            }
+            return !!result;
+          } finally {
+            row[loadingKey] = false;
+          }
+        }
+        return h(ElSwitch, finallyProps);
       },
     });
 

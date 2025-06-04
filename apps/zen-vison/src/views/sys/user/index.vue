@@ -19,8 +19,8 @@ import {
   resetUserPasswordApi,
   updateUserStatusApi,
 } from '#/api';
-import { TableAction, TableExport, TableSwitch } from '#/components';
-import { DictSex, DictTypeEnum } from '#/enums';
+import { TableAction, TableExport } from '#/components';
+import { DictSex, DictStatus, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore, useUserStore } from '#/store';
@@ -84,10 +84,6 @@ const [UserImportModal, importModal] = useVbenModal({
 const [ImportResultModal, importResultModal] = useVbenModal({
   connectedComponent: ImportResult,
 });
-
-const statusDisabled = computed(
-  () => !hasAccessByCodes(['system:user:update']),
-);
 
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
@@ -194,7 +190,11 @@ const columns: VxeGridProps<UserApi.User>['columns'] = [
     field: 'status',
     minWidth: 100,
     title: $t('sys.user.status'),
-    slots: { default: 'status' },
+    cellRender: {
+      name: 'CellSwitch',
+      props: { disabled: !hasAccessByCodes(['system:user:update']) },
+      attrs: { beforeChange: handleStatusChange },
+    },
   },
   {
     field: 'loginIp',
@@ -343,6 +343,26 @@ function createActions(row: UserApi.User) {
   return { actions, dropdownActions };
 }
 
+async function handleStatusChange(newStatus: number, row: UserApi.User) {
+  const action =
+    newStatus === DictStatus.ENABLE ? $t('page.enable') : $t('page.disable');
+
+  const message = $t('sys.user.confirm.status', [action, row.username]);
+
+  try {
+    await ElMessageBox.confirm(message, $t('page.systemTip'), {
+      closeOnClickModal: false,
+      draggable: true,
+      type: 'warning',
+    });
+    await updateStatus({ id: row.id, status: newStatus });
+    requestAfter(false);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function resetPassword(row: UserApi.User) {
   const title = $t('page.systemTip');
   const message = $t('sys.user.confirm.password', [row.username]);
@@ -434,20 +454,6 @@ async function reloadTable(deptId?: number) {
               />
               <span>{{ dictStore.getSex(sex)?.label || '-' }}</span>
             </div>
-          </template>
-
-          <template #status="{ row }">
-            <TableSwitch
-              v-model="row.status"
-              :disabled="statusDisabled"
-              :row
-              :tip="
-                (action) =>
-                  $t('sys.user.confirm.status', [action, row.username])
-              "
-              :on-action="(status) => updateStatus({ id: row.id, status })"
-              :on-success="() => requestAfter(false)"
-            />
           </template>
 
           <template #opt="{ row }">
