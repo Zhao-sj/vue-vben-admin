@@ -5,7 +5,7 @@ import { DictStatus } from '#/enums';
 import { $t } from '#/locales';
 
 interface ChangeOpts {
-  onAction: AnyPromiseFunction<any, any>;
+  onAction: AnyPromiseFunction<[DictStatus], any>;
   compareField?: keyof T;
   row: T;
   tip: AnyNormalFunction<[string], string>;
@@ -19,21 +19,18 @@ const props = defineProps<Props>();
 
 const modelValue = defineModel<boolean | number | string>('modelValue');
 
+const loading = ref(false);
+
 async function changeStatus(options: ChangeOpts) {
-  return new Promise<void>((resolve) => {
+  return new Promise<boolean>((resolve) => {
     const { row, compareField = 'status', tip, onAction } = options;
     const { DISABLE, ENABLE } = DictStatus;
 
     const action =
-      row[compareField] === ENABLE ? $t('page.enable') : $t('page.disable');
+      row[compareField] === ENABLE ? $t('page.disable') : $t('page.enable');
 
     const title = $t('page.systemTip');
     const message = tip(action);
-    const rollback = () => {
-      row[compareField] = (
-        row[compareField] === ENABLE ? DISABLE : ENABLE
-      ) as T[typeof compareField];
-    };
 
     ElMessageBox.confirm(message, title, {
       closeOnClickModal: false,
@@ -41,19 +38,24 @@ async function changeStatus(options: ChangeOpts) {
       type: 'warning',
     })
       .then(async () => {
-        try {
-          await onAction();
-          resolve();
-        } catch {
-          rollback();
-        }
+        const targetVal = row[compareField] === ENABLE ? DISABLE : ENABLE;
+        await onAction(targetVal);
+        resolve(true);
       })
-      .catch(rollback);
+      .catch(() => {
+        resolve(false);
+      });
   });
 }
 
-async function handleStatusChange() {
-  await changeStatus(props);
+async function handleStatusBeforeChange() {
+  loading.value = true;
+  const isChange = await changeStatus(props);
+  loading.value = false;
+  return isChange;
+}
+
+function handleStatusChange() {
   props.onSuccess?.();
 }
 </script>
@@ -62,11 +64,13 @@ async function handleStatusChange() {
   <ElSwitch
     v-bind="$attrs"
     v-model="modelValue"
+    :loading
     :active-value="0"
     :inactive-value="1"
-    :active-text="$t('page.enable')"
-    :inactive-text="$t('page.disable')"
+    :active-text="$t('page.enabled')"
+    :inactive-text="$t('page.disabled')"
     inline-prompt
+    :before-change="handleStatusBeforeChange"
     @change="handleStatusChange"
   />
 </template>

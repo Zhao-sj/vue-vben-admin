@@ -342,8 +342,8 @@ async function handleExport(fileName: string) {
           :disabled="statusDisabled"
           :row
           :tip="(action) => $t('sys.role.confirm.status', [action, row.code])"
-          :on-action="() => updateStatus({ id: row.id, status: row.status })"
-          :on-success="requestAfter"
+          :on-action="(status) => updateStatus({ id: row.id, status })"
+          :on-success="() => requestAfter(false)"
         />
       </template>
 

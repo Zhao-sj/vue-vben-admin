@@ -445,10 +445,8 @@ async function reloadTable(deptId?: number) {
                 (action) =>
                   $t('sys.user.confirm.status', [action, row.username])
               "
-              :on-action="
-                () => updateStatus({ id: row.id, status: row.status })
-              "
-              :on-success="requestAfter"
+              :on-action="(status) => updateStatus({ id: row.id, status })"
+              :on-success="() => requestAfter(false)"
             />
           </template>
 

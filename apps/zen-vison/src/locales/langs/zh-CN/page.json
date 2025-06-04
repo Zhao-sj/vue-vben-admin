@@ -86,6 +86,8 @@
   "status": "状态",
   "enable": "开启",
   "disable": "禁用",
+  "enabled": "已开启",
+  "disabled": "已禁用",
   "remark": "备注",
   "expand": "展开{0}",
   "collapsed": "折叠{0}",

@@ -18,6 +18,8 @@ export const overridesPreferences = defineOverridesPreferences({
     enableRefreshToken: true,
   },
   copyright: {
+    companyName: 'ZenVision',
+    date: new Date().getFullYear().toString(),
     settingShow: false,
   },
   footer: {

@@ -86,6 +86,8 @@
   "status": "Status",
   "enable": " Enable",
   "disable": " Disable",
+  "enabled": " Enabled",
+  "disabled": " Disabled",
   "remark": "Remark",
   "expand": "Expand {0}",
   "collapsed": "Collapsed {0}",
