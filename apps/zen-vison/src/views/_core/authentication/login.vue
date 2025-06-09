@@ -34,11 +34,20 @@ const Captcha = defineAsyncComponent(
 );
 
 const authStore = useAuthStore();
+
+const REMEMBER_TENANT_KEY = `REMEMBER_ME_TENANT_${location.hostname}`;
+const localTenant = localStorage.getItem(REMEMBER_TENANT_KEY) || '';
+
+const loginRef = useTemplateRef('login');
 const tenantName = ref('');
 const showCaptcha = ref(false);
 let loginState: Nullable<AuthApi.LoginModel> = null;
 
-const { loading, runAsync: fetchTenantList } = useRequest(
+const {
+  loading,
+  data: tenantList,
+  runAsync: fetchTenantList,
+} = useRequest(
   async ({ keyword }: Record<string, any>) => {
     if (!keyword) return;
     return getTenantListByNameApi(keyword);
@@ -46,13 +55,22 @@ const { loading, runAsync: fetchTenantList } = useRequest(
   { manual: true },
 );
 
+const remeberMe = computed(() => loginRef.value?.getRememberMe());
+
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'ApiSelect',
     componentProps: {
       api: fetchTenantList,
-      afterFetch: (data: BaseSimple[]) =>
-        data?.map((item) => ({ label: item.name, value: item.id })),
+      afterFetch: (data: BaseSimple[]) => {
+        if (!data && localTenant) {
+          const tenant = JSON.parse(localTenant);
+          if (tenant) {
+            data = [tenant];
+          }
+        }
+        return data?.map((item) => ({ label: item.name, value: item.id }));
+      },
       remoteMethod: useDebounceFn((value: string) => {
         tenantName.value = value;
       }),
@@ -61,7 +79,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
       },
       loading: loading.value,
       remote: true,
-      remoteShowSuffix: true,
       filterable: true,
       reserveKeyword: false,
       appendTo: 'body',
@@ -104,6 +121,13 @@ const formSchema = computed<VbenFormSchema[]>(() => [
 
 const handleLogin = useDebounceFn((params: Record<string, any>) => {
   const state = cloneDeep(params) as AuthApi.LoginModel;
+
+  const tenant = tenantList.value?.find((item) => item.id === state.tenant);
+  localStorage.setItem(
+    REMEMBER_TENANT_KEY,
+    JSON.stringify(remeberMe.value ? tenant : ''),
+  );
+
   if (props.modal) {
     emit('submit', state);
     return;
@@ -122,11 +146,21 @@ function handleValidateSuccess(captcah: string) {
   loginState.captcha = captcah;
   authStore.authLogin(loginState);
 }
+
+onMounted(() => {
+  if (localTenant) {
+    const tenant = JSON.parse(localTenant);
+    if (tenant) {
+      loginRef.value?.getFormApi().setFieldValue('tenant', tenant.id);
+    }
+  }
+});
 </script>
 
 <template>
   <div>
     <AuthenticationLogin
+      ref="login"
       class="h-[550px]"
       :form-schema="formSchema"
       :loading="authStore.loginLoading"

@@ -88,6 +88,7 @@ onMounted(() => {
 
 defineExpose({
   getFormApi: () => formApi,
+  getRememberMe: () => rememberMe.value,
 });
 </script>
 
