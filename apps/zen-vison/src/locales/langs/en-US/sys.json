@@ -1,6 +1,8 @@
 {
   "tenant": {
     "list": {
+      "list": "Tenant List",
+      "title": "Tenant",
       "id": "ID",
       "name": "Name",
       "package": "Package",
@@ -12,22 +14,21 @@
       "status": "Status",
       "systemTenant": "System Tenant",
       "username": "Account",
-      "password": "Password",
-      "create": "Create Tenant",
-      "edit": "Edit Tenant"
+      "password": "Password"
     },
     "package": {
+      "list": "Tenant Package List",
+      "title": "Tenant Package",
       "id": "ID",
       "name": "Name",
       "status": "Status",
       "remark": "Remark",
-      "menu": "Menus",
-      "create": "Create Tenant Package",
-      "edit": "Edit Tenant Package"
+      "menu": "Menus"
     }
   },
   "user": {
-    "title": "User List",
+    "list": "User List",
+    "name": "User",
     "id": "ID",
     "username": "Account",
     "password": "Password",
@@ -42,8 +43,6 @@
     "loginDate": "Last login",
     "resetPassword": "Reset Password",
     "assignRole": "Asign Role",
-    "create": "Create User",
-    "edit": "Edit User",
     "post": "Post",
     "role": "Role",
     "upload": {
@@ -67,7 +66,8 @@
     }
   },
   "role": {
-    "title": "Role List",
+    "list": "Role List",
+    "title": "Role",
     "id": "ID",
     "name": "Name",
     "code": "Code",
@@ -79,8 +79,6 @@
     "assignMenu": "Asign Menu",
     "menuPermission": "Menus",
     "assignScope": "Assign Data Scope",
-    "create": "Create Role",
-    "edit": "Edit Role",
     "strictly": {
       "title": "Strictly",
       "tip": "Select the parent node to automatically select all child nodes."
@@ -90,14 +88,13 @@
     }
   },
   "post": {
-    "title": "Post List",
+    "list": "Post List",
+    "title": "Post",
     "id": "ID",
     "name": "Name",
     "code": "Code",
     "sort": "Sort",
-    "status": "Status",
-    "create": "Create Post",
-    "edit": "Edit Post"
+    "status": "Status"
   },
   "log": {
     "id": "ID",
@@ -116,7 +113,7 @@
     "userInfo": "User Info",
     "requestInfo": "Request Info",
     "login": {
-      "title": "Login Log",
+      "list": "Login Log List",
       "type": "Type",
       "username": "Account",
       "result": "Status",
@@ -126,7 +123,7 @@
       "tenant": "Tenant"
     },
     "access": {
-      "title": "Access Log",
+      "list": "Access Log List",
       "responseBody": "Response",
       "operateModule": "Module",
       "operateName": "ModuleName",
@@ -140,13 +137,11 @@
       "tenant": "Tenant"
     },
     "error": {
-      "title": "Error Log",
+      "list": "Error Log List",
       "exTime": "ExceptionTime",
       "exName": "ExceptionName",
       "exMsg": "ExceptionMessage",
       "status": "ProcessStatus",
-      "batchIgnore": "Batch Ignore",
-      "batchProcess": "Batch Process",
       "processed": "Processed",
       "ignored": "Ignored",
       "processTip": "Has the error been handled?",
@@ -157,6 +152,8 @@
     }
   },
   "menu": {
+    "list": "Menu List",
+    "title": "Menu",
     "name": "Name",
     "type": "Type",
     "parent": "Parent",
@@ -191,8 +188,6 @@
       "badgeDot": "Dot",
       "badgeNormal": "Normal"
     },
-    "create": "Create Menu",
-    "edit": "Edit Menu",
     "other": "Other Configuration",
     "tip": {
       "icon": "Icons used to configure pages, which will be displayed in menus and tabs. Usually used with icon libraries, if it is an http link, the image will be loaded automatically.",
@@ -218,37 +213,37 @@
     }
   },
   "dept": {
+    "list": "Dept List",
+    "title": "Dept",
     "name": "Name",
     "leader": "Leader",
     "phone": "Phone",
     "email": "Email",
     "sort": "Sort",
     "status": "Status",
-    "parent": "Parent",
-    "create": "Create Dept",
-    "edit": "Edit Dept"
+    "parent": "Parent"
   },
   "dict": {
     "id": "ID",
     "status": "Status",
     "type": {
+      "list": "Dict Type List",
       "title": "Dict Type",
-      "name": "Name",
-      "create": "Create Dict Type",
-      "edit": "Edit Dict Type"
+      "name": "Name"
     },
     "data": {
+      "list": "Dict Data List",
       "title": "Dict Data",
       "label": "Label",
       "value": "Value",
       "sort": "Sort",
-      "color": "Color",
-      "create": "Create Dict Data",
-      "edit": "Edit Dict Data"
+      "color": "Color"
     }
   },
   "message": {
     "notice": {
+      "list": "Notice List",
+      "name": "Notice",
       "id": "ID",
       "title": "Title",
       "type": "Type",
@@ -257,13 +252,13 @@
       "push": {
         "title": "Push",
         "tip": "Are you sure to push?"
-      },
-      "create": "Create Notice",
-      "edit": "Edit Notice"
+      }
     }
   },
   "oauth2": {
     "client": {
+      "list": "OAuth2 List",
+      "title": "OAuth2",
       "id": "ID",
       "clientId": "Client ID",
       "secret": "Secret",
@@ -271,21 +266,19 @@
       "logo": "Logo",
       "status": "Status",
       "description": "App Description",
-      "accessTokenValiditySeconds": "Token Validity {0}",
-      "refreshTokenValiditySeconds": "Refresh Validity {0}",
+      "accessTokenValiditySeconds": "Token Validity",
+      "refreshTokenValiditySeconds": "Refresh Validity",
       "authorizedGrantTypes": "Grant Types",
       "scopes": "Scopes",
       "autoApproveScopes": "Auto Approve",
       "redirectUris": "Redirect URI",
       "authorities": "Authorities",
       "resourceIds": "Resources",
-      "additionalInformation": "Additional Information {0}",
-      "create": "Create OAuth2 Client",
-      "edit": "Edit OAuth2 Client",
-      "jsonFormatter": "(JSON format data)",
-      "unit": "(Unit: seconds)"
+      "additionalInformation": "Additional Information",
+      "jsonFormatter": "(JSON format data)"
     },
     "token": {
+      "list": "Token List",
       "id": "ID",
       "clientId": "ClientId",
       "userId": "UserId",
@@ -299,6 +292,7 @@
     }
   },
   "area": {
+    "list": "Area List",
     "id": "Code",
     "name": "Name",
     "search": "IP Search",

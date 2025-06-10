@@ -43,7 +43,7 @@ async function onConfirm() {
   <Drawer
     :close-on-click-modal="false"
     :confirm-loading="loading"
-    :title="$t('sys.message.notice.create')"
+    :title="$t('page.actionTitle.create', [$t('sys.message.notice.name')])"
     class="w-full lg:w-1/2"
     footer-class="gap-x-0"
   >

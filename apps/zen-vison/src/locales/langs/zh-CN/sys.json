@@ -1,7 +1,8 @@
 {
   "tenant": {
     "list": {
-      "title": "租户列表",
+      "list": "租户列表",
+      "title": "租户",
       "id": "租户编号",
       "name": "租户名称",
       "package": "租户套餐",
@@ -13,39 +14,36 @@
       "status": "租户状态",
       "systemTenant": "系统租户",
       "username": "用户账号",
-      "password": "用户密码",
-      "create": "新增租户",
-      "edit": "编辑租户"
+      "password": "用户密码"
     },
     "package": {
+      "list": "租户套餐列表",
+      "title": "租户套餐",
       "id": "套餐编号",
       "name": "套餐名称",
       "status": "套餐状态",
       "remark": "套餐备注",
-      "menu": "菜单权限",
-      "create": "新增租户套餐",
-      "edit": "编辑租户套餐"
+      "menu": "菜单权限"
     }
   },
   "user": {
-    "title": "用户列表",
-    "id": "用户编号",
-    "username": "用户账号",
-    "password": "用户密码",
-    "nickname": "用户昵称",
-    "deptName": "所属部门",
+    "list": "用户列表",
+    "name": "用户",
+    "id": "编号",
+    "username": "账号",
+    "password": "密码",
+    "nickname": "昵称",
+    "deptName": "部门",
     "mobile": "联系方式",
-    "email": "用户邮箱",
-    "sex": "用户性别",
-    "avatar": "用户头像",
-    "status": "用户状态",
+    "email": "邮箱",
+    "sex": "性别",
+    "avatar": "头像",
+    "status": "状态",
     "loginIp": "最后登录IP",
     "loginDate": "最后登录时间",
     "resetPassword": "重置密码",
     "assignRole": "分配角色",
-    "create": "新增用户",
-    "edit": "编辑用户",
-    "post": "用户岗位",
+    "post": "岗位",
     "role": "角色",
     "upload": {
       "title": "点击上传",
@@ -68,7 +66,8 @@
     }
   },
   "role": {
-    "title": "角色列表",
+    "list": "角色列表",
+    "title": "角色",
     "id": "角色编号",
     "name": "角色名称",
     "code": "角色标识",
@@ -80,8 +79,6 @@
     "assignMenu": "分配菜单",
     "menuPermission": "菜单权限",
     "assignScope": "分配数据权限",
-    "create": "新增角色",
-    "edit": "编辑角色",
     "strictly": {
       "title": "父子联动",
       "tip": "选中父节点，自动选中所有子节点"
@@ -91,14 +88,13 @@
     }
   },
   "post": {
-    "title": "岗位列表",
+    "list": "岗位列表",
+    "title": "岗位",
     "id": "岗位编号",
     "name": "岗位名称",
     "code": "岗位编码",
     "sort": "显示顺序",
-    "status": "岗位状态",
-    "create": "新增岗位",
-    "edit": "编辑岗位"
+    "status": "岗位状态"
   },
   "log": {
     "id": "日志编号",
@@ -117,7 +113,7 @@
     "userInfo": "用户信息",
     "requestInfo": "请求信息",
     "login": {
-      "title": "登录日志",
+      "list": "登录日志列表",
       "type": "日志类型",
       "username": "登录账号",
       "result": "登录状态",
@@ -127,7 +123,7 @@
       "tenant": "登录租户"
     },
     "access": {
-      "title": "访问日志",
+      "list": "访问日志列表",
       "responseBody": "响应结果",
       "operateModule": "操作模块",
       "operateName": "操作名称",
@@ -141,15 +137,13 @@
       "tenant": "访问租户"
     },
     "error": {
-      "title": "错误日志",
+      "list": "错误日志列表",
       "exTime": "异常时间",
       "exName": "异常名称",
       "exMsg": "异常信息",
       "status": "处理状态",
-      "batchIgnore": "批量忽略",
-      "batchProcess": "批量处理",
-      "processed": "已处理",
-      "ignored": "已忽略",
+      "processed": "处理",
+      "ignored": "忽略",
       "processTip": "是否已处理该错误?",
       "ignoreTip": "是否忽略该错误?",
       "processUser": "处理人员",
@@ -158,6 +152,8 @@
     }
   },
   "menu": {
+    "list": "菜单列表",
+    "title": "菜单",
     "name": "菜单名称",
     "type": "菜单类型",
     "parent": "上级菜单",
@@ -192,8 +188,6 @@
       "badgeDot": "红点",
       "badgeNormal": "文本"
     },
-    "create": "新增菜单",
-    "edit": "编辑菜单",
     "other": "其它配置",
     "tip": {
       "icon": "用于配置页面的图标，会在菜单和标签页中显示。一般会配合图标库使用，如果是http链接，会自动加载图片。",
@@ -219,37 +213,37 @@
     }
   },
   "dept": {
+    "list": "部门列表",
+    "title": "部门",
     "name": "部门名称",
     "leader": "负责人",
     "phone": "联系方式",
     "email": "联系邮箱",
     "sort": "显示顺序",
     "status": "部门状态",
-    "parent": "上级部门",
-    "create": "新增部门",
-    "edit": "编辑部门"
+    "parent": "上级部门"
   },
   "dict": {
     "id": "字典编号",
     "status": "字典状态",
     "type": {
+      "list": "字典类型列表",
       "title": "字典类型",
-      "name": "字典名称",
-      "create": "新增字典类型",
-      "edit": "编辑字典类型"
+      "name": "字典名称"
     },
     "data": {
+      "list": "字典数据列表",
       "title": "字典数据",
       "label": "数据标签",
       "value": "数据键值",
       "sort": "显示顺序",
-      "color": "颜色类型",
-      "create": "新增字典数据",
-      "edit": "编辑字典数据"
+      "color": "颜色类型"
     }
   },
   "message": {
     "notice": {
+      "list": "通知列表",
+      "name": "通知",
       "id": "公告编号",
       "title": "公告标题",
       "type": "公告类型",
@@ -258,13 +252,13 @@
       "push": {
         "title": "推送",
         "tip": "确定推送吗？"
-      },
-      "create": "新增通知公告",
-      "edit": "编辑通知公告"
+      }
     }
   },
   "oauth2": {
     "client": {
+      "list": "OAuth2 列表",
+      "title": "OAuth2",
       "id": "编号",
       "clientId": "客户端编号",
       "secret": "客户端秘钥",
@@ -272,21 +266,19 @@
       "logo": "应用图标",
       "status": "客户端状态",
       "description": "应用描述",
-      "accessTokenValiditySeconds": "访问令牌有效期{0}",
-      "refreshTokenValiditySeconds": "刷新令牌有效期{0}",
+      "accessTokenValiditySeconds": "访问令牌有效期",
+      "refreshTokenValiditySeconds": "刷新令牌有效期",
       "authorizedGrantTypes": "授权类型",
       "scopes": "授权范围",
       "autoApproveScopes": "自动授权范围",
       "redirectUris": "可重定向URI地址",
       "authorities": "权限",
       "resourceIds": "资源",
-      "additionalInformation": "附加信息{0}",
-      "create": "新增 OAuth2 客户端",
-      "edit": "编辑 OAuth2 客户端",
-      "jsonFormatter": "（JSON 格式数据）",
-      "unit": "（单位：秒）"
+      "additionalInformation": "附加信息",
+      "jsonFormatter": "（JSON 格式数据）"
     },
     "token": {
+      "list": "令牌列表",
       "id": "编号",
       "clientId": "客户端编号",
       "userId": "用户编号",
@@ -300,6 +292,7 @@
     }
   },
   "area": {
+    "list": "地区列表",
     "id": "地区编号",
     "name": "地区名称",
     "search": "IP查询",

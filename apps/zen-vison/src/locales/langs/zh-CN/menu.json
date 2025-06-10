@@ -56,9 +56,9 @@
     }
   },
   "cms": {
-    "title": "CMS 系统",
+    "title": "内容管理",
     "article": {
-      "title": "内容管理"
+      "title": "文章管理"
     },
     "category": {
       "title": "分类管理"

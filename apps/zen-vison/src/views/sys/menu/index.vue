@@ -113,7 +113,7 @@ const columns: VxeGridProps<MenuApi.Menu>['columns'] = [
   {
     field: 'opt',
     title: $t('page.options'),
-    width: 120,
+    width: 240,
     fixed: isMobile.value ? null : 'right',
     slots: { default: 'opt' },
   },
@@ -155,8 +155,8 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:menu:create',
     icon: 'ep:plus',
+    btnText: $t('page.create'),
     onClick: () => addModal.open(),
-    title: $t('page.create'),
     type: 'primary',
   },
 ]);
@@ -166,18 +166,17 @@ function createActions(row: MenuApi.Menu) {
     {
       auth: 'system:menu:update',
       icon: 'ep:edit',
+      btnText: $t('page.edit'),
       onClick: () => {
         editModal.setData({ id: row.id });
         editModal.open();
-      },
-      tooltip: {
-        content: $t('page.edit'),
       },
       type: 'primary',
     },
     {
       auth: 'system:menu:delete',
       icon: 'ep:delete',
+      btnText: $t('page.delete'),
       popConfirm: {
         on: {
           confirm: () => {
@@ -189,9 +188,6 @@ function createActions(row: MenuApi.Menu) {
         },
         title: $t('page.confirmDelete'),
       },
-      tooltip: {
-        content: $t('page.delete'),
-      },
       type: 'danger',
     },
   ];
@@ -200,13 +196,12 @@ function createActions(row: MenuApi.Menu) {
     actions.unshift({
       auth: 'system:menu:create',
       icon: 'ep:plus',
+      btnText: $t('page.actionTitle.create', [$t('page.sub')]),
       onClick: () => {
         addModal.setData({ parentId: row.id });
         addModal.open();
       },
-      tooltip: {
-        content: $t('page.create'),
-      },
+      type: 'primary',
     });
   }
 
@@ -231,21 +226,15 @@ function toggleExpandAll() {
 
 <template>
   <Page auto-content-height>
-    <Grid :form-options="formOptions">
-      <template #toolbar-actions>
-        <TableAction
-          :actions="toolbarActions"
-          :link="false"
-          :show-empty="false"
-          circle
-        />
-
-        <TableAddModal @success="reloadTable" />
-        <TableEditModal @success="reloadTable" />
-      </template>
-
+    <Grid :table-title="$t('sys.menu.list')" :form-options="formOptions">
       <template #toolbar-tools>
-        <div>
+        <div class="flex items-center gap-2">
+          <TableAction
+            :actions="toolbarActions"
+            :link="false"
+            :show-empty="false"
+          />
+
           <ElButton
             :title="`${$t('page.expand')} / ${$t('page.collapsed')}`"
             circle
@@ -254,6 +243,9 @@ function toggleExpandAll() {
           >
             <IconifyIcon icon="ep:sort" />
           </ElButton>
+
+          <TableAddModal @success="reloadTable" />
+          <TableEditModal @success="reloadTable" />
         </div>
       </template>
 

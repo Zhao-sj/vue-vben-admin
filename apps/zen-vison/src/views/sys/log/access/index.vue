@@ -268,8 +268,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'system:access-log:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
     onClick: () => exportModal.open(),
-    title: $t('page.export.title'),
-    type: 'warning',
+    btnText: $t('page.export.action'),
   },
 ]);
 
@@ -277,8 +276,7 @@ function createActions(row: LogApi.Access) {
   const actions: ActionItem[] = [
     {
       icon: 'ep:view',
-      label: $t('page.detail'),
-
+      btnText: $t('page.detail'),
       onClick: () => {
         detailModal.setData(row);
         detailModal.open();
@@ -304,17 +302,16 @@ async function handleExport(fileName: string) {
 
 <template>
   <Page auto-content-height>
-    <Grid :form-options="formOptions">
-      <template #toolbar-actions>
+    <Grid :table-title="$t('sys.log.access.list')" :form-options="formOptions">
+      <template #toolbar-tools>
         <TableAction
           :actions="toolbarActions"
           :link="false"
           :show-empty="false"
-          circle
         />
 
         <TableExportModal
-          :default-name="$t('sys.log.access.title')"
+          :default-name="$t('sys.log.access.list')"
           @confirm="handleExport"
         />
         <TableDetailModal />

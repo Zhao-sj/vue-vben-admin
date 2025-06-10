@@ -68,8 +68,8 @@ const [Grid] = useVbenVxeGrid({ gridOptions });
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     icon: 'lucide:search',
+    btnText: $t('sys.area.search'),
     onClick: () => searchModal.open(),
-    title: $t('sys.area.search'),
     type: 'primary',
   },
 ]);
@@ -82,13 +82,12 @@ async function getAreaList() {
 
 <template>
   <Page auto-content-height>
-    <Grid>
-      <template #toolbar-actions>
+    <Grid :table-title="$t('sys.area.list')">
+      <template #toolbar-tools>
         <TableAction
           :actions="toolbarActions"
           :link="false"
           :show-empty="false"
-          circle
         />
 
         <IPSearchModal />

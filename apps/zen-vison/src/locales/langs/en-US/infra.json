@@ -1,13 +1,13 @@
 {
   "file": {
     "config": {
+      "list": "Config List",
+      "title": "Config",
       "id": "ID",
       "name": "Name",
       "storage": "Storage",
       "master": "Master",
       "remark": "Remark",
-      "create": "Create File Config",
-      "edit": "Edit File Config",
       "test": "Test",
       "domain": "Domain",
       "basePath": "Base Path",
@@ -34,6 +34,7 @@
       }
     },
     "list": {
+      "list": "File List",
       "id": "ID",
       "name": "Name",
       "path": "Path",

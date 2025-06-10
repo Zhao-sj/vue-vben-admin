@@ -177,7 +177,7 @@ const columns: VxeGridProps<RoleApi.Role>['columns'] = [
   {
     field: 'opt',
     title: $t('page.options'),
-    width: 120,
+    width: 180,
     fixed: isMobile.value ? null : 'right',
     slots: { default: 'opt' },
   },
@@ -208,8 +208,15 @@ const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
+    auth: 'system:role:export',
+    icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
+    btnText: $t('page.export.action'),
+    onClick: () => exportModal.open(),
+  },
+  {
     auth: 'system:role:delete',
     icon: 'ep:delete',
+    btnText: $t('page.delete'),
     onClick: async () => {
       const values = await gridApi.formApi.getValues();
       useBatchSelect<RoleApi.Role>({
@@ -219,22 +226,14 @@ const toolbarActions = computed<ActionItem[]>(() => [
         query: values,
       });
     },
-    title: $t('page.batchDelete'),
     type: 'danger',
   },
   {
     auth: 'system:role:create',
     icon: 'ep:plus',
+    btnText: $t('page.create'),
     onClick: () => addModal.open(),
-    title: $t('page.create'),
     type: 'primary',
-  },
-  {
-    auth: 'system:role:export',
-    icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
-    onClick: () => exportModal.open(),
-    title: $t('page.export.title'),
-    type: 'warning',
   },
 ]);
 
@@ -243,12 +242,10 @@ function createActions(row: RoleApi.Role) {
     {
       auth: 'system:role:update',
       icon: 'ep:edit',
+      btnText: $t('page.edit'),
       onClick: () => {
         editModal.setData({ id: row.id });
         editModal.open();
-      },
-      tooltip: {
-        content: $t('page.edit'),
       },
       type: 'primary',
     },
@@ -256,14 +253,12 @@ function createActions(row: RoleApi.Role) {
       auth: 'system:role:delete',
       disabled: row.type === DictRoleType.ADMIN,
       icon: 'ep:delete',
+      btnText: $t('page.delete'),
       popConfirm: {
         on: {
           confirm: () => deleteRoleApi(row.id).then(requestAfter),
         },
         title: $t('page.confirmDelete'),
-      },
-      tooltip: {
-        content: $t('page.delete'),
       },
       type: 'danger',
     },
@@ -273,7 +268,7 @@ function createActions(row: RoleApi.Role) {
     {
       auth: 'system:permission:assign-role-menu',
       icon: 'hugeicons:menu-square',
-      label: $t('sys.role.menuPermission'),
+      btnText: $t('sys.role.menuPermission'),
       onClick: () => {
         asignMenuModal.setData({ id: row.id });
         asignMenuModal.open();
@@ -282,7 +277,7 @@ function createActions(row: RoleApi.Role) {
     {
       auth: 'system:permission:assign-role-data-scope',
       icon: 'f7:scope',
-      label: $t('sys.role.dataScope'),
+      btnText: $t('sys.role.dataScope'),
       onClick: () => {
         assignScopeModal.setData({ id: row.id });
         assignScopeModal.open();
@@ -340,13 +335,12 @@ async function handleExport(fileName: string) {
 
 <template>
   <Page auto-content-height>
-    <Grid :form-options="formOptions">
-      <template #toolbar-actions>
+    <Grid :table-title="$t('sys.role.list')" :form-options="formOptions">
+      <template #toolbar-tools>
         <TableAction
           :actions="toolbarActions"
           :link="false"
           :show-empty="false"
-          circle
         />
 
         <TableAddModal @success="reloadTable" />

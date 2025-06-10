@@ -61,10 +61,11 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     componentProps: {
       clearable: true,
       multiple: true,
-      options: roleList.value?.map((item) => ({
-        label: item.name,
-        value: item.id,
-      })),
+      options:
+        roleList.value?.map((item) => ({
+          label: item.name,
+          value: item.id,
+        })) || [],
     },
     fieldName: 'roleIds',
     label: $t('sys.user.role'),

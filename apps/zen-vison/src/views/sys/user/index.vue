@@ -219,7 +219,7 @@ const columns: VxeGridProps<UserApi.User>['columns'] = [
   {
     field: 'opt',
     title: $t('page.options'),
-    width: 120,
+    width: 180,
     fixed: isMobile.value ? null : 'right',
     slots: { default: 'opt' },
   },
@@ -250,8 +250,21 @@ const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
+    auth: 'system:user:export',
+    icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
+    btnText: $t('page.export.action'),
+    onClick: () => exportModal.open(),
+  },
+  {
+    auth: 'system:user:import',
+    icon: importLoading.value ? 'eos-icons:bubble-loading' : 'ep:upload',
+    btnText: $t('page.import.action'),
+    onClick: () => importModal.open(),
+  },
+  {
     auth: 'system:user:delete',
     icon: 'ep:delete',
+    btnText: $t('page.delete'),
     onClick: async () => {
       const values = await gridApi.formApi.getValues();
       useBatchSelect<UserApi.User>({
@@ -261,29 +274,14 @@ const toolbarActions = computed<ActionItem[]>(() => [
         query: values,
       });
     },
-    title: $t('page.batchDelete'),
     type: 'danger',
   },
   {
     auth: 'system:user:create',
     icon: 'ep:plus',
+    btnText: $t('page.create'),
     onClick: () => addModal.open(),
-    title: $t('page.create'),
     type: 'primary',
-  },
-  {
-    auth: 'system:user:export',
-    icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
-    onClick: () => exportModal.open(),
-    title: $t('page.export.title'),
-    type: 'warning',
-  },
-  {
-    auth: 'system:user:import',
-    icon: importLoading.value ? 'eos-icons:bubble-loading' : 'ep:upload',
-    onClick: () => importModal.open(),
-    title: $t('page.import'),
-    type: 'info',
   },
 ]);
 
@@ -292,12 +290,10 @@ function createActions(row: UserApi.User) {
     {
       auth: 'system:user:update',
       icon: 'ep:edit',
+      btnText: $t('page.edit'),
       onClick: () => {
         editModal.setData({ id: row.id });
         editModal.open();
-      },
-      tooltip: {
-        content: $t('page.edit'),
       },
       type: 'primary',
     },
@@ -305,6 +301,7 @@ function createActions(row: UserApi.User) {
       auth: 'system:user:delete',
       disabled: row.id === userStore.userId,
       icon: 'ep:delete',
+      btnText: $t('page.delete'),
       popConfirm: {
         on: {
           confirm: () => {
@@ -312,9 +309,6 @@ function createActions(row: UserApi.User) {
           },
         },
         title: $t('page.confirmDelete'),
-      },
-      tooltip: {
-        content: $t('page.delete'),
       },
       type: 'danger',
     },
@@ -324,7 +318,7 @@ function createActions(row: UserApi.User) {
     {
       auth: 'system:user:update-password',
       icon: 'carbon:password',
-      label: $t('sys.user.resetPassword'),
+      btnText: $t('sys.user.resetPassword'),
       onClick: () => {
         resetPassword(row);
       },
@@ -332,7 +326,7 @@ function createActions(row: UserApi.User) {
     {
       auth: 'system:permission:assign-user-role',
       icon: 'clarity:assign-user-line',
-      label: $t('sys.user.assignRole'),
+      btnText: $t('sys.user.assignRole'),
       onClick: () => {
         assignRoleModal.setData({ id: row.id });
         assignRoleModal.open();
@@ -427,18 +421,17 @@ async function reloadTable(deptId?: number) {
       </div>
 
       <div class="w-full overflow-hidden xl:w-4/5">
-        <Grid :form-options="formOptions">
-          <template #toolbar-actions>
+        <Grid :table-title="$t('sys.user.list')" :form-options="formOptions">
+          <template #toolbar-tools>
             <TableAction
               :actions="toolbarActions"
               :link="false"
               :show-empty="false"
-              circle
             />
             <TableAddModal @success="reloadTable" />
             <TableEditModal @success="reloadTable" />
             <TableExportModal
-              :default-name="$t('sys.user.title')"
+              :default-name="$t('sys.user.list')"
               @confirm="handleExport"
             />
             <UserImportModal @confirm="handleImport" />

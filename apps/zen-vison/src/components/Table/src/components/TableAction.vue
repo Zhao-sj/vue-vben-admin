@@ -64,7 +64,7 @@ function hasDisabled(config?: Record<string, any>) {
 </script>
 
 <template>
-  <div class="flex items-center justify-center">
+  <div class="flex flex-wrap items-center justify-center gap-y-3">
     <template v-for="(item, i) in authActions" :key="i">
       <ElPopconfirm
         :disabled="item.disabled || hasDisabled(item.popConfirm)"
@@ -82,10 +82,12 @@ function hasDisabled(config?: Record<string, any>) {
               <ElButton :circle :link v-bind="{ ...item, icon: undefined }">
                 <IconifyIcon
                   v-if="item.icon"
-                  :class="{ 'mr-1': item.label }"
+                  :class="{ 'mr-1': !!item.btnText }"
                   :icon="item.icon"
                 />
-                <span v-if="item.label" class="z-span">{{ item.label }}</span>
+                <span v-if="item.btnText" class="z-span">
+                  {{ item.btnText }}
+                </span>
               </ElButton>
             </ElTooltip>
           </div>
@@ -115,7 +117,7 @@ function hasDisabled(config?: Record<string, any>) {
             v-bind="{ ...item, icon: undefined }"
           >
             <IconifyIcon v-if="item.icon" :icon="item.icon" class="mr-1" />
-            <span>{{ item.label }}</span>
+            <span>{{ item.btnText }}</span>
           </ElDropdownItem>
         </ElDropdownMenu>
       </template>

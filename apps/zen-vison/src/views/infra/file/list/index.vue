@@ -184,8 +184,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     icon: 'ep:upload',
+    btnText: $t('page.upload.action'),
     onClick: () => uploadDrawer.open(),
-    title: $t('page.create'),
     type: 'primary',
   },
 ]);
@@ -195,6 +195,7 @@ function createActions(row: FileApi.FileItem) {
     {
       auth: 'infra:file:delete',
       icon: 'ep:delete',
+      btnText: $t('page.delete'),
       popConfirm: {
         on: {
           confirm: () => {
@@ -205,9 +206,6 @@ function createActions(row: FileApi.FileItem) {
           },
         },
         title: $t('page.confirmDelete'),
-      },
-      tooltip: {
-        content: $t('page.delete'),
       },
       type: 'danger',
     },
@@ -242,13 +240,12 @@ async function reloadTable() {
 
 <template>
   <Page auto-content-height>
-    <Grid :form-options="formOptions">
-      <template #toolbar-actions>
+    <Grid :table-title="$t('infra.file.list.list')" :form-options="formOptions">
+      <template #toolbar-tools>
         <TableAction
           :actions="toolbarActions"
           :link="false"
           :show-empty="false"
-          circle
         />
 
         <FileUploadDrawer @success="reloadTable" />

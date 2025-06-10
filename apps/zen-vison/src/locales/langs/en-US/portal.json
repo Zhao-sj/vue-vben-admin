@@ -1,6 +1,6 @@
 {
   "consult": {
-    "title": "Business Consult",
+    "list": "Business Consult List",
     "id": "ID",
     "company": "Conpany",
     "name": "Contact",
@@ -9,8 +9,6 @@
     "content": "Content",
     "status": "Status",
     "createTime": "Consult Time",
-    "batchIgnore": "Batch Ignore",
-    "batchProcess": "Batch Accept",
     "processed": "Accept",
     "ignored": "Ignored",
     "processTip": "Has the consultation been accepted?",

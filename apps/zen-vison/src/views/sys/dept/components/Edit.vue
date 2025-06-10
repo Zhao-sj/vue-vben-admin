@@ -92,7 +92,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="deptLoading || userLoading || dataLoading"
-    :title="$t('sys.dept.edit')"
+    :title="$t('page.actionTitle.edit', [$t('sys.dept.title')])"
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
     footer-class="gap-x-0"

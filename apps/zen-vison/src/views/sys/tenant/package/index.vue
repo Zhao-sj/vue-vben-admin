@@ -117,7 +117,7 @@ const columns: VxeGridProps<TenantApi.Package>['columns'] = [
   {
     field: 'opt',
     title: $t('page.options'),
-    width: 120,
+    width: 180,
     slots: { default: 'opt' },
     fixed: isMobile.value ? null : 'right',
   },
@@ -149,6 +149,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:tenant-package:delete',
     icon: 'ep:delete',
+    btnText: $t('page.delete'),
     onClick: async () => {
       const values = await gridApi.formApi.getValues();
       useBatchSelect<TenantApi.Package>({
@@ -158,14 +159,13 @@ const toolbarActions = computed<ActionItem[]>(() => [
         query: values,
       });
     },
-    title: $t('page.batchDelete'),
     type: 'danger',
   },
   {
     auth: 'system:tenant-package:create',
     icon: 'ep:plus',
+    btnText: $t('page.create'),
     onClick: () => addModal.open(),
-    title: $t('page.create'),
     type: 'primary',
   },
 ]);
@@ -175,18 +175,17 @@ function createActions(row: TenantApi.Package) {
     {
       auth: 'system:tenant-package:update',
       icon: 'ep:edit',
+      btnText: $t('page.edit'),
       onClick: () => {
         editModal.setData({ id: row.id });
         editModal.open();
-      },
-      tooltip: {
-        content: $t('page.edit'),
       },
       type: 'primary',
     },
     {
       auth: 'system:tenant-package:delete',
       icon: 'ep:delete',
+      btnText: $t('page.delete'),
       popConfirm: {
         on: {
           confirm: () => {
@@ -197,9 +196,6 @@ function createActions(row: TenantApi.Package) {
           },
         },
         title: $t('page.confirmDelete'),
-      },
-      tooltip: {
-        content: $t('page.delete'),
       },
       type: 'danger',
     },
@@ -216,13 +212,15 @@ async function reloadTable() {
 
 <template>
   <Page auto-content-height>
-    <Grid :form-options="formOptions">
-      <template #toolbar-actions>
+    <Grid
+      :table-title="$t('sys.tenant.package.list')"
+      :form-options="formOptions"
+    >
+      <template #toolbar-tools>
         <TableAction
           :actions="toolbarActions"
           :link="false"
           :show-empty="false"
-          circle
         />
 
         <TableAddModal @success="reloadTable" />

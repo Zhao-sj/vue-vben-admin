@@ -181,7 +181,7 @@ const columns: VxeGridProps<TenantApi.Tenant>['columns'] = [
   {
     field: 'opt',
     title: $t('page.options'),
-    width: 120,
+    width: 180,
     fixed: isMobile.value ? null : 'right',
     slots: { default: 'opt' },
   },
@@ -216,6 +216,12 @@ const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
+    auth: 'system:tenant:export',
+    icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
+    onClick: () => exportModal.open(),
+    btnText: $t('page.export.action'),
+  },
+  {
     auth: 'system:tenant:delete',
     icon: 'ep:delete',
     onClick: async () => {
@@ -227,22 +233,15 @@ const toolbarActions = computed<ActionItem[]>(() => [
         query: values,
       });
     },
-    title: $t('page.batchDelete'),
+    btnText: $t('page.delete'),
     type: 'danger',
   },
   {
     auth: 'system:tenant:create',
     icon: 'ep:plus',
     onClick: () => addModal.open(),
-    title: $t('page.create'),
+    btnText: $t('page.create'),
     type: 'primary',
-  },
-  {
-    auth: 'system:tenant:export',
-    icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
-    onClick: () => exportModal.open(),
-    title: $t('page.export.title'),
-    type: 'warning',
   },
 ]);
 
@@ -253,12 +252,10 @@ function createActions(row: TenantApi.Tenant) {
     {
       auth: 'system:tenant:update',
       icon: 'ep:edit',
+      btnText: $t('page.edit'),
       onClick: () => {
         editModal.setData({ id: row.id });
         editModal.open();
-      },
-      tooltip: {
-        content: $t('page.edit'),
       },
       type: 'primary',
     },
@@ -266,6 +263,7 @@ function createActions(row: TenantApi.Tenant) {
       auth: 'system:tenant:delete',
       disabled,
       icon: 'ep:delete',
+      btnText: $t('page.delete'),
       popConfirm: {
         on: {
           confirm: () => {
@@ -276,9 +274,6 @@ function createActions(row: TenantApi.Tenant) {
           },
         },
         title: $t('page.confirmDelete'),
-      },
-      tooltip: {
-        content: $t('page.delete'),
       },
       type: 'danger',
     },
@@ -318,20 +313,19 @@ async function reloadTable() {
 
 <template>
   <Page auto-content-height>
-    <Grid :form-options="formOptions">
-      <template #toolbar-actions>
+    <Grid :table-title="$t('sys.tenant.list.list')" :form-options="formOptions">
+      <template #toolbar-tools>
         <TableAction
           :actions="toolbarActions"
           :link="false"
           :show-empty="false"
-          circle
         />
 
         <TableAddModal @success="reloadTable" />
         <TableEditModal @success="reloadTable" />
 
         <TableExportModal
-          :default-name="$t('sys.tenant.list.title')"
+          :default-name="$t('sys.tenant.list.list')"
           @confirm="handleExport"
         />
       </template>

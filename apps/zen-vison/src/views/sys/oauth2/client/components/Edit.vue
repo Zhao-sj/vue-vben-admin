@@ -64,7 +64,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="clientLoading"
-    :title="$t('sys.oauth2.client.edit')"
+    :title="$t('page.actionTitle.edit', [$t('sys.oauth2.client.title')])"
     class="w-11/12 lg:w-1/2 2xl:w-1/3"
     draggable
     footer-class="gap-x-0"

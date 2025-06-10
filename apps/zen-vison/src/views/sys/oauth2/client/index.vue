@@ -181,7 +181,7 @@ const columns: VxeGridProps<OAuth2Api.Client>['columns'] = [
   {
     field: 'opt',
     title: $t('page.options'),
-    width: 120,
+    width: 180,
     fixed: isMobile.value ? null : 'right',
     slots: { default: 'opt' },
   },
@@ -209,6 +209,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:oauth2-client:delete',
     icon: 'ep:delete',
+    btnText: $t('page.delete'),
     onClick: async () => {
       const values = await gridApi.formApi.getValues();
       useBatchSelect<OAuth2Api.Client>({
@@ -218,14 +219,13 @@ const toolbarActions = computed<ActionItem[]>(() => [
         query: values,
       });
     },
-    title: $t('page.batchDelete'),
     type: 'danger',
   },
   {
     auth: 'system:oauth2-client:create',
     icon: 'ep:plus',
+    btnText: $t('page.create'),
     onClick: () => addModal.open(),
-    title: $t('page.create'),
     type: 'primary',
   },
 ]);
@@ -235,26 +235,22 @@ function createActions(row: OAuth2Api.Client) {
     {
       auth: 'system:oauth2-client:update',
       icon: 'ep:edit',
+      btnText: $t('page.edit'),
       onClick: () => {
         editModal.setData({ id: row.id });
         editModal.open();
-      },
-      tooltip: {
-        content: $t('page.edit'),
       },
       type: 'primary',
     },
     {
       auth: 'system:oauth2-client:delete',
       icon: 'ep:delete',
+      btnText: $t('page.delete'),
       popConfirm: {
         on: {
           confirm: () => deleteOAuth2ClientApi(row.id).then(requestAfter),
         },
         title: $t('page.confirmDelete'),
-      },
-      tooltip: {
-        content: $t('page.delete'),
       },
       type: 'danger',
     },
@@ -276,13 +272,15 @@ async function reloadTable() {
 
 <template>
   <Page auto-content-height>
-    <Grid :form-options="formOptions">
-      <template #toolbar-actions>
+    <Grid
+      :table-title="$t('sys.oauth2.client.list')"
+      :form-options="formOptions"
+    >
+      <template #toolbar-tools>
         <TableAction
           :actions="toolbarActions"
           :link="false"
           :show-empty="false"
-          circle
         />
 
         <TableAddModal @success="reloadTable" />

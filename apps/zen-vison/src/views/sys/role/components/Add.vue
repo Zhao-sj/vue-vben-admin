@@ -44,7 +44,7 @@ async function onConfirm() {
   <Modal
     :close-on-click-modal="false"
     :confirm-loading="loading"
-    :title="$t('sys.role.create')"
+    :title="$t('page.actionTitle.create', [$t('sys.role.title')])"
     class="w-11/12 lg:w-1/3 2xl:w-1/4"
     draggable
     footer-class="gap-x-0"

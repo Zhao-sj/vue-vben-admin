@@ -156,7 +156,7 @@ const columns: VxeGridProps<LogApi.Error>['columns'] = [
   {
     field: 'opt',
     title: $t('page.options'),
-    width: 240,
+    width: 180,
     fixed: isMobile.value ? null : 'right',
     slots: { default: 'opt' },
   },
@@ -187,37 +187,33 @@ const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
+    auth: 'portal:consult:export',
+    icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
+    btnText: $t('page.export.action'),
+    onClick: () => exportModal.open(),
+  },
+  {
     auth: 'portal:consult:update-status',
     icon: 'ep:close',
+    btnText: $t('portal.consult.ignored'),
     onClick: () => handleBatchProcess(DictConsultAccept.IGNORE),
-    title: $t('portal.consult.batchIgnore'),
     type: 'danger',
   },
   {
     auth: 'portal:consult:update-status',
     icon: 'ep:check',
+    btnText: $t('portal.consult.processed'),
     onClick: () => handleBatchProcess(DictConsultAccept.ACCEPT),
-    title: $t('portal.consult.batchProcess'),
     type: 'success',
-  },
-  {
-    auth: 'portal:consult:export',
-    icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
-    onClick: () => exportModal.open(),
-    title: $t('page.export.title'),
-    type: 'warning',
   },
 ]);
 
 function createActions(row: LogApi.Error) {
-  const disabled = row.processStatus !== DictConsultAccept.UN_ACCEPT;
-
   const actions: ActionItem[] = [
     {
       auth: 'portal:consult:update-status',
-      disabled,
       icon: 'ep:circle-check',
-      label: $t('portal.consult.processed'),
+      btnText: $t('portal.consult.processed'),
       popConfirm: {
         on: {
           confirm: () => {
@@ -233,9 +229,8 @@ function createActions(row: LogApi.Error) {
     },
     {
       auth: 'portal:consult:update-status',
-      disabled,
       icon: 'ep:circle-close',
-      label: $t('portal.consult.ignored'),
+      btnText: $t('portal.consult.ignored'),
       popConfirm: {
         on: {
           confirm: () => {
@@ -251,7 +246,7 @@ function createActions(row: LogApi.Error) {
     },
   ];
 
-  return actions;
+  return row.processStatus === DictConsultAccept.UN_ACCEPT ? actions : [];
 }
 
 function requestAfter(reload = true) {
@@ -292,17 +287,16 @@ async function handleBatchProcess(status: DictConsultAccept) {
 
 <template>
   <Page auto-content-height>
-    <Grid :form-options="formOptions">
-      <template #toolbar-actions>
+    <Grid :table-title="$t('portal.consult.list')" :form-options="formOptions">
+      <template #toolbar-tools>
         <TableAction
           :actions="toolbarActions"
           :link="false"
           :show-empty="false"
-          circle
         />
 
         <TableExportModal
-          :default-name="$t('portal.consult.title')"
+          :default-name="$t('portal.consult.list')"
           @confirm="handleExport"
         />
       </template>

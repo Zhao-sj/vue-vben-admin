@@ -18,7 +18,7 @@ interface PopconfirmEmits {
 }
 
 export interface ActionItem extends ActionAuth, Partial<ButtonProps> {
-  label?: string;
+  btnText?: string;
   icon?: string;
   title?: string;
   onClick?: () => void;
@@ -29,7 +29,7 @@ export interface ActionItem extends ActionAuth, Partial<ButtonProps> {
 export interface ActionDropdownItem
   extends ActionAuth,
     Partial<DropdownItemProps> {
-  label?: string;
+  btnText?: string;
   icon?: string;
   onClick?: () => void;
 }

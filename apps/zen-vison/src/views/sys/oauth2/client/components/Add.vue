@@ -43,7 +43,7 @@ async function onConfirm() {
   <Modal
     :close-on-click-modal="false"
     :confirm-loading="loading"
-    :title="$t('sys.oauth2.client.create')"
+    :title="$t('page.actionTitle.create', [$t('sys.oauth2.client.title')])"
     class="w-11/12 lg:w-1/2 2xl:w-1/3"
     draggable
     footer-class="gap-x-0"

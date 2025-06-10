@@ -131,7 +131,7 @@ const columns: VxeGridProps<FileApi.Config>['columns'] = [
   {
     field: 'opt',
     title: $t('page.options'),
-    width: 120,
+    width: 240,
     fixed: isMobile.value ? null : 'right',
     slots: { default: 'opt' },
   },
@@ -163,8 +163,8 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'infra:file-config:create',
     icon: 'ep:plus',
+    btnText: $t('page.create'),
     onClick: () => addModal.open(),
-    title: $t('page.create'),
     type: 'primary',
   },
 ]);
@@ -174,18 +174,17 @@ function createActions(row: FileApi.Config) {
     {
       auth: 'infra:file-config:update',
       icon: 'ep:edit',
+      btnText: $t('page.edit'),
       onClick: () => {
         editModal.setData({ id: row.id });
         editModal.open();
-      },
-      tooltip: {
-        content: $t('page.edit'),
       },
       type: 'primary',
     },
     {
       auth: 'infra:file-config:query',
       icon: 'lucide:flask-conical',
+      btnText: $t('infra.file.config.test'),
       popConfirm: {
         on: {
           confirm: () => {
@@ -194,14 +193,12 @@ function createActions(row: FileApi.Config) {
         },
         title: $t('infra.file.config.confirm.test.title'),
       },
-      tooltip: {
-        content: $t('infra.file.config.test'),
-      },
       type: 'warning',
     },
     {
       auth: 'infra:file-config:delete',
       icon: 'ep:delete',
+      btnText: $t('page.delete'),
       popConfirm: {
         on: {
           confirm: () => {
@@ -212,9 +209,6 @@ function createActions(row: FileApi.Config) {
           },
         },
         title: $t('page.confirmDelete'),
-      },
-      tooltip: {
-        content: $t('page.delete'),
       },
       type: 'danger',
     },
@@ -276,13 +270,15 @@ async function reloadTable() {
 
 <template>
   <Page auto-content-height>
-    <Grid :form-options="formOptions">
-      <template #toolbar-actions>
+    <Grid
+      :table-title="$t('infra.file.config.list')"
+      :form-options="formOptions"
+    >
+      <template #toolbar-tools>
         <TableAction
           :actions="toolbarActions"
           :link="false"
           :show-empty="false"
-          circle
         />
 
         <TableAddModal @success="reloadTable" />

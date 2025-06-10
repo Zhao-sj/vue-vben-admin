@@ -64,7 +64,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="roleLoading"
-    :title="$t('sys.role.edit')"
+    :title="$t('page.actionTitle.edit', [$t('sys.role.title')])"
     class="w-11/12 lg:w-1/3 2xl:w-1/4"
     draggable
     footer-class="gap-x-0"

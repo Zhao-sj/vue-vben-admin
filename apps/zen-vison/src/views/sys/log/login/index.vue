@@ -201,9 +201,8 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:login-log:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
+    btnText: $t('page.export.action'),
     onClick: () => exportModal.open(),
-    title: $t('page.export.title'),
-    type: 'warning',
   },
 ]);
 
@@ -221,17 +220,16 @@ async function handleExport(fileName: string) {
 
 <template>
   <Page auto-content-height>
-    <Grid :form-options="formOptions">
-      <template #toolbar-actions>
+    <Grid :table-title="$t('sys.log.login.list')" :form-options="formOptions">
+      <template #toolbar-tools>
         <TableAction
           :actions="toolbarActions"
           :link="false"
           :show-empty="false"
-          circle
         />
 
         <TableExportModal
-          :default-name="$t('sys.log.login.title')"
+          :default-name="$t('sys.log.login.list')"
           @confirm="handleExport"
         />
       </template>

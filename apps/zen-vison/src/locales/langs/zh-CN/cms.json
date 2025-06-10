@@ -1,21 +1,23 @@
 {
   "category": {
+    "list": "分类列表",
+    "title": "分类",
     "name": "分类名称",
     "parent": "上级分类",
     "code": "分类编码",
     "sort": "分类排序",
-    "status": "分类状态",
-    "create": "新增分类",
-    "edit": "编辑分类"
+    "status": "分类状态"
   },
   "tag": {
+    "list": "标签列表",
+    "title": "标签",
     "id": "标签编号",
     "name": "标签名称",
-    "status": "标签状态",
-    "create": "新增标签",
-    "edit": "编辑标签"
+    "status": "标签状态"
   },
   "article": {
+    "list": "文章列表",
+    "name": "文章",
     "id": "编号",
     "banner": "封面",
     "title": "标题",
@@ -29,8 +31,6 @@
     "likeCount": "点赞数",
     "commentCount": "评论数",
     "favoriteCount": "收藏数",
-    "forwardCount": "转发量",
-    "create": "新增文章",
-    "edit": "编辑文章"
+    "forwardCount": "转发量"
   }
 }

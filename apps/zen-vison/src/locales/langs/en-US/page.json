@@ -31,12 +31,14 @@
   },
   "export": {
     "title": "Export",
+    "action": "Export",
     "fileName": "Name",
     "fileType": "Type",
     "empty": "File name cannot be empty",
     "success": "Export Success"
   },
   "upload": {
+    "action": "Upload",
     "title": "Upload File",
     "start": "Start Uploading",
     "loading": "Uploading",
@@ -74,7 +76,10 @@
   "detail": "Detail",
   "batchDelete": "Batch Delete",
   "confirmDelete": "Are you sure to delete?",
-  "import": "Import",
+  "import": {
+    "title": "Import",
+    "action": "Import"
+  },
   "search": "Search",
   "query": "Search",
   "reset": "Reset",
@@ -98,5 +103,12 @@
   "batchConfirm": "Are you sure you want to batch {0} the select record?",
   "yes": "Yes",
   "no": "No",
-  "copied": "Copied to clipboard"
+  "copied": "Copied to clipboard",
+  "actionTitle": {
+    "create": "Create {0}",
+    "edit": "Edit {0}",
+    "import": "Import {0}",
+    "export": "Export {0}"
+  },
+  "sub": "Sub"
 }

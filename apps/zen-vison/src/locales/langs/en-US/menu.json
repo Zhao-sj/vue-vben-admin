@@ -56,9 +56,9 @@
     }
   },
   "cms": {
-    "title": "CMS System",
+    "title": "Content Manage",
     "article": {
-      "title": "Content Manage"
+      "title": "Article Manage"
     },
     "category": {
       "title": "Category Manage"

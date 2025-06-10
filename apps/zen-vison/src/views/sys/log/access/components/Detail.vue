@@ -17,7 +17,13 @@ const requestParams = computed(() => {
   if (!log.value) return;
   const obj: Record<string, any> = JSON.parse(log.value.requestParams);
   for (const key in obj) {
-    obj[key] = JSON.parse(obj[key]);
+    let val;
+    try {
+      val = JSON.parse(obj[key]);
+    } catch {
+      val = obj[key];
+    }
+    obj[key] = val;
   }
   return obj;
 });

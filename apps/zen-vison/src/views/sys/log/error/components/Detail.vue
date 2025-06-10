@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { LogApi } from '#/api';
 
-import { useVbenModal } from '@vben/common-ui';
+import { JsonViewer, useVbenModal } from '@vben/common-ui';
 
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -12,6 +12,21 @@ const dictStore = useDictStore();
 const log = ref<LogApi.Error>();
 
 const [Modal, modal] = useVbenModal({ onOpenChange });
+
+const requestParams = computed(() => {
+  if (!log.value) return;
+  const obj: Record<string, any> = JSON.parse(log.value.requestParams);
+  for (const key in obj) {
+    let val;
+    try {
+      val = JSON.parse(obj[key]);
+    } catch {
+      val = obj[key];
+    }
+    obj[key] = val;
+  }
+  return obj;
+});
 
 function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
@@ -121,7 +136,7 @@ function onOpenChange(isOpen: boolean) {
         </ElDescriptionsItem>
 
         <ElDescriptionsItem :label="$t('sys.log.requestParams')">
-          {{ log?.requestParams }}
+          <JsonViewer :value="requestParams" preview-mode copyable boxed />
         </ElDescriptionsItem>
 
         <ElDescriptionsItem :label="$t('sys.log.error.exTime')">

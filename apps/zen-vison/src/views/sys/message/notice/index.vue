@@ -119,7 +119,7 @@ const columns: VxeGridProps<NoticeApi.Notice>['columns'] = [
   {
     field: 'opt',
     title: $t('page.options'),
-    width: 120,
+    width: 240,
     fixed: isMobile.value ? null : 'right',
     slots: { default: 'opt' },
   },
@@ -151,6 +151,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:notice:delete',
     icon: 'ep:delete',
+    btnText: $t('page.delete'),
     onClick: async () => {
       const formValues = await gridApi.formApi.getValues();
       useBatchSelect<NoticeApi.Notice>({
@@ -160,14 +161,13 @@ const toolbarActions = computed<ActionItem[]>(() => [
         query: formValues,
       });
     },
-    title: $t('page.batchDelete'),
     type: 'danger',
   },
   {
     auth: 'system:notice:create',
     icon: 'ep:plus',
+    btnText: $t('page.create'),
     onClick: () => addModal.open(),
-    title: $t('page.create'),
     type: 'primary',
   },
 ]);
@@ -177,40 +177,34 @@ function createActions(row: NoticeApi.Notice) {
     {
       auth: 'system:dict:update',
       icon: 'ep:edit',
+      btnText: $t('page.edit'),
       onClick: () => {
         editModal.setData({ id: row.id });
         editModal.open();
-      },
-      tooltip: {
-        content: $t('page.edit'),
       },
       type: 'primary',
     },
     {
       auth: 'system:dict:delete',
       icon: 'ep:delete',
+      btnText: $t('page.delete'),
       popConfirm: {
         on: {
           confirm: () => deleteNoticeApi(row.id).then(requestAfter),
         },
         title: $t('page.confirmDelete'),
       },
-      tooltip: {
-        content: $t('page.delete'),
-      },
       type: 'danger',
     },
     {
       auth: 'system:notice:push',
       icon: 'ion:push-outline',
+      btnText: $t('sys.message.notice.push.title'),
       popConfirm: {
         on: {
           confirm: () => pushNotice(row.id).then(() => requestAfter(false)),
         },
         title: $t('sys.message.notice.push.tip'),
-      },
-      tooltip: {
-        content: $t('sys.message.notice.push.title'),
       },
       type: 'warning',
     },
@@ -232,13 +226,15 @@ function requestAfter(reload = true) {
 
 <template>
   <Page auto-content-height>
-    <Grid :form-options="formOptions">
-      <template #toolbar-actions>
+    <Grid
+      :table-title="$t('sys.message.notice.list')"
+      :form-options="formOptions"
+    >
+      <template #toolbar-tools>
         <TableAction
           :actions="toolbarActions"
           :link="false"
           :show-empty="false"
-          circle
         />
 
         <TableAddModal @success="reloadTable" />

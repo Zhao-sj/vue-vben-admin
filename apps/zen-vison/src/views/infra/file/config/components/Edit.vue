@@ -63,7 +63,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="dataLoading"
-    :title="$t('infra.file.config.edit')"
+    :title="$t('page.actionTitle.edit', [$t('infra.file.config.title')])"
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
     footer-class="gap-x-0"

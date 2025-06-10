@@ -1,21 +1,23 @@
 {
   "category": {
+    "list": "Category List",
+    "title": "Category",
     "name": "Name",
     "parent": "Parent",
     "code": "Code",
     "sort": "Sort",
-    "status": "Status",
-    "create": "Create Category",
-    "edit": "Edit Category"
+    "status": "Status"
   },
   "tag": {
+    "list": "Tag List",
+    "title": "Tag",
     "id": "ID",
     "name": "Name",
-    "status": "Status",
-    "create": "Create Tag",
-    "edit": "Edit Tag"
+    "status": "Status"
   },
   "article": {
+    "list": "Article List",
+    "name": "Article",
     "id": "ID",
     "banner": "Banner",
     "title": "Title",
@@ -29,8 +31,6 @@
     "likeCount": "Like Count",
     "commentCount": "Comment Count",
     "favoriteCount": "Favorite Count",
-    "forwardCount": "Forward Count",
-    "create": "Create Article",
-    "edit": "Edit Article"
+    "forwardCount": "Forward Count"
   }
 }

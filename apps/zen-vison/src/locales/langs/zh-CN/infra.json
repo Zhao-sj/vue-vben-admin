@@ -1,13 +1,13 @@
 {
   "file": {
     "config": {
+      "list": "配置列表",
+      "title": "配置",
       "id": "配置编号",
       "name": "配置名称",
       "storage": "存储器",
       "master": "主配置",
       "remark": "配置描述",
-      "create": "新增文件配置",
-      "edit": "编辑文件配置",
       "test": "测试",
       "domain": "自定义域名",
       "basePath": "基础路径",
@@ -34,6 +34,7 @@
       }
     },
     "list": {
+      "list": "文件列表",
       "id": "文件编号",
       "name": "文件名称",
       "path": "文件路径",

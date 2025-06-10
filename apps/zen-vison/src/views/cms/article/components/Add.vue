@@ -72,7 +72,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="categoryLoading || tagLoading"
-    :title="$t('cms.article.create')"
+    :title="$t('page.actionTitle.create', [$t('cms.article.name')])"
     class="w-full lg:w-1/2"
     draggable
     footer-class="gap-x-0"

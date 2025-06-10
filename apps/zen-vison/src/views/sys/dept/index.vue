@@ -114,7 +114,7 @@ const columns: VxeGridProps<DeptApi.Dept>['columns'] = [
   {
     field: 'opt',
     title: $t('page.options'),
-    width: 120,
+    width: 240,
     fixed: isMobile.value ? null : 'right',
     slots: { default: 'opt' },
   },
@@ -152,44 +152,28 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:dept:create',
     icon: 'ep:plus',
+    btnText: $t('page.create'),
     onClick: () => addModal.open(),
-    title: $t('page.create'),
     type: 'primary',
   },
 ]);
 
 function createActions(row: DeptApi.Dept) {
   const actions: ActionItem[] = [
-    ...(row.status === DictStatus.ENABLE
-      ? [
-          {
-            auth: 'system:dept:create',
-            icon: 'ep:plus',
-            onClick: () => {
-              addModal.setData({ parentId: row.id });
-              addModal.open();
-            },
-            tooltip: {
-              content: $t('page.create'),
-            },
-          },
-        ]
-      : []),
     {
       auth: 'system:dept:update',
       icon: 'ep:edit',
+      btnText: $t('page.edit'),
       onClick: () => {
         editModal.setData({ id: row.id });
         editModal.open();
-      },
-      tooltip: {
-        content: $t('page.edit'),
       },
       type: 'primary',
     },
     {
       auth: 'system:dept:delete',
       icon: 'ep:delete',
+      btnText: $t('page.delete'),
       popConfirm: {
         on: {
           confirm: () => {
@@ -201,12 +185,22 @@ function createActions(row: DeptApi.Dept) {
         },
         title: $t('page.confirmDelete'),
       },
-      tooltip: {
-        content: $t('page.delete'),
-      },
       type: 'danger',
     },
   ];
+
+  if (row.status === DictStatus.ENABLE) {
+    actions.unshift({
+      auth: 'system:dept:create',
+      icon: 'ep:plus',
+      btnText: $t('page.actionTitle.create', [$t('page.sub')]),
+      onClick: () => {
+        addModal.setData({ parentId: row.id });
+        addModal.open();
+      },
+      type: 'primary',
+    });
+  }
 
   return actions;
 }
@@ -238,21 +232,15 @@ function toggleExpandAll() {
 
 <template>
   <Page auto-content-height>
-    <Grid :form-options="formOptions">
-      <template #toolbar-actions>
-        <TableAction
-          :actions="toolbarActions"
-          :link="false"
-          :show-empty="false"
-          circle
-        />
-
-        <TableAddModal @success="reloadTable" />
-        <TableEditModal @success="reloadTable" />
-      </template>
-
+    <Grid :table-title="$t('sys.dept.list')" :form-options="formOptions">
       <template #toolbar-tools>
-        <div>
+        <div class="flex items-center gap-2">
+          <TableAction
+            :actions="toolbarActions"
+            :link="false"
+            :show-empty="false"
+          />
+
           <ElButton
             :title="`${$t('page.expand')} / ${$t('page.collapsed')}`"
             circle
@@ -261,6 +249,9 @@ function toggleExpandAll() {
           >
             <IconifyIcon icon="ep:sort" />
           </ElButton>
+
+          <TableAddModal @success="reloadTable" />
+          <TableEditModal @success="reloadTable" />
         </div>
       </template>
 

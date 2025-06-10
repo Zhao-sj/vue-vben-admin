@@ -13,10 +13,16 @@ function getDeviceInfo() {
   }
 
   const { browser, os } = UAParser(props.ua);
-  const deviceType = `${os.name} ${os.version}`;
-  const kernelInfo = `${browser.name} ${browser.version}`;
 
-  return `${deviceType}[${kernelInfo}]`;
+  const deviceType = [os.name, os.version].filter((item) => !!item).join(' ');
+  const kernelInfo = [browser.name, browser.version]
+    .filter((item) => !!item)
+    .join(' ');
+
+  return [deviceType, kernelInfo]
+    .filter((item) => !!item)
+    .map((item, i, arr) => (i === arr.length - 1 ? `[${item}]` : item))
+    .join(' ');
 }
 </script>
 

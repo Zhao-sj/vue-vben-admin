@@ -138,7 +138,7 @@ function createActions(row: OAuth2Api.AccessToken) {
     {
       auth: 'system:oauth2-token:delete',
       icon: 'lucide:log-out',
-      label: $t('sys.oauth2.token.kickout'),
+      btnText: $t('sys.oauth2.token.kickout'),
       popConfirm: {
         on: {
           confirm: () =>
@@ -167,7 +167,10 @@ async function reloadTable() {
 
 <template>
   <Page auto-content-height>
-    <Grid :form-options="formOptions">
+    <Grid
+      :table-title="$t('sys.oauth2.token.list')"
+      :form-options="formOptions"
+    >
       <template #toolbar-actions>
         <div></div>
       </template>

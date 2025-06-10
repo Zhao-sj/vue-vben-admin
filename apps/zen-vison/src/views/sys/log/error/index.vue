@@ -261,76 +261,76 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:error-log:update-status',
     icon: 'ep:close',
+    btnText: $t('sys.log.error.ignored'),
     onClick: () => handleBatchProcess(DictLogProcess.IGNORE),
-    title: $t('sys.log.error.batchIgnore'),
     type: 'danger',
   },
   {
     auth: 'system:error-log:update-status',
     icon: 'ep:check',
+    btnText: $t('sys.log.error.processed'),
     onClick: () => handleBatchProcess(DictLogProcess.PROCESSED),
-    title: $t('sys.log.error.batchProcess'),
     type: 'success',
   },
   {
     auth: 'system:error-log:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
+    btnText: $t('page.export.action'),
     onClick: () => exportModal.open(),
-    title: $t('page.export.title'),
-    type: 'warning',
   },
 ]);
 
 function createActions(row: LogApi.Error) {
-  const disabled = row.processStatus !== DictLogProcess.UN_PROCESS;
-
   const actions: ActionItem[] = [
     {
       icon: 'ep:view',
-      label: $t('page.detail'),
+      btnText: $t('page.detail'),
       onClick: () => {
         detailModal.setData(row);
         detailModal.open();
       },
       type: 'primary',
     },
-    {
-      auth: 'system:error-log:update-status',
-      disabled,
-      icon: 'ep:circle-check',
-      label: $t('sys.log.error.processed'),
-      popConfirm: {
-        on: {
-          confirm: () => {
-            updateStatus({
-              id: row.id,
-              processStatus: DictLogProcess.PROCESSED,
-            }).then(requestAfter);
-          },
-        },
-        title: $t('sys.log.error.processTip'),
-      },
-      type: 'success',
-    },
-    {
-      auth: 'system:error-log:update-status',
-      disabled,
-      icon: 'ep:circle-close',
-      label: $t('sys.log.error.ignored'),
-      popConfirm: {
-        on: {
-          confirm: () => {
-            updateStatus({
-              id: row.id,
-              processStatus: DictLogProcess.IGNORE,
-            }).then(requestAfter);
-          },
-        },
-        title: $t('sys.log.error.ignoreTip'),
-      },
-      type: 'danger',
-    },
   ];
+
+  if (row.processStatus === DictLogProcess.UN_PROCESS) {
+    actions.push(
+      {
+        auth: 'system:error-log:update-status',
+        icon: 'ep:circle-check',
+        btnText: $t('sys.log.error.processed'),
+        popConfirm: {
+          on: {
+            confirm: () => {
+              updateStatus({
+                id: row.id,
+                processStatus: DictLogProcess.PROCESSED,
+              }).then(requestAfter);
+            },
+          },
+          title: $t('sys.log.error.processTip'),
+        },
+        type: 'success',
+      },
+      {
+        auth: 'system:error-log:update-status',
+        icon: 'ep:circle-close',
+        btnText: $t('sys.log.error.ignored'),
+        popConfirm: {
+          on: {
+            confirm: () => {
+              updateStatus({
+                id: row.id,
+                processStatus: DictLogProcess.IGNORE,
+              }).then(requestAfter);
+            },
+          },
+          title: $t('sys.log.error.ignoreTip'),
+        },
+        type: 'danger',
+      },
+    );
+  }
 
   return actions;
 }
@@ -373,17 +373,16 @@ async function handleBatchProcess(status: DictLogProcess) {
 
 <template>
   <Page auto-content-height>
-    <Grid :form-options="formOptions">
-      <template #toolbar-actions>
+    <Grid :table-title="$t('sys.log.error.list')" :form-options="formOptions">
+      <template #toolbar-tools>
         <TableAction
           :actions="toolbarActions"
           :link="false"
           :show-empty="false"
-          circle
         />
 
         <TableExportModal
-          :default-name="$t('sys.log.error.title')"
+          :default-name="$t('sys.log.error.list')"
           @confirm="handleExport"
         />
         <TableDetailModal />

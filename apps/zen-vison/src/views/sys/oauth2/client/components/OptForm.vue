@@ -56,25 +56,29 @@ const formSchema = computed<VbenFormSchema[]>(() => [
   },
   {
     component: 'InputNumber',
+    fieldName: 'accessTokenValiditySeconds',
     componentProps: {
       class: '!w-full',
       controlsPosition: 'right',
       min: 1,
-      placeholder: $t('page.pleaseInput', [$t('sys.oauth2.client.unit')]),
     },
-    fieldName: 'accessTokenValiditySeconds',
+    renderComponentContent: () => ({
+      suffix: () => 'ms',
+    }),
     label: $t('sys.oauth2.client.accessTokenValiditySeconds'),
     rules: 'required',
   },
   {
     component: 'InputNumber',
+    fieldName: 'refreshTokenValiditySeconds',
     componentProps: {
       class: '!w-full',
       controlsPosition: 'right',
       min: 1,
-      placeholder: $t('page.pleaseInput', [$t('sys.oauth2.client.unit')]),
     },
-    fieldName: 'refreshTokenValiditySeconds',
+    renderComponentContent: () => ({
+      suffix: () => 'ms',
+    }),
     label: $t('sys.oauth2.client.refreshTokenValiditySeconds'),
     rules: 'required',
   },
@@ -172,7 +176,7 @@ const [Form, formApi] = useVbenForm(
       },
       labelClass: 'justify-start',
       labelWidth: 150,
-      formItemClass: 'flex-col items-start',
+      formItemClass: 'flex-col items-start [&>*]:w-full',
     },
     schema: formSchema,
     showDefaultActions: false,

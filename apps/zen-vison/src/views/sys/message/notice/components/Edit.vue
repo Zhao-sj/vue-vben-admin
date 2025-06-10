@@ -64,7 +64,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="noticeLoading"
-    :title="$t('sys.message.notice.edit')"
+    :title="$t('page.actionTitle.edit', [$t('sys.message.notice.name')])"
     class="w-full lg:w-1/2"
     footer-class="gap-x-0"
   >

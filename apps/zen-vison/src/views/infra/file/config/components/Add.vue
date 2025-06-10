@@ -47,7 +47,7 @@ async function onConfirm() {
   <Modal
     :close-on-click-modal="false"
     :confirm-loading="loading"
-    :title="$t('infra.file.config.create')"
+    :title="$t('page.actionTitle.create', [$t('infra.file.config.title')])"
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
     footer-class="gap-x-0"

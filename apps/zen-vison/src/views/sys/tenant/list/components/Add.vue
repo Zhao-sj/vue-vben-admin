@@ -64,7 +64,7 @@ async function onConfirm() {
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="pckLoading"
-    :title="$t('sys.tenant.list.create')"
+    :title="$t('page.actionTitle.create', [$t('sys.tenant.list.title')])"
     class="w-11/12 md:w-1/2 2xl:w-1/3"
     draggable
     footer-class="gap-x-0"
