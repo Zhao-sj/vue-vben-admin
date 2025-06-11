@@ -4,7 +4,7 @@ import {
   createWebHistory,
 } from 'vue-router';
 
-import { resetStaticRoutes } from '@vben/utils';
+import { cloneDeep, resetStaticRoutes } from '@vben/utils';
 
 import { createRouterGuard } from './guard';
 import { routes } from './routes';
@@ -24,7 +24,8 @@ const router = createRouter({
   // strict: true,
 });
 
-const resetRoutes = () => resetStaticRoutes(router, routes);
+const defaultRoutes = cloneDeep(routes);
+const resetRoutes = () => resetStaticRoutes(router, defaultRoutes);
 
 // 创建路由守卫
 createRouterGuard(router);

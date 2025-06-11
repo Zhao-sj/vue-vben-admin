@@ -14,6 +14,7 @@ import { defineStore } from 'pinia';
 
 import { getUserPermissionApi, userLoginApi, userLogoutApi } from '#/api';
 import { $t } from '#/locales';
+import { resetRoutes } from '#/router';
 import { useWsStore, useUserStore as useZenUserStore } from '#/store';
 
 export const useAuthStore = defineStore('zen-auth', () => {
@@ -90,22 +91,24 @@ export const useAuthStore = defineStore('zen-auth', () => {
       if (accessStore.accessToken) {
         await userLogoutApi();
       }
-    } finally {
-      wsStore.disconnect(true);
-      resetAllStores();
-      accessStore.setLoginExpired(false);
-      userInfoCache = null;
-
-      // 回登陆页带上当前路由地址
-      await router.replace({
-        path: LOGIN_PATH,
-        query: redirect
-          ? {
-              redirect: encodeURIComponent(router.currentRoute.value.fullPath),
-            }
-          : {},
-      });
+    } catch {
+      // 不做任何处理
     }
+    wsStore.disconnect(true);
+    resetAllStores();
+    resetRoutes();
+    accessStore.setLoginExpired(false);
+    userInfoCache = null;
+
+    // 回登陆页带上当前路由地址
+    await router.replace({
+      path: LOGIN_PATH,
+      query: redirect
+        ? {
+            redirect: encodeURIComponent(router.currentRoute.value.fullPath),
+          }
+        : {},
+    });
   }
 
   async function fetchUserInfo() {
