@@ -19,6 +19,7 @@
     "list": "Article List",
     "name": "Article",
     "id": "ID",
+    "publicId": "Public ID",
     "banner": "Banner",
     "title": "Title",
     "description": "Description",
@@ -31,6 +32,9 @@
     "likeCount": "Like Count",
     "commentCount": "Comment Count",
     "favoriteCount": "Favorite Count",
-    "forwardCount": "Forward Count"
+    "forwardCount": "Forward Count",
+    "help": {
+      "publicId": "Article details address bar public id"
+    }
   }
 }

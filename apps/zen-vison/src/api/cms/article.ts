@@ -9,6 +9,7 @@ const { CMS } = ModuleEnum;
 
 export namespace ArticleApi {
   export interface PageQuery {
+    publicId?: string;
     title?: string;
     description?: string;
     categoryId?: number;

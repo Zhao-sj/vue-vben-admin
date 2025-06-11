@@ -19,6 +19,7 @@
     "list": "文章列表",
     "name": "文章",
     "id": "编号",
+    "publicId": "文章编号",
     "banner": "封面",
     "title": "标题",
     "description": "描述",
@@ -31,6 +32,9 @@
     "likeCount": "点赞数",
     "commentCount": "评论数",
     "favoriteCount": "收藏数",
-    "forwardCount": "转发量"
+    "forwardCount": "转发量",
+    "help": {
+      "publicId": "文章详情地址栏编号"
+    }
   }
 }

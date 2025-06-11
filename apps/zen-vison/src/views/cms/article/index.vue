@@ -77,6 +77,12 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     label: $t('cms.article.tag'),
   },
   {
+    component: 'Input',
+    fieldName: 'publicId',
+    label: $t('cms.article.publicId'),
+    help: $t('cms.article.help.publicId'),
+  },
+  {
     component: 'DatePicker',
     componentProps: {
       placeholder: $t('page.date.placeholder.between'),
