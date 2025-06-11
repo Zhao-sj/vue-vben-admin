@@ -123,10 +123,12 @@ const handleLogin = useDebounceFn((params: Record<string, any>) => {
   const state = cloneDeep(params) as AuthApi.LoginModel;
 
   const tenant = tenantList.value?.find((item) => item.id === state.tenant);
-  localStorage.setItem(
-    REMEMBER_TENANT_KEY,
-    JSON.stringify(remeberMe.value ? tenant : ''),
-  );
+  if (tenant) {
+    localStorage.setItem(
+      REMEMBER_TENANT_KEY,
+      JSON.stringify(remeberMe.value ? tenant : ''),
+    );
+  }
 
   if (props.modal) {
     emit('submit', state);
