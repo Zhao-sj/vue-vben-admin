@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FileApi } from '#/api';
 
-import { useVbenModal } from '@vben/common-ui';
+import { useVbenDrawer } from '@vben/common-ui';
 
 import { cloneDeep } from 'lodash-es';
 
@@ -26,7 +26,7 @@ const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
 const { loading, runAsync } = useRequest(addFileConfigApi, requestConf);
 
-const [Modal, modal] = useVbenModal({ onConfirm });
+const [Drawer, drawer] = useVbenDrawer({ onConfirm });
 
 async function onConfirm() {
   if (!optFormRef.value) return;
@@ -38,20 +38,20 @@ async function onConfirm() {
 
   await runAsync(state);
   ElMessage.success($t('page.success'));
-  modal.close();
+  drawer.close();
   emit('success');
 }
 </script>
 
 <template>
-  <Modal
+  <Drawer
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :title="$t('page.actionTitle.create', [$t('infra.file.config.title')])"
-    class="w-11/12 md:w-1/2 2xl:w-1/3"
+    class="md:w-1/2 2xl:w-1/3"
     draggable
     footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" />
-  </Modal>
+  </Drawer>
 </template>

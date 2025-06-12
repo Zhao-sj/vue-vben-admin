@@ -24,7 +24,7 @@ const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
 const { loading, runAsync } = useRequest(addNoticeApi, requestConf);
 
-const [Drawer, modal] = useVbenDrawer({ onConfirm });
+const [Drawer, drawer] = useVbenDrawer({ onConfirm });
 
 async function onConfirm() {
   if (!optFormRef.value) return;
@@ -34,7 +34,7 @@ async function onConfirm() {
   const values = await optFormRef.value.formApi.getValues();
   await runAsync(values as NoticeApi.AddModel);
   ElMessage.success($t('page.success'));
-  modal.close();
+  drawer.close();
   emit('success');
 }
 </script>

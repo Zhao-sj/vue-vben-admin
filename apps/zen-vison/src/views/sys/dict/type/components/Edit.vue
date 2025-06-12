@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DictApi } from '#/api';
 
-import { useVbenModal } from '@vben/common-ui';
+import { useVbenDrawer } from '@vben/common-ui';
 
 import { getDictTypeApi, updateDictTypeApi } from '#/api';
 import { useRequest } from '#/hooks';
@@ -30,14 +30,14 @@ const {
 
 const { loading, runAsync } = useRequest(updateDictTypeApi, requestConf);
 
-const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
+const [Drawer, drawer] = useVbenDrawer({ onConfirm, onOpenChange });
 
 async function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
     return;
   }
 
-  const { id } = modal.getData();
+  const { id } = drawer.getData();
   if (id) {
     const dict = await getDict(id);
     setTimeout(() => {
@@ -54,21 +54,21 @@ async function onConfirm() {
   const values = await optFormRef.value.formApi.getValues();
   await runAsync({ id: dict.value.id, ...values } as DictApi.TypeUpdateModel);
   ElMessage.success($t('page.success'));
-  modal.close();
+  drawer.close();
   emit('success');
 }
 </script>
 
 <template>
-  <Modal
+  <Drawer
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="dictLoading"
     :title="$t('page.actionTitle.edit', [$t('sys.dict.type.title')])"
-    class="w-11/12 lg:w-1/3 2xl:w-1/4"
+    class="lg:w-1/3 2xl:w-1/4"
     draggable
     footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" edit />
-  </Modal>
+  </Drawer>
 </template>

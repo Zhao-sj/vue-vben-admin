@@ -34,11 +34,11 @@ const requestConfig = {
 
 const { runAsync: pushNotice } = useRequest(pushNoticeApi, requestConfig);
 
-const [TableAddModal, addModal] = useVbenDrawer({
+const [TableAddDrawer, addDrawerApi] = useVbenDrawer({
   connectedComponent: TableAdd,
 });
 
-const [TableEditModal, editModal] = useVbenDrawer({
+const [TableEditDrawer, editDrawerApi] = useVbenDrawer({
   connectedComponent: TableEdit,
 });
 
@@ -167,7 +167,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'system:notice:create',
     icon: 'ep:plus',
     btnText: $t('page.create'),
-    onClick: () => addModal.open(),
+    onClick: () => addDrawerApi.open(),
     type: 'primary',
   },
 ]);
@@ -179,8 +179,8 @@ function createActions(row: NoticeApi.Notice) {
       icon: 'ep:edit',
       btnText: $t('page.edit'),
       onClick: () => {
-        editModal.setData({ id: row.id });
-        editModal.open();
+        editDrawerApi.setData({ id: row.id });
+        editDrawerApi.open();
       },
       type: 'primary',
     },
@@ -237,8 +237,8 @@ function requestAfter(reload = true) {
           :show-empty="false"
         />
 
-        <TableAddModal @success="reloadTable" />
-        <TableEditModal @success="reloadTable" />
+        <TableAddDrawer @success="reloadTable" />
+        <TableEditDrawer @success="reloadTable" />
       </template>
 
       <template #opt="{ row }">

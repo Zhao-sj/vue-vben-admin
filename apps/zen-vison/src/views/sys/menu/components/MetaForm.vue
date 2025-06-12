@@ -15,7 +15,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const show = ref(false);
+const show = ref(true);
 
 const chooseOpts = [
   { label: $t('page.no'), value: false },

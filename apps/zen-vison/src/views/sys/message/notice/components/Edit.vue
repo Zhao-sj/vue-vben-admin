@@ -30,14 +30,14 @@ const {
 
 const { loading, runAsync } = useRequest(updateNoticeApi, requestConf);
 
-const [Drawer, modal] = useVbenDrawer({ onConfirm, onOpenChange });
+const [Drawer, drawer] = useVbenDrawer({ onConfirm, onOpenChange });
 
 async function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
     return;
   }
 
-  const { id } = modal.getData();
+  const { id } = drawer.getData();
   if (id) {
     const notice = await getNotice(id);
     setTimeout(() => {
@@ -54,7 +54,7 @@ async function onConfirm() {
   const values = await optFormRef.value.formApi.getValues();
   await runAsync({ id: notice.value.id, ...values } as NoticeApi.UpdateModel);
   ElMessage.success($t('page.success'));
-  modal.close();
+  drawer.close();
   emit('success');
 }
 </script>

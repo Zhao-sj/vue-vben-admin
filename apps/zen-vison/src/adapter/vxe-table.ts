@@ -1,10 +1,10 @@
 import { h } from 'vue';
 
 import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
+import { isFunction } from '@vben/utils';
 
 import { ElAvatar, ElImage, ElLink, ElSwitch, ElTag } from 'element-plus';
 
-import { DictStatus } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 import {
@@ -154,13 +154,17 @@ setupVbenVxeTable({
           ...props,
           modelValue: row[column.field],
           loading: row[loadingKey] ?? false,
+          disabled: isFunction(props?.disabled)
+            ? props.disabled(row)
+            : props?.disabled,
           beforeChange: onBeforeChange,
         };
         async function onBeforeChange() {
           row[loadingKey] = true;
           try {
-            const { DISABLE, ENABLE } = DictStatus;
-            const newVal = row[column.field] === ENABLE ? DISABLE : ENABLE;
+            const { activeValue, inactiveValue } = finallyProps;
+            const newVal =
+              row[column.field] === activeValue ? inactiveValue : activeValue;
             const result = await attrs?.beforeChange?.(newVal, row);
             if (result !== false) {
               row[column.field] = newVal;

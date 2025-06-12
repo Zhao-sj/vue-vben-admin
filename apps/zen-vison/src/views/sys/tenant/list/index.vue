@@ -4,7 +4,7 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import type { TenantApi } from '#/api';
 import type { ActionItem } from '#/components';
 
-import { Page, useVbenModal } from '@vben/common-ui';
+import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 
 import dayjs from 'dayjs';
@@ -35,15 +35,15 @@ const requestConfig = {
   manual: true,
 };
 
-const [TableAddModal, addModal] = useVbenModal({
+const [TableAddDrawer, addDrawerApi] = useVbenDrawer({
   connectedComponent: TableAdd,
 });
 
-const [TableEditModal, editModal] = useVbenModal({
+const [TableEditDrawer, editDrawerApi] = useVbenDrawer({
   connectedComponent: TableEdit,
 });
 
-const [TableExportModal, exportModal] = useVbenModal({
+const [TableExportModal, exportModalApi] = useVbenModal({
   connectedComponent: TableExport,
 });
 
@@ -218,7 +218,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:tenant:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
-    onClick: () => exportModal.open(),
+    onClick: () => exportModalApi.open(),
     btnText: $t('page.export.action'),
   },
   {
@@ -239,7 +239,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:tenant:create',
     icon: 'ep:plus',
-    onClick: () => addModal.open(),
+    onClick: () => addDrawerApi.open(),
     btnText: $t('page.create'),
     type: 'primary',
   },
@@ -254,8 +254,8 @@ function createActions(row: TenantApi.Tenant) {
       icon: 'ep:edit',
       btnText: $t('page.edit'),
       onClick: () => {
-        editModal.setData({ id: row.id });
-        editModal.open();
+        editDrawerApi.setData({ id: row.id });
+        editDrawerApi.open();
       },
       type: 'primary',
     },
@@ -301,7 +301,7 @@ async function handleExport(fileName: string) {
   const values = await gridApi.formApi.getValues();
   const { data } = await exportTenant(values);
   downloadExcel(data, fileName);
-  exportModal.close();
+  exportModalApi.close();
   ElMessage.success($t('page.export.success'));
 }
 
@@ -321,8 +321,8 @@ async function reloadTable() {
           :show-empty="false"
         />
 
-        <TableAddModal @success="reloadTable" />
-        <TableEditModal @success="reloadTable" />
+        <TableAddDrawer @success="reloadTable" />
+        <TableEditDrawer @success="reloadTable" />
 
         <TableExportModal
           :default-name="$t('sys.tenant.list.list')"

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VbenFormSchema } from '#/adapter/form';
 
-import { useVbenModal } from '@vben/common-ui';
+import { useVbenDrawer } from '@vben/common-ui';
 
 import { useVbenForm } from '#/adapter/form';
 import {
@@ -37,7 +37,7 @@ const {
 
 const { loading, runAsync } = useRequest(assignUserRoleApi, requestConf);
 
-const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
+const [Drawer, drawer] = useVbenDrawer({ onConfirm, onOpenChange });
 
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
@@ -89,7 +89,7 @@ async function onOpenChange(isOpen: boolean) {
     return;
   }
 
-  const { id } = modal.getData();
+  const { id } = drawer.getData();
   if (id) {
     const [user, roleIds] = await Promise.all([
       getUser(id),
@@ -109,20 +109,20 @@ async function onConfirm() {
   const { roleIds } = await formApi.getValues();
   await runAsync({ roleIds, userId: user.value.id });
   ElMessage.success($t('page.success'));
-  modal.close();
+  drawer.close();
 }
 </script>
 
 <template>
-  <Modal
+  <Drawer
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="roleLoading || roleIdsLoading || userLoading"
     :title="$t('sys.user.assignRole')"
-    class="w-11/12 md:w-1/3 2xl:w-1/5"
+    class="md:w-1/3 2xl:w-1/5"
     draggable
     footer-class="gap-x-0"
   >
     <Form />
-  </Modal>
+  </Drawer>
 </template>

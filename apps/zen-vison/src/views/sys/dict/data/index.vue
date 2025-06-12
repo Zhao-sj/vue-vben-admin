@@ -4,7 +4,7 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import type { DictApi } from '#/api';
 import type { ActionItem } from '#/components';
 
-import { Page, useVbenModal } from '@vben/common-ui';
+import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
@@ -41,15 +41,15 @@ const { loading: exportLoading, runAsync: exportDict } = useRequest(
   requestConfig,
 );
 
-const [TableAddModal, addModal] = useVbenModal({
+const [TableAddDrawer, addDrawer] = useVbenDrawer({
   connectedComponent: TableAdd,
 });
 
-const [TableEditModal, editModal] = useVbenModal({
+const [TableEditDrawer, editDrawerApi] = useVbenDrawer({
   connectedComponent: TableEdit,
 });
 
-const [TableExportModal, exportModal] = useVbenModal({
+const [TableExportModal, exportModalApi] = useVbenModal({
   connectedComponent: TableExport,
 });
 
@@ -189,7 +189,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'system:dict:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
     btnText: $t('page.export.action'),
-    onClick: () => exportModal.open(),
+    onClick: () => exportModalApi.open(),
   },
   {
     auth: 'system:dict:delete',
@@ -212,8 +212,8 @@ const toolbarActions = computed<ActionItem[]>(() => [
     btnText: $t('page.create'),
     onClick: async () => {
       const formValues = await gridApi.formApi.getValues();
-      addModal.setData({ typeId: formValues.dictTypeId });
-      addModal.open();
+      addDrawer.setData({ typeId: formValues.dictTypeId });
+      addDrawer.open();
     },
     type: 'primary',
   },
@@ -226,8 +226,8 @@ function createActions(row: DictApi.Data) {
       icon: 'ep:edit',
       btnText: $t('page.edit'),
       onClick: () => {
-        editModal.setData({ id: row.id, typeId: row.dictTypeId });
-        editModal.open();
+        editDrawerApi.setData({ id: row.id, typeId: row.dictTypeId });
+        editDrawerApi.open();
       },
       type: 'primary',
     },
@@ -265,7 +265,7 @@ async function handleExport(fileName: string) {
   const formValues = await gridApi.formApi.getValues();
   const { data } = await exportDict(formValues as DictApi.DataPageQuery);
   downloadExcel(data, fileName);
-  exportModal.close();
+  exportModalApi.close();
   ElMessage.success($t('page.export.success'));
 }
 </script>
@@ -280,8 +280,8 @@ async function handleExport(fileName: string) {
           :show-empty="false"
         />
 
-        <TableAddModal @success="reloadTable" />
-        <TableEditModal @success="reloadTable" />
+        <TableAddDrawer @success="reloadTable" />
+        <TableEditDrawer @success="reloadTable" />
         <TableExportModal
           :default-name="$t('sys.dict.data.list')"
           @confirm="handleExport"

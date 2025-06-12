@@ -4,7 +4,7 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import type { FileApi } from '#/api';
 import type { ActionItem } from '#/components';
 
-import { Page, useVbenModal } from '@vben/common-ui';
+import { Page, useVbenDrawer } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 
 import { ElLink } from 'element-plus';
@@ -38,11 +38,11 @@ const { runAsync: updateMaster } = useRequest(
   requestConfig,
 );
 
-const [TableAddModal, addModal] = useVbenModal({
+const [TableAddDrawer, addDrawerApi] = useVbenDrawer({
   connectedComponent: TableAdd,
 });
 
-const [TableEditModal, editModal] = useVbenModal({
+const [TableEditDrawer, editDrawerApi] = useVbenDrawer({
   connectedComponent: TableEdit,
 });
 
@@ -114,7 +114,18 @@ const columns: VxeGridProps<FileApi.Config>['columns'] = [
     field: 'master',
     minWidth: 100,
     title: $t('infra.file.config.master'),
-    slots: { default: 'master' },
+    cellRender: {
+      name: 'CellSwitch',
+      props: {
+        disabled: (row: FileApi.Config) => row.master,
+        activeValue: true,
+        inactiveValue: false,
+        activeText: $t('page.yes'),
+        inactiveText: $t('page.no'),
+        style: null,
+      },
+      attrs: { beforeChange: handleMasterChange },
+    },
   },
   {
     field: 'remark',
@@ -164,7 +175,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'infra:file-config:create',
     icon: 'ep:plus',
     btnText: $t('page.create'),
-    onClick: () => addModal.open(),
+    onClick: () => addDrawerApi.open(),
     type: 'primary',
   },
 ]);
@@ -176,8 +187,8 @@ function createActions(row: FileApi.Config) {
       icon: 'ep:edit',
       btnText: $t('page.edit'),
       onClick: () => {
-        editModal.setData({ id: row.id });
-        editModal.open();
+        editDrawerApi.setData({ id: row.id });
+        editDrawerApi.open();
       },
       type: 'primary',
     },
@@ -239,22 +250,22 @@ function handleTestSuccess(url: string) {
   );
 }
 
-function handleMasterChange(row: FileApi.Config) {
+async function handleMasterChange(_: boolean, row: FileApi.Config) {
   const title = $t('page.systemTip');
   const message = $t('infra.file.config.confirm.master', [row.id]);
-  const resetMaster = () => {
-    row.master = !row.master;
-  };
 
-  ElMessageBox.confirm(message, title, {
-    closeOnClickModal: false,
-    draggable: true,
-    type: 'warning',
-  })
-    .then(() => {
-      updateMaster(row.id).then(requestAfter).catch(resetMaster);
-    })
-    .catch(resetMaster);
+  try {
+    await ElMessageBox.confirm(message, title, {
+      closeOnClickModal: false,
+      draggable: true,
+      type: 'warning',
+    });
+    await updateMaster(row.id);
+    requestAfter();
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function requestAfter(reload = true) {
@@ -281,18 +292,8 @@ async function reloadTable() {
           :show-empty="false"
         />
 
-        <TableAddModal @success="reloadTable" />
-        <TableEditModal @success="reloadTable" />
-      </template>
-
-      <template #master="{ row }">
-        <ElSwitch
-          v-model="row.master"
-          :active-value="true"
-          :disabled="row.master"
-          :inactive-value="false"
-          @change="handleMasterChange(row)"
-        />
+        <TableAddDrawer @success="reloadTable" />
+        <TableEditDrawer @success="reloadTable" />
       </template>
 
       <template #opt="{ row }">

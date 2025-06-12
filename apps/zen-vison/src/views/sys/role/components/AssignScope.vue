@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VbenFormSchema } from '#/adapter/form';
 
-import { useVbenModal } from '@vben/common-ui';
+import { useVbenDrawer } from '@vben/common-ui';
 import { IconifyIcon } from '@vben/icons';
 
 import { ElTree } from 'element-plus';
@@ -49,7 +49,7 @@ const {
 
 const { loading, runAsync } = useRequest(assignRoleDataScopeApi, requestConf);
 
-const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
+const [Drawer, drawer] = useVbenDrawer({ onConfirm, onOpenChange });
 
 const deptTree = computed(() => buildMenuTree(cloneDeep(deptList.value || [])));
 
@@ -139,7 +139,7 @@ async function onOpenChange(isOpen: boolean) {
     return;
   }
 
-  const { id } = modal.getData();
+  const { id } = drawer.getData();
   if (id) {
     const [role] = await Promise.all([getRole(id), getDeptList()]);
     if (!role.dataScopeDeptIds) {
@@ -161,17 +161,17 @@ async function onConfirm() {
     roleId: role.value.id,
   });
   ElMessage.success($t('page.success'));
-  modal.close();
+  drawer.close();
 }
 </script>
 
 <template>
-  <Modal
+  <Drawer
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="dictStore.loading || roleLoading || deptLoading"
     :title="$t('sys.role.assignScope')"
-    class="w-11/12 md:w-1/2 2xl:w-1/3"
+    class="md:w-1/2 2xl:w-1/3"
     draggable
     footer-class="gap-x-0"
   >
@@ -214,5 +214,5 @@ async function onConfirm() {
         </div>
       </template>
     </Form>
-  </Modal>
+  </Drawer>
 </template>

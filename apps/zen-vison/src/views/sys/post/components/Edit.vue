@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PostApi } from '#/api';
 
-import { useVbenModal } from '@vben/common-ui';
+import { useVbenDrawer } from '@vben/common-ui';
 
 import { getPostApi, updatePostApi } from '#/api';
 import { useRequest } from '#/hooks';
@@ -30,14 +30,14 @@ const {
 
 const { loading, runAsync } = useRequest(updatePostApi, requestConf);
 
-const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
+const [Drawer, drawer] = useVbenDrawer({ onConfirm, onOpenChange });
 
 async function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
     return;
   }
 
-  const { id } = modal.getData();
+  const { id } = drawer.getData();
   if (id) {
     const role = await getPost(id);
     setTimeout(() => {
@@ -54,21 +54,21 @@ async function onConfirm() {
   const values = await optFormRef.value.formApi.getValues();
   await runAsync({ id: post.value.id, ...values } as PostApi.UpdateModel);
   ElMessage.success($t('page.success'));
-  modal.close();
+  drawer.close();
   emit('success');
 }
 </script>
 
 <template>
-  <Modal
+  <Drawer
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="postLoading"
     :title="$t('page.actionTitle.edit', [$t('sys.post.title')])"
-    class="w-11/12 lg:w-1/3 2xl:w-1/4"
+    class="lg:w-1/3 2xl:w-1/4"
     draggable
     footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" />
-  </Modal>
+  </Drawer>
 </template>

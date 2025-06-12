@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { UserApi } from '#/api';
 
-import { useVbenModal } from '@vben/common-ui';
+import { useVbenDrawer } from '@vben/common-ui';
 
 import { cloneDeep } from 'lodash-es';
 
@@ -39,7 +39,7 @@ const {
 
 const { loading, runAsync } = useRequest(addUserApi, requestConf);
 
-const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
+const [Drawer, drawer] = useVbenDrawer({ onConfirm, onOpenChange });
 
 async function onOpenChange(isOpen: boolean) {
   if (isOpen) {
@@ -58,21 +58,21 @@ async function onConfirm() {
 
   await runAsync(state);
   ElMessage.success($t('page.success'));
-  modal.close();
+  drawer.close();
   emit('success');
 }
 </script>
 
 <template>
-  <Modal
+  <Drawer
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="deptLoading || postLoading"
     :title="$t('page.actionTitle.create', [$t('sys.user.name')])"
-    class="w-11/12 md:w-1/2 2xl:w-1/3"
+    class="md:w-1/2 2xl:w-1/3"
     draggable
     footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" :dept-list :post-list />
-  </Modal>
+  </Drawer>
 </template>

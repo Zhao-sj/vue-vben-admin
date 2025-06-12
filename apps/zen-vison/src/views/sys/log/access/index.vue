@@ -5,7 +5,7 @@ import type { LogApi } from '#/api';
 import type { ActionItem } from '#/components';
 
 import { useAccess } from '@vben/access';
-import { Page, useVbenModal } from '@vben/common-ui';
+import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 
 import { isNumber } from 'lodash-es';
@@ -47,11 +47,11 @@ const { loading: exportLoading, runAsync: exportLog } = useRequest(
   requestConfig,
 );
 
-const [TableExportModal, exportModal] = useVbenModal({
+const [TableExportModal, exportModalApi] = useVbenModal({
   connectedComponent: TableExport,
 });
 
-const [TableDetailModal, detailModal] = useVbenModal({
+const [TableDetailDrawer, detailDrawerApi] = useVbenDrawer({
   connectedComponent: TableDetail,
 });
 
@@ -267,7 +267,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:access-log:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
-    onClick: () => exportModal.open(),
+    onClick: () => exportModalApi.open(),
     btnText: $t('page.export.action'),
   },
 ]);
@@ -278,8 +278,8 @@ function createActions(row: LogApi.Access) {
       icon: 'ep:view',
       btnText: $t('page.detail'),
       onClick: () => {
-        detailModal.setData(row);
-        detailModal.open();
+        detailDrawerApi.setData(row);
+        detailDrawerApi.open();
       },
       type: 'primary',
     },
@@ -295,7 +295,7 @@ async function handleExport(fileName: string) {
   const values = await gridApi.formApi.getValues();
   const { data } = await exportLog(values);
   downloadExcel(data, fileName);
-  exportModal.close();
+  exportModalApi.close();
   ElMessage.success($t('page.export.success'));
 }
 </script>
@@ -314,7 +314,7 @@ async function handleExport(fileName: string) {
           :default-name="$t('sys.log.access.list')"
           @confirm="handleExport"
         />
-        <TableDetailModal />
+        <TableDetailDrawer />
       </template>
 
       <template #tenant="{ row: { tenantId } }">

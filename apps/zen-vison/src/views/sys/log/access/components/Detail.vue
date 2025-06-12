@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { LogApi } from '#/api';
 
-import { JsonViewer, useVbenModal } from '@vben/common-ui';
+import { JsonViewer, useVbenDrawer } from '@vben/common-ui';
 
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -11,7 +11,7 @@ import { DeviceInfo } from '#/views/sys/log/components';
 const dictStore = useDictStore();
 const log = ref<LogApi.Access>();
 
-const [Modal, modal] = useVbenModal({ onOpenChange });
+const [Drawer, drawer] = useVbenDrawer({ onOpenChange });
 
 const requestParams = computed(() => {
   if (!log.value) return;
@@ -33,7 +33,7 @@ function onOpenChange(isOpen: boolean) {
     return;
   }
 
-  const data = modal.getData<LogApi.Access>();
+  const data = drawer.getData<LogApi.Access>();
   if (data) {
     log.value = data;
   }
@@ -41,11 +41,11 @@ function onOpenChange(isOpen: boolean) {
 </script>
 
 <template>
-  <Modal
+  <Drawer
     :close-on-click-modal="false"
     :footer="false"
     :title="$t('sys.log.detail')"
-    class="w-11/12 2xl:w-3/5"
+    class="2xl:w-1/2"
     draggable
   >
     <div class="flex flex-col gap-3">
@@ -135,5 +135,5 @@ function onOpenChange(isOpen: boolean) {
         </ElDescriptionsItem>
       </ElDescriptions>
     </div>
-  </Modal>
+  </Drawer>
 </template>

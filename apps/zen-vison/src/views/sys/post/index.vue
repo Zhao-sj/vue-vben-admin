@@ -4,7 +4,7 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import type { PostApi } from '#/api';
 import type { ActionItem } from '#/components';
 
-import { Page, useVbenModal } from '@vben/common-ui';
+import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
@@ -37,15 +37,15 @@ const { loading: exportLoading, runAsync: exportPost } = useRequest(
   requestConfig,
 );
 
-const [TableAddModal, addModal] = useVbenModal({
+const [TableAddDrawer, addDrawerApi] = useVbenDrawer({
   connectedComponent: TableAdd,
 });
 
-const [TableEditModal, editModal] = useVbenModal({
+const [TableEditDrawer, editDrawerApi] = useVbenDrawer({
   connectedComponent: TableEdit,
 });
 
-const [TableExportModal, exportModal] = useVbenModal({
+const [TableExportModal, exportModalApi] = useVbenModal({
   connectedComponent: TableExport,
 });
 
@@ -169,7 +169,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'system:post:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
     btnText: $t('page.export.action'),
-    onClick: () => exportModal.open(),
+    onClick: () => exportModalApi.open(),
   },
   {
     auth: 'system:post:delete',
@@ -190,7 +190,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'system:post:create',
     icon: 'ep:plus',
     btnText: $t('page.create'),
-    onClick: () => addModal.open(),
+    onClick: () => addDrawerApi.open(),
     type: 'primary',
   },
 ]);
@@ -202,8 +202,8 @@ function createActions(row: PostApi.Post) {
       icon: 'ep:edit',
       btnText: $t('page.edit'),
       onClick: () => {
-        editModal.setData({ id: row.id });
-        editModal.open();
+        editDrawerApi.setData({ id: row.id });
+        editDrawerApi.open();
       },
       type: 'primary',
     },
@@ -241,7 +241,7 @@ async function handleExport(fileName: string) {
   const values = await gridApi.formApi.getValues();
   const { data } = await exportPost(values);
   downloadExcel(data, fileName);
-  exportModal.close();
+  exportModalApi.close();
   ElMessage.success($t('page.export.success'));
 }
 </script>
@@ -256,8 +256,8 @@ async function handleExport(fileName: string) {
           :show-empty="false"
         />
 
-        <TableAddModal @success="reloadTable" />
-        <TableEditModal @success="reloadTable" />
+        <TableAddDrawer @success="reloadTable" />
+        <TableEditDrawer @success="reloadTable" />
         <TableExportModal
           :default-name="$t('sys.post.list')"
           @confirm="handleExport"

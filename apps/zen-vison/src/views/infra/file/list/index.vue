@@ -20,7 +20,7 @@ import { FileUpload, VideoPreview } from './components';
 const { isMobile } = useIsMobile();
 const { copy } = useClipboard({ legacy: true });
 
-const [FileUploadDrawer, uploadDrawer] = useVbenDrawer({
+const [FileUploadDrawer, uploadDrawerApi] = useVbenDrawer({
   connectedComponent: FileUpload,
 });
 
@@ -185,7 +185,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
   {
     icon: 'ep:upload',
     btnText: $t('page.upload.action'),
-    onClick: () => uploadDrawer.open(),
+    onClick: () => uploadDrawerApi.open(),
     type: 'primary',
   },
 ]);

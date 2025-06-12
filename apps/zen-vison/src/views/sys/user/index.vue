@@ -5,7 +5,7 @@ import type { UserApi } from '#/api';
 import type { ActionDropdownItem, ActionItem } from '#/components';
 
 import { useAccess } from '@vben/access';
-import { Page, useVbenModal } from '@vben/common-ui';
+import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 import { IconifyIcon } from '@vben/icons';
 
@@ -61,27 +61,27 @@ const { loading: importLoading, runAsync: importUser } = useRequest(
   requestConfig,
 );
 
-const [TableAddModal, addModal] = useVbenModal({
+const [TableAddDrawer, addDrawerApi] = useVbenDrawer({
   connectedComponent: TableAdd,
 });
 
-const [TableEditModal, editModal] = useVbenModal({
+const [TableEditDrawer, editDrawerApi] = useVbenDrawer({
   connectedComponent: TableEdit,
 });
 
-const [AssignRoleModal, assignRoleModal] = useVbenModal({
+const [AssignRoleDrawer, assignRoleDrawerApi] = useVbenDrawer({
   connectedComponent: AssignRole,
 });
 
-const [TableExportModal, exportModal] = useVbenModal({
+const [TableExportModal, exportModalApi] = useVbenModal({
   connectedComponent: TableExport,
 });
 
-const [UserImportModal, importModal] = useVbenModal({
+const [UserImportDrawer, importDrawerApi] = useVbenDrawer({
   connectedComponent: UserImport,
 });
 
-const [ImportResultModal, importResultModal] = useVbenModal({
+const [ImportResultModal, importResultModalApi] = useVbenModal({
   connectedComponent: ImportResult,
 });
 
@@ -253,13 +253,13 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'system:user:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
     btnText: $t('page.export.action'),
-    onClick: () => exportModal.open(),
+    onClick: () => exportModalApi.open(),
   },
   {
     auth: 'system:user:import',
     icon: importLoading.value ? 'eos-icons:bubble-loading' : 'ep:upload',
     btnText: $t('page.import.action'),
-    onClick: () => importModal.open(),
+    onClick: () => importDrawerApi.open(),
   },
   {
     auth: 'system:user:delete',
@@ -280,7 +280,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'system:user:create',
     icon: 'ep:plus',
     btnText: $t('page.create'),
-    onClick: () => addModal.open(),
+    onClick: () => addDrawerApi.open(),
     type: 'primary',
   },
 ]);
@@ -292,8 +292,8 @@ function createActions(row: UserApi.User) {
       icon: 'ep:edit',
       btnText: $t('page.edit'),
       onClick: () => {
-        editModal.setData({ id: row.id });
-        editModal.open();
+        editDrawerApi.setData({ id: row.id });
+        editDrawerApi.open();
       },
       type: 'primary',
     },
@@ -328,8 +328,8 @@ function createActions(row: UserApi.User) {
       icon: 'clarity:assign-user-line',
       btnText: $t('sys.user.assignRole'),
       onClick: () => {
-        assignRoleModal.setData({ id: row.id });
-        assignRoleModal.open();
+        assignRoleDrawerApi.setData({ id: row.id });
+        assignRoleDrawerApi.open();
       },
     },
   ];
@@ -392,17 +392,17 @@ async function handleExport(fileName: string) {
   const values = await gridApi.formApi.getValues();
   const { data } = await exportUser(values);
   downloadExcel(data, fileName);
-  exportModal.close();
+  exportModalApi.close();
   ElMessage.success($t('page.export.success'));
 }
 
 async function handleImport(file: File, updateSupport: boolean) {
   const result = await importUser(file, updateSupport);
-  importModal.close();
+  importDrawerApi.close();
 
   setTimeout(() => {
-    importResultModal.setData({ data: result });
-    importResultModal.open();
+    importResultModalApi.setData({ data: result });
+    importResultModalApi.open();
   }, 250);
 }
 
@@ -428,15 +428,15 @@ async function reloadTable(deptId?: number) {
               :link="false"
               :show-empty="false"
             />
-            <TableAddModal @success="reloadTable" />
-            <TableEditModal @success="reloadTable" />
+            <TableAddDrawer @success="reloadTable" />
+            <TableEditDrawer @success="reloadTable" />
             <TableExportModal
               :default-name="$t('sys.user.list')"
               @confirm="handleExport"
             />
-            <UserImportModal @confirm="handleImport" />
+            <UserImportDrawer @confirm="handleImport" />
             <ImportResultModal @confirm="reloadTable" />
-            <AssignRoleModal />
+            <AssignRoleDrawer />
           </template>
 
           <template #sex="{ row: { sex } }">

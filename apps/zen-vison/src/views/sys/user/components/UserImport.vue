@@ -5,7 +5,7 @@ import type {
   UploadUserFile,
 } from 'element-plus';
 
-import { useVbenModal } from '@vben/common-ui';
+import { useVbenDrawer } from '@vben/common-ui';
 import { IconifyIcon } from '@vben/icons';
 
 import { useDebounceFn } from '@vueuse/core';
@@ -35,7 +35,7 @@ const { loading: downloading, runAsync: downloadTemplate } = useRequest(
   },
 );
 
-const [Modal] = useVbenModal({ onConfirm, onOpenChange });
+const [Drawer] = useVbenDrawer({ onConfirm, onOpenChange });
 
 const handleDownload = useDebounceFn(async () => {
   if (downloading.value) {
@@ -76,12 +76,12 @@ function onConfirm() {
 </script>
 
 <template>
-  <Modal
+  <Drawer
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="downloading"
     :title="$t('page.actionTitle.import', [$t('sys.user.name')])"
-    class="w-11/12 lg:w-1/3 2xl:w-1/4"
+    class="lg:w-1/3 2xl:w-1/4"
     draggable
     footer-class="gap-x-0"
   >
@@ -119,5 +119,5 @@ function onConfirm() {
         </div>
       </template>
     </ElUpload>
-  </Modal>
+  </Drawer>
 </template>

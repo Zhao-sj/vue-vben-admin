@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RoleApi } from '#/api';
 
-import { useVbenModal } from '@vben/common-ui';
+import { useVbenDrawer } from '@vben/common-ui';
 
 import { addRoleApi } from '#/api';
 import { useRequest } from '#/hooks';
@@ -24,7 +24,7 @@ const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
 
 const { loading, runAsync } = useRequest(addRoleApi, requestConf);
 
-const [Modal, modalApi] = useVbenModal({ onConfirm });
+const [Drawer, drawer] = useVbenDrawer({ onConfirm });
 
 async function onConfirm() {
   if (!optFormRef.value) return;
@@ -35,20 +35,20 @@ async function onConfirm() {
 
   await runAsync(values as RoleApi.AddModel);
   ElMessage.success($t('page.success'));
-  modalApi.close();
+  drawer.close();
   emit('success');
 }
 </script>
 
 <template>
-  <Modal
+  <Drawer
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :title="$t('page.actionTitle.create', [$t('sys.role.title')])"
-    class="w-11/12 lg:w-1/3 2xl:w-1/4"
+    class="lg:w-1/3 2xl:w-1/4"
     draggable
     footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" />
-  </Modal>
+  </Drawer>
 </template>

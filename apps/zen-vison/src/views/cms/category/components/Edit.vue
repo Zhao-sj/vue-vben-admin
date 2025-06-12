@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CategoryApi } from '#/api';
 
-import { useVbenModal } from '@vben/common-ui';
+import { useVbenDrawer } from '@vben/common-ui';
 
 import { cloneDeep } from 'lodash-es';
 
@@ -41,14 +41,14 @@ const {
 } = useRequest(getCmsCategoryApi, requestConf);
 
 const { loading, runAsync } = useRequest(updateCmsCategoryApi, requestConf);
-const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
+const [Drawer, drawer] = useVbenDrawer({ onConfirm, onOpenChange });
 
 async function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
     return;
   }
 
-  const { id } = modal.getData();
+  const { id } = drawer.getData();
   if (id) {
     const [category] = await Promise.all([getData(id), getCategoryList()]);
 
@@ -70,21 +70,21 @@ async function onConfirm() {
 
   await runAsync(state);
   ElMessage.success($t('page.success'));
-  modal.close();
+  drawer.close();
   emit('success');
 }
 </script>
 
 <template>
-  <Modal
+  <Drawer
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="categoryLoading || dataLoading"
     :title="$t('page.actionTitle.edit', [$t('cms.category.title')])"
-    class="w-11/12 lg:w-1/3 2xl:w-1/4"
+    class="lg:w-1/3 2xl:w-1/4"
     draggable
     footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" :category-list />
-  </Modal>
+  </Drawer>
 </template>

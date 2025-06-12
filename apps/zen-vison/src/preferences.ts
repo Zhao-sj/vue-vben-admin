@@ -14,11 +14,10 @@ export const overridesPreferences = defineOverridesPreferences({
     accessMode: 'backend',
     loginExpiredMode: 'modal',
     name: import.meta.env.VITE_APP_TITLE,
-    preferencesButtonPosition: 'fixed',
     enableRefreshToken: true,
   },
   copyright: {
-    companyName: 'ZenVision',
+    companyName: '至枢台',
     date: new Date().getFullYear().toString(),
     settingShow: false,
   },

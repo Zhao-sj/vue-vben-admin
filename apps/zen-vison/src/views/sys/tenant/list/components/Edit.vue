@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { TenantApi } from '#/api';
 
-import { useVbenModal } from '@vben/common-ui';
+import { useVbenDrawer } from '@vben/common-ui';
 
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash-es';
@@ -43,14 +43,14 @@ const {
 
 const { loading, runAsync } = useRequest(updateTenantApi, requestConf);
 
-const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
+const [Drawer, drawer] = useVbenDrawer({ onConfirm, onOpenChange });
 
 async function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
     return;
   }
 
-  const { id } = modal.getData();
+  const { id } = drawer.getData();
   if (id) {
     const [tenant] = await Promise.all([getTenant(id), getPackage()]);
     setTimeout(() => {
@@ -70,21 +70,21 @@ async function onConfirm() {
   state.expireTime = dayjs(state.expireTime).valueOf();
   await runAsync(state as TenantApi.UpdateModel);
   ElMessage.success($t('page.success'));
-  modal.close();
+  drawer.close();
   emit('success');
 }
 </script>
 
 <template>
-  <Modal
+  <Drawer
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="pckLoading || tentantLoading"
     :title="$t('page.actionTitle.edit', [$t('sys.tenant.list.title')])"
-    class="w-11/12 md:w-1/2 2xl:w-1/3"
+    class="md:w-1/2 2xl:w-1/3"
     draggable
     footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" :packages edit />
-  </Modal>
+  </Drawer>
 </template>

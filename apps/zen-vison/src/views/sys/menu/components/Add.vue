@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { MenuApi } from '#/api';
 
-import { useVbenModal } from '@vben/common-ui';
+import { useVbenDrawer } from '@vben/common-ui';
 
 import { addMenuApi, getMenuSimpleListApi } from '#/api';
 import { useRequest } from '#/hooks';
@@ -30,12 +30,12 @@ const {
 
 const { loading, runAsync } = useRequest(addMenuApi, requestConf);
 
-const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
+const [Drawer, drawer] = useVbenDrawer({ onConfirm, onOpenChange });
 
 function onOpenChange(isOpen: boolean) {
   if (isOpen) {
     getMenu();
-    const { parentId } = modal.getData();
+    const { parentId } = drawer.getData();
     if (parentId) {
       setTimeout(() => {
         optFormRef.value?.formApi.setFieldValue('parentId', parentId);
@@ -45,7 +45,7 @@ function onOpenChange(isOpen: boolean) {
     return;
   }
 
-  modal.setData({ parentId: null });
+  drawer.setData({ parentId: null });
 }
 
 async function onConfirm() {
@@ -59,21 +59,21 @@ async function onConfirm() {
   const values = await optFormRef.value.getValues();
   await runAsync(values as MenuApi.AddModel);
   ElMessage.success($t('page.success'));
-  modal.close();
+  drawer.close();
   emit('success');
 }
 </script>
 
 <template>
-  <Modal
+  <Drawer
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="menuLoading"
     :title="$t('page.actionTitle.create', [$t('sys.menu.title')])"
-    class="w-11/12 md:w-1/2 2xl:w-1/3"
+    class="md:w-1/2 2xl:w-1/3"
     draggable
     footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" :menus />
-  </Modal>
+  </Drawer>
 </template>

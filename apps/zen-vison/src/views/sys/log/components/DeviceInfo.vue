@@ -19,15 +19,17 @@ function getDeviceInfo() {
     .filter((item) => !!item)
     .join(' ');
 
-  return [deviceType, kernelInfo]
+  const info = [deviceType, kernelInfo]
     .filter((item) => !!item)
     .map((item, i, arr) => (i === arr.length - 1 ? `[${item}]` : item))
     .join(' ');
+
+  return info || props.ua;
 }
 </script>
 
 <template>
-  <ElTooltip :content="ua" :show-after="750">
+  <ElTooltip :content="ua" :disabled="ua === getDeviceInfo()" :show-after="750">
     <span>{{ getDeviceInfo() }}</span>
   </ElTooltip>
 </template>

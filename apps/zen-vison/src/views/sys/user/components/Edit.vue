@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { UserApi } from '#/api';
 
-import { useVbenModal } from '@vben/common-ui';
+import { useVbenDrawer } from '@vben/common-ui';
 
 import {
   getDeptSimpleListApi,
@@ -47,14 +47,14 @@ const {
 
 const { loading, runAsync } = useRequest(updateUserApi, requestConf);
 
-const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
+const [Drawer, drawer] = useVbenDrawer({ onConfirm, onOpenChange });
 
 async function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
     return;
   }
 
-  const { id } = modal.getData();
+  const { id } = drawer.getData();
   if (id) {
     const [user] = await Promise.all([getUser(id), getDept(), getPost()]);
     if (!user.postIds) {
@@ -75,21 +75,21 @@ async function onConfirm() {
   const values = await optFormRef.value.formApi.getValues();
   await runAsync({ id: user.value.id, ...values } as UserApi.UpdateModel);
   ElMessage.success($t('page.success'));
-  modal.close();
+  drawer.close();
   emit('success');
 }
 </script>
 
 <template>
-  <Modal
+  <Drawer
     :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="deptLoading || postLoading || userLoading"
     :title="$t('page.actionTitle.edit', [$t('sys.user.name')])"
-    class="w-11/12 md:w-1/2 2xl:w-1/3"
+    class="md:w-1/2 2xl:w-1/3"
     draggable
     footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" :dept-list :post-list edit />
-  </Modal>
+  </Drawer>
 </template>

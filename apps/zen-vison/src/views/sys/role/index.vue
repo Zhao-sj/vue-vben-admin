@@ -5,7 +5,7 @@ import type { RoleApi } from '#/api';
 import type { ActionDropdownItem, ActionItem } from '#/components';
 
 import { useAccess } from '@vben/access';
-import { Page, useVbenModal } from '@vben/common-ui';
+import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
@@ -49,23 +49,23 @@ const { loading: exportLoading, runAsync: exportRole } = useRequest(
   requestConfig,
 );
 
-const [TableAddModal, addModal] = useVbenModal({
+const [TableAddDrawer, addDrawerApi] = useVbenDrawer({
   connectedComponent: TableAdd,
 });
 
-const [TableEditModal, editModal] = useVbenModal({
+const [TableEditDrawer, editDrawerApi] = useVbenDrawer({
   connectedComponent: TableEdit,
 });
 
-const [TableExportModal, exportModal] = useVbenModal({
+const [TableExportModal, exportModalApi] = useVbenModal({
   connectedComponent: TableExport,
 });
 
-const [AsignMenuModal, asignMenuModal] = useVbenModal({
+const [AsignMenuDrawer, asignMenuDrawerApi] = useVbenDrawer({
   connectedComponent: AsignMenu,
 });
 
-const [AssignScopeModal, assignScopeModal] = useVbenModal({
+const [AssignScopeDrawer, assignScopeDrawerApi] = useVbenDrawer({
   connectedComponent: AssignScope,
 });
 
@@ -211,7 +211,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'system:role:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
     btnText: $t('page.export.action'),
-    onClick: () => exportModal.open(),
+    onClick: () => exportModalApi.open(),
   },
   {
     auth: 'system:role:delete',
@@ -232,7 +232,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'system:role:create',
     icon: 'ep:plus',
     btnText: $t('page.create'),
-    onClick: () => addModal.open(),
+    onClick: () => addDrawerApi.open(),
     type: 'primary',
   },
 ]);
@@ -244,8 +244,8 @@ function createActions(row: RoleApi.Role) {
       icon: 'ep:edit',
       btnText: $t('page.edit'),
       onClick: () => {
-        editModal.setData({ id: row.id });
-        editModal.open();
+        editDrawerApi.setData({ id: row.id });
+        editDrawerApi.open();
       },
       type: 'primary',
     },
@@ -270,8 +270,8 @@ function createActions(row: RoleApi.Role) {
       icon: 'hugeicons:menu-square',
       btnText: $t('sys.role.menuPermission'),
       onClick: () => {
-        asignMenuModal.setData({ id: row.id });
-        asignMenuModal.open();
+        asignMenuDrawerApi.setData({ id: row.id });
+        asignMenuDrawerApi.open();
       },
     },
     {
@@ -279,8 +279,8 @@ function createActions(row: RoleApi.Role) {
       icon: 'f7:scope',
       btnText: $t('sys.role.dataScope'),
       onClick: () => {
-        assignScopeModal.setData({ id: row.id });
-        assignScopeModal.open();
+        assignScopeDrawerApi.setData({ id: row.id });
+        assignScopeDrawerApi.open();
       },
     },
   ];
@@ -328,7 +328,7 @@ async function handleExport(fileName: string) {
   const values = await gridApi.formApi.getValues();
   const { data } = await exportRole(values);
   downloadExcel(data, fileName);
-  exportModal.close();
+  exportModalApi.close();
   ElMessage.success($t('page.export.success'));
 }
 </script>
@@ -343,14 +343,14 @@ async function handleExport(fileName: string) {
           :show-empty="false"
         />
 
-        <TableAddModal @success="reloadTable" />
-        <TableEditModal @success="reloadTable" />
+        <TableAddDrawer @success="reloadTable" />
+        <TableEditDrawer @success="reloadTable" />
         <TableExportModal
           :default-name="$t('sys.role.title')"
           @confirm="handleExport"
         />
-        <AsignMenuModal />
-        <AssignScopeModal />
+        <AsignMenuDrawer />
+        <AssignScopeDrawer />
       </template>
 
       <template #opt="{ row }">

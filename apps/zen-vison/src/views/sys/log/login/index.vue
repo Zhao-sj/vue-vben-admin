@@ -43,7 +43,7 @@ const { loading: exportLoading, runAsync: exportLog } = useRequest(
   requestConfig,
 );
 
-const [TableExportModal, exportModal] = useVbenModal({
+const [TableExportModal, exportModalApi] = useVbenModal({
   connectedComponent: TableExport,
 });
 
@@ -202,7 +202,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'system:login-log:export',
     icon: exportLoading.value ? 'eos-icons:bubble-loading' : 'ep:download',
     btnText: $t('page.export.action'),
-    onClick: () => exportModal.open(),
+    onClick: () => exportModalApi.open(),
   },
 ]);
 
@@ -213,7 +213,7 @@ async function handleExport(fileName: string) {
   const values = await gridApi.formApi.getValues();
   const { data } = await exportLog(values);
   downloadExcel(data, fileName);
-  exportModal.close();
+  exportModalApi.close();
   ElMessage.success($t('page.export.success'));
 }
 </script>

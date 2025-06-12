@@ -4,7 +4,7 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import type { CategoryApi } from '#/api';
 import type { ActionItem } from '#/components';
 
-import { Page, useVbenModal } from '@vben/common-ui';
+import { Page, useVbenDrawer } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 import { IconifyIcon } from '@vben/icons';
 
@@ -21,11 +21,11 @@ const { isMobile } = useIsMobile();
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.STATUS);
 
-const [TableAddModal, addModal] = useVbenModal({
+const [TableAddDrawer, addDrawerApi] = useVbenDrawer({
   connectedComponent: TableAdd,
 });
 
-const [TableEditModal, editModal] = useVbenModal({
+const [TableEditDrawer, editDrawerApi] = useVbenDrawer({
   connectedComponent: TableEdit,
 });
 
@@ -137,7 +137,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'cms:article-category:create',
     icon: 'ep:plus',
     btnText: $t('page.create'),
-    onClick: () => addModal.open(),
+    onClick: () => addDrawerApi.open(),
     type: 'primary',
   },
 ]);
@@ -149,8 +149,8 @@ function createActions(row: CategoryApi.Category) {
       icon: 'ep:edit',
       btnText: $t('page.edit'),
       onClick: () => {
-        editModal.setData({ id: row.id });
-        editModal.open();
+        editDrawerApi.setData({ id: row.id });
+        editDrawerApi.open();
       },
       type: 'primary',
     },
@@ -179,8 +179,8 @@ function createActions(row: CategoryApi.Category) {
       icon: 'ep:plus',
       btnText: $t('page.actionTitle.create', [$t('page.sub')]),
       onClick: () => {
-        addModal.setData({ parentId: row.id });
-        addModal.open();
+        addDrawerApi.setData({ parentId: row.id });
+        addDrawerApi.open();
       },
       type: 'primary',
     });
@@ -227,8 +227,8 @@ function toggleExpandAll() {
             <IconifyIcon icon="ep:sort" />
           </ElButton>
 
-          <TableAddModal @success="reloadTable" />
-          <TableEditModal @success="reloadTable" />
+          <TableAddDrawer @success="reloadTable" />
+          <TableEditDrawer @success="reloadTable" />
         </div>
       </template>
 
