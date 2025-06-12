@@ -8,14 +8,12 @@ import type { ComponentType } from './components';
 import { setupVbenForm, useVbenForm as useForm, z } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
-import { initComponentAdapter } from './components';
-
-// 初始化组件适配器
-initComponentAdapter().then(() => {
+async function initSetupVbenForm() {
   setupVbenForm<ComponentType>({
     config: {
       modelPropNameMap: {
         Upload: 'fileList',
+        CheckboxGroup: 'model-value',
       },
     },
     defineRules: {
@@ -33,11 +31,11 @@ initComponentAdapter().then(() => {
       },
     },
   });
-});
+}
 
 const useVbenForm = useForm<ComponentType>;
 
-export { useVbenForm, z };
+export { initSetupVbenForm, useVbenForm, z };
 
 export type VbenFormSchema = FormSchema<ComponentType>;
 export type { VbenFormProps };

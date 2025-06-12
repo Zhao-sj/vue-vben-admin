@@ -1,3 +1,5 @@
+import type { VxeTableGridOptions } from '@vben/plugins/vxe-table';
+
 import { h } from 'vue';
 
 import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
@@ -35,7 +37,6 @@ setupVbenVxeTable({
           refresh: {
             code: 'query',
           },
-          // @ts-ignore 全局开启表单搜索切换
           search: true,
         },
         size: 'small',
@@ -52,7 +53,7 @@ setupVbenVxeTable({
         pagerConfig: {
           pageSizes: [10, 20, 50, 100],
         },
-      },
+      } as VxeTableGridOptions,
       table: {
         columnConfig: {
           resizable: true,
