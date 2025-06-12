@@ -17,7 +17,8 @@ export const overridesPreferences = defineOverridesPreferences({
     enableRefreshToken: true,
   },
   copyright: {
-    companyName: '至枢台',
+    companyName: '至道科技',
+    companySiteLink: 'https://www.yimanyi.cn/',
     date: new Date().getFullYear().toString(),
     settingShow: false,
   },
