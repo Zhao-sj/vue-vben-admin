@@ -27,6 +27,7 @@ const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
 function createRequestClient(baseURL: string) {
   const client = new ZenRequestClient({
     baseURL,
+    timeout: 30_000,
     paramsSerializer: {
       // 自定义params参数序列化（日期格式化，支持时间范围）
       serialize: (params) => {

@@ -63,7 +63,7 @@ class RequestClient {
       timeout: 10_000,
     };
     const { ...axiosConfig } = options;
-    const requestConfig = merge(axiosConfig, defaultConfig);
+    const requestConfig = merge(defaultConfig, axiosConfig);
     requestConfig.paramsSerializer = getParamsSerializer(
       requestConfig.paramsSerializer,
     );
