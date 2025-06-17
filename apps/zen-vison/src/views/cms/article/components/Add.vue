@@ -74,7 +74,7 @@ async function onConfirm() {
     :loading="categoryLoading || tagLoading"
     :title="$t('page.actionTitle.create', [$t('cms.article.name')])"
     class="w-full lg:w-1/2"
-    draggable
+    destroy-on-close
     footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" :category-list :tag-list />

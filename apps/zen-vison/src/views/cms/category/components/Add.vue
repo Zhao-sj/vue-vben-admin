@@ -68,12 +68,11 @@ async function onConfirm() {
 
 <template>
   <Drawer
-    :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="categoryLoading"
     :title="$t('page.actionTitle.create', [$t('cms.category.title')])"
     class="lg:w-1/3 2xl:w-1/4"
-    draggable
+    destroy-on-close
     footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" :category-list />

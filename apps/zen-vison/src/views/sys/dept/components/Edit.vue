@@ -89,12 +89,11 @@ async function onConfirm() {
 
 <template>
   <Drawer
-    :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="deptLoading || userLoading || dataLoading"
     :title="$t('page.actionTitle.edit', [$t('sys.dept.title')])"
     class="md:w-1/2 2xl:w-1/3"
-    draggable
+    destroy-on-close
     footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" :dept-list :user-list />

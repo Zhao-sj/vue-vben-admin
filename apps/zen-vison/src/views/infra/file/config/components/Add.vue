@@ -45,11 +45,10 @@ async function onConfirm() {
 
 <template>
   <Drawer
-    :close-on-click-modal="false"
     :confirm-loading="loading"
     :title="$t('page.actionTitle.create', [$t('infra.file.config.title')])"
     class="md:w-1/2 2xl:w-1/3"
-    draggable
+    destroy-on-close
     footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" />

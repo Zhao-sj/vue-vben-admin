@@ -115,12 +115,11 @@ async function onConfirm() {
 
 <template>
   <Drawer
-    :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="roleLoading || roleIdsLoading || userLoading"
     :title="$t('sys.user.assignRole')"
     class="md:w-1/3 2xl:w-1/5"
-    draggable
+    destroy-on-close
     footer-class="gap-x-0"
   >
     <Form />

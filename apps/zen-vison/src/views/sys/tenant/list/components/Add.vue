@@ -61,12 +61,11 @@ async function onConfirm() {
 
 <template>
   <Drawer
-    :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="pckLoading"
     :title="$t('page.actionTitle.create', [$t('sys.tenant.list.title')])"
     class="md:w-1/2 2xl:w-1/3"
-    draggable
+    destroy-on-close
     footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" :packages />

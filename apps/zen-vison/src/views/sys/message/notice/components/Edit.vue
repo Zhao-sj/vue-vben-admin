@@ -66,6 +66,7 @@ async function onConfirm() {
     :loading="noticeLoading"
     :title="$t('page.actionTitle.edit', [$t('sys.message.notice.name')])"
     class="w-full lg:w-1/2"
+    destroy-on-close
     footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" />

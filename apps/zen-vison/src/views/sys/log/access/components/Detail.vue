@@ -42,11 +42,10 @@ function onOpenChange(isOpen: boolean) {
 
 <template>
   <Drawer
-    :close-on-click-modal="false"
     :footer="false"
     :title="$t('sys.log.detail')"
     class="2xl:w-1/2"
-    draggable
+    destroy-on-close
   >
     <div class="flex flex-col gap-3">
       <ElDescriptions :column="2" :title="$t('sys.log.basicInfo')" border>

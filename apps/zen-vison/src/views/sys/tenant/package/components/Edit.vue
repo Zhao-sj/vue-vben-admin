@@ -89,7 +89,6 @@ async function onConfirm() {
     :loading="menuLoading || pckLoading"
     :title="$t('page.actionTitle.edit', [$t('sys.tenant.package.title')])"
     class="md:w-1/2 2xl:w-2/5"
-    draggable
     destroy-on-close
     footer-class="gap-x-0"
   >
