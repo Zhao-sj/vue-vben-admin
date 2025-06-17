@@ -168,6 +168,12 @@
     "menu": "Menu",
     "button": "Button",
     "root": "Root",
+    "strictly": "Strictly",
+    "unStrictly": "UnStrictly",
+    "expand": "Expand",
+    "collapsed": "Collapsed",
+    "selected": "Selected",
+    "node": "node",
     "meta": {
       "title": "Title",
       "activeIcon": "ActiveIcon",
