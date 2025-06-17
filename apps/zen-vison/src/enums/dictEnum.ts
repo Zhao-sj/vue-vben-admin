@@ -73,6 +73,3 @@ export enum FileStorageEnum {
   S3 = 20,
   SFTP = 12,
 }
-
-export const DICT_DATA_NAME = 'DictDataManage';
-export const ACCOUNT_SETTING = 'AccountSetting';

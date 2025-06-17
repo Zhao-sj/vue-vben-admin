@@ -15,7 +15,7 @@ import {
   getDictTypePageListApi,
 } from '#/api';
 import { TableAction, TableExport } from '#/components';
-import { DICT_DATA_NAME, DictTypeEnum } from '#/enums';
+import { DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -277,7 +277,7 @@ async function handleExport(fileName: string) {
           tag="ins"
           type="primary"
           @click="
-            $router.push({ name: DICT_DATA_NAME, params: { id: row.id } })
+            $router.push({ name: 'DictDataManage', params: { id: row.id } })
           "
         >
           {{ row.type }}

@@ -11,6 +11,8 @@ import { preferences } from '@vben/preferences';
 
 import { BasicLayout, IFrameView } from '#/layouts';
 
+import { internalRoutes } from './routes';
+
 const forbiddenComponent = () => import('#/views/_core/fallback/forbidden.vue');
 
 async function generateAccess(
@@ -26,7 +28,7 @@ async function generateAccess(
 
   return await generateAccessible(preferences.app.accessMode, {
     ...options,
-    fetchMenuListAsync: async () => menu2Route(menus),
+    fetchMenuListAsync: async () => [...internalRoutes, ...menu2Route(menus)],
     // 可以指定没有权限跳转403页面
     forbiddenComponent,
     // 如果 route.meta.menuVisibleWithForbidden = true

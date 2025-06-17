@@ -2,7 +2,8 @@
   "dashboard": {
     "title": "Dashboard",
     "analytics": "Analytics",
-    "workspace": "Workspace"
+    "workspace": "Workspace",
+    "profile": "Profile"
   },
   "sys": {
     "title": "System Mange",
@@ -66,8 +67,5 @@
     "tag": {
       "title": "Tag Manage"
     }
-  },
-  "account": {
-    "profile": "Profile"
   }
 }

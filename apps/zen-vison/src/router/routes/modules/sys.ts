@@ -198,16 +198,6 @@ const routes: RouteRecordRaw[] = [
           title: $t('menu.sys.area'),
         },
       },
-      {
-        name: 'AccountSetting',
-        path: '/setting',
-        component: () => import('#/views/account/setting/index.vue'),
-        meta: {
-          hideInMenu: true,
-          icon: 'lucide:user-round-pen',
-          title: $t('menu.account.profile'),
-        },
-      },
     ],
   },
 ];

@@ -2,7 +2,8 @@
   "dashboard": {
     "title": "概览",
     "analytics": "分析页",
-    "workspace": "工作台"
+    "workspace": "工作台",
+    "profile": "个人中心"
   },
   "sys": {
     "title": "系统管理",
@@ -66,8 +67,5 @@
     "tag": {
       "title": "标签管理"
     }
-  },
-  "account": {
-    "profile": "个人设置"
   }
 }

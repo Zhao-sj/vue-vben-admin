@@ -11,6 +11,7 @@ export namespace MenuApi {
   export interface Simple extends BaseSimple {
     parentId: number;
     type: number;
+    icon: Nullable<string>;
   }
 
   export interface Query {

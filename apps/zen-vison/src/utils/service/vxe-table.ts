@@ -1,18 +1,19 @@
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { $t } from '#/locales';
 
-type ExtendedVxeGridApi = ReturnType<typeof useVbenVxeGrid>;
-type GridApi = ExtendedVxeGridApi[1];
+type GridApi<T extends Record<string, any> = any> = ReturnType<
+  typeof useVbenVxeGrid<T>
+>[1];
 
 /** 处理批量选择操作 */
-export function useBatchSelect<T>(options: {
-  gridApi: GridApi;
+export function useBatchSelect<T extends Record<string, any> = any>(options: {
+  gridApi: GridApi<T>;
   handleBatch: (records: T[]) => Promise<any>;
   query?: Record<string, any>;
   type?: string;
 }) {
   const { handleBatch, gridApi, query, type = $t('page.delete') } = options;
-  const selectedRecords: T[] = gridApi.grid.getCheckboxRecords();
+  const selectedRecords = gridApi.grid.getCheckboxRecords() as T[];
   if (selectedRecords.length === 0) {
     ElMessage.warning($t('page.selectTip'));
     return;

@@ -20,7 +20,7 @@ import { useAccessStore } from '@vben/stores';
 
 import { useDebounceFn } from '@vueuse/core';
 
-import { ACCOUNT_SETTING, NoticeType } from '#/enums';
+import { NoticeType } from '#/enums';
 import { $t } from '#/locales';
 import { useAuthStore, useUserStore, useWsStore } from '#/store';
 import { encryptBySha256 } from '#/utils';
@@ -78,10 +78,10 @@ const showDot = computed(() =>
 const menus = computed(() => [
   {
     handler: () => {
-      router.push({ name: ACCOUNT_SETTING });
+      router.push({ name: 'Profile' });
     },
     icon: UserRoundPen,
-    text: $t('menu.account.profile'),
+    text: $t('menu.dashboard.profile'),
   },
 ]);
 

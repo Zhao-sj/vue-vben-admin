@@ -1,9 +1,10 @@
-import type { RouteRecordRaw } from 'vue-router';
+import type { RouteRecordStringComponent } from '@vben/types';
 
 import { $t } from '#/locales';
 
-const routes: RouteRecordRaw[] = [
+const routes: RouteRecordStringComponent[] = [
   {
+    component: 'BasicLayout',
     meta: {
       icon: 'lucide:layout-dashboard',
       order: -1,
@@ -11,21 +12,22 @@ const routes: RouteRecordRaw[] = [
     },
     name: 'Dashboard',
     path: '/dashboard',
+    redirect: '/dashboard/analytics',
     children: [
       {
         name: 'Analytics',
         path: '/analytics',
-        component: () => import('#/views/dashboard/analytics/index.vue'),
+        component: '/dashboard/analytics/index',
         meta: {
+          affixTab: true,
           icon: 'lucide:area-chart',
           title: $t('menu.dashboard.analytics'),
-          affixTab: true,
         },
       },
       {
         name: 'Workspace',
         path: '/workspace',
-        component: () => import('#/views/dashboard/workspace/index.vue'),
+        component: '/dashboard/workspace/index',
         meta: {
           icon: 'carbon:workspace-import',
           title: $t('menu.dashboard.workspace'),
@@ -34,7 +36,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'Profile',
         path: '/profile',
-        component: () => import('#/views/_core/profile/index.vue'),
+        component: '/_core/profile/index',
         meta: {
           icon: 'lucide:user-round-pen',
           title: $t('menu.dashboard.profile'),
