@@ -4,6 +4,7 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import type { TenantApi } from '#/api';
 import type { ActionItem } from '#/components';
 
+import { useAccess } from '@vben/access';
 import { Page, useVbenDrawer } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 
@@ -12,9 +13,11 @@ import {
   batchDeleteTenantPackageApi,
   deleteTenantPackageApi,
   getTenantPackagePageListApi,
+  updateTenantPackageStatusApi,
 } from '#/api';
 import { TableAction } from '#/components';
-import { DictTypeEnum } from '#/enums';
+import { DictStatus, DictTypeEnum } from '#/enums';
+import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 import { useBatchSelect } from '#/utils';
@@ -22,8 +25,19 @@ import { useBatchSelect } from '#/utils';
 import { TableAdd, TableEdit } from './components';
 
 const { isMobile } = useIsMobile();
+const { hasAccessByCodes } = useAccess();
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.STATUS);
+
+const requestConfig = {
+  loadingDelay: 200,
+  manual: true,
+};
+
+const { runAsync: updateStatus } = useRequest(
+  updateTenantPackageStatusApi,
+  requestConfig,
+);
 
 const [TableAddDrawer, addDrawerApi] = useVbenDrawer({
   connectedComponent: TableAdd,
@@ -96,10 +110,9 @@ const columns: VxeGridProps<TenantApi.Package>['columns'] = [
     minWidth: 100,
     title: $t('sys.tenant.package.status'),
     cellRender: {
-      name: 'CellDict',
-      props: {
-        type: DictTypeEnum.STATUS,
-      },
+      name: 'CellSwitch',
+      props: { disabled: !hasAccessByCodes(['system:tenant-package:update']) },
+      attrs: { beforeChange: handleStatusChange },
     },
   },
   {
@@ -202,6 +215,35 @@ function createActions(row: TenantApi.Package) {
   ];
 
   return actions;
+}
+
+async function handleStatusChange(newStatus: number, row: TenantApi.Package) {
+  const action =
+    newStatus === DictStatus.ENABLE ? $t('page.enable') : $t('page.disable');
+
+  const message = $t('page.actionConfirm.status', [
+    action,
+    row.name,
+    $t('sys.tenant.package.title'),
+  ]);
+
+  try {
+    await ElMessageBox.confirm(message, $t('page.systemTip'), {
+      closeOnClickModal: false,
+      draggable: true,
+      type: 'warning',
+    });
+    await updateStatus({ id: row.id, status: newStatus });
+    requestAfter(false);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function requestAfter(reload = true) {
+  ElMessage.success($t('page.success'));
+  reload && reloadTable();
 }
 
 async function reloadTable() {

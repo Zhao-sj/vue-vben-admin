@@ -2,33 +2,19 @@
 import type { VbenFormSchema } from '#/adapter/form';
 import type { MenuApi } from '#/api';
 
-import { ElTree } from 'element-plus';
-import { cloneDeep } from 'lodash-es';
-
 import { useVbenForm } from '#/adapter/form';
-import { buildMenuTree } from '#/api';
-import { DictTypeEnum } from '#/enums';
+import { MenuSelectTable } from '#/components';
 import { $t } from '#/locales';
-import { useDictStore } from '#/store';
 
 interface Props {
   menus?: MenuApi.Simple[];
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   menus: () => [],
 });
 
-const dictStore = useDictStore();
-const treeRef = useTemplateRef<InstanceType<typeof ElTree>>('treeRef');
-const isCheckAll = ref(false);
-
-const treeMapConf = {
-  label: 'name',
-  children: 'children',
-};
-
-const menuTree = computed(() => buildMenuTree(cloneDeep(props.menus)));
+const menuSelectRef = useTemplateRef('menuSelectTable');
 
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
@@ -41,20 +27,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Input',
     fieldName: 'menuIds',
     label: $t('sys.tenant.package.menu'),
-    labelClass: 'self-start h-8',
-  },
-  {
-    component: 'RadioGroup',
-    componentProps: {
-      isButton: true,
-      options: dictStore.getDictDataList(DictTypeEnum.STATUS).map((item) => ({
-        ...item,
-        value: +item.value,
-      })),
-    },
-    defaultValue: 0,
-    fieldName: 'status',
-    label: $t('sys.tenant.package.status'),
   },
   {
     component: 'Input',
@@ -68,7 +40,6 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     fieldName: 'remark',
     label: $t('sys.tenant.package.remark'),
-    labelClass: 'self-start h-8',
   },
 ]);
 
@@ -80,6 +51,7 @@ const [Form, formApi] = useVbenForm(
       },
       labelClass: 'mr-4',
       labelWidth: 65,
+      formItemClass: 'flex-col items-start [&>*]:w-full',
     },
     schema: formSchema,
     showDefaultActions: false,
@@ -87,57 +59,21 @@ const [Form, formApi] = useVbenForm(
   }),
 );
 
-function handleExpand(checked: boolean | number | string) {
-  props.menus.forEach((item) => {
-    treeRef.value!.store.nodesMap[item.id]!.expanded = checked as boolean;
-  });
-}
-
-function handleChooseAll(checked: boolean | number | string) {
-  treeRef.value!.setCheckedKeys(
-    checked ? props.menus.map((item) => item.id) : [],
-  );
-}
-
-function setCheckAll(isAll: boolean) {
-  isCheckAll.value = isAll;
-}
-
-function getTreeInstance() {
-  return treeRef.value;
+function getMenuSelectInstance() {
+  return menuSelectRef.value;
 }
 
 defineExpose({
   formApi,
-  getTreeInstance,
-  setCheckAll,
+  getMenuSelectInstance,
 });
 </script>
 
 <template>
   <Form>
     <template #menuIds>
-      <div class="w-full">
-        <div>
-          <ElCheckbox
-            :label="`${$t('page.expand')} / ${$t('page.collapsed')}`"
-            @change="handleExpand"
-          />
-          <ElCheckbox
-            v-model="isCheckAll"
-            :label="`${$t('page.selectAll')} / ${$t('page.unselectAll')}`"
-            @change="handleChooseAll"
-          />
-        </div>
-        <ElTree
-          ref="treeRef"
-          :data="menuTree"
-          :props="treeMapConf"
-          check-strictly
-          class="min-h-60 overflow-y-auto rounded-lg border pt-1"
-          node-key="id"
-          show-checkbox
-        />
+      <div class="h-[600px] w-full">
+        <MenuSelectTable ref="menuSelectTable" :menus />
       </div>
     </template>
   </Form>

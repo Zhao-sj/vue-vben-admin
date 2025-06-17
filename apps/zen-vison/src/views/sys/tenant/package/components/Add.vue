@@ -22,7 +22,7 @@ const requestConf = {
   manual: true,
 };
 
-const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
+const optFormRef = useTemplateRef('optFormRef');
 
 const {
   data: menus,
@@ -34,7 +34,9 @@ const { loading, runAsync } = useRequest(addTenantPackageApi, requestConf);
 
 const [Drawer, drawer] = useVbenDrawer({ onConfirm, onOpenChange });
 
-const treeInstance = computed(() => optFormRef.value?.getTreeInstance());
+const menuSelectInstance = computed(() =>
+  optFormRef.value?.getMenuSelectInstance(),
+);
 
 function onOpenChange(isOpen: boolean) {
   if (isOpen) {
@@ -49,7 +51,7 @@ async function onConfirm() {
 
   const values = await optFormRef.value.formApi.getValues();
   const state = cloneDeep(values as TenantApi.AddPackageModel);
-  const keys = treeInstance.value!.getCheckedKeys() as number[];
+  const keys = menuSelectInstance.value!.getCheckedKeys() as number[];
   state.menuIds = keys;
 
   await runAsync(state);
@@ -61,12 +63,12 @@ async function onConfirm() {
 
 <template>
   <Drawer
-    :close-on-click-modal="false"
     :confirm-loading="loading"
     :loading="menuLoading"
     :title="$t('page.actionTitle.create', [$t('sys.tenant.package.title')])"
-    class="md:w-1/2 2xl:w-1/3"
+    class="md:w-1/2 2xl:w-2/5"
     draggable
+    destroy-on-close
     footer-class="gap-x-0"
   >
     <OptForm ref="optFormRef" :menus />

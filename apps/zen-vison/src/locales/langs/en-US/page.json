@@ -110,5 +110,8 @@
     "import": "Import {0}",
     "export": "Export {0}"
   },
+  "actionConfirm": {
+    "status": "Confirm {0} [{1}] {2}?"
+  },
   "sub": "Sub"
 }

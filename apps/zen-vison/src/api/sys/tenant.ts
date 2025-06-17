@@ -76,6 +76,11 @@ export namespace TenantApi {
   }
 
   export type UpdatePackageModel = TenantApi.AddPackageModel & { id: number };
+
+  export interface UpdatePackageStatusModel {
+    id: number;
+    status: number;
+  }
 }
 
 /**
@@ -92,6 +97,15 @@ export function batchDeleteTenantPackageApi(ids: number[]) {
  */
 export function deleteTenantPackageApi(id: number) {
   return requestClient.delete<boolean>(`${SYSTEM}/tenant/package/${id}`);
+}
+
+/**
+ * 更新角色状态
+ */
+export function updateTenantPackageStatusApi(
+  data: TenantApi.UpdatePackageStatusModel,
+) {
+  return requestClient.put<boolean>(`${SYSTEM}/tenant/package/status`, data);
 }
 
 /**

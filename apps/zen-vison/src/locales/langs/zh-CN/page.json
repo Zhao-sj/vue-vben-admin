@@ -110,5 +110,8 @@
     "import": "导入{0}",
     "export": "导出{0}"
   },
+  "actionConfirm": {
+    "status": "确认{0}【{1}】{2}吗？"
+  },
   "sub": "下级"
 }
