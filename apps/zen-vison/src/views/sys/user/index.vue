@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
-import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { UserApi } from '#/api';
 import type { ActionDropdownItem, ActionItem } from '#/components';
 
@@ -131,7 +131,7 @@ const formOptions = computed<VbenFormProps>(() => ({
   wrapperClass: 'grid-cols-1 lg:grid-cols-3',
 }));
 
-const columns: VxeGridProps<UserApi.User>['columns'] = [
+const columns: VxeTableGridOptions<UserApi.User>['columns'] = [
   {
     type: 'checkbox',
     width: 50,
@@ -225,7 +225,7 @@ const columns: VxeGridProps<UserApi.User>['columns'] = [
   },
 ];
 
-const gridOptions: VxeGridProps<UserApi.User> = {
+const gridOptions: VxeTableGridOptions<UserApi.User> = {
   columns,
   checkboxConfig: {
     checkMethod: ({ row }) => row.id !== userStore.userId,

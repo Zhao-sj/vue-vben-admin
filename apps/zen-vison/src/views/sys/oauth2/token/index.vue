@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
-import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { OAuth2Api } from '#/api';
 import type { ActionItem } from '#/components';
 
@@ -55,7 +55,7 @@ const formOptions = computed<VbenFormProps>(() => ({
   wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
 }));
 
-const columns: VxeGridProps<OAuth2Api.AccessToken>['columns'] = [
+const columns: VxeTableGridOptions<OAuth2Api.AccessToken>['columns'] = [
   {
     field: 'id',
     minWidth: 80,
@@ -115,7 +115,7 @@ const columns: VxeGridProps<OAuth2Api.AccessToken>['columns'] = [
   },
 ];
 
-const gridOptions: VxeGridProps<OAuth2Api.AccessToken> = {
+const gridOptions: VxeTableGridOptions<OAuth2Api.AccessToken> = {
   columns,
   height: 'auto',
   id: 'oauth2_token_manage',

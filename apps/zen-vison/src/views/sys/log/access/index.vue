@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
-import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { LogApi } from '#/api';
 import type { ActionItem } from '#/components';
 
@@ -141,7 +141,7 @@ const formOptions = computed<VbenFormProps>(() => ({
   wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-5',
 }));
 
-const columns: VxeGridProps<LogApi.Access>['columns'] = [
+const columns: VxeTableGridOptions<LogApi.Access>['columns'] = [
   {
     field: 'id',
     minWidth: 80,
@@ -245,7 +245,7 @@ const columns: VxeGridProps<LogApi.Access>['columns'] = [
   },
 ];
 
-const gridOptions: VxeGridProps<LogApi.Access> = {
+const gridOptions: VxeTableGridOptions<LogApi.Access> = {
   columns,
   height: 'auto',
   id: 'log_access_manage',

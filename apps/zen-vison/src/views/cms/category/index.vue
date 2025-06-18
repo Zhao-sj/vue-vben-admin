@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
-import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { CategoryApi } from '#/api';
 import type { ActionItem } from '#/components';
 
@@ -59,7 +59,7 @@ const formOptions = computed<VbenFormProps>(() => ({
   wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
 }));
 
-const columns: VxeGridProps<CategoryApi.Category>['columns'] = [
+const columns: VxeTableGridOptions<CategoryApi.Category>['columns'] = [
   {
     field: 'name',
     headerAlign: 'center',
@@ -104,7 +104,7 @@ const columns: VxeGridProps<CategoryApi.Category>['columns'] = [
   },
 ];
 
-const gridOptions: VxeGridProps<CategoryApi.Category> = {
+const gridOptions: VxeTableGridOptions<CategoryApi.Category> = {
   columns,
   id: 'cms_category_manage',
   keyboardConfig: {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
-import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { OAuth2Api } from '#/api';
 import type { ActionItem } from '#/components';
 
@@ -63,7 +63,7 @@ const formOptions = computed<VbenFormProps>(() => ({
   wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
 }));
 
-const columns: VxeGridProps<OAuth2Api.Client>['columns'] = [
+const columns: VxeTableGridOptions<OAuth2Api.Client>['columns'] = [
   {
     type: 'checkbox',
     width: 50,
@@ -187,7 +187,7 @@ const columns: VxeGridProps<OAuth2Api.Client>['columns'] = [
   },
 ];
 
-const gridOptions: VxeGridProps<OAuth2Api.Client> = {
+const gridOptions: VxeTableGridOptions<OAuth2Api.Client> = {
   columns,
   height: 'auto',
   id: 'oauth2_client_manage',

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { AreaApi } from '#/api';
 import type { ActionItem } from '#/components';
 
@@ -12,7 +12,7 @@ import { $t } from '#/locales';
 
 import { IPSearch } from './components';
 
-type AreaColumns = VxeGridProps<AreaApi.Simple>['columns'];
+type AreaColumns = VxeTableGridOptions<AreaApi.Simple>['columns'];
 
 const [IPSearchModal, searchModal] = useVbenModal({
   connectedComponent: IPSearch,
@@ -36,7 +36,7 @@ const columns: AreaColumns = [
   },
 ];
 
-const gridOptions: VxeGridProps<AreaApi.Simple> = {
+const gridOptions: VxeTableGridOptions<AreaApi.Simple> = {
   columns,
   height: 'auto',
   id: 'area_manage',

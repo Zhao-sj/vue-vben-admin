@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
-import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { DictApi } from '#/api';
 import type { ActionItem } from '#/components';
 
@@ -95,7 +95,7 @@ const formOptions = computed<VbenFormProps>(() => ({
   wrapperClass: 'grid-cols-1 lg:grid-cols-3',
 }));
 
-const columns: VxeGridProps<DictApi.Type>['columns'] = [
+const columns: VxeTableGridOptions<DictApi.Type>['columns'] = [
   {
     type: 'checkbox',
     width: 50,
@@ -149,7 +149,7 @@ const columns: VxeGridProps<DictApi.Type>['columns'] = [
   },
 ];
 
-const gridOptions: VxeGridProps<DictApi.Type> = {
+const gridOptions: VxeTableGridOptions<DictApi.Type> = {
   columns,
   height: 'auto',
   checkboxConfig: {

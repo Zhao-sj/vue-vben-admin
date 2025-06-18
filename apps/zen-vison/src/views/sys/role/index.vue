@@ -148,6 +148,17 @@ const columns: VxeGridProps<RoleApi.Role>['columns'] = [
     },
   },
   {
+    field: 'dataScope',
+    minWidth: 150,
+    title: $t('sys.role.dataScope'),
+    cellRender: {
+      name: 'CellDict',
+      props: {
+        type: DictTypeEnum.DATA_SCOPE,
+      },
+    },
+  },
+  {
     field: 'sort',
     minWidth: 80,
     title: $t('sys.role.sort'),

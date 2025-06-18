@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
-import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { PostApi } from '#/api';
 import type { ActionItem } from '#/components';
 
@@ -84,7 +84,7 @@ const formOptions = computed<VbenFormProps>(() => ({
   wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
 }));
 
-const columns: VxeGridProps<PostApi.Post>['columns'] = [
+const columns: VxeTableGridOptions<PostApi.Post>['columns'] = [
   {
     type: 'checkbox',
     width: 50,
@@ -142,7 +142,7 @@ const columns: VxeGridProps<PostApi.Post>['columns'] = [
   },
 ];
 
-const gridOptions: VxeGridProps<PostApi.Post> = {
+const gridOptions: VxeTableGridOptions<PostApi.Post> = {
   columns,
   checkboxConfig: {
     highlight: true,

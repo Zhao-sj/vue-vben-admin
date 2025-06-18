@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CheckboxValueType } from 'element-plus';
 
-import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { MenuApi } from '#/api';
 
 import { VbenCheckButtonGroup } from '@vben/common-ui';
@@ -50,7 +50,7 @@ const strictlyOptions = [
 const isStrictly = ref(false);
 const checkedCount = ref(0);
 
-const columns: VxeGridProps<TreeNode>['columns'] = [
+const columns: VxeTableGridOptions<TreeNode>['columns'] = [
   {
     field: 'name',
     type: 'checkbox',
@@ -76,7 +76,7 @@ const columns: VxeGridProps<TreeNode>['columns'] = [
   },
 ];
 
-const gridOptions: VxeGridProps<TreeNode> = {
+const gridOptions: VxeTableGridOptions<TreeNode> = {
   columns,
   height: 'auto',
   stripe: false,

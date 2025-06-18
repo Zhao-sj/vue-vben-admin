@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
-import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { DeptApi } from '#/api';
 import type { ActionItem } from '#/components';
 
@@ -62,7 +62,7 @@ const formOptions = computed<VbenFormProps>(() => ({
   wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
 }));
 
-const columns: VxeGridProps<DeptApi.Dept>['columns'] = [
+const columns: VxeTableGridOptions<DeptApi.Dept>['columns'] = [
   {
     field: 'name',
     headerAlign: 'center',
@@ -120,7 +120,7 @@ const columns: VxeGridProps<DeptApi.Dept>['columns'] = [
   },
 ];
 
-const gridOptions: VxeGridProps<DeptApi.Dept> = {
+const gridOptions: VxeTableGridOptions<DeptApi.Dept> = {
   columns,
   id: 'dept_manage',
   keyboardConfig: {
