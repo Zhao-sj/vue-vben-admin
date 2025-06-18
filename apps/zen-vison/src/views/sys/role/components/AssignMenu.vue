@@ -4,17 +4,14 @@ import type { RoleApi } from '#/api';
 
 import { useVbenDrawer } from '@vben/common-ui';
 
-import { ElTree } from 'element-plus';
-import { cloneDeep } from 'lodash-es';
-
 import { useVbenForm } from '#/adapter/form';
 import {
   assignRoleMenuApi,
-  buildMenuTree,
   getMenuSimpleListApi,
   getRoleApi,
   getRoleMenuListApi,
 } from '#/api';
+import { MenuSelectTable } from '#/components';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 
@@ -25,13 +22,7 @@ const requestConf = {
   manual: true,
 };
 
-const treeRef = useTemplateRef<InstanceType<typeof ElTree>>('treeRef');
-const isCheckAll = ref(false);
-
-const treeMapConf = {
-  label: 'name',
-  children: 'children',
-};
+const menuSelectRef = useTemplateRef('menuSelectTable');
 
 const {
   data: menus,
@@ -54,8 +45,6 @@ const { loading, runAsync } = useRequest(assignRoleMenuApi, requestConf);
 
 const [Drawer, drawer] = useVbenDrawer({ onConfirm, onOpenChange });
 
-const menuTree = computed(() => buildMenuTree(cloneDeep(menus.value || [])));
-
 const formSchema = computed<VbenFormSchema[]>(() => [
   {
     component: 'Input',
@@ -77,7 +66,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     component: 'Input',
     fieldName: 'menuIds',
     label: $t('sys.role.menuPermission'),
-    labelClass: 'self-start h-8',
+    formItemClass: 'lg:col-span-2 flex-col items-start [&>*]:w-full',
   },
 ]);
 
@@ -85,25 +74,13 @@ const [Form, formApi] = useVbenForm(
   reactive({
     commonConfig: {
       labelClass: 'mr-4',
-      labelWidth: 80,
+      labelWidth: 65,
     },
     schema: formSchema,
     showDefaultActions: false,
-    wrapperClass: 'grid-cols-1',
+    wrapperClass: 'grid-cols-1 lg:grid-cols-2 gap-x-4',
   }),
 );
-
-function handleExpand(checked: boolean | number | string) {
-  menus.value.forEach((item) => {
-    treeRef.value!.store.nodesMap[item.id]!.expanded = checked as boolean;
-  });
-}
-
-function handleChooseAll(checked: boolean | number | string) {
-  treeRef.value!.setCheckedKeys(
-    checked ? menus.value.map((item) => item.id) : [],
-  );
-}
 
 async function onOpenChange(isOpen: boolean) {
   if (!isOpen) {
@@ -112,7 +89,7 @@ async function onOpenChange(isOpen: boolean) {
 
   const { id } = drawer.getData();
   if (id) {
-    const [role, menuIds, menu] = await Promise.all([
+    const [role, menuIds] = await Promise.all([
       getRole(id),
       getMenuIds(id),
       getMenu(),
@@ -125,13 +102,12 @@ async function onOpenChange(isOpen: boolean) {
     };
 
     formApi.setValues(state);
-    treeRef.value?.setCheckedKeys(menuIds);
-    isCheckAll.value = menu.every((item) => menuIds.includes(item.id));
+    menuSelectRef.value?.setCheckedKeys(menuIds);
   }
 }
 
 async function onConfirm() {
-  const menuIds = treeRef.value!.getCheckedKeys() as number[];
+  const menuIds = menuSelectRef.value!.getCheckedKeys();
   await runAsync({ menuIds, roleId: role.value.id });
   ElMessage.success($t('page.success'));
   drawer.close();
@@ -143,33 +119,14 @@ async function onConfirm() {
     :confirm-loading="loading"
     :loading="roleLoading || menuLoading || menuIdsLoading"
     :title="$t('sys.role.assignMenu')"
-    class="md:w-1/2 2xl:w-1/3"
+    class="md:w-1/2 2xl:w-2/5"
     destroy-on-close
     footer-class="gap-x-0"
   >
     <Form>
       <template #menuIds>
-        <div class="w-full">
-          <div>
-            <ElCheckbox
-              :label="`${$t('page.expand')} / ${$t('page.collapsed')}`"
-              @change="handleExpand"
-            />
-            <ElCheckbox
-              v-model="isCheckAll"
-              :label="`${$t('page.selectAll')} / ${$t('page.unselectAll')}`"
-              @change="handleChooseAll"
-            />
-          </div>
-          <ElTree
-            ref="treeRef"
-            :data="menuTree"
-            :props="treeMapConf"
-            check-strictly
-            class="min-h-60 overflow-y-auto rounded-lg border pt-1"
-            node-key="id"
-            show-checkbox
-          />
+        <div class="h-[600px] w-full">
+          <MenuSelectTable ref="menuSelectTable" :menus />
         </div>
       </template>
     </Form>
