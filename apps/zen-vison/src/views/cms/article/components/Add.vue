@@ -26,7 +26,7 @@ const requestConf = {
   manual: true,
 };
 
-const optFormRef = useTemplateRef<InstanceType<typeof OptForm>>('optFormRef');
+const optFormRef = useTemplateRef('optFormRef');
 
 const {
   loading: categoryLoading,

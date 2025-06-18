@@ -19,7 +19,7 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 const POINT_OFFSET = 11;
-const basemapRef = useTemplateRef<HTMLImageElement>('basemapRef');
+const basemapRef = useTemplateRef('basemapRef');
 const { addPoint, clearPoints, points } = useCaptchaPoints();
 
 const state = reactive({

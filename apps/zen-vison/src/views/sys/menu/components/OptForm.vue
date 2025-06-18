@@ -22,8 +22,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const dictStore = useDictStore();
 
-const metaFormRef =
-  useTemplateRef<InstanceType<typeof MetaForm>>('metaFormRef');
+const metaFormRef = useTemplateRef('metaFormRef');
 const type = ref(MenuType.MENU);
 
 const componentList = [{ value: 'BasicLayout' }];
@@ -40,6 +39,7 @@ const menuTree = computed(() => {
     name: $t('sys.menu.root'),
     parentId: -1,
     type: MenuType.DIR,
+    icon: null,
   });
   return buildMenuTree(menuList);
 });

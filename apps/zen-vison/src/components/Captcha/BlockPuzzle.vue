@@ -19,10 +19,9 @@ interface Emits {
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
-const basemapRef = useTemplateRef<HTMLImageElement>('basemapRef');
-const puzzleRef = useTemplateRef<HTMLImageElement>('puzzleRef');
-const sliderBarRef =
-  useTemplateRef<InstanceType<typeof SliderCaptcha>>('sliderBarRef');
+const basemapRef = useTemplateRef('basemapRef');
+const puzzleRef = useTemplateRef('puzzleRef');
+const sliderBarRef = useTemplateRef('sliderBarRef');
 
 const state = reactive({
   dragging: false,

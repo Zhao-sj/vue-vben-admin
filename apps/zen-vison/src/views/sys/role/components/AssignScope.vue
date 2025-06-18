@@ -31,7 +31,7 @@ const treeMapConf = {
   children: 'children',
 };
 
-const treeRef = useTemplateRef<InstanceType<typeof ElTree>>('treeRef');
+const treeRef = useTemplateRef('treeRef');
 const checkStrictly = ref(true);
 const isExpandAll = ref(true);
 
@@ -96,7 +96,7 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     },
     fieldName: 'dataScopeDeptIds',
     label: $t('sys.role.customScope'),
-    labelClass: 'self-start h-8',
+    formItemClass: 'flex-col items-start [&>*]:w-full',
   },
 ]);
 
@@ -104,7 +104,7 @@ const [Form, formApi] = useVbenForm(
   reactive({
     commonConfig: {
       labelClass: 'mr-4',
-      labelWidth: 65,
+      labelWidth: 60,
     },
     schema: formSchema,
     showDefaultActions: false,
@@ -170,7 +170,7 @@ async function onConfirm() {
     :confirm-loading="loading"
     :loading="dictStore.loading || roleLoading || deptLoading"
     :title="$t('sys.role.assignScope')"
-    class="md:w-1/3 2xl:w-1/5"
+    class="md:w-1/3 2xl:w-1/4"
     destroy-on-close
     footer-class="gap-x-0"
   >
