@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ActionDropdownItem, ActionItem } from '#/components/Table';
+import type { ActionDropdownItem, ActionItem } from './typing';
 
 import { useAccess } from '@vben/access';
 import { IconifyIcon } from '@vben/icons';

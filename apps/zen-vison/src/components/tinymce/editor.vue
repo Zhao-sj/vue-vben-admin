@@ -237,10 +237,7 @@ onDeactivated(destory);
 
 <template>
   <div :style="{ width: containerWidth }" class="tinymce__wrapper">
-    <textarea
-      :id="tinymceId"
-      ref="elRef"
-      :style="{ visibility: 'hidden' }"
-    ></textarea>
+    <textarea :id="tinymceId" ref="elRef" :style="{ visibility: 'hidden' }">
+    </textarea>
   </div>
 </template>

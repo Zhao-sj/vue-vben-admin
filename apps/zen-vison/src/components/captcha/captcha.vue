@@ -7,8 +7,8 @@ import { CaptchaEnum, ResultEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { AesEncryption } from '#/utils';
 
-import BlockPuzzle from './BlockPuzzle.vue';
-import ClickWord from './ClickWord.vue';
+import BlockPuzzle from './modules/block-puzzle.vue';
+import ClickWord from './modules/click-word.vue';
 
 interface Props {
   random?: boolean;

@@ -4,7 +4,7 @@ import type { AuthApi } from '#/api';
 import { VbenButton } from '@vben/common-ui';
 import { IconifyIcon, RotateCw } from '@vben/icons';
 
-import { useCaptchaPoints } from './hooks/useCaptchaPoints';
+import { useCaptchaPoints } from './helper';
 
 interface Props {
   data?: AuthApi.CaptchaResp;
