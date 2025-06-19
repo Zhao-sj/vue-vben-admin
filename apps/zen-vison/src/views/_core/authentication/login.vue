@@ -30,7 +30,7 @@ const props = withDefaults(defineProps<Props>(), { modal: false });
 const emit = defineEmits<Emits>();
 
 const Captcha = defineAsyncComponent(
-  () => import('#/components/Captcha/Captcha.vue'),
+  () => import('#/components/captcha/captcha.vue'),
 );
 
 const authStore = useAuthStore();

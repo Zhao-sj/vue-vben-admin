@@ -27,7 +27,7 @@ import { encryptBySha256 } from '#/utils';
 import LoginForm from '#/views/_core/authentication/login.vue';
 
 const Captcha = defineAsyncComponent(
-  () => import('#/components/Captcha/Captcha.vue'),
+  () => import('#/components/captcha/captcha.vue'),
 );
 
 const notifications = ref<NotificationItem[]>([

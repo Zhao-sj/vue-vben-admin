@@ -9,6 +9,8 @@ import type { AuthApi } from '#/api';
 import { generateAccessible } from '@vben/access';
 import { preferences } from '@vben/preferences';
 
+import { cloneDeep } from 'lodash-es';
+
 import { BasicLayout, IFrameView } from '#/layouts';
 
 import { internalRoutes } from './routes';
@@ -28,7 +30,10 @@ async function generateAccess(
 
   return await generateAccessible(preferences.app.accessMode, {
     ...options,
-    fetchMenuListAsync: async () => [...internalRoutes, ...menu2Route(menus)],
+    fetchMenuListAsync: async () => [
+      ...cloneDeep(internalRoutes),
+      ...menu2Route(menus),
+    ],
     // 可以指定没有权限跳转403页面
     forbiddenComponent,
     // 如果 route.meta.menuVisibleWithForbidden = true
