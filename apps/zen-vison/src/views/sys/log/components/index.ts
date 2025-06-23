@@ -1,1 +1,1 @@
-export { default as DeviceInfo } from './DeviceInfo.vue';
+export { default as DeviceInfo } from './device-info.vue';

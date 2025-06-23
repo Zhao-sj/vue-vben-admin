@@ -15,7 +15,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'CmsArticleManage',
         path: '/cms/article',
-        component: () => import('#/views/cms/article/index.vue'),
+        component: () => import('#/views/cms/article/list.vue'),
         meta: {
           icon: 'lucide:file-text',
           title: $t('menu.cms.article.title'),
@@ -24,7 +24,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'CmsCategoryManage',
         path: '/cms/category',
-        component: () => import('#/views/cms/category/index.vue'),
+        component: () => import('#/views/cms/category/list.vue'),
         meta: {
           icon: 'lucide:book-type',
           title: $t('menu.cms.category.title'),
@@ -33,7 +33,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'CmsTagManage',
         path: '/cms/tag',
-        component: () => import('#/views/cms/tag/index.vue'),
+        component: () => import('#/views/cms/tag/list.vue'),
         meta: {
           icon: 'lucide:tag',
           title: $t('menu.cms.tag.title'),

@@ -23,7 +23,7 @@ const routes: RouteRecordRaw[] = [
           {
             name: 'FileConfig',
             path: '/infra/file/config',
-            component: () => import('#/views/infra/file/config/index.vue'),
+            component: () => import('#/views/infra/file/config/list.vue'),
             meta: {
               icon: 'lucide:file-cog',
               title: $t('menu.infra.file.config.title'),
@@ -32,7 +32,7 @@ const routes: RouteRecordRaw[] = [
           {
             name: 'FileList',
             path: '/infra/file/list',
-            component: () => import('#/views/infra/file/list/index.vue'),
+            component: () => import('#/views/infra/file/file/list.vue'),
             meta: {
               icon: 'lucide:file-chart-column-increasing',
               title: $t('menu.infra.file.list.title'),

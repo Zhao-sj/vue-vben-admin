@@ -15,7 +15,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'PortalConsultManage',
         path: '/portal/consult',
-        component: () => import('#/views/portal/consult/index.vue'),
+        component: () => import('#/views/portal/consult/list.vue'),
         meta: {
           icon: 'lucide:message-square-reply',
           title: $t('menu.portal.consult.title'),

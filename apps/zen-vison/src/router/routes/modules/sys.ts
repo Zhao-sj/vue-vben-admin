@@ -23,7 +23,7 @@ const routes: RouteRecordRaw[] = [
           {
             name: 'TenantList',
             path: '/sys/tenant/list',
-            component: () => import('#/views/sys/tenant/list/index.vue'),
+            component: () => import('#/views/sys/tenant/tenant/list.vue'),
             meta: {
               icon: 'lucide:book-user',
               title: $t('menu.sys.tenant.list'),
@@ -32,7 +32,7 @@ const routes: RouteRecordRaw[] = [
           {
             name: 'TenantPackage',
             path: '/sys/tenant/package',
-            component: () => import('#/views/sys/tenant/package/index.vue'),
+            component: () => import('#/views/sys/tenant/package/list.vue'),
             meta: {
               icon: 'lucide:combine',
               title: $t('menu.sys.tenant.package'),
@@ -43,7 +43,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'UserManage',
         path: '/sys/user',
-        component: () => import('#/views/sys/user/index.vue'),
+        component: () => import('#/views/sys/user/list.vue'),
         meta: {
           icon: 'lucide:user-cog',
           title: $t('menu.sys.user'),
@@ -52,7 +52,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'RoleManage',
         path: '/sys/role',
-        component: () => import('#/views/sys/role/index.vue'),
+        component: () => import('#/views/sys/role/list.vue'),
         meta: {
           icon: 'lucide:contact-round',
           title: $t('menu.sys.role'),
@@ -61,7 +61,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'MenuManage',
         path: '/sys/menu',
-        component: () => import('#/views/sys/menu/index.vue'),
+        component: () => import('#/views/sys/menu/list.vue'),
         meta: {
           icon: 'lucide:menu',
           title: $t('menu.sys.menu'),
@@ -70,7 +70,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'DeptManage',
         path: '/sys/dept',
-        component: () => import('#/views/sys/dept/index.vue'),
+        component: () => import('#/views/sys/dept/list.vue'),
         meta: {
           icon: 'lucide:layers',
           title: $t('menu.sys.dept'),
@@ -79,7 +79,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'PostManage',
         path: '/sys/post',
-        component: () => import('#/views/sys/post/index.vue'),
+        component: () => import('#/views/sys/post/list.vue'),
         meta: {
           icon: 'lucide:network',
           title: $t('menu.sys.post'),
@@ -88,7 +88,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'DictTypeManage',
         path: '/sys/dict/type',
-        component: () => import('#/views/sys/dict/type/index.vue'),
+        component: () => import('#/views/sys/dict/type/list.vue'),
         meta: {
           icon: 'streamline:dictionary-language-book',
           title: $t('menu.sys.dict.title'),
@@ -97,7 +97,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'DictDataManage',
         path: '/sys/dict/data/:id',
-        component: () => import('#/views/sys/dict/data/index.vue'),
+        component: () => import('#/views/sys/dict/data/list.vue'),
         meta: {
           activePath: '/sys/dict/type',
           hideInMenu: true,
@@ -116,7 +116,7 @@ const routes: RouteRecordRaw[] = [
           {
             name: 'NoticeManage',
             path: '/sys/message/notice',
-            component: () => import('#/views/sys/message/notice/index.vue'),
+            component: () => import('#/views/sys/message/notice/list.vue'),
             meta: {
               icon: 'icon-park-outline:volume-notice',
               title: $t('menu.sys.message.notice'),
@@ -135,7 +135,7 @@ const routes: RouteRecordRaw[] = [
           {
             name: 'LoginLog',
             path: '/sys/log/login',
-            component: () => import('#/views/sys/log/login/index.vue'),
+            component: () => import('#/views/sys/log/login/list.vue'),
             meta: {
               icon: 'lucide:log-in',
               title: $t('menu.sys.log.login'),
@@ -144,7 +144,7 @@ const routes: RouteRecordRaw[] = [
           {
             name: 'AccessLog',
             path: '/sys/log/access',
-            component: () => import('#/views/sys/log/access/index.vue'),
+            component: () => import('#/views/sys/log/access/list.vue'),
             meta: {
               icon: 'lucide:scroll-text',
               title: $t('menu.sys.log.access'),
@@ -153,7 +153,7 @@ const routes: RouteRecordRaw[] = [
           {
             name: 'ErrorLog',
             path: '/sys/log/error',
-            component: () => import('#/views/sys/log/error/index.vue'),
+            component: () => import('#/views/sys/log/error/list.vue'),
             meta: {
               icon: 'lucide:triangle-alert',
               title: $t('menu.sys.log.error'),
@@ -172,7 +172,7 @@ const routes: RouteRecordRaw[] = [
           {
             name: 'OAuth2Client',
             path: '/sys/oauth2/client',
-            component: () => import('#/views/sys/oauth2/client/index.vue'),
+            component: () => import('#/views/sys/oauth2/client/list.vue'),
             meta: {
               icon: 'lucide:layout-grid',
               title: $t('menu.sys.oauth2.client'),
@@ -181,7 +181,7 @@ const routes: RouteRecordRaw[] = [
           {
             name: 'OAuth2Token',
             path: '/sys/oauth2/token',
-            component: () => import('#/views/sys/oauth2/token/index.vue'),
+            component: () => import('#/views/sys/oauth2/token/list.vue'),
             meta: {
               icon: 'lucide:key-round',
               title: $t('menu.sys.oauth2.token'),
@@ -192,7 +192,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'AreaManage',
         path: '/sys/area',
-        component: () => import('#/views/sys/area/index.vue'),
+        component: () => import('#/views/sys/area/list.vue'),
         meta: {
           icon: 'lucide:map-pinned',
           title: $t('menu.sys.area'),
