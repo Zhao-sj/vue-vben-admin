@@ -62,5 +62,15 @@ export const useDictStore = defineStore('zen-dict', {
         }),
       );
     },
+
+    async loadDictData(type: DictTypeEnum) {
+      if (Reflect.has(this.dictData, type)) {
+        return;
+      }
+
+      const data = await getDictDataSimpleListApi(type);
+      this.dictData[type] = data;
+      return data;
+    },
   },
 });

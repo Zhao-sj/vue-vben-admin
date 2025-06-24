@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import type { VbenFormProps } from '#/adapter/form';
-import type { VxeTableGridOptions } from '#/adapter/vxe-table';
+import type {
+  OnActionClickParams,
+  VxeTableGridOptions,
+} from '#/adapter/vxe-table';
 import type { UserApi } from '#/api';
-import type { ActionDropdownItem, ActionItem } from '#/components';
+import type { ActionItem } from '#/components';
 
 import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
@@ -29,26 +31,20 @@ import { useColumns, useGridFormSchema } from './data';
 import {
   AssignRole,
   DeptFilter,
+  Form,
   ImportResult,
-  TableAdd,
-  TableEdit,
   UserImport,
 } from './modules';
 
 const { isMobile } = useIsMobile();
 const userStore = useUserStore();
 const dictStore = useDictStore();
-dictStore.initDictData(DictTypeEnum.STATUS, DictTypeEnum.SEX);
+dictStore.initDictData(DictTypeEnum.SEX);
 
 const requestConfig = {
   loadingDelay: 200,
   manual: true,
 };
-
-const { runAsync: updateStatus } = useRequest(
-  updateUserStatusApi,
-  requestConfig,
-);
 
 const { loading: exportLoading, runAsync: exportUser } = useRequest(
   exportUserApi,
@@ -60,23 +56,20 @@ const { loading: importLoading, runAsync: importUser } = useRequest(
   requestConfig,
 );
 
-const [TableAddDrawer, addDrawerApi] = useVbenDrawer({
-  connectedComponent: TableAdd,
-});
-
-const [TableEditDrawer, editDrawerApi] = useVbenDrawer({
-  connectedComponent: TableEdit,
+const [FormDrawer, formDrawerApi] = useVbenDrawer({
+  connectedComponent: Form,
+  destroyOnClose: true,
 });
 
 const [AssignRoleDrawer, assignRoleDrawerApi] = useVbenDrawer({
   connectedComponent: AssignRole,
 });
 
-const [TableExportModal, exportModalApi] = useVbenModal({
+const [ExportModal, exportModalApi] = useVbenModal({
   connectedComponent: TableExport,
 });
 
-const [UserImportDrawer, importDrawerApi] = useVbenDrawer({
+const [ImportDrawer, importDrawerApi] = useVbenDrawer({
   connectedComponent: UserImport,
 });
 
@@ -84,22 +77,21 @@ const [ImportResultModal, importResultModalApi] = useVbenModal({
   connectedComponent: ImportResult,
 });
 
-const formOptions = computed<VbenFormProps>(() => ({
-  collapsed: isMobile.value,
-  commonConfig: {
-    componentProps: {
-      clearable: true,
-    },
-    labelWidth: 80,
-  },
-  schema: useGridFormSchema(),
-  submitOnEnter: true,
-  wrapperClass: 'grid-cols-1 lg:grid-cols-3',
-}));
-
 const [Grid, gridApi] = useVbenVxeGrid({
+  formOptions: {
+    collapsed: isMobile.value,
+    commonConfig: {
+      componentProps: {
+        clearable: true,
+      },
+      labelWidth: 80,
+    },
+    schema: useGridFormSchema(),
+    submitOnEnter: true,
+    wrapperClass: 'grid-cols-1 lg:grid-cols-3',
+  },
   gridOptions: {
-    columns: useColumns(handleStatusChange),
+    columns: useColumns(onActionClick, onStatusChange),
     checkboxConfig: {
       checkMethod: ({ row }) => row.id !== userStore.userId,
       highlight: true,
@@ -152,64 +144,38 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'system:user:create',
     icon: 'ep:plus',
     btnText: $t('page.create'),
-    onClick: () => addDrawerApi.open(),
+    onClick: () => formDrawerApi.open(),
     type: 'primary',
   },
 ]);
 
-function createActions(row: UserApi.User) {
-  const actions: ActionItem[] = [
-    {
-      auth: 'system:user:update',
-      icon: 'ep:edit',
-      btnText: $t('page.edit'),
-      onClick: () => {
-        editDrawerApi.setData({ id: row.id });
-        editDrawerApi.open();
-      },
-      type: 'primary',
-    },
-    {
-      auth: 'system:user:delete',
-      disabled: row.id === userStore.userId,
-      icon: 'ep:delete',
-      btnText: $t('page.delete'),
-      popConfirm: {
-        on: {
-          confirm: () => {
-            deleteUserApi(row.id).then(requestAfter);
-          },
-        },
-        title: $t('page.confirmDelete'),
-      },
-      type: 'danger',
-    },
-  ];
-
-  const dropdownActions: ActionDropdownItem[] = [
-    {
-      auth: 'system:user:update-password',
-      icon: 'carbon:password',
-      btnText: $t('sys.user.resetPassword'),
-      onClick: () => {
-        resetPassword(row);
-      },
-    },
-    {
-      auth: 'system:permission:assign-user-role',
-      icon: 'clarity:assign-user-line',
-      btnText: $t('sys.user.assignRole'),
-      onClick: () => {
-        assignRoleDrawerApi.setData({ id: row.id });
-        assignRoleDrawerApi.open();
-      },
-    },
-  ];
-
-  return { actions, dropdownActions };
+function onActionClick({ code, row }: OnActionClickParams<UserApi.User>) {
+  switch (code) {
+    case 'assign': {
+      assignRoleDrawerApi.setData(row);
+      assignRoleDrawerApi.open();
+      break;
+    }
+    case 'delete': {
+      deleteUserApi(row.id).then(requestAfter);
+      break;
+    }
+    case 'edit': {
+      formDrawerApi.setData(row);
+      formDrawerApi.open();
+      break;
+    }
+    case 'reset': {
+      resetPassword(row);
+      break;
+    }
+    default: {
+      break;
+    }
+  }
 }
 
-async function handleStatusChange(newStatus: number, row: UserApi.User) {
+async function onStatusChange(newStatus: number, row: UserApi.User) {
   const action =
     newStatus === DictStatus.ENABLE ? $t('page.enable') : $t('page.disable');
 
@@ -221,12 +187,33 @@ async function handleStatusChange(newStatus: number, row: UserApi.User) {
       draggable: true,
       type: 'warning',
     });
-    await updateStatus({ id: row.id, status: newStatus });
+    await updateUserStatusApi({ id: row.id, status: newStatus });
     requestAfter(false);
     return true;
   } catch {
     return false;
   }
+}
+
+async function onExport(fileName: string) {
+  if (exportLoading.value) {
+    return;
+  }
+  const values = await gridApi.formApi.getValues();
+  const { data } = await exportUser(values);
+  downloadExcel(data, fileName);
+  exportModalApi.close();
+  ElMessage.success($t('page.export.success'));
+}
+
+async function onImport(file: File, updateSupport: boolean) {
+  const result = await importUser(file, updateSupport);
+  importDrawerApi.close();
+
+  setTimeout(() => {
+    importResultModalApi.setData({ data: result });
+    importResultModalApi.open();
+  }, 250);
 }
 
 function resetPassword(row: UserApi.User) {
@@ -257,27 +244,6 @@ function requestAfter(reload = true) {
   reload && reloadTable();
 }
 
-async function handleExport(fileName: string) {
-  if (exportLoading.value) {
-    return;
-  }
-  const values = await gridApi.formApi.getValues();
-  const { data } = await exportUser(values);
-  downloadExcel(data, fileName);
-  exportModalApi.close();
-  ElMessage.success($t('page.export.success'));
-}
-
-async function handleImport(file: File, updateSupport: boolean) {
-  const result = await importUser(file, updateSupport);
-  importDrawerApi.close();
-
-  setTimeout(() => {
-    importResultModalApi.setData({ data: result });
-    importResultModalApi.open();
-  }, 250);
-}
-
 async function reloadTable(deptId?: number) {
   await gridApi.formApi.setFieldValue('deptId', deptId);
   const values = await gridApi.formApi.getValues();
@@ -287,14 +253,10 @@ async function reloadTable(deptId?: number) {
 
 <template>
   <Page auto-content-height>
-    <TableAddDrawer @success="reloadTable" />
-    <TableEditDrawer @success="reloadTable" />
-    <TableExportModal
-      :default-name="$t('sys.user.list')"
-      @confirm="handleExport"
-    />
-    <UserImportDrawer @confirm="handleImport" />
+    <FormDrawer @success="reloadTable" />
+    <ImportDrawer @confirm="onImport" />
     <ImportResultModal @confirm="reloadTable" />
+    <ExportModal :default-name="$t('sys.user.list')" @confirm="onExport" />
     <AssignRoleDrawer />
 
     <div class="flex h-full gap-4">
@@ -303,7 +265,7 @@ async function reloadTable(deptId?: number) {
       </div>
 
       <div class="w-full overflow-hidden xl:w-4/5">
-        <Grid :table-title="$t('sys.user.list')" :form-options>
+        <Grid :table-title="$t('sys.user.list')">
           <template #toolbar-tools>
             <TableAction
               :actions="toolbarActions"
@@ -320,10 +282,6 @@ async function reloadTable(deptId?: number) {
               />
               <span>{{ dictStore.getSex(sex)?.label || '-' }}</span>
             </div>
-          </template>
-
-          <template #opt="{ row }">
-            <TableAction v-bind="createActions(row)" />
           </template>
         </Grid>
       </div>

@@ -69,6 +69,7 @@ function hasDisabled(config?: Record<string, any>) {
       <ElPopconfirm
         :disabled="item.disabled || hasDisabled(item.popConfirm)"
         :width="180"
+        :hide-after="0"
         v-bind="item.popConfirm || {}"
         v-on="item.popConfirm?.on || {}"
       >
@@ -85,7 +86,7 @@ function hasDisabled(config?: Record<string, any>) {
                   :class="{ 'mr-1': !!item.btnText }"
                   :icon="item.icon"
                 />
-                <span v-if="item.btnText" class="z-span">
+                <span v-if="item.btnText">
                   {{ item.btnText }}
                 </span>
               </ElButton>

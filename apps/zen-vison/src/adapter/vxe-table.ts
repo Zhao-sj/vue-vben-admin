@@ -1,4 +1,5 @@
 import type { VxeTableGridOptions } from '@vben/plugins/vxe-table';
+import type { Recordable } from '@vben/types';
 
 import { h } from 'vue';
 
@@ -7,6 +8,7 @@ import { isFunction } from '@vben/utils';
 
 import { ElAvatar, ElImage, ElLink, ElSwitch, ElTag } from 'element-plus';
 
+import { TableAction } from '#/components';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 import {
@@ -179,6 +181,18 @@ setupVbenVxeTable({
       },
     });
 
+    // 表格配置项可以用 cellRender: { name: 'CellOperate' },
+    vxeUI.renderer.add('CellOperate', {
+      renderTableDefault({ attrs, props }, { row }) {
+        if (attrs && attrs.createActions && isFunction(attrs.createActions)) {
+          const propActions = attrs.createActions(row);
+          return h(TableAction, { ...props, ...propActions });
+        }
+
+        return h(TableAction, { ...props });
+      },
+    });
+
     // 表格配置项可以用 cellRender: { name: 'CellDict' },
     vxeUI.renderer.add('CellDict', {
       renderTableDefault(renderOpts, params) {
@@ -243,5 +257,14 @@ setupVbenVxeTable({
 });
 
 export { useVbenVxeGrid };
+
+export type OnActionClickParams<T = Recordable<any>> = {
+  code: string;
+  row: T;
+};
+
+export type OnActionClickFn<T = Recordable<any>> = (
+  params: OnActionClickParams<T>,
+) => void;
 
 export type * from '@vben/plugins/vxe-table';
