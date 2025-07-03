@@ -4,25 +4,30 @@ import type { RoleApi } from '#/api';
 
 import { useVbenDrawer } from '@vben/common-ui';
 
+import { isEmpty } from 'lodash-es';
+
 import { useVbenForm } from '#/adapter/form';
 import {
   assignRoleMenuApi,
   getMenuSimpleListApi,
-  getRoleApi,
   getRoleMenuListApi,
 } from '#/api';
 import { MenuSelectTable } from '#/components';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 
-type FormState = Pick<RoleApi.Role, 'code' | 'id' | 'name'>;
+interface Emits {
+  (e: 'success'): void;
+}
+
+const emit = defineEmits<Emits>();
+
+const menuSelectRef = useTemplateRef('menuSelectTable');
 
 const requestConf = {
   loadingDelay: 200,
   manual: true,
 };
-
-const menuSelectRef = useTemplateRef('menuSelectTable');
 
 const {
   data: menus,
@@ -35,17 +40,7 @@ const { loading: menuIdsLoading, runAsync: getMenuIds } = useRequest(
   requestConf,
 );
 
-const {
-  data: role,
-  loading: roleLoading,
-  runAsync: getRole,
-} = useRequest(getRoleApi, requestConf);
-
-const { loading, runAsync } = useRequest(assignRoleMenuApi, requestConf);
-
-const [Drawer, drawer] = useVbenDrawer({ onConfirm, onOpenChange });
-
-const formSchema = computed<VbenFormSchema[]>(() => [
+const schema: VbenFormSchema[] = [
   {
     component: 'Input',
     componentProps: {
@@ -68,59 +63,62 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     label: $t('sys.role.menuPermission'),
     formItemClass: 'lg:col-span-2 flex-col items-start [&>*]:w-full',
   },
-]);
+];
 
-const [Form, formApi] = useVbenForm(
-  reactive({
-    commonConfig: {
-      labelClass: 'mr-4',
-      labelWidth: 65,
-    },
-    schema: formSchema,
-    showDefaultActions: false,
-    wrapperClass: 'grid-cols-1 lg:grid-cols-2 gap-x-4',
-  }),
-);
+const [Form, formApi] = useVbenForm({
+  commonConfig: {
+    labelClass: 'mr-4',
+    labelWidth: 65,
+  },
+  schema,
+  showDefaultActions: false,
+  wrapperClass: 'grid-cols-1 lg:grid-cols-2 gap-x-4',
+});
+
+const [Drawer, drawerApi] = useVbenDrawer({ onConfirm, onOpenChange });
 
 async function onOpenChange(isOpen: boolean) {
-  if (!isOpen) {
-    return;
-  }
-
-  const { id } = drawer.getData();
-  if (id) {
-    const [role, menuIds] = await Promise.all([
-      getRole(id),
-      getMenuIds(id),
-      getMenu(),
-    ]);
-
-    const state: Partial<FormState> = {
-      code: role.code,
-      id: role.id,
-      name: role.name,
-    };
-
-    formApi.setValues(state);
-    menuSelectRef.value?.setCheckedKeys(menuIds);
+  if (isOpen) {
+    await getMenu();
+    const data = drawerApi.getData<RoleApi.Role>();
+    if (!isEmpty(data)) {
+      const menuIds = await getMenuIds(data.id);
+      formApi.setValues(
+        {
+          id: data.id,
+          name: data.name,
+          code: data.code,
+        },
+        false,
+      );
+      menuSelectRef.value?.setCheckedKeys(menuIds);
+    }
   }
 }
 
 async function onConfirm() {
+  const values = await formApi.getValues();
   const menuIds = menuSelectRef.value!.getCheckedKeys();
-  await runAsync({ menuIds, roleId: role.value.id });
-  ElMessage.success($t('page.success'));
-  drawer.close();
+  drawerApi.lock();
+  assignRoleMenuApi({
+    roleId: values.id,
+    menuIds,
+  })
+    .then(() => {
+      emit('success');
+      drawerApi.close();
+    })
+    .catch(() => {
+      drawerApi.unlock();
+    });
 }
 </script>
 
 <template>
   <Drawer
-    :confirm-loading="loading"
-    :loading="roleLoading || menuLoading || menuIdsLoading"
+    :loading="menuLoading || menuIdsLoading"
     :title="$t('sys.role.assignMenu')"
     class="md:w-1/2 2xl:w-2/5"
-    destroy-on-close
     footer-class="gap-x-0"
   >
     <Form>

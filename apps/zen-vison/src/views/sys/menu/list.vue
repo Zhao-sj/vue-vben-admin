@@ -229,11 +229,7 @@ function toggleExpandAll() {
     <Grid :table-title="$t('sys.menu.list')" :form-options="formOptions">
       <template #toolbar-tools>
         <div class="flex items-center gap-2">
-          <TableAction
-            :actions="toolbarActions"
-            :link="false"
-            :show-empty="false"
-          />
+          <TableAction :actions="toolbarActions" />
 
           <ElButton
             :title="`${$t('page.expand')} / ${$t('page.collapsed')}`"
@@ -256,7 +252,7 @@ function toggleExpandAll() {
       </template>
 
       <template #opt="{ row }">
-        <TableAction :actions="createActions(row)" />
+        <TableAction :actions="createActions(row)" show-empty link />
       </template>
     </Grid>
   </Page>

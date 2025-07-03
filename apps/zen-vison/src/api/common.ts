@@ -15,6 +15,11 @@ export interface PageResult<T> {
   total: number;
 }
 
+export interface UpdateStatus {
+  id: number;
+  status: number;
+}
+
 export interface BaseSimple {
   id: number;
   name: string;

@@ -28,11 +28,11 @@ const visible = computed({
   },
 });
 
-const [Modal, modal] = useVbenModal({ footer: false });
+const [Modal, modalApi] = useVbenModal({ footer: false });
 
 async function handleMobileClick() {
   await runAsync(props.id);
-  modal.open();
+  modalApi.open();
 }
 </script>
 

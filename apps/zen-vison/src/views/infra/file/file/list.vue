@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
-import type { VxeTableGridOptions } from '#/adapter/vxe-table';
+import type {
+  OnActionClickParams,
+  VxeTableGridOptions,
+} from '#/adapter/vxe-table';
 import type { FileApi } from '#/api';
 import type { ActionItem } from '#/components';
 
@@ -10,11 +12,12 @@ import { IconifyIcon } from '@vben/icons';
 
 import { useClipboard } from '@vueuse/core';
 
-import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { useGridHelper, useVbenVxeGrid } from '#/adapter/vxe-table';
 import { deleteFileApi, getFilePageApi } from '#/api';
 import { TableAction } from '#/components';
 import { $t } from '#/locales';
 
+import { useColumns, useGridFormSchema } from './data';
 import { FileUpload, VideoPreview } from './modules';
 
 const { isMobile } = useIsMobile();
@@ -24,140 +27,54 @@ const [FileUploadDrawer, uploadDrawerApi] = useVbenDrawer({
   connectedComponent: FileUpload,
 });
 
-const formSchema = computed<VbenFormSchema[]>(() => [
-  {
-    component: 'Input',
-    fieldName: 'path',
-    label: $t('infra.file.list.path'),
+const [Grid, gridApi] = useVbenVxeGrid({
+  formOptions: {
+    collapsed: isMobile.value,
+    commonConfig: {
+      componentProps: {
+        clearable: true,
+      },
+      labelWidth: 80,
+    },
+    schema: useGridFormSchema(),
+    submitOnEnter: true,
+    showCollapseButton: isMobile.value,
+    wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-5',
   },
-  {
-    component: 'Input',
-    fieldName: 'type',
-    label: $t('infra.file.list.type'),
-  },
-  {
-    component: 'DatePicker',
-    componentProps: {
-      placeholder: $t('page.date.placeholder.between'),
+  gridOptions: {
+    columns: useColumns(onActionClick),
+    checkboxConfig: {
+      highlight: true,
       range: true,
-      multiCalendars: {
-        solo: true,
+    },
+    id: 'file_list',
+    height: 'auto',
+    proxyConfig: {
+      ajax: {
+        query: ({ page }, formValues) =>
+          getFilePageApi({
+            pageNum: page.currentPage,
+            pageSize: page.pageSize,
+            ...formValues,
+          }),
       },
     },
-    fieldName: 'createTime',
-    label: $t('page.createTime'),
-  },
-]);
-
-const formOptions = computed<VbenFormProps>(() => ({
-  collapsed: isMobile.value,
-  commonConfig: {
-    componentProps: {
-      clearable: true,
-    },
-    labelWidth: 80,
-  },
-  schema: formSchema.value,
-  submitOnEnter: true,
-  showCollapseButton: isMobile.value,
-  wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-5',
-}));
-
-const columns: VxeTableGridOptions<FileApi.FileItem>['columns'] = [
-  {
-    field: 'id',
-    minWidth: 80,
-    title: $t('infra.file.list.id'),
-  },
-  {
-    field: 'name',
-    minWidth: 150,
-    title: $t('infra.file.list.name'),
-    showOverflow: true,
-  },
-  {
-    field: 'path',
-    minWidth: 200,
-    title: $t('infra.file.list.path'),
-    showOverflow: true,
-  },
-  {
-    field: 'url',
-    minWidth: 300,
-    title: $t('infra.file.list.url'),
-    showOverflow: true,
-  },
-  {
-    field: 'type',
-    minWidth: 100,
-    title: $t('infra.file.list.type'),
-    showOverflow: true,
-  },
-  {
-    field: 'size',
-    minWidth: 100,
-    title: $t('infra.file.list.size'),
-    formatter: 'formatFileSize',
-  },
-  {
-    field: 'preview',
-    minWidth: 100,
-    title: $t('infra.file.list.preview.title'),
-    slots: { default: 'preview' },
-    showOverflow: false,
-  },
-  {
-    field: 'createTime',
-    minWidth: 150,
-    title: $t('infra.file.list.createTime'),
-    formatter: 'formatDateTime',
-  },
-  {
-    field: 'opt',
-    title: $t('page.options'),
-    width: 120,
-    slots: { default: 'opt' },
-    fixed: isMobile.value ? null : 'right',
-  },
-];
-
-const gridOptions: VxeTableGridOptions<FileApi.FileItem> = {
-  columns,
-  checkboxConfig: {
-    highlight: true,
-    range: true,
-  },
-  id: 'file_list',
-  height: 'auto',
-  proxyConfig: {
-    ajax: {
-      query: ({ page }, formValues) =>
-        getFilePageApi({
-          pageNum: page.currentPage,
-          pageSize: page.pageSize,
-          ...formValues,
-        }),
-    },
-  },
-  menuConfig: {
-    body: {
-      options: [
-        [
-          {
-            code: 'copy',
-            name: '复制内容',
-            prefixConfig: { icon: 'vxe-icon-copy' },
-            visible: true,
-            disabled: false,
-          },
+    menuConfig: {
+      body: {
+        options: [
+          [
+            {
+              code: 'copy',
+              name: '复制内容',
+              prefixConfig: { icon: 'vxe-icon-copy' },
+              visible: true,
+              disabled: false,
+            },
+          ],
         ],
-      ],
+      },
     },
-  },
-};
-
-const [Grid, gridApi] = useVbenVxeGrid({
-  gridOptions,
+  } as VxeTableGridOptions<FileApi.FileItem>,
   gridEvents: {
     cellMenu({ row }: any) {
       gridApi.grid?.setCurrentRow(row);
@@ -181,6 +98,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
   },
 });
 
+const { reloadTable, onSuccess } = useGridHelper<FileApi.FileItem>(gridApi);
+
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     icon: 'ep:upload',
@@ -190,28 +109,16 @@ const toolbarActions = computed<ActionItem[]>(() => [
   },
 ]);
 
-function createActions(row: FileApi.FileItem) {
-  const actions: ActionItem[] = [
-    {
-      auth: 'infra:file:delete',
-      icon: 'ep:delete',
-      btnText: $t('page.delete'),
-      popConfirm: {
-        on: {
-          confirm: () => {
-            deleteFileApi(row.id).then(() => {
-              ElMessage.success($t('page.success'));
-              reloadTable();
-            });
-          },
-        },
-        title: $t('page.confirmDelete'),
-      },
-      type: 'danger',
-    },
-  ];
-
-  return actions;
+function onActionClick({ code, row }: OnActionClickParams<FileApi.FileItem>) {
+  switch (code) {
+    case 'delete': {
+      deleteFileApi(row.id).then(onSuccess);
+      break;
+    }
+    default: {
+      break;
+    }
+  }
 }
 
 function isImageUrl(url: string) {
@@ -231,24 +138,19 @@ function isVideoUrl(url: string) {
   ];
   return videoExtensions.some((ext) => url.endsWith(ext));
 }
-
-async function reloadTable() {
-  const values = await gridApi.formApi.getValues();
-  gridApi.query(values);
-}
 </script>
 
 <template>
   <Page auto-content-height>
-    <Grid :table-title="$t('infra.file.list.list')" :form-options="formOptions">
+    <FileUploadDrawer @success="reloadTable" />
+
+    <Grid :table-title="$t('infra.file.list.list')">
       <template #toolbar-tools>
         <TableAction
           :actions="toolbarActions"
           :link="false"
           :show-empty="false"
         />
-
-        <FileUploadDrawer @success="reloadTable" />
       </template>
 
       <template #preview="{ row: { url } }">
@@ -270,10 +172,6 @@ async function reloadTable() {
             icon="lucide:file-text"
           />
         </div>
-      </template>
-
-      <template #opt="{ row }">
-        <TableAction :actions="createActions(row)" />
       </template>
     </Grid>
   </Page>

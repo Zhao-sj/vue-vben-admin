@@ -3,15 +3,20 @@ import type { LogApi } from '#/api';
 
 import { JsonViewer, useVbenDrawer } from '@vben/common-ui';
 
+import { isEmpty } from 'lodash-es';
+
+import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 import { formatToDateTime } from '#/utils';
 import { DeviceInfo } from '#/views/sys/log/components';
 
 const dictStore = useDictStore();
+dictStore.initDictData(DictTypeEnum.OPERATE_TYPE);
+
 const log = ref<LogApi.Access>();
 
-const [Drawer, drawer] = useVbenDrawer({ onOpenChange });
+const [Drawer, drawerApi] = useVbenDrawer({ onOpenChange });
 
 const requestParams = computed(() => {
   if (!log.value) return;
@@ -29,24 +34,25 @@ const requestParams = computed(() => {
 });
 
 function onOpenChange(isOpen: boolean) {
-  if (!isOpen) {
-    return;
+  if (isOpen) {
+    const data = drawerApi.getData<LogApi.Access>();
+    if (!isEmpty(data)) {
+      log.value = data;
+    }
   }
+}
 
-  const data = drawer.getData<LogApi.Access>();
-  if (data) {
-    log.value = data;
-  }
+function getOperateTypeDict(value?: number) {
+  return dictStore.getDictData(DictTypeEnum.OPERATE_TYPE, `${value}`);
+}
+
+function getUserTypeDict(value?: number) {
+  return dictStore.getDictData(DictTypeEnum.USER_TYPE, `${value}`);
 }
 </script>
 
 <template>
-  <Drawer
-    :footer="false"
-    :title="$t('sys.log.detail')"
-    class="2xl:w-1/2"
-    destroy-on-close
-  >
+  <Drawer :title="$t('sys.log.detail')" class="2xl:w-1/2" :footer="false">
     <div class="flex flex-col gap-3">
       <ElDescriptions :column="2" :title="$t('sys.log.basicInfo')" border>
         <ElDescriptionsItem :label="$t('sys.log.appName')" width="25%">
@@ -68,8 +74,8 @@ function onOpenChange(isOpen: boolean) {
         </ElDescriptionsItem>
 
         <ElDescriptionsItem :label="$t('sys.log.userType')" width="25%">
-          <ElTag :type="dictStore.getUserType(log?.userType!)?.color">
-            {{ dictStore.getUserType(log?.userType!)?.label }}
+          <ElTag :type="getUserTypeDict(log?.userType!)?.color">
+            {{ getUserTypeDict(log?.userType!)?.label }}
           </ElTag>
         </ElDescriptionsItem>
 
@@ -124,8 +130,8 @@ function onOpenChange(isOpen: boolean) {
         </ElDescriptionsItem>
 
         <ElDescriptionsItem :label="$t('sys.log.access.operateType')">
-          <ElTag :type="dictStore.getOperaType(log?.operateType!)?.color">
-            {{ dictStore.getOperaType(log?.operateType!)?.label }}
+          <ElTag :type="getOperateTypeDict(log?.operateType!)?.color">
+            {{ getOperateTypeDict(log?.operateType!)?.label }}
           </ElTag>
         </ElDescriptionsItem>
 

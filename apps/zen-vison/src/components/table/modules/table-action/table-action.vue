@@ -16,8 +16,6 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   actions: () => [],
   dropdownActions: () => [],
-  link: true,
-  showEmpty: true,
 });
 
 const { hasAccessByCodes, hasAccessByRoles } = useAccess();

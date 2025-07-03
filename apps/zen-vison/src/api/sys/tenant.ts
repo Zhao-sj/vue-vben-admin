@@ -1,6 +1,11 @@
 import type { Nullable } from '@vben/types';
 
-import type { BaseSimple, PageParam, PageResult } from '#/api/common';
+import type {
+  BaseSimple,
+  PageParam,
+  PageResult,
+  UpdateStatus,
+} from '#/api/common';
 
 import { ModuleEnum } from '#/api/common';
 import { requestClient } from '#/api/request';
@@ -76,11 +81,6 @@ export namespace TenantApi {
   }
 
   export type UpdatePackageModel = TenantApi.AddPackageModel & { id: number };
-
-  export interface UpdatePackageStatusModel {
-    id: number;
-    status: number;
-  }
 }
 
 /**
@@ -100,11 +100,9 @@ export function deleteTenantPackageApi(id: number) {
 }
 
 /**
- * 更新角色状态
+ * 更新租户套餐状态
  */
-export function updateTenantPackageStatusApi(
-  data: TenantApi.UpdatePackageStatusModel,
-) {
+export function updateTenantPackageStatusApi(data: UpdateStatus) {
   return requestClient.put<boolean>(`${SYSTEM}/tenant/package/status`, data);
 }
 
@@ -162,6 +160,13 @@ export function batchDeleteTenantApi(ids: number[]) {
  */
 export function deleteTenantApi(id: number) {
   return requestClient.delete<boolean>(`${SYSTEM}/tenant/${id}`);
+}
+
+/**
+ * 更新租户状态
+ */
+export function updateTenantStatusApi(data: UpdateStatus) {
+  return requestClient.put<boolean>(`${SYSTEM}/tenant/status`, data);
 }
 
 /**

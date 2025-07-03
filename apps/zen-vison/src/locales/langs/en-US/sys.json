@@ -227,7 +227,8 @@
     "email": "Email",
     "sort": "Sort",
     "status": "Status",
-    "parent": "Parent"
+    "parent": "Parent",
+    "top": "Top Dept"
   },
   "dict": {
     "id": "ID",
@@ -264,7 +265,7 @@
   "oauth2": {
     "client": {
       "list": "OAuth2 List",
-      "title": "OAuth2",
+      "title": "OAuth2 Client",
       "id": "ID",
       "clientId": "Client ID",
       "secret": "Secret",

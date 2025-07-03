@@ -253,7 +253,7 @@ onUnmounted(handleRemoveEventListener);
             </div>
 
             <div v-if="column.slots?.default === 'opt'">
-              <TableAction :actions="createActions(row)" />
+              <TableAction :actions="createActions(row)" show-empty link />
             </div>
           </template>
         </ElTableColumn>

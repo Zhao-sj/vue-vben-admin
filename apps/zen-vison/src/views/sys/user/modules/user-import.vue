@@ -12,7 +12,6 @@ import { useDebounceFn } from '@vueuse/core';
 import { genFileId } from 'element-plus';
 
 import { getUserImportTemplateApi } from '#/api';
-import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { downloadExcel } from '#/utils';
 
@@ -26,42 +25,8 @@ const MAX_UPLOAD = 1;
 const uploadRef = ref<UploadInstance>();
 const fileList = ref<UploadUserFile[]>([]);
 const updateSupport = ref(false);
-const loading = ref(false);
 
-const { loading: downloading, runAsync: downloadTemplate } = useRequest(
-  getUserImportTemplateApi,
-  {
-    manual: true,
-  },
-);
-
-const [Drawer] = useVbenDrawer({ onConfirm, onOpenChange });
-
-const handleDownload = useDebounceFn(async () => {
-  if (downloading.value) {
-    return;
-  }
-
-  const { data } = await downloadTemplate();
-  downloadExcel(data, $t('sys.user.download.template'));
-});
-
-function handleExceed(files: File[]) {
-  uploadRef.value!.clearFiles();
-  const uploadFiles = files.slice(-MAX_UPLOAD) as UploadRawFile[];
-  uploadFiles.forEach((file) => {
-    file.uid = genFileId();
-    uploadRef.value!.handleStart(file);
-  });
-}
-
-function onOpenChange(isOpen: boolean) {
-  if (!isOpen) {
-    loading.value = false;
-    fileList.value = [];
-    updateSupport.value = false;
-  }
-}
+const [Drawer, drawerApi] = useVbenDrawer({ onConfirm });
 
 function onConfirm() {
   if (fileList.value.length === 0) {
@@ -71,17 +36,34 @@ function onConfirm() {
 
   const file = fileList.value[0]!.raw!;
   emit('confirm', file, updateSupport.value);
-  loading.value = true;
+  drawerApi.lock();
+}
+
+const onDownload = useDebounceFn(async () => {
+  drawerApi.lock();
+  getUserImportTemplateApi()
+    .then(({ data }) => {
+      downloadExcel(data, $t('sys.user.download.template'));
+    })
+    .finally(() => {
+      drawerApi.unlock();
+    });
+});
+
+function onExceed(files: File[]) {
+  uploadRef.value!.clearFiles();
+  const uploadFiles = files.slice(-MAX_UPLOAD) as UploadRawFile[];
+  uploadFiles.forEach((file) => {
+    file.uid = genFileId();
+    uploadRef.value!.handleStart(file);
+  });
 }
 </script>
 
 <template>
   <Drawer
-    :confirm-loading="loading"
-    :loading="downloading"
     :title="$t('page.actionTitle.import', [$t('sys.user.name')])"
     class="lg:w-1/3 2xl:w-1/4"
-    destroy-on-close
     footer-class="gap-x-0"
   >
     <ElUpload
@@ -91,7 +73,7 @@ function onConfirm() {
       :limit="MAX_UPLOAD"
       accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       drag
-      @exceed="handleExceed"
+      @exceed="onExceed"
     >
       <div class="flex flex-col items-center gap-3">
         <IconifyIcon class="text-6xl text-gray-300" icon="ep:upload-filled" />
@@ -111,7 +93,7 @@ function onConfirm() {
           />
           <p>
             <ElText>{{ $t('sys.user.upload.limit') }}</ElText>
-            <ElButton link type="primary" @click="handleDownload">
+            <ElButton link type="primary" @click="onDownload">
               {{ $t('sys.user.download.title') }}
             </ElButton>
           </p>

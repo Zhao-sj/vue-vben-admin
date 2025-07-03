@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
-import type { VxeTableGridOptions } from '#/adapter/vxe-table';
+import type {
+  OnActionClickParams,
+  VxeTableGridOptions,
+} from '#/adapter/vxe-table';
 import type { CategoryApi } from '#/api';
 import type { ActionItem } from '#/components';
 
@@ -8,196 +10,131 @@ import { Page, useVbenDrawer } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 import { IconifyIcon } from '@vben/icons';
 
-import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { deleteCmsCategoryApi, getCmsCategoryListApi } from '#/api';
+import { useGridHelper, useVbenVxeGrid } from '#/adapter/vxe-table';
+import {
+  deleteCmsCategoryApi,
+  getCmsCategoryListApi,
+  updateCmsCategoryStatusApi,
+} from '#/api';
 import { TableAction } from '#/components';
-import { DictStatus, DictTypeEnum } from '#/enums';
+import { DictStatus } from '#/enums';
 import { $t } from '#/locales';
-import { useDictStore } from '#/store';
 
-import { TableAdd, TableEdit } from './modules';
+import { useColumns, useGridFormSchema } from './data';
+import { Form } from './modules';
 
 const { isMobile } = useIsMobile();
-const dictStore = useDictStore();
-dictStore.initDictData(DictTypeEnum.STATUS);
 
-const [TableAddDrawer, addDrawerApi] = useVbenDrawer({
-  connectedComponent: TableAdd,
+const [FormDrawer, formDrawerApi] = useVbenDrawer({
+  connectedComponent: Form,
+  destroyOnClose: true,
 });
 
-const [TableEditDrawer, editDrawerApi] = useVbenDrawer({
-  connectedComponent: TableEdit,
-});
-
-const formSchema = computed<VbenFormSchema[]>(() => [
-  {
-    component: 'Input',
-    fieldName: 'name',
-    label: $t('cms.category.name'),
-  },
-  {
-    component: 'Select',
-    componentProps: {
-      options: dictStore.getDictDataList(DictTypeEnum.STATUS),
+const [Grid, gridApi] = useVbenVxeGrid({
+  formOptions: {
+    collapsed: isMobile.value,
+    commonConfig: {
+      componentProps: {
+        clearable: true,
+      },
+      labelWidth: 80,
     },
-    fieldName: 'status',
-    label: $t('cms.category.status'),
+    schema: useGridFormSchema(),
+    submitOnEnter: true,
+    showCollapseButton: isMobile.value,
+    wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
   },
-]);
-
-const formOptions = computed<VbenFormProps>(() => ({
-  collapsed: isMobile.value,
-  commonConfig: {
-    componentProps: {
-      clearable: true,
+  gridOptions: {
+    columns: useColumns(onActionClick, onStatusChange),
+    id: 'cms_category_manage',
+    keyboardConfig: {
+      isArrow: true,
+      isBack: true,
+      isEnter: true,
     },
-    labelWidth: 80,
-  },
-  schema: formSchema.value,
-  submitOnEnter: true,
-  showCollapseButton: isMobile.value,
-  wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
-}));
-
-const columns: VxeTableGridOptions<CategoryApi.Category>['columns'] = [
-  {
-    field: 'name',
-    headerAlign: 'center',
-    align: 'left',
-    minWidth: 200,
-    title: $t('cms.category.name'),
-    treeNode: true,
-  },
-  {
-    field: 'code',
-    minWidth: 150,
-    title: $t('cms.category.code'),
-  },
-  {
-    field: 'sort',
-    minWidth: 150,
-    title: $t('cms.category.sort'),
-  },
-  {
-    field: 'status',
-    minWidth: 100,
-    title: $t('cms.category.status'),
-    cellRender: {
-      name: 'CellDict',
-      props: {
-        type: DictTypeEnum.STATUS,
+    proxyConfig: {
+      ajax: {
+        query: async (_, formValues) => {
+          const list = await getCmsCategoryListApi(formValues);
+          return { list };
+        },
       },
     },
-  },
-  {
-    field: 'createTime',
-    minWidth: 150,
-    title: $t('page.createTime'),
-    formatter: 'formatDateTime',
-  },
-  {
-    field: 'opt',
-    title: $t('page.options'),
-    width: 240,
-    fixed: isMobile.value ? null : 'right',
-    slots: { default: 'opt' },
-  },
-];
-
-const gridOptions: VxeTableGridOptions<CategoryApi.Category> = {
-  columns,
-  id: 'cms_category_manage',
-  keyboardConfig: {
-    isArrow: true,
-    isBack: true,
-    isEnter: true,
-  },
-  proxyConfig: {
-    ajax: {
-      query: (_, formValues) => getCategoryList(formValues),
+    height: 'auto',
+    stripe: false,
+    pagerConfig: {
+      enabled: false,
     },
-  },
-  height: 'auto',
-  stripe: false,
-  pagerConfig: {
-    enabled: false,
-  },
-  treeConfig: {
-    expandAll: true,
-    parentField: 'parentId',
-    rowField: 'id',
-    transform: true,
-  },
-};
+    treeConfig: {
+      expandAll: true,
+      parentField: 'parentId',
+      rowField: 'id',
+      transform: true,
+    },
+  } as VxeTableGridOptions<CategoryApi.Category>,
+});
 
-const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
+const { onSuccess } = useGridHelper<CategoryApi.Category>(gridApi);
 
-const toolbarActions = computed<ActionItem[]>(() => [
+const toolbarActions: ActionItem[] = [
   {
     auth: 'cms:article-category:create',
     icon: 'ep:plus',
     btnText: $t('page.create'),
-    onClick: () => addDrawerApi.open(),
+    onClick: () => {
+      formDrawerApi.open();
+    },
     type: 'primary',
   },
-]);
+];
 
-function createActions(row: CategoryApi.Category) {
-  const actions: ActionItem[] = [
-    {
-      auth: 'cms:article-category:update',
-      icon: 'ep:edit',
-      btnText: $t('page.edit'),
-      onClick: () => {
-        editDrawerApi.setData({ id: row.id });
-        editDrawerApi.open();
-      },
-      type: 'primary',
-    },
-    {
-      auth: 'cms:article-category:delete',
-      icon: 'ep:delete',
-      btnText: $t('page.delete'),
-      popConfirm: {
-        on: {
-          confirm: () => {
-            deleteCmsCategoryApi(row.id).then(() => {
-              ElMessage.success($t('page.success'));
-              reloadTable();
-            });
-          },
-        },
-        title: $t('page.confirmDelete'),
-      },
-      type: 'danger',
-    },
-  ];
-
-  if (row.status === DictStatus.ENABLE) {
-    actions.unshift({
-      auth: 'cms:article-category:create',
-      icon: 'ep:plus',
-      btnText: $t('page.actionTitle.create', [$t('page.sub')]),
-      onClick: () => {
-        addDrawerApi.setData({ parentId: row.id });
-        addDrawerApi.open();
-      },
-      type: 'primary',
-    });
+function onActionClick({
+  code,
+  row,
+}: OnActionClickParams<CategoryApi.Category>) {
+  switch (code) {
+    case 'append': {
+      formDrawerApi.setData({ parentId: row.id });
+      formDrawerApi.open();
+      break;
+    }
+    case 'delete': {
+      deleteCmsCategoryApi(row.id).then(onSuccess);
+      break;
+    }
+    case 'edit': {
+      formDrawerApi.setData({ id: row.id });
+      formDrawerApi.open();
+      break;
+    }
+    default: {
+      break;
+    }
   }
-
-  return actions;
 }
 
-async function getCategoryList(categoryQuery: CategoryApi.Query) {
-  const list = await getCmsCategoryListApi(categoryQuery);
-  return { list };
-}
+async function onStatusChange(newStatus: number, row: CategoryApi.Category) {
+  const action =
+    newStatus === DictStatus.ENABLE ? $t('page.enable') : $t('page.disable');
 
-async function reloadTable() {
-  const values = await gridApi.formApi.getValues();
-  await gridApi.reload(values);
-  gridApi.grid.setAllTreeExpand(true);
+  const message = $t('page.actionConfirm.status', [
+    action,
+    row.name,
+    $t('cms.category.title'),
+  ]);
+
+  try {
+    await ElMessageBox.confirm(message, $t('page.systemTip'), {
+      closeOnClickModal: false,
+      draggable: true,
+      type: 'warning',
+    });
+    await updateCmsCategoryStatusApi({ id: row.id, status: newStatus });
+    onSuccess(false);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function toggleExpandAll() {
@@ -208,14 +145,12 @@ function toggleExpandAll() {
 
 <template>
   <Page auto-content-height>
-    <Grid :table-title="$t('cms.category.list')" :form-options="formOptions">
+    <FormDrawer @success="onSuccess" />
+
+    <Grid :table-title="$t('cms.category.list')">
       <template #toolbar-tools>
         <div class="flex items-center gap-2">
-          <TableAction
-            :actions="toolbarActions"
-            :link="false"
-            :show-empty="false"
-          />
+          <TableAction :actions="toolbarActions" />
 
           <ElButton
             :title="`${$t('page.expand')} / ${$t('page.collapsed')}`"
@@ -226,14 +161,7 @@ function toggleExpandAll() {
           >
             <IconifyIcon icon="ep:sort" />
           </ElButton>
-
-          <TableAddDrawer @success="reloadTable" />
-          <TableEditDrawer @success="reloadTable" />
         </div>
-      </template>
-
-      <template #opt="{ row }">
-        <TableAction :actions="createActions(row)" />
       </template>
     </Grid>
   </Page>

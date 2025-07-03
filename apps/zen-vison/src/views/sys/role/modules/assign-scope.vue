@@ -1,30 +1,31 @@
 <script setup lang="ts">
 import type { VbenFormSchema } from '#/adapter/form';
+import type { RoleApi } from '#/api';
 
 import { useVbenDrawer } from '@vben/common-ui';
 import { IconifyIcon } from '@vben/icons';
 
 import { ElTree } from 'element-plus';
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep, isEmpty } from 'lodash-es';
 
 import { useVbenForm } from '#/adapter/form';
 import {
   assignRoleDataScopeApi,
   buildMenuTree,
   getDeptSimpleListApi,
-  getRoleApi,
 } from '#/api';
 import { DictRoleDataScope, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 
-const dictStore = useDictStore();
+interface Emits {
+  (e: 'success'): void;
+}
 
-const requestConf = {
-  loadingDelay: 200,
-  manual: true,
-};
+const emit = defineEmits<Emits>();
+
+const dictStore = useDictStore();
 
 const treeMapConf = {
   label: 'name',
@@ -37,23 +38,16 @@ const isExpandAll = ref(true);
 
 const {
   data: deptList,
-  loading: deptLoading,
+  loading,
   runAsync: getDeptList,
-} = useRequest(getDeptSimpleListApi, requestConf);
-
-const {
-  data: role,
-  loading: roleLoading,
-  runAsync: getRole,
-} = useRequest(getRoleApi, requestConf);
-
-const { loading, runAsync } = useRequest(assignRoleDataScopeApi, requestConf);
-
-const [Drawer, drawer] = useVbenDrawer({ onConfirm, onOpenChange });
+} = useRequest(getDeptSimpleListApi, {
+  loadingDelay: 200,
+  manual: true,
+});
 
 const deptTree = computed(() => buildMenuTree(cloneDeep(deptList.value || [])));
 
-const formSchema = computed<VbenFormSchema[]>(() => [
+const schema: VbenFormSchema[] = [
   {
     component: 'Input',
     componentProps: {
@@ -71,14 +65,17 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     label: $t('sys.role.code'),
   },
   {
-    component: 'Select',
+    component: 'ApiSelect',
     componentProps: {
-      options: dictStore
-        .getDictDataList(DictTypeEnum.DATA_SCOPE)
-        .map((item) => ({
-          label: item.label,
-          value: +item.value,
-        })),
+      api: () => dictStore.loadDictData(DictTypeEnum.DATA_SCOPE),
+      afterFetch: () => {
+        return dictStore
+          .getDictDataList(DictTypeEnum.DATA_SCOPE)
+          .map((item) => ({
+            label: item.label,
+            value: +item.value,
+          }));
+      },
     },
     fieldName: 'dataScope',
     label: $t('sys.role.dataScope'),
@@ -98,27 +95,61 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     label: $t('sys.role.customScope'),
     formItemClass: 'flex-col items-start [&>*]:w-full',
   },
-]);
+];
 
-const [Form, formApi] = useVbenForm(
-  reactive({
-    commonConfig: {
-      labelClass: 'mr-4',
-      labelWidth: 60,
-    },
-    schema: formSchema,
-    showDefaultActions: false,
-    wrapperClass: 'grid-cols-1',
-  }),
-);
+const [Form, formApi] = useVbenForm({
+  commonConfig: {
+    labelClass: 'mr-4',
+    labelWidth: 60,
+  },
+  schema,
+  showDefaultActions: false,
+  wrapperClass: 'grid-cols-1',
+});
 
-function handleExpand(checked: boolean | number | string) {
+const [Drawer, drawerApi] = useVbenDrawer({ onConfirm, onOpenChange });
+
+async function onOpenChange(isOpen: boolean) {
+  if (isOpen) {
+    await getDeptList();
+    const data = drawerApi.getData<RoleApi.Role>();
+    if (!isEmpty(data)) {
+      if (!data.dataScopeDeptIds) {
+        data.dataScopeDeptIds = [];
+      }
+
+      formApi.setValues(data);
+      formApi.setFieldValue('id', data.id);
+      setCheckedKeys(data.dataScope, data.dataScopeDeptIds);
+    }
+  }
+}
+
+async function onConfirm() {
+  const values = await formApi.getValues();
+  const dataScopeDeptIds = treeRef.value?.getCheckedKeys() as number[];
+  drawerApi.lock();
+  assignRoleDataScopeApi({
+    roleId: values.id,
+    dataScope: values.dataScope,
+    dataScopeDeptIds: dataScopeDeptIds || [],
+  })
+    .then(() => {
+      emit('success');
+      drawerApi.close();
+    })
+    .catch(() => {
+      drawerApi.unlock();
+    });
+}
+
+function onExpandChange(checked: boolean | number | string) {
   deptList.value.forEach((item) => {
     treeRef.value!.store.nodesMap[item.id]!.expanded = checked as boolean;
   });
 }
 
-function handleChooseAll(checked: boolean | number | string) {
+function onChooseAll(checked: boolean | number | string) {
   treeRef.value!.setCheckedKeys(
     checked ? deptList.value.map((item) => item.id) : [],
   );
@@ -131,47 +162,13 @@ function setCheckedKeys(dataScope: number, dataScopeDeptIds: number[]) {
     });
   }
 }
-
-async function onOpenChange(isOpen: boolean) {
-  if (!isOpen) {
-    checkStrictly.value = true;
-    isExpandAll.value = true;
-    return;
-  }
-
-  const { id } = drawer.getData();
-  if (id) {
-    const [role] = await Promise.all([getRole(id), getDeptList()]);
-    if (!role.dataScopeDeptIds) {
-      role.dataScopeDeptIds = [];
-    }
-
-    formApi.setValues(role);
-    setCheckedKeys(role.dataScope, role.dataScopeDeptIds);
-  }
-}
-
-async function onConfirm() {
-  const { dataScope } = await formApi.getValues();
-  const dataScopeDeptIds = treeRef.value?.getCheckedKeys() as number[];
-
-  await runAsync({
-    dataScope,
-    dataScopeDeptIds: dataScopeDeptIds || [],
-    roleId: role.value.id,
-  });
-  ElMessage.success($t('page.success'));
-  drawer.close();
-}
 </script>
 
 <template>
   <Drawer
-    :confirm-loading="loading"
-    :loading="dictStore.loading || roleLoading || deptLoading"
+    :loading
     :title="$t('sys.role.assignScope')"
     class="md:w-1/3 2xl:w-1/4"
-    destroy-on-close
     footer-class="gap-x-0"
   >
     <Form>
@@ -193,13 +190,14 @@ async function onConfirm() {
             <ElCheckbox
               v-model="isExpandAll"
               :label="`${$t('page.expand')} / ${$t('page.collapsed')}`"
-              @change="handleExpand"
+              @change="onExpandChange"
             />
             <ElCheckbox
               :label="`${$t('page.selectAll')} / ${$t('page.unselectAll')}`"
-              @change="handleChooseAll"
+              @change="onChooseAll"
             />
           </div>
+
           <ElTree
             ref="treeRef"
             :check-strictly="!checkStrictly"

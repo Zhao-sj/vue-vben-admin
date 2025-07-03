@@ -1,1 +1,1 @@
-export { default as TableDetail } from './detail.vue';
+export { default as Detail } from './detail.vue';

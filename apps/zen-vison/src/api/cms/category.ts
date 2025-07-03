@@ -1,4 +1,4 @@
-import type { BaseSimple, PageResult } from '#/api/common';
+import type { BaseSimple, PageResult, UpdateStatus } from '#/api/common';
 
 import { ModuleEnum } from '#/api/common';
 import { requestClient } from '#/api/request';
@@ -43,6 +43,13 @@ export namespace CategoryApi {
  */
 export function deleteCmsCategoryApi(id: number) {
   return requestClient.delete<boolean>(`${CMS}/category/${id}`);
+}
+
+/**
+ * 更新分类状态
+ */
+export function updateCmsCategoryStatusApi(data: UpdateStatus) {
+  return requestClient.put<boolean>(`${CMS}/category/status`, data);
 }
 
 /**

@@ -1,6 +1,8 @@
 import type { VxeTableGridOptions } from '@vben/plugins/vxe-table';
 import type { Recordable } from '@vben/types';
 
+import type { DictApi } from '#/api';
+
 import { h } from 'vue';
 
 import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
@@ -186,7 +188,12 @@ setupVbenVxeTable({
       renderTableDefault({ attrs, props }, { row }) {
         if (attrs && attrs.createActions && isFunction(attrs.createActions)) {
           const propActions = attrs.createActions(row);
-          return h(TableAction, { ...props, ...propActions });
+          return h(TableAction, {
+            link: true,
+            showEmpty: true,
+            ...props,
+            ...propActions,
+          });
         }
 
         return h(TableAction, { ...props });
@@ -195,13 +202,11 @@ setupVbenVxeTable({
 
     // 表格配置项可以用 cellRender: { name: 'CellDict' },
     vxeUI.renderer.add('CellDict', {
-      renderTableDefault(renderOpts, params) {
-        const { props } = renderOpts;
-        const { column, row } = params;
+      renderTableDefault({ props }, { column, row }) {
         const value: number = row[column.field];
         const dictStore = useDictStore();
 
-        let data = null;
+        let data: DictApi.DataSimple | undefined;
         if (props) {
           data = dictStore.getDictData(props.type, value.toString());
         }
@@ -257,6 +262,8 @@ setupVbenVxeTable({
 });
 
 export { useVbenVxeGrid };
+
+export * from './vxe-table-helper';
 
 export type OnActionClickParams<T = Recordable<any>> = {
   code: string;

@@ -1,222 +1,77 @@
 <script setup lang="ts">
-import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
-import type { VxeTableGridOptions } from '#/adapter/vxe-table';
+import type {
+  OnActionClickParams,
+  VxeTableGridOptions,
+} from '#/adapter/vxe-table';
 import type { OAuth2Api } from '#/api';
 import type { ActionItem } from '#/components';
 
 import { Page, useVbenDrawer } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 
-import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { useGridHelper, useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
   batchDeleteOAuth2ClientApi,
   deleteOAuth2ClientApi,
   getOAuth2ClientPageApi,
+  updateOAuth2ClientStatusApi,
 } from '#/api';
 import { TableAction } from '#/components';
-import { DictTypeEnum } from '#/enums';
+import { DictStatus } from '#/enums';
 import { $t } from '#/locales';
-import { useDictStore } from '#/store';
-import { useBatchSelect } from '#/utils';
 
-import { TableAdd, TableEdit } from './modules';
+import { useColumns, useGridFormSchema } from './data';
+import { Form } from './modules';
 
 const { isMobile } = useIsMobile();
-const dictStore = useDictStore();
-dictStore.initDictData(DictTypeEnum.STATUS);
 
-const [TableAddDrawer, addDrawerApi] = useVbenDrawer({
-  connectedComponent: TableAdd,
+const [FormDrawer, formDrawerApi] = useVbenDrawer({
+  connectedComponent: Form,
+  destroyOnClose: true,
 });
 
-const [TableEditDrawer, editDrawerApi] = useVbenDrawer({
-  connectedComponent: TableEdit,
-});
-
-const formSchema = computed<VbenFormSchema[]>(() => [
-  {
-    component: 'Input',
-    fieldName: 'name',
-    label: $t('sys.oauth2.client.name'),
-  },
-  {
-    component: 'Select',
-    componentProps: {
-      options: dictStore.getDictDataList(DictTypeEnum.STATUS),
+const [Grid, gridApi] = useVbenVxeGrid({
+  formOptions: {
+    collapsed: isMobile.value,
+    commonConfig: {
+      componentProps: {
+        clearable: true,
+      },
+      labelWidth: 80,
     },
-    fieldName: 'status',
-    label: $t('sys.oauth2.client.status'),
+    schema: useGridFormSchema(),
+    submitOnEnter: true,
+    showCollapseButton: isMobile.value,
+    wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
   },
-]);
-
-const formOptions = computed<VbenFormProps>(() => ({
-  collapsed: isMobile.value,
-  commonConfig: {
-    componentProps: {
-      clearable: true,
-    },
-    labelWidth: 80,
-  },
-  schema: formSchema.value,
-  submitOnEnter: true,
-  showCollapseButton: isMobile.value,
-  wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
-}));
-
-const columns: VxeTableGridOptions<OAuth2Api.Client>['columns'] = [
-  {
-    type: 'checkbox',
-    width: 50,
-    fixed: isMobile.value ? null : 'left',
-  },
-  {
-    field: 'id',
-    minWidth: 80,
-    title: $t('sys.oauth2.client.id'),
-    visible: false,
-  },
-  {
-    field: 'logo',
-    minWidth: 100,
-    title: $t('sys.oauth2.client.logo'),
-    cellRender: {
-      name: 'CellAvatar',
-      props: { shape: 'square' },
-      attrs: { class: '!rounded-none !bg-transparent' },
-    },
-  },
-  {
-    field: 'name',
-    minWidth: 150,
-    title: $t('sys.oauth2.client.name'),
-  },
-  {
-    field: 'clientId',
-    minWidth: 150,
-    title: $t('sys.oauth2.client.clientId'),
-  },
-  {
-    field: 'secret',
-    minWidth: 150,
-    title: $t('sys.oauth2.client.secret'),
-    showOverflow: true,
-  },
-  {
-    field: 'accessTokenValiditySeconds',
-    minWidth: 150,
-    title: $t('sys.oauth2.client.accessTokenValiditySeconds'),
-    formatter: 'formatSeconds',
-  },
-  {
-    field: 'refreshTokenValiditySeconds',
-    minWidth: 150,
-    title: $t('sys.oauth2.client.refreshTokenValiditySeconds'),
-    formatter: 'formatSeconds',
-  },
-  {
-    field: 'status',
-    minWidth: 100,
-    title: $t('sys.oauth2.client.status'),
-    cellRender: {
-      name: 'CellDict',
-      props: {
-        type: DictTypeEnum.STATUS,
+  gridOptions: {
+    columns: useColumns(onActionClick, onStatusChange),
+    height: 'auto',
+    id: 'oauth2_client_manage',
+    proxyConfig: {
+      ajax: {
+        query: ({ page }, formValues) =>
+          getOAuth2ClientPageApi({
+            pageNum: page.currentPage,
+            pageSize: page.pageSize,
+            ...formValues,
+          }),
       },
     },
-  },
-  {
-    field: 'authorizedGrantTypes',
-    minWidth: 240,
-    title: $t('sys.oauth2.client.authorizedGrantTypes'),
-    cellRender: { name: 'CellTags' },
-  },
-  {
-    field: 'scopes',
-    minWidth: 240,
-    title: $t('sys.oauth2.client.scopes'),
-    cellRender: { name: 'CellTags' },
-    visible: false,
-  },
-  {
-    field: 'autoApproveScopes',
-    minWidth: 240,
-    title: $t('sys.oauth2.client.autoApproveScopes'),
-    cellRender: { name: 'CellTags' },
-    visible: false,
-  },
-  {
-    field: 'redirectUris',
-    minWidth: 240,
-    title: $t('sys.oauth2.client.redirectUris'),
-    slots: { default: 'redirectUris' },
-    visible: false,
-  },
-  {
-    field: 'authorities',
-    minWidth: 240,
-    title: $t('sys.oauth2.client.authorities'),
-    cellRender: { name: 'CellTags' },
-    visible: false,
-  },
-  {
-    field: 'resourceIds',
-    minWidth: 240,
-    title: $t('sys.oauth2.client.resourceIds'),
-    cellRender: { name: 'CellTags' },
-    visible: false,
-  },
-  {
-    field: 'description',
-    minWidth: 200,
-    title: $t('sys.oauth2.client.description'),
-    formatter: 'formatBlank',
-    visible: false,
-  },
-  {
-    field: 'createTime',
-    minWidth: 150,
-    title: $t('page.createTime'),
-    formatter: 'formatDateTime',
-  },
-  {
-    field: 'opt',
-    title: $t('page.options'),
-    width: 180,
-    fixed: isMobile.value ? null : 'right',
-    slots: { default: 'opt' },
-  },
-];
+  } as VxeTableGridOptions<OAuth2Api.Client>,
+});
 
-const gridOptions: VxeTableGridOptions<OAuth2Api.Client> = {
-  columns,
-  height: 'auto',
-  id: 'oauth2_client_manage',
-  proxyConfig: {
-    ajax: {
-      query: ({ page }, formValues) =>
-        getOAuth2ClientPageApi({
-          pageNum: page.currentPage,
-          pageSize: page.pageSize,
-          ...formValues,
-        }),
-    },
-  },
-};
+const { batchSelect, onSuccess } = useGridHelper<OAuth2Api.Client>(gridApi);
 
-const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
-
-const toolbarActions = computed<ActionItem[]>(() => [
+const toolbarActions: ActionItem[] = [
   {
     auth: 'system:oauth2-client:delete',
     icon: 'ep:delete',
     btnText: $t('page.delete'),
-    onClick: async () => {
-      const values = await gridApi.formApi.getValues();
-      useBatchSelect<OAuth2Api.Client>({
-        gridApi,
-        handleBatch: (records) =>
+    onClick: () => {
+      batchSelect({
+        onBatchAction: (records) =>
           batchDeleteOAuth2ClientApi(records.map((item) => item.id)),
-        query: values,
       });
     },
     type: 'danger',
@@ -225,66 +80,62 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'system:oauth2-client:create',
     icon: 'ep:plus',
     btnText: $t('page.create'),
-    onClick: () => addDrawerApi.open(),
+    onClick: () => {
+      formDrawerApi.open();
+    },
     type: 'primary',
   },
-]);
+];
 
-function createActions(row: OAuth2Api.Client) {
-  const actions: ActionItem[] = [
-    {
-      auth: 'system:oauth2-client:update',
-      icon: 'ep:edit',
-      btnText: $t('page.edit'),
-      onClick: () => {
-        editDrawerApi.setData({ id: row.id });
-        editDrawerApi.open();
-      },
-      type: 'primary',
-    },
-    {
-      auth: 'system:oauth2-client:delete',
-      icon: 'ep:delete',
-      btnText: $t('page.delete'),
-      popConfirm: {
-        on: {
-          confirm: () => deleteOAuth2ClientApi(row.id).then(requestAfter),
-        },
-        title: $t('page.confirmDelete'),
-      },
-      type: 'danger',
-    },
-  ];
-
-  return actions;
+function onActionClick({ code, row }: OnActionClickParams<OAuth2Api.Client>) {
+  switch (code) {
+    case 'delete': {
+      deleteOAuth2ClientApi(row.id).then(onSuccess);
+      break;
+    }
+    case 'edit': {
+      formDrawerApi.setData(row);
+      formDrawerApi.open();
+      break;
+    }
+    default: {
+      break;
+    }
+  }
 }
 
-function requestAfter(reload = true) {
-  ElMessage.success($t('page.success'));
-  reload && reloadTable();
-}
+async function onStatusChange(newStatus: number, row: OAuth2Api.Client) {
+  const action =
+    newStatus === DictStatus.ENABLE ? $t('page.enable') : $t('page.disable');
 
-async function reloadTable() {
-  const values = await gridApi.formApi.getValues();
-  gridApi.reload(values);
+  const message = $t('page.actionConfirm.status', [
+    action,
+    row.name,
+    $t('sys.oauth2.client.title'),
+  ]);
+
+  try {
+    await ElMessageBox.confirm(message, $t('page.systemTip'), {
+      closeOnClickModal: false,
+      draggable: true,
+      type: 'warning',
+    });
+    await updateOAuth2ClientStatusApi({ id: row.id, status: newStatus });
+    onSuccess(false);
+    return true;
+  } catch {
+    return false;
+  }
 }
 </script>
 
 <template>
   <Page auto-content-height>
-    <Grid
-      :table-title="$t('sys.oauth2.client.list')"
-      :form-options="formOptions"
-    >
-      <template #toolbar-tools>
-        <TableAction
-          :actions="toolbarActions"
-          :link="false"
-          :show-empty="false"
-        />
+    <FormDrawer @success="onSuccess" />
 
-        <TableAddDrawer @success="reloadTable" />
-        <TableEditDrawer @success="reloadTable" />
+    <Grid :table-title="$t('sys.oauth2.client.list')">
+      <template #toolbar-tools>
+        <TableAction :actions="toolbarActions" />
       </template>
 
       <template #redirectUris="{ row: { redirectUris } }">
@@ -303,10 +154,6 @@ async function reloadTable() {
           </ElLink>
         </div>
         <div v-else>-</div>
-      </template>
-
-      <template #opt="{ row }">
-        <TableAction :actions="createActions(row)" />
       </template>
     </Grid>
   </Page>

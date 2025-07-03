@@ -4,7 +4,7 @@ import type { UserApi } from '#/api';
 import { useIsMobile } from '@vben/hooks';
 import { IconifyIcon } from '@vben/icons';
 
-import { DictSex } from '#/enums';
+import { DictSex, DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 
@@ -14,9 +14,9 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const dictStore = useDictStore();
-const { isMobile } = useIsMobile();
 const { MALE, FEMALE } = DictSex;
+const { isMobile } = useIsMobile();
+const dictStore = useDictStore();
 
 const dataList = computed(() => {
   if (!props.user) {
@@ -57,6 +57,10 @@ function createSex(sex: number) {
     icon: isMale ? 'icon-park-outline:male' : 'icon-park-outline:female',
   };
 }
+
+function getSexDict(value?: number) {
+  return dictStore.getDictData(DictTypeEnum.SEX, `${value}`);
+}
 </script>
 
 <template>
@@ -81,7 +85,7 @@ function createSex(sex: number) {
           v-if="user?.sex === MALE || user?.sex === FEMALE"
           v-bind="createSex(user.sex)"
         />
-        <span>{{ dictStore.getSex(user!.sex)?.label || '-' }}</span>
+        <span>{{ getSexDict(user!.sex)?.label || '-' }}</span>
       </div>
 
       <template v-else>{{ item.value }}</template>

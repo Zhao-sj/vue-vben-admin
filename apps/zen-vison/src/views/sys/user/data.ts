@@ -110,7 +110,7 @@ export function useFormSchema(): VbenFormSchema[] {
       fieldName: 'remark',
       formItemClass: 'lg:col-span-2',
       label: $t('page.remark'),
-      labelClass: 'self-start h-8',
+      labelClass: 'self-start',
     },
   ];
 }

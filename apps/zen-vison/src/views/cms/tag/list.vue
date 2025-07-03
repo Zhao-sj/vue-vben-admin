@@ -1,140 +1,75 @@
 <script setup lang="ts">
-import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
-import type { VxeTableGridOptions } from '#/adapter/vxe-table';
+import type {
+  OnActionClickParams,
+  VxeTableGridOptions,
+} from '#/adapter/vxe-table';
 import type { TagApi } from '#/api';
 import type { ActionItem } from '#/components';
 
 import { Page, useVbenDrawer } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 
-import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { useGridHelper, useVbenVxeGrid } from '#/adapter/vxe-table';
 import { batchDeleteCmsTagApi, deleteCmsTagApi, getCmsTagPageApi } from '#/api';
 import { TableAction } from '#/components';
-import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
-import { useDictStore } from '#/store';
-import { useBatchSelect } from '#/utils';
 
-import { TableAdd, TableEdit } from './modules';
+import { useColumns, useGridFormSchema } from './data';
+import { Form } from './modules';
 
 const { isMobile } = useIsMobile();
-const dictStore = useDictStore();
-dictStore.initDictData(DictTypeEnum.STATUS);
 
-const [TableAddDrawer, addDrawerApi] = useVbenDrawer({
-  connectedComponent: TableAdd,
+const [FormDrawer, formDrawerApi] = useVbenDrawer({
+  connectedComponent: Form,
+  destroyOnClose: true,
 });
 
-const [TableEditDrawer, editDrawerApi] = useVbenDrawer({
-  connectedComponent: TableEdit,
-});
-
-const formSchema = computed<VbenFormSchema[]>(() => [
-  {
-    component: 'Input',
-    fieldName: 'name',
-    label: $t('cms.tag.name'),
-  },
-  {
-    component: 'Select',
-    componentProps: {
-      options: dictStore.getDictDataList(DictTypeEnum.STATUS),
+const [Grid, gridApi] = useVbenVxeGrid({
+  formOptions: {
+    collapsed: isMobile.value,
+    commonConfig: {
+      componentProps: {
+        clearable: true,
+      },
+      labelWidth: 80,
     },
-    fieldName: 'status',
-    label: $t('cms.tag.status'),
+    schema: useGridFormSchema(),
+    submitOnEnter: true,
+    showCollapseButton: isMobile.value,
+    wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
   },
-]);
-
-const formOptions = computed<VbenFormProps>(() => ({
-  collapsed: isMobile.value,
-  commonConfig: {
-    componentProps: {
-      clearable: true,
+  gridOptions: {
+    columns: useColumns(onActionClick),
+    checkboxConfig: {
+      highlight: true,
+      range: true,
     },
-    labelWidth: 80,
-  },
-  schema: formSchema.value,
-  submitOnEnter: true,
-  showCollapseButton: isMobile.value,
-  wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
-}));
-
-const columns: VxeTableGridOptions<TagApi.Tag>['columns'] = [
-  {
-    type: 'checkbox',
-    width: 50,
-    fixed: isMobile.value ? null : 'left',
-  },
-  {
-    field: 'id',
-    minWidth: 80,
-    title: $t('cms.tag.id'),
-  },
-  {
-    field: 'name',
-    minWidth: 150,
-    title: $t('cms.tag.name'),
-  },
-  {
-    field: 'status',
-    minWidth: 100,
-    title: $t('cms.tag.status'),
-    cellRender: {
-      name: 'CellDict',
-      props: {
-        type: DictTypeEnum.STATUS,
+    id: 'post_manage',
+    height: 'auto',
+    proxyConfig: {
+      ajax: {
+        query: ({ page }, formValues) =>
+          getCmsTagPageApi({
+            pageNum: page.currentPage,
+            pageSize: page.pageSize,
+            ...formValues,
+          }),
       },
     },
-  },
-  {
-    field: 'createTime',
-    minWidth: 150,
-    title: $t('page.createTime'),
-    formatter: 'formatDateTime',
-  },
-  {
-    field: 'opt',
-    title: $t('page.options'),
-    width: 180,
-    fixed: isMobile.value ? null : 'right',
-    slots: { default: 'opt' },
-  },
-];
+  } as VxeTableGridOptions<TagApi.Tag>,
+});
 
-const gridOptions: VxeTableGridOptions<TagApi.Tag> = {
-  columns,
-  checkboxConfig: {
-    highlight: true,
-    range: true,
-  },
-  id: 'post_manage',
-  height: 'auto',
-  proxyConfig: {
-    ajax: {
-      query: ({ page }, formValues) =>
-        getCmsTagPageApi({
-          pageNum: page.currentPage,
-          pageSize: page.pageSize,
-          ...formValues,
-        }),
-    },
-  },
-};
-
-const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
+const { batchSelect, onSuccess } = useGridHelper<TagApi.Tag>(gridApi);
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'cms:article-tag:delete',
     icon: 'ep:delete',
     btnText: $t('page.delete'),
-    onClick: async () => {
-      const values = await gridApi.formApi.getValues();
-      useBatchSelect<TagApi.Tag>({
-        gridApi,
-        handleBatch: (records) =>
+    onClick: () => {
+      batchSelect({
+        onBatchAction: (records) =>
           batchDeleteCmsTagApi(records.map((item) => item.id)),
-        query: values,
       });
     },
     type: 'danger',
@@ -143,67 +78,38 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'cms:article-tag:create',
     icon: 'ep:plus',
     btnText: $t('page.create'),
-    onClick: () => addDrawerApi.open(),
+    onClick: () => {
+      formDrawerApi.open();
+    },
     type: 'primary',
   },
 ]);
 
-function createActions(row: TagApi.Tag) {
-  const actions: ActionItem[] = [
-    {
-      auth: 'cms:article-tag:update',
-      icon: 'ep:edit',
-      btnText: $t('page.edit'),
-      onClick: () => {
-        editDrawerApi.setData({ id: row.id });
-        editDrawerApi.open();
-      },
-      type: 'primary',
-    },
-    {
-      auth: 'cms:article-tag:delete',
-      icon: 'ep:delete',
-      btnText: $t('page.delete'),
-      popConfirm: {
-        on: {
-          confirm: () => deleteCmsTagApi(row.id).then(requestAfter),
-        },
-        title: $t('page.confirmDelete'),
-      },
-      type: 'danger',
-    },
-  ];
-
-  return actions;
-}
-
-async function reloadTable() {
-  const values = await gridApi.formApi.getValues();
-  gridApi.reload(values);
-}
-
-function requestAfter(reload = true) {
-  ElMessage.success($t('page.success'));
-  reload && reloadTable();
+function onActionClick({ code, row }: OnActionClickParams<TagApi.Tag>) {
+  switch (code) {
+    case 'delete': {
+      deleteCmsTagApi(row.id).then(onSuccess);
+      break;
+    }
+    case 'edit': {
+      formDrawerApi.setData(row);
+      formDrawerApi.open();
+      break;
+    }
+    default: {
+      break;
+    }
+  }
 }
 </script>
 
 <template>
   <Page auto-content-height>
-    <Grid :table-title="$t('cms.tag.list')" :form-options="formOptions">
+    <FormDrawer @success="onSuccess" />
+
+    <Grid :table-title="$t('cms.tag.list')">
       <template #toolbar-tools>
-        <TableAction
-          :actions="toolbarActions"
-          :link="false"
-          :show-empty="false"
-        />
-
-        <TableAddDrawer @success="reloadTable" />
-        <TableEditDrawer @success="reloadTable" />
-      </template>
-
-      <template #opt="{ row }">
-        <TableAction :actions="createActions(row)" />
+        <TableAction :actions="toolbarActions" />
       </template>
     </Grid>
   </Page>

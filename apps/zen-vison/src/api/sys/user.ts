@@ -1,6 +1,6 @@
 import type { Nullable, Recordable } from '@vben/types';
 
-import type { PageParam, PageResult } from '#/api/common';
+import type { PageParam, PageResult, UpdateStatus } from '#/api/common';
 
 import { ModuleEnum } from '#/api/common';
 import { requestClient } from '#/api/request';
@@ -58,11 +58,6 @@ export namespace UserApi {
 
   export interface UpdateModel extends Omit<AddModel, 'password'> {
     id: number;
-  }
-
-  export interface UpdateStatusModel {
-    id: number;
-    status: number;
   }
 
   export interface UpdatePasswordModel {
@@ -127,7 +122,7 @@ export function resetUserPasswordApi(data: UserApi.UpdatePasswordModel) {
 /**
  * 更新用户状态
  */
-export function updateUserStatusApi(data: UserApi.UpdateStatusModel) {
+export function updateUserStatusApi(data: UpdateStatus) {
   return requestClient.put<boolean>(`${SYSTEM}/user/status`, data);
 }
 

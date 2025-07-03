@@ -6,7 +6,8 @@
     "parent": "Parent",
     "code": "Code",
     "sort": "Sort",
-    "status": "Status"
+    "status": "Status",
+    "top": "Top Category"
   },
   "tag": {
     "list": "Tag List",

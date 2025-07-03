@@ -74,6 +74,7 @@ const withDefaultPlaceholder = <T extends Component>(
 
 // 这里需要自行根据业务组件库进行适配，需要用到的组件都需要在这里类型说明
 export type ComponentType =
+  | 'ApiCascader'
   | 'ApiSelect'
   | 'ApiTreeSelect'
   | 'Cascader'
@@ -122,6 +123,18 @@ async function initComponentAdapter() {
         nodeKey: 'value',
         loadingSlot: 'loading',
         optionsPropName: 'data',
+        visibleEvent: 'onVisibleChange',
+      },
+    ),
+    ApiCascader: withDefaultPlaceholder(
+      {
+        ...ApiComponent,
+        name: 'ApiCascader',
+      },
+      'select',
+      {
+        component: ElCascader,
+        props: { expandTrigger: 'hover' },
         visibleEvent: 'onVisibleChange',
       },
     ),

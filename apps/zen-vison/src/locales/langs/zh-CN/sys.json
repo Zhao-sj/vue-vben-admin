@@ -227,7 +227,8 @@
     "email": "联系邮箱",
     "sort": "显示顺序",
     "status": "部门状态",
-    "parent": "上级部门"
+    "parent": "上级部门",
+    "top": "顶级部门"
   },
   "dict": {
     "id": "字典编号",
@@ -264,7 +265,7 @@
   "oauth2": {
     "client": {
       "list": "OAuth2 列表",
-      "title": "OAuth2",
+      "title": "OAuth2客户端",
       "id": "编号",
       "clientId": "客户端编号",
       "secret": "客户端秘钥",

@@ -15,7 +15,7 @@ const data = ref<UserApi.ImportResp>({
   updateUserList: [],
 });
 
-const [Modal, modal] = useVbenModal({ onConfirm, onOpenChange });
+const [Modal, modalApi] = useVbenModal({ onConfirm, onOpenChange });
 
 const failList = computed(() =>
   Object.keys(data.value.failureUsers).map((item) => ({
@@ -30,7 +30,7 @@ function onOpenChange(isOpen: boolean) {
     return;
   }
 
-  const { data: resultData } = modal.getData();
+  const { data: resultData } = modalApi.getData();
   if (resultData) {
     data.value = resultData;
   }
@@ -38,7 +38,7 @@ function onOpenChange(isOpen: boolean) {
 
 function onConfirm() {
   handleConfirm();
-  modal.close();
+  modalApi.close();
 }
 
 function handleConfirm() {
@@ -55,8 +55,8 @@ function handleConfirm() {
     :show-cancel-button="false"
     :title="$t('sys.user.upload.result')"
     class="w-11/12 md:w-1/2 2xl:w-1/3"
-    draggable
     footer-class="gap-x-0"
+    draggable
   >
     <div class="flex flex-col gap-2">
       <div>

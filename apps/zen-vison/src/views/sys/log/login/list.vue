@@ -1,19 +1,13 @@
 <script setup lang="ts">
-import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { LogApi } from '#/api';
 import type { ActionItem } from '#/components';
 
-import { useAccess } from '@vben/access';
 import { Page, useVbenModal } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import {
-  exporLoginLogApi,
-  getLoginLogPageListApi,
-  getTenantSimpleListApi,
-} from '#/api';
+import { exporLoginLogApi, getLoginLogPageListApi } from '#/api';
 import { TableAction, TableExport } from '#/components';
 import { DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
@@ -22,180 +16,53 @@ import { useDictStore } from '#/store';
 import { downloadExcel } from '#/utils';
 import { DeviceInfo } from '#/views/sys/log/components';
 
+import { useColumns, useGridFormSchema } from './data';
+
 const { isMobile } = useIsMobile();
-const { hasAccessByCodes } = useAccess();
 const dictStore = useDictStore();
 dictStore.initDictData(DictTypeEnum.LOGIN_TYPE, DictTypeEnum.LOGIN_RESULT);
 
-const hasTenantPermission = hasAccessByCodes(['system:tenant:list']);
-
-const requestConfig = {
-  loadingDelay: 200,
-  manual: true,
-};
-
-const { data: tenantList } = useRequest(getTenantSimpleListApi, {
-  manual: !hasTenantPermission,
-});
-
 const { loading: exportLoading, runAsync: exportLog } = useRequest(
   exporLoginLogApi,
-  requestConfig,
+  {
+    loadingDelay: 200,
+    manual: true,
+  },
 );
 
-const [TableExportModal, exportModalApi] = useVbenModal({
+const [ExportModal, exportModalApi] = useVbenModal({
   connectedComponent: TableExport,
 });
 
-const formSchema = computed<VbenFormSchema[]>(() => [
-  {
-    component: 'Select',
-    componentProps: {
-      options: [
-        { label: $t('sys.log.login.success'), value: true },
-        { label: $t('sys.log.login.fail'), value: false },
-      ],
+const [Grid, gridApi] = useVbenVxeGrid({
+  formOptions: {
+    collapsed: isMobile.value,
+    commonConfig: {
+      componentProps: {
+        clearable: true,
+      },
+      labelWidth: 80,
     },
-    fieldName: 'status',
-    label: $t('sys.log.login.result'),
+    schema: useGridFormSchema(),
+    submitOnEnter: true,
+    wrapperClass: 'grid-cols-1 lg:grid-cols-3 2xl:grid-cols-4',
   },
-  {
-    component: 'Select',
-    componentProps: {
-      options:
-        tenantList.value?.map((item) => ({
-          label: item.name,
-          value: item.id,
-        })) || [],
-    },
-    fieldName: 'tenantId',
-    label: $t('sys.log.login.tenant'),
-    dependencies: {
-      if: () => tenantList.value?.length > 0,
-      triggerFields: ['tenantId'],
-    },
-  },
-  {
-    component: 'Input',
-    fieldName: 'ip',
-    label: $t('sys.log.ip'),
-  },
-  {
-    component: 'Input',
-    fieldName: 'username',
-    label: $t('sys.log.login.username'),
-  },
-  {
-    component: 'DatePicker',
-    componentProps: {
-      placeholder: $t('page.date.placeholder.between'),
-      range: true,
-      multiCalendars: {
-        solo: true,
+  gridOptions: {
+    columns: useColumns(),
+    height: 'auto',
+    id: 'log_login_manage',
+    proxyConfig: {
+      ajax: {
+        query: ({ page }, formValues) =>
+          getLoginLogPageListApi({
+            pageNum: page.currentPage,
+            pageSize: page.pageSize,
+            ...formValues,
+          }),
       },
     },
-    fieldName: 'createTime',
-    label: $t('sys.log.login.createTime'),
-  },
-]);
-
-const formOptions = computed<VbenFormProps>(() => ({
-  collapsed: isMobile.value,
-  commonConfig: {
-    componentProps: {
-      clearable: true,
-    },
-    labelWidth: 80,
-  },
-  schema: formSchema.value,
-  submitOnEnter: true,
-  wrapperClass: 'grid-cols-1 lg:grid-cols-3 2xl:grid-cols-4',
-}));
-
-const columns: VxeTableGridOptions<LogApi.Login>['columns'] = [
-  {
-    field: 'id',
-    minWidth: 80,
-    title: $t('sys.log.id'),
-  },
-  ...(hasTenantPermission
-    ? [
-        {
-          field: 'tenantId',
-          minWidth: 150,
-          slots: { default: 'tenant' },
-          title: $t('sys.log.login.tenant'),
-        },
-      ]
-    : []),
-  {
-    field: 'type',
-    minWidth: 150,
-    title: $t('sys.log.login.type'),
-    cellRender: {
-      name: 'CellDict',
-      props: {
-        type: DictTypeEnum.LOGIN_TYPE,
-      },
-    },
-  },
-  {
-    field: 'username',
-    minWidth: 150,
-    title: $t('sys.log.login.username'),
-  },
-  {
-    field: 'ip',
-    minWidth: 150,
-    title: $t('sys.log.ip'),
-  },
-  {
-    field: 'location',
-    minWidth: 150,
-    title: $t('sys.log.location'),
-  },
-  {
-    field: 'ua',
-    minWidth: 300,
-    slots: { default: 'ua' },
-    title: $t('sys.log.ua'),
-  },
-  {
-    field: 'result',
-    minWidth: 100,
-    title: $t('sys.log.login.result'),
-    cellRender: {
-      name: 'CellDict',
-      props: {
-        type: DictTypeEnum.LOGIN_RESULT,
-      },
-    },
-  },
-  {
-    field: 'createTime',
-    formatter: 'formatDateTime',
-    minWidth: 150,
-    title: $t('sys.log.login.createTime'),
-  },
-];
-
-const gridOptions: VxeTableGridOptions<LogApi.Login> = {
-  columns,
-  height: 'auto',
-  id: 'log_login_manage',
-  proxyConfig: {
-    ajax: {
-      query: ({ page }, formValues) =>
-        getLoginLogPageListApi({
-          pageNum: page.currentPage,
-          pageSize: page.pageSize,
-          ...formValues,
-        }),
-    },
-  },
-};
-
-const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
+  } as VxeTableGridOptions<LogApi.Login>,
+});
 
 const toolbarActions = computed<ActionItem[]>(() => [
   {
@@ -206,7 +73,7 @@ const toolbarActions = computed<ActionItem[]>(() => [
   },
 ]);
 
-async function handleExport(fileName: string) {
+async function onExport(fileName: string) {
   if (exportLoading.value) {
     return;
   }
@@ -220,22 +87,11 @@ async function handleExport(fileName: string) {
 
 <template>
   <Page auto-content-height>
-    <Grid :table-title="$t('sys.log.login.list')" :form-options="formOptions">
+    <ExportModal :default-name="$t('sys.log.login.list')" @confirm="onExport" />
+
+    <Grid :table-title="$t('sys.log.login.list')">
       <template #toolbar-tools>
-        <TableAction
-          :actions="toolbarActions"
-          :link="false"
-          :show-empty="false"
-        />
-
-        <TableExportModal
-          :default-name="$t('sys.log.login.list')"
-          @confirm="handleExport"
-        />
-      </template>
-
-      <template #tenant="{ row: { tenantId } }">
-        {{ tenantList?.find((item) => item.id === tenantId)?.name }}
+        <TableAction :actions="toolbarActions" />
       </template>
 
       <template #ua="{ row: { ua } }">

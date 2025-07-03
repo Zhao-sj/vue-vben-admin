@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import type { VbenFormProps, VbenFormSchema } from '#/adapter/form';
-import type { VxeTableGridOptions } from '#/adapter/vxe-table';
+import type {
+  OnActionClickParams,
+  VxeTableGridOptions,
+} from '#/adapter/vxe-table';
 import type { DeptApi } from '#/api';
 import type { ActionItem } from '#/components';
 
@@ -8,220 +10,99 @@ import { Page, useVbenDrawer } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 import { IconifyIcon } from '@vben/icons';
 
-import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { deleteDeptApi, getDeptListApi, getUserSimpleListApi } from '#/api';
+import { useGridHelper, useVbenVxeGrid } from '#/adapter/vxe-table';
+import { deleteDeptApi, getDeptListApi } from '#/api';
 import { TableAction } from '#/components';
-import { DictStatus, DictTypeEnum } from '#/enums';
-import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
-import { useDictStore } from '#/store';
 
-import { TableAdd, TableEdit } from './modules';
+import { useColumns, useGridFormSchema } from './data';
+import { Form } from './modules';
 
 const { isMobile } = useIsMobile();
-const dictStore = useDictStore();
-dictStore.initDictData(DictTypeEnum.STATUS);
 
-const { data: userList } = useRequest(getUserSimpleListApi);
-
-const [TableAddDrawer, addDrawerApi] = useVbenDrawer({
-  connectedComponent: TableAdd,
+const [FormDrawer, formDrawerApi] = useVbenDrawer({
+  connectedComponent: Form,
+  destroyOnClose: true,
 });
 
-const [TableEditDrawer, editDrawerApi] = useVbenDrawer({
-  connectedComponent: TableEdit,
-});
-
-const formSchema = computed<VbenFormSchema[]>(() => [
-  {
-    component: 'Input',
-    fieldName: 'name',
-    label: $t('sys.dept.name'),
-  },
-  {
-    component: 'Select',
-    componentProps: {
-      options: dictStore.getDictDataList(DictTypeEnum.STATUS),
+const [Grid, gridApi] = useVbenVxeGrid({
+  formOptions: {
+    collapsed: isMobile.value,
+    commonConfig: {
+      componentProps: {
+        clearable: true,
+      },
+      labelWidth: 80,
     },
-    fieldName: 'status',
-    label: $t('sys.dept.status'),
+    schema: useGridFormSchema(),
+    submitOnEnter: true,
+    showCollapseButton: isMobile.value,
+    wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
   },
-]);
-
-const formOptions = computed<VbenFormProps>(() => ({
-  collapsed: isMobile.value,
-  commonConfig: {
-    componentProps: {
-      clearable: true,
+  gridOptions: {
+    columns: useColumns(onActionClick),
+    id: 'dept_manage',
+    keyboardConfig: {
+      isArrow: true,
+      isBack: true,
+      isEnter: true,
     },
-    labelWidth: 80,
-  },
-  schema: formSchema.value,
-  submitOnEnter: true,
-  showCollapseButton: isMobile.value,
-  wrapperClass: 'grid-cols-1 lg:grid-cols-4 2xl:grid-cols-6',
-}));
-
-const columns: VxeTableGridOptions<DeptApi.Dept>['columns'] = [
-  {
-    field: 'name',
-    headerAlign: 'center',
-    align: 'left',
-    minWidth: 200,
-    title: $t('sys.dept.name'),
-    treeNode: true,
-  },
-  {
-    field: 'leaderId',
-    minWidth: 150,
-    title: $t('sys.dept.leader'),
-    formatter: ({ cellValue }) => getUserName(cellValue),
-  },
-  {
-    field: 'phone',
-    minWidth: 150,
-    title: $t('sys.dept.phone'),
-    formatter: 'formatBlank',
-  },
-  {
-    field: 'email',
-    minWidth: 150,
-    title: $t('sys.dept.email'),
-    formatter: 'formatBlank',
-  },
-  {
-    field: 'sort',
-    minWidth: 80,
-    title: $t('sys.dept.sort'),
-  },
-  {
-    field: 'status',
-    minWidth: 100,
-    title: $t('sys.dept.status'),
-    cellRender: {
-      name: 'CellDict',
-      props: {
-        type: DictTypeEnum.STATUS,
+    proxyConfig: {
+      ajax: {
+        query: async (_, formValues) => {
+          const list = await getDeptListApi(formValues);
+          return { list };
+        },
       },
     },
-  },
-  {
-    field: 'createTime',
-    minWidth: 150,
-    title: $t('page.createTime'),
-    formatter: 'formatDateTime',
-  },
-  {
-    field: 'opt',
-    title: $t('page.options'),
-    width: 240,
-    fixed: isMobile.value ? null : 'right',
-    slots: { default: 'opt' },
-  },
-];
-
-const gridOptions: VxeTableGridOptions<DeptApi.Dept> = {
-  columns,
-  id: 'dept_manage',
-  keyboardConfig: {
-    isArrow: true,
-    isBack: true,
-    isEnter: true,
-  },
-  proxyConfig: {
-    ajax: {
-      query: (_, formValues) => getDeptList(formValues),
+    height: 'auto',
+    stripe: false,
+    pagerConfig: {
+      enabled: false,
     },
-  },
-  height: 'auto',
-  stripe: false,
-  pagerConfig: {
-    enabled: false,
-  },
-  treeConfig: {
-    expandAll: true,
-    parentField: 'parentId',
-    rowField: 'id',
-    transform: true,
-  },
-};
+    treeConfig: {
+      expandAll: true,
+      parentField: 'parentId',
+      rowField: 'id',
+      transform: true,
+    },
+  } as VxeTableGridOptions<DeptApi.Dept>,
+});
 
-const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
+const { onSuccess } = useGridHelper<DeptApi.Dept>(gridApi);
 
-const toolbarActions = computed<ActionItem[]>(() => [
+const toolbarActions: ActionItem[] = [
   {
     auth: 'system:dept:create',
     icon: 'ep:plus',
     btnText: $t('page.create'),
-    onClick: () => addDrawerApi.open(),
+    onClick: () => {
+      formDrawerApi.open();
+    },
     type: 'primary',
   },
-]);
+];
 
-function createActions(row: DeptApi.Dept) {
-  const actions: ActionItem[] = [
-    {
-      auth: 'system:dept:update',
-      icon: 'ep:edit',
-      btnText: $t('page.edit'),
-      onClick: () => {
-        editDrawerApi.setData({ id: row.id });
-        editDrawerApi.open();
-      },
-      type: 'primary',
-    },
-    {
-      auth: 'system:dept:delete',
-      icon: 'ep:delete',
-      btnText: $t('page.delete'),
-      popConfirm: {
-        on: {
-          confirm: () => {
-            deleteDeptApi(row.id).then(() => {
-              ElMessage.success($t('page.success'));
-              reloadTable();
-            });
-          },
-        },
-        title: $t('page.confirmDelete'),
-      },
-      type: 'danger',
-    },
-  ];
-
-  if (row.status === DictStatus.ENABLE) {
-    actions.unshift({
-      auth: 'system:dept:create',
-      icon: 'ep:plus',
-      btnText: $t('page.actionTitle.create', [$t('page.sub')]),
-      onClick: () => {
-        addDrawerApi.setData({ parentId: row.id });
-        addDrawerApi.open();
-      },
-      type: 'primary',
-    });
+function onActionClick({ code, row }: OnActionClickParams<DeptApi.Dept>) {
+  switch (code) {
+    case 'append': {
+      formDrawerApi.setData({ parentId: row.id });
+      formDrawerApi.open();
+      break;
+    }
+    case 'delete': {
+      deleteDeptApi(row.id).then(onSuccess);
+      break;
+    }
+    case 'edit': {
+      formDrawerApi.setData({ id: row.id });
+      formDrawerApi.open();
+      break;
+    }
+    default: {
+      break;
+    }
   }
-
-  return actions;
-}
-
-async function getDeptList(deptQuery: DeptApi.Query) {
-  const list = await getDeptListApi(deptQuery);
-  return { list };
-}
-
-function getUserName(id: number) {
-  if (!userList.value) {
-    return '-';
-  }
-
-  return userList.value.find((item) => item.id === id)?.nickname || '-';
-}
-
-async function reloadTable() {
-  const values = await gridApi.formApi.getValues();
-  await gridApi.reload(values);
-  gridApi.grid.setAllTreeExpand(true);
 }
 
 function toggleExpandAll() {
@@ -232,14 +113,12 @@ function toggleExpandAll() {
 
 <template>
   <Page auto-content-height>
-    <Grid :table-title="$t('sys.dept.list')" :form-options="formOptions">
+    <FormDrawer @success="onSuccess" />
+
+    <Grid :table-title="$t('sys.dept.list')">
       <template #toolbar-tools>
         <div class="flex items-center gap-2">
-          <TableAction
-            :actions="toolbarActions"
-            :link="false"
-            :show-empty="false"
-          />
+          <TableAction :actions="toolbarActions" />
 
           <ElButton
             :title="`${$t('page.expand')} / ${$t('page.collapsed')}`"
@@ -249,14 +128,7 @@ function toggleExpandAll() {
           >
             <IconifyIcon icon="ep:sort" />
           </ElButton>
-
-          <TableAddDrawer @success="reloadTable" />
-          <TableEditDrawer @success="reloadTable" />
         </div>
-      </template>
-
-      <template #opt="{ row }">
-        <TableAction :actions="createActions(row)" />
       </template>
     </Grid>
   </Page>

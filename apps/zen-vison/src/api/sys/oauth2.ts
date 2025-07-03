@@ -1,6 +1,6 @@
 import type { Nullable } from '@vben/types';
 
-import type { PageParam, PageResult } from '#/api/common';
+import type { PageParam, PageResult, UpdateStatus } from '#/api/common';
 
 import { ModuleEnum } from '#/api/common';
 import { requestClient } from '#/api/request';
@@ -106,6 +106,13 @@ export function batchDeleteOAuth2ClientApi(ids: number[]) {
  */
 export function deleteOAuth2ClientApi(id: number) {
   return requestClient.delete<boolean>(`${SYSTEM}/oauth2/client/${id}`);
+}
+
+/**
+ * 更新OAuth2客户端状态
+ */
+export function updateOAuth2ClientStatusApi(data: UpdateStatus) {
+  return requestClient.put<boolean>(`${SYSTEM}/oauth2/client/status`, data);
 }
 
 /**

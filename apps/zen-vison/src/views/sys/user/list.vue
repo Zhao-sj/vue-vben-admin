@@ -10,7 +10,7 @@ import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
 import { IconifyIcon } from '@vben/icons';
 
-import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { useGridHelper, useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
   batchDeleteUserApi,
   deleteUserApi,
@@ -25,7 +25,7 @@ import { DictSex, DictStatus, DictTypeEnum } from '#/enums';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 import { useDictStore, useUserStore } from '#/store';
-import { downloadExcel, encryptBySha256, useBatchSelect } from '#/utils';
+import { downloadExcel, encryptBySha256 } from '#/utils';
 
 import { useColumns, useGridFormSchema } from './data';
 import {
@@ -63,6 +63,7 @@ const [FormDrawer, formDrawerApi] = useVbenDrawer({
 
 const [AssignRoleDrawer, assignRoleDrawerApi] = useVbenDrawer({
   connectedComponent: AssignRole,
+  destroyOnClose: true,
 });
 
 const [ExportModal, exportModalApi] = useVbenModal({
@@ -71,6 +72,7 @@ const [ExportModal, exportModalApi] = useVbenModal({
 
 const [ImportDrawer, importDrawerApi] = useVbenDrawer({
   connectedComponent: UserImport,
+  destroyOnClose: true,
 });
 
 const [ImportResultModal, importResultModalApi] = useVbenModal({
@@ -112,6 +114,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
   } as VxeTableGridOptions<UserApi.User>,
 });
 
+const { batchSelect, onSuccess } = useGridHelper<UserApi.User>(gridApi);
+
 const toolbarActions = computed<ActionItem[]>(() => [
   {
     auth: 'system:user:export',
@@ -129,13 +133,10 @@ const toolbarActions = computed<ActionItem[]>(() => [
     auth: 'system:user:delete',
     icon: 'ep:delete',
     btnText: $t('page.delete'),
-    onClick: async () => {
-      const values = await gridApi.formApi.getValues();
-      useBatchSelect<UserApi.User>({
-        gridApi,
-        handleBatch: (records) =>
+    onClick: () => {
+      batchSelect({
+        onBatchAction: (records) =>
           batchDeleteUserApi(records.map((item) => item.id)),
-        query: values,
       });
     },
     type: 'danger',
@@ -157,7 +158,7 @@ function onActionClick({ code, row }: OnActionClickParams<UserApi.User>) {
       break;
     }
     case 'delete': {
-      deleteUserApi(row.id).then(requestAfter);
+      deleteUserApi(row.id).then(onSuccess);
       break;
     }
     case 'edit': {
@@ -179,7 +180,11 @@ async function onStatusChange(newStatus: number, row: UserApi.User) {
   const action =
     newStatus === DictStatus.ENABLE ? $t('page.enable') : $t('page.disable');
 
-  const message = $t('sys.user.confirm.status', [action, row.username]);
+  const message = $t('page.actionConfirm.status', [
+    action,
+    row.username,
+    $t('sys.user.name'),
+  ]);
 
   try {
     await ElMessageBox.confirm(message, $t('page.systemTip'), {
@@ -188,7 +193,7 @@ async function onStatusChange(newStatus: number, row: UserApi.User) {
       type: 'warning',
     });
     await updateUserStatusApi({ id: row.id, status: newStatus });
-    requestAfter(false);
+    onSuccess(false);
     return true;
   } catch {
     return false;
@@ -227,7 +232,7 @@ function resetPassword(row: UserApi.User) {
     resetUserPasswordApi({
       id: row.id,
       password: encryptBySha256(value),
-    }).then(() => requestAfter(false));
+    }).then(() => onSuccess(false));
   });
 }
 
@@ -239,9 +244,8 @@ function createSex(sex: number) {
   };
 }
 
-function requestAfter(reload = true) {
-  ElMessage.success($t('page.success'));
-  reload && reloadTable();
+function getSexDict(value?: number) {
+  return dictStore.getDictData(DictTypeEnum.SEX, `${value}`);
 }
 
 async function reloadTable(deptId?: number) {
@@ -253,11 +257,11 @@ async function reloadTable(deptId?: number) {
 
 <template>
   <Page auto-content-height>
-    <FormDrawer @success="reloadTable" />
+    <FormDrawer @success="onSuccess" />
+    <AssignRoleDrawer @success="onSuccess(false)" />
     <ImportDrawer @confirm="onImport" />
-    <ImportResultModal @confirm="reloadTable" />
+    <ImportResultModal @confirm="onSuccess" />
     <ExportModal :default-name="$t('sys.user.list')" @confirm="onExport" />
-    <AssignRoleDrawer />
 
     <div class="flex h-full gap-4">
       <div class="hidden w-1/5 xl:block">
@@ -267,11 +271,7 @@ async function reloadTable(deptId?: number) {
       <div class="w-full overflow-hidden xl:w-4/5">
         <Grid :table-title="$t('sys.user.list')">
           <template #toolbar-tools>
-            <TableAction
-              :actions="toolbarActions"
-              :link="false"
-              :show-empty="false"
-            />
+            <TableAction :actions="toolbarActions" />
           </template>
 
           <template #sex="{ row: { sex } }">
@@ -280,7 +280,7 @@ async function reloadTable(deptId?: number) {
                 v-if="sex === DictSex.MALE || sex === DictSex.FEMALE"
                 v-bind="createSex(sex)"
               />
-              <span>{{ dictStore.getSex(sex)?.label || '-' }}</span>
+              <span>{{ getSexDict(sex)?.label || '-' }}</span>
             </div>
           </template>
         </Grid>

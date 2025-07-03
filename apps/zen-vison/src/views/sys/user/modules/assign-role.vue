@@ -1,45 +1,32 @@
 <script setup lang="ts">
 import type { VbenFormSchema } from '#/adapter/form';
+import type { UserApi } from '#/api';
 
 import { useVbenDrawer } from '@vben/common-ui';
+
+import { isEmpty } from 'lodash-es';
 
 import { useVbenForm } from '#/adapter/form';
 import {
   assignUserRoleApi,
   getRoleSimpleListApi,
-  getUserApi,
   getUserRoleListApi,
 } from '#/api';
 import { useRequest } from '#/hooks';
 import { $t } from '#/locales';
 
-const requestConf = {
+interface Emits {
+  (e: 'success'): void;
+}
+
+const emit = defineEmits<Emits>();
+
+const { loading, runAsync: getRoleIds } = useRequest(getUserRoleListApi, {
   loadingDelay: 200,
   manual: true,
-};
+});
 
-const {
-  data: roleList,
-  loading: roleLoading,
-  runAsync: getRole,
-} = useRequest(getRoleSimpleListApi, requestConf);
-
-const { loading: roleIdsLoading, runAsync: getRoleIds } = useRequest(
-  getUserRoleListApi,
-  requestConf,
-);
-
-const {
-  data: user,
-  loading: userLoading,
-  runAsync: getUser,
-} = useRequest(getUserApi, requestConf);
-
-const { loading, runAsync } = useRequest(assignUserRoleApi, requestConf);
-
-const [Drawer, drawer] = useVbenDrawer({ onConfirm, onOpenChange });
-
-const formSchema = computed<VbenFormSchema[]>(() => [
+const schema: VbenFormSchema[] = [
   {
     component: 'Input',
     componentProps: {
@@ -57,69 +44,72 @@ const formSchema = computed<VbenFormSchema[]>(() => [
     label: $t('sys.user.nickname'),
   },
   {
-    component: 'Select',
+    component: 'ApiSelect',
     componentProps: {
+      api: getRoleSimpleListApi,
+      labelField: 'name',
+      valueField: 'id',
       clearable: true,
       multiple: true,
-      options:
-        roleList.value?.map((item) => ({
-          label: item.name,
-          value: item.id,
-        })) || [],
     },
     fieldName: 'roleIds',
     label: $t('sys.user.role'),
   },
-]);
+];
 
-const [Form, formApi] = useVbenForm(
-  reactive({
-    commonConfig: {
-      labelClass: 'mr-4',
-      labelWidth: 65,
-    },
-    schema: formSchema,
-    showDefaultActions: false,
-    wrapperClass: 'grid-cols-1',
-  }),
-);
+const [Form, formApi] = useVbenForm({
+  schema,
+  commonConfig: {
+    labelClass: 'mr-4',
+    labelWidth: 40,
+    colon: true,
+  },
+  showDefaultActions: false,
+  wrapperClass: 'grid-cols-1',
+});
+
+const [Drawer, drawerApi] = useVbenDrawer({ onConfirm, onOpenChange });
 
 async function onOpenChange(isOpen: boolean) {
-  if (!isOpen) {
-    return;
-  }
-
-  const { id } = drawer.getData();
-  if (id) {
-    const [user, roleIds] = await Promise.all([
-      getUser(id),
-      getRoleIds(id),
-      getRole(),
-    ]);
-
-    formApi.setValues({
-      nickname: user.nickname,
-      roleIds,
-      username: user.username,
-    });
+  if (isOpen) {
+    const data = drawerApi.getData<UserApi.User>();
+    if (!isEmpty(data)) {
+      const roleIds = await getRoleIds(data.id);
+      formApi.setValues(
+        {
+          id: data.id,
+          nickname: data.nickname,
+          username: data.username,
+          roleIds,
+        },
+        false,
+      );
+    }
   }
 }
 
 async function onConfirm() {
-  const { roleIds } = await formApi.getValues();
-  await runAsync({ roleIds, userId: user.value.id });
-  ElMessage.success($t('page.success'));
-  drawer.close();
+  drawerApi.lock();
+  const values = await formApi.getValues();
+  assignUserRoleApi({
+    userId: values.id,
+    roleIds: values.roleIds,
+  })
+    .then(() => {
+      emit('success');
+      drawerApi.close();
+    })
+    .catch(() => {
+      drawerApi.unlock();
+    });
 }
 </script>
 
 <template>
   <Drawer
-    :confirm-loading="loading"
-    :loading="roleLoading || roleIdsLoading || userLoading"
+    :loading
     :title="$t('sys.user.assignRole')"
     class="md:w-1/3 2xl:w-1/5"
-    destroy-on-close
     footer-class="gap-x-0"
   >
     <Form />

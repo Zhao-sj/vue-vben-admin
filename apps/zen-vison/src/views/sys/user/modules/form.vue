@@ -19,21 +19,17 @@ interface Emits {
 
 const emit = defineEmits<Emits>();
 
-const requestConf = {
-  loadingDelay: 200,
-  manual: true,
-};
-
-const { loading, runAsync: getUser } = useRequest(getUserApi, requestConf);
-const { runAsync: createUser } = useRequest(addUserApi, requestConf);
-const { runAsync: updateUser } = useRequest(updateUserApi, requestConf);
-
 const id = ref<number>();
 
 const getDrawerTitle = computed(() => {
   return id.value
-    ? $t('page.actionTitle.edit', $t('sys.user.name'))
-    : $t('page.actionTitle.create', $t('sys.user.name'));
+    ? $t('page.actionTitle.edit', [$t('sys.user.name')])
+    : $t('page.actionTitle.create', [$t('sys.user.name')]);
+});
+
+const { loading, runAsync: getUser } = useRequest(getUserApi, {
+  loadingDelay: 200,
+  manual: true,
 });
 
 const [Form, formApi] = useVbenForm({
@@ -73,8 +69,8 @@ async function onConfirm() {
   }
   drawerApi.lock();
   (id.value
-    ? updateUser(values as UserApi.UpdateModel)
-    : createUser(values as UserApi.AddModel)
+    ? updateUserApi(values as UserApi.UpdateModel)
+    : addUserApi(values as UserApi.AddModel)
   )
     .then(() => {
       emit('success');
@@ -88,7 +84,7 @@ async function onConfirm() {
 
 <template>
   <Drawer
-    :loading="loading"
+    :loading
     :title="getDrawerTitle"
     class="md:w-1/2 2xl:w-1/3"
     footer-class="gap-x-0"
