@@ -1,10 +1,10 @@
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { NoticeApi } from '#/api';
-import type { ActionItem } from '#/components';
 
 import { useIsMobile } from '@vben/hooks';
 
+import { useGridActions } from '#/adapter/vxe-table';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -141,47 +141,24 @@ export function useColumns(
         name: 'CellOperate',
         attrs: {
           createActions: (row: NoticeApi.Notice) => {
-            const actions: ActionItem[] = [
-              {
-                auth: 'system:dict:update',
-                icon: 'ep:edit',
-                btnText: $t('page.edit'),
-                onClick: () => {
-                  onActionClick({ code: 'edit', row });
-                },
-                type: 'primary',
-              },
-              {
-                auth: 'system:dict:delete',
-                icon: 'ep:delete',
-                btnText: $t('page.delete'),
-                popConfirm: {
-                  on: {
-                    confirm: () => {
-                      onActionClick({ code: 'delete', row });
-                    },
-                  },
-                  title: $t('page.confirmDelete'),
-                },
-                type: 'danger',
-              },
-              {
+            return useGridActions(row, onActionClick)
+              .addEdit('system:notice:update')
+              .addDelete('system:notice:delete')
+              .addAction({
                 auth: 'system:notice:push',
                 icon: 'ion:push-outline',
                 btnText: $t('sys.message.notice.push.title'),
+                type: 'warning',
                 popConfirm: {
+                  title: $t('sys.message.notice.push.tip'),
                   on: {
                     confirm: () => {
                       onActionClick({ code: 'push', row });
                     },
                   },
-                  title: $t('sys.message.notice.push.tip'),
                 },
-                type: 'warning',
-              },
-            ];
-
-            return { actions };
+              })
+              .build();
           },
         },
       },

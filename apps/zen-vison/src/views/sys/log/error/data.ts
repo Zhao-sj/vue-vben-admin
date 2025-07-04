@@ -1,11 +1,11 @@
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { LogApi } from '#/api';
-import type { ActionItem } from '#/components';
 
 import { useAccess } from '@vben/access';
 import { useIsMobile } from '@vben/hooks';
 
+import { useGridActions } from '#/adapter/vxe-table';
 import { getTenantSimpleListApi } from '#/api';
 import { DictLogProcess, DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
@@ -163,51 +163,50 @@ export function useColumns(
         name: 'CellOperate',
         attrs: {
           createActions: (row: LogApi.Error) => {
-            const actions: ActionItem[] = [
-              {
+            return useGridActions(row, onActionClick)
+              .addAction({
                 icon: 'ep:view',
                 btnText: $t('page.detail'),
+                type: 'primary',
                 onClick: () => {
                   onActionClick({ code: 'detail', row });
                 },
-                type: 'primary',
-              },
-            ];
-
-            if (row.processStatus === DictLogProcess.UN_PROCESS) {
-              actions.push(
-                {
-                  auth: 'system:error-log:update-status',
-                  icon: 'ep:circle-check',
-                  btnText: $t('sys.log.error.processed'),
-                  popConfirm: {
-                    on: {
-                      confirm: () => {
-                        onActionClick({ code: 'process', row });
+              })
+              .addIf(
+                row.processStatus === DictLogProcess.UN_PROCESS,
+                (builder) => {
+                  builder
+                    .addAction({
+                      auth: 'system:error-log:update-status',
+                      icon: 'ep:circle-check',
+                      btnText: $t('sys.log.error.processed'),
+                      type: 'success',
+                      popConfirm: {
+                        on: {
+                          confirm: () => {
+                            onActionClick({ code: 'process', row });
+                          },
+                        },
+                        title: $t('sys.log.error.processTip'),
                       },
-                    },
-                    title: $t('sys.log.error.processTip'),
-                  },
-                  type: 'success',
-                },
-                {
-                  auth: 'system:error-log:update-status',
-                  icon: 'ep:circle-close',
-                  btnText: $t('sys.log.error.ignored'),
-                  popConfirm: {
-                    on: {
-                      confirm: () => {
-                        onActionClick({ code: 'ignore', row });
+                    })
+                    .addAction({
+                      auth: 'system:error-log:update-status',
+                      icon: 'ep:circle-close',
+                      btnText: $t('sys.log.error.ignored'),
+                      type: 'danger',
+                      popConfirm: {
+                        on: {
+                          confirm: () => {
+                            onActionClick({ code: 'ignore', row });
+                          },
+                        },
+                        title: $t('sys.log.error.ignoreTip'),
                       },
-                    },
-                    title: $t('sys.log.error.ignoreTip'),
-                  },
-                  type: 'danger',
+                    });
                 },
-              );
-            }
-
-            return { actions };
+              )
+              .build();
           },
         },
       },

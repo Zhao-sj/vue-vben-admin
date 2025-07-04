@@ -2,11 +2,11 @@ import type { VbenFormSchema } from '@vben/common-ui';
 
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { RoleApi } from '#/api';
-import type { ActionDropdownItem, ActionItem } from '#/components';
 
 import { useAccess } from '@vben/access';
 import { useIsMobile } from '@vben/hooks';
 
+import { useGridActions } from '#/adapter/vxe-table';
 import { DictRoleType, DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -175,53 +175,28 @@ export function useColumns(
         name: 'CellOperate',
         attrs: {
           createActions: (row: RoleApi.Role) => {
-            const actions: ActionItem[] = [
-              {
-                auth: 'system:role:update',
-                icon: 'ep:edit',
-                btnText: $t('page.edit'),
-                onClick: () => {
-                  onActionClick({ code: 'edit', row });
-                },
-                type: 'primary',
-              },
-              {
-                auth: 'system:role:delete',
+            return useGridActions(row, onActionClick)
+              .addEdit('system:role:update')
+              .addDelete('system:role:delete', {
                 disabled: row.type === DictRoleType.ADMIN,
-                icon: 'ep:delete',
-                btnText: $t('page.delete'),
-                popConfirm: {
-                  on: {
-                    confirm: () => {
-                      onActionClick({ code: 'delete', row });
-                    },
-                  },
-                  title: $t('page.confirmDelete'),
-                },
-                type: 'danger',
-              },
-            ];
-
-            const dropdownActions: ActionDropdownItem[] = [
-              {
+              })
+              .addDropdown({
                 auth: 'system:permission:assign-role-menu',
                 icon: 'hugeicons:menu-square',
                 btnText: $t('sys.role.menuPermission'),
                 onClick: () => {
                   onActionClick({ code: 'permission', row });
                 },
-              },
-              {
+              })
+              .addDropdown({
                 auth: 'system:permission:assign-role-data-scope',
                 icon: 'f7:scope',
                 btnText: $t('sys.role.dataScope'),
                 onClick: () => {
                   onActionClick({ code: 'dataScope', row });
                 },
-              },
-            ];
-
-            return { actions, dropdownActions };
+              })
+              .build();
           },
         },
       },

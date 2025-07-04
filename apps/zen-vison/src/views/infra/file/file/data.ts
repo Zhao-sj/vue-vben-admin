@@ -1,10 +1,10 @@
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { FileApi } from '#/api';
-import type { ActionItem } from '#/components';
 
 import { useIsMobile } from '@vben/hooks';
 
+import { useGridActions } from '#/adapter/vxe-table';
 import { $t } from '#/locales';
 
 const { isMobile } = useIsMobile();
@@ -97,24 +97,9 @@ export function useColumns(
         name: 'CellOperate',
         attrs: {
           createActions: (row: FileApi.FileItem) => {
-            const actions: ActionItem[] = [
-              {
-                auth: 'infra:file:delete',
-                icon: 'ep:delete',
-                btnText: $t('page.delete'),
-                popConfirm: {
-                  on: {
-                    confirm: () => {
-                      onActionClick({ code: 'delete', row });
-                    },
-                  },
-                  title: $t('page.confirmDelete'),
-                },
-                type: 'danger',
-              },
-            ];
-
-            return { actions };
+            return useGridActions(row, onActionClick)
+              .addDelete('infra:file:delete')
+              .build();
           },
         },
       },

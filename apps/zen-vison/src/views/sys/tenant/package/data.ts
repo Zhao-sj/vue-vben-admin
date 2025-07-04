@@ -2,11 +2,11 @@ import type { VbenFormSchema } from '@vben/common-ui';
 
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { TenantApi } from '#/api';
-import type { ActionItem } from '#/components';
 
 import { useAccess } from '@vben/access';
 import { useIsMobile } from '@vben/hooks';
 
+import { useGridActions } from '#/adapter/vxe-table';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -130,33 +130,10 @@ export function useColumns(
         name: 'CellOperate',
         attrs: {
           createActions: (row: TenantApi.Package) => {
-            const actions: ActionItem[] = [
-              {
-                auth: 'system:tenant-package:update',
-                icon: 'ep:edit',
-                btnText: $t('page.edit'),
-                onClick: () => {
-                  onActionClick({ code: 'edit', row });
-                },
-                type: 'primary',
-              },
-              {
-                auth: 'system:tenant-package:delete',
-                icon: 'ep:delete',
-                btnText: $t('page.delete'),
-                popConfirm: {
-                  on: {
-                    confirm: () => {
-                      onActionClick({ code: 'delete', row });
-                    },
-                  },
-                  title: $t('page.confirmDelete'),
-                },
-                type: 'danger',
-              },
-            ];
-
-            return { actions };
+            return useGridActions(row, onActionClick)
+              .addEdit('system:tenant-package:update')
+              .addDelete('system:tenant-package:delete')
+              .build();
           },
         },
       },

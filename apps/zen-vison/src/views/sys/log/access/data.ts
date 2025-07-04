@@ -1,13 +1,13 @@
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { LogApi } from '#/api';
-import type { ActionItem } from '#/components';
 
 import { useAccess } from '@vben/access';
 import { useIsMobile } from '@vben/hooks';
 
 import { isNumber } from 'lodash-es';
 
+import { useGridActions } from '#/adapter/vxe-table';
 import { getTenantSimpleListApi } from '#/api';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
@@ -186,18 +186,16 @@ export function useColumns(
         name: 'CellOperate',
         attrs: {
           createActions: (row: LogApi.Access) => {
-            const actions: ActionItem[] = [
-              {
+            return useGridActions(row, onActionClick)
+              .addAction({
                 icon: 'ep:view',
                 btnText: $t('page.detail'),
+                type: 'primary',
                 onClick: () => {
                   onActionClick({ code: 'detail', row });
                 },
-                type: 'primary',
-              },
-            ];
-
-            return { actions };
+              })
+              .build();
           },
         },
       },

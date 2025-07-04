@@ -1,10 +1,10 @@
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { OAuth2Api } from '#/api';
-import type { ActionItem } from '#/components';
 
 import { useIsMobile } from '@vben/hooks';
 
+import { useGridActions } from '#/adapter/vxe-table';
 import { DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -98,25 +98,23 @@ export function useColumns(
         name: 'CellOperate',
         attrs: {
           createActions: (row: OAuth2Api.AccessToken) => {
-            const actions: ActionItem[] = [
-              {
+            return useGridActions(row, onActionClick)
+              .addAction({
                 auth: 'system:oauth2-token:delete',
                 icon: 'lucide:log-out',
                 btnText: $t('sys.oauth2.token.kickout'),
+                type: 'primary',
                 popConfirm: {
+                  title: $t('sys.oauth2.token.kickoutTip', [row.userId]),
+                  width: 240,
                   on: {
                     confirm: () => {
                       onActionClick({ code: 'kickout', row });
                     },
                   },
-                  title: $t('sys.oauth2.token.kickoutTip', [row.userId]),
-                  width: 240,
                 },
-                type: 'primary',
-              },
-            ];
-
-            return { actions };
+              })
+              .build();
           },
         },
       },

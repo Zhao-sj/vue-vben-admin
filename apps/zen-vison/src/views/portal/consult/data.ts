@@ -1,10 +1,10 @@
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { ZDPortalApi } from '#/api';
-import type { ActionItem } from '#/components';
 
 import { useIsMobile } from '@vben/hooks';
 
+import { useGridActions } from '#/adapter/vxe-table';
 import { DictConsultAccept, DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -115,43 +115,42 @@ export function useColumns(
         name: 'CellOperate',
         attrs: {
           createActions: (row: ZDPortalApi.Consult) => {
-            const actions: ActionItem[] = [
-              {
-                auth: 'portal:consult:update-status',
-                icon: 'ep:circle-check',
-                btnText: $t('portal.consult.processed'),
-                popConfirm: {
-                  on: {
-                    confirm: () => {
-                      onActionClick({ code: 'accept', row });
-                    },
-                  },
-                  title: $t('portal.consult.processTip'),
+            return useGridActions(row, onActionClick)
+              .addIf(
+                row.processStatus === DictConsultAccept.UN_ACCEPT,
+                (builder) => {
+                  builder
+                    .addAction({
+                      auth: 'portal:consult:update-status',
+                      icon: 'ep:circle-check',
+                      btnText: $t('portal.consult.processed'),
+                      popConfirm: {
+                        on: {
+                          confirm: () => {
+                            onActionClick({ code: 'accept', row });
+                          },
+                        },
+                        title: $t('portal.consult.processTip'),
+                      },
+                      type: 'success',
+                    })
+                    .addAction({
+                      auth: 'portal:consult:update-status',
+                      icon: 'ep:circle-close',
+                      btnText: $t('portal.consult.ignored'),
+                      popConfirm: {
+                        on: {
+                          confirm: () => {
+                            onActionClick({ code: 'ignore', row });
+                          },
+                        },
+                        title: $t('portal.consult.ignoreTip'),
+                      },
+                      type: 'danger',
+                    });
                 },
-                type: 'success',
-              },
-              {
-                auth: 'portal:consult:update-status',
-                icon: 'ep:circle-close',
-                btnText: $t('portal.consult.ignored'),
-                popConfirm: {
-                  on: {
-                    confirm: () => {
-                      onActionClick({ code: 'ignore', row });
-                    },
-                  },
-                  title: $t('portal.consult.ignoreTip'),
-                },
-                type: 'danger',
-              },
-            ];
-
-            return {
-              actions:
-                row.processStatus === DictConsultAccept.UN_ACCEPT
-                  ? actions
-                  : [],
-            };
+              )
+              .build();
           },
         },
       },

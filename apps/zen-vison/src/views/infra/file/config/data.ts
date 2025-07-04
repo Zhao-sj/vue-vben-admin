@@ -1,10 +1,10 @@
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { DictApi, FileApi } from '#/api';
-import type { ActionItem } from '#/components';
 
 import { useIsMobile } from '@vben/hooks';
 
+import { useGridActions } from '#/adapter/vxe-table';
 import { DictTypeEnum, FileStorageEnum } from '#/enums';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -307,47 +307,24 @@ export function useColumns(
         name: 'CellOperate',
         attrs: {
           createActions: (row: FileApi.Config) => {
-            const actions: ActionItem[] = [
-              {
-                auth: 'infra:file-config:update',
-                icon: 'ep:edit',
-                btnText: $t('page.edit'),
-                onClick: () => {
-                  onActionClick({ code: 'edit', row });
-                },
-                type: 'primary',
-              },
-              {
+            return useGridActions(row, onActionClick)
+              .addEdit('infra:file-config:update')
+              .addAction({
                 auth: 'infra:file-config:query',
                 icon: 'lucide:flask-conical',
                 btnText: $t('infra.file.config.test'),
+                type: 'warning',
                 popConfirm: {
+                  title: $t('infra.file.config.confirm.test.title'),
                   on: {
                     confirm: () => {
                       onActionClick({ code: 'test', row });
                     },
                   },
-                  title: $t('infra.file.config.confirm.test.title'),
                 },
-                type: 'warning',
-              },
-              {
-                auth: 'infra:file-config:delete',
-                icon: 'ep:delete',
-                btnText: $t('page.delete'),
-                popConfirm: {
-                  on: {
-                    confirm: () => {
-                      onActionClick({ code: 'delete', row });
-                    },
-                  },
-                  title: $t('page.confirmDelete'),
-                },
-                type: 'danger',
-              },
-            ];
-
-            return { actions };
+              })
+              .addDelete('infra:file-config:delete')
+              .build();
           },
         },
       },

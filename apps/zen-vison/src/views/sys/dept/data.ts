@@ -1,10 +1,10 @@
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { DeptApi, UserApi } from '#/api';
-import type { ActionItem } from '#/components';
 
 import { useIsMobile } from '@vben/hooks';
 
+import { useGridActions } from '#/adapter/vxe-table';
 import {
   buildMenuTree,
   getDeptSimpleListApi,
@@ -174,45 +174,21 @@ export function useColumns(
         name: 'CellOperate',
         attrs: {
           createActions: (row: DeptApi.Dept) => {
-            const actions: ActionItem[] = [
-              {
-                auth: 'system:dept:update',
-                icon: 'ep:edit',
-                btnText: $t('page.edit'),
-                onClick: () => {
-                  onActionClick({ code: 'edit', row });
-                },
-                type: 'primary',
-              },
-              {
-                auth: 'system:dept:delete',
-                icon: 'ep:delete',
-                btnText: $t('page.delete'),
-                popConfirm: {
-                  on: {
-                    confirm: () => {
-                      onActionClick({ code: 'delete', row });
-                    },
+            return useGridActions(row, onActionClick)
+              .addIf(row.status === DictStatus.ENABLE, (builder) => {
+                builder.addAction({
+                  auth: 'system:dept:create',
+                  icon: 'ep:plus',
+                  btnText: $t('page.actionTitle.create', [$t('page.sub')]),
+                  onClick: () => {
+                    onActionClick({ code: 'append', row });
                   },
-                  title: $t('page.confirmDelete'),
-                },
-                type: 'danger',
-              },
-            ];
-
-            if (row.status === DictStatus.ENABLE) {
-              actions.unshift({
-                auth: 'system:dept:create',
-                icon: 'ep:plus',
-                btnText: $t('page.actionTitle.create', [$t('page.sub')]),
-                onClick: () => {
-                  onActionClick({ code: 'append', row });
-                },
-                type: 'primary',
-              });
-            }
-
-            return { actions };
+                  type: 'primary',
+                });
+              })
+              .addEdit('system:dept:update')
+              .addDelete('system:dept:delete')
+              .build();
           },
         },
       },

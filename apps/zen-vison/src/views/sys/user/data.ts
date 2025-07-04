@@ -1,11 +1,11 @@
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { BaseSimple, DeptApi, UserApi } from '#/api';
-import type { ActionDropdownItem, ActionItem } from '#/components';
 
 import { useAccess } from '@vben/access';
 import { useIsMobile } from '@vben/hooks';
 
+import { useGridActions } from '#/adapter/vxe-table';
 import {
   buildMenuTree,
   getDeptSimpleListApi,
@@ -251,53 +251,28 @@ export function useColumns(
         name: 'CellOperate',
         attrs: {
           createActions: (row: UserApi.User) => {
-            const actions: ActionItem[] = [
-              {
-                auth: 'system:user:update',
-                icon: 'ep:edit',
-                btnText: $t('page.edit'),
-                onClick: () => {
-                  onActionClick({ code: 'edit', row });
-                },
-                type: 'primary',
-              },
-              {
-                auth: 'system:user:delete',
+            return useGridActions(row, onActionClick)
+              .addEdit('system:user:update')
+              .addDelete('system:user:delete', {
                 disabled: row.id === userStore.userId,
-                icon: 'ep:delete',
-                btnText: $t('page.delete'),
-                popConfirm: {
-                  on: {
-                    confirm: () => {
-                      onActionClick({ code: 'delete', row });
-                    },
-                  },
-                  title: $t('page.confirmDelete'),
-                },
-                type: 'danger',
-              },
-            ];
-
-            const dropdownActions: ActionDropdownItem[] = [
-              {
+              })
+              .addDropdown({
                 auth: 'system:user:update-password',
                 icon: 'carbon:password',
                 btnText: $t('sys.user.resetPassword'),
                 onClick: () => {
                   onActionClick({ code: 'reset', row });
                 },
-              },
-              {
+              })
+              .addDropdown({
                 auth: 'system:permission:assign-user-role',
                 icon: 'clarity:assign-user-line',
                 btnText: $t('sys.user.assignRole'),
                 onClick: () => {
                   onActionClick({ code: 'assign', row });
                 },
-              },
-            ];
-
-            return { actions, dropdownActions };
+              })
+              .build();
           },
         },
       },

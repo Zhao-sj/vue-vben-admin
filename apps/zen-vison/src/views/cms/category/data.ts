@@ -1,11 +1,11 @@
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { CategoryApi } from '#/api';
-import type { ActionItem } from '#/components';
 
 import { useAccess } from '@vben/access';
 import { useIsMobile } from '@vben/hooks';
 
+import { useGridActions } from '#/adapter/vxe-table';
 import { buildMenuTree, getCmsCategorySimpleApi } from '#/api';
 import { DictStatus, DictTypeEnum } from '#/enums';
 import { $t } from '#/locales';
@@ -130,45 +130,21 @@ export function useColumns(
         name: 'CellOperate',
         attrs: {
           createActions: (row: CategoryApi.Category) => {
-            const actions: ActionItem[] = [
-              {
-                auth: 'cms:article-category:update',
-                icon: 'ep:edit',
-                btnText: $t('page.edit'),
-                onClick: () => {
-                  onActionClick({ code: 'edit', row });
-                },
-                type: 'primary',
-              },
-              {
-                auth: 'cms:article-category:delete',
-                icon: 'ep:delete',
-                btnText: $t('page.delete'),
-                popConfirm: {
-                  on: {
-                    confirm: () => {
-                      onActionClick({ code: 'delete', row });
-                    },
+            return useGridActions(row, onActionClick)
+              .addIf(row.status === DictStatus.ENABLE, (builder) => {
+                builder.addAction({
+                  auth: 'cms:article-category:create',
+                  icon: 'ep:plus',
+                  btnText: $t('page.actionTitle.create', [$t('page.sub')]),
+                  onClick: () => {
+                    onActionClick({ code: 'append', row });
                   },
-                  title: $t('page.confirmDelete'),
-                },
-                type: 'danger',
-              },
-            ];
-
-            if (row.status === DictStatus.ENABLE) {
-              actions.unshift({
-                auth: 'cms:article-category:create',
-                icon: 'ep:plus',
-                btnText: $t('page.actionTitle.create', [$t('page.sub')]),
-                onClick: () => {
-                  onActionClick({ code: 'append', row });
-                },
-                type: 'primary',
-              });
-            }
-
-            return { actions };
+                  type: 'primary',
+                });
+              })
+              .addEdit('cms:article-category:update')
+              .addDelete('cms:article-category:delete')
+              .build();
           },
         },
       },
