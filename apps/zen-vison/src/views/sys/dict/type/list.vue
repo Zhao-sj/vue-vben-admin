@@ -153,9 +153,7 @@ async function onExport(fileName: string) {
           class="cursor-pointer"
           tag="ins"
           type="primary"
-          @click="
-            $router.push({ name: 'DictDataManage', params: { id: row.id } })
-          "
+          @click="$router.push({ path: `/sys/dict/data/${row.id}` })"
         >
           {{ row.type }}
         </ElText>

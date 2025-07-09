@@ -77,6 +77,7 @@ export type ComponentType =
   | 'ApiCascader'
   | 'ApiSelect'
   | 'ApiTreeSelect'
+  | 'AutoComplete'
   | 'Cascader'
   | 'Checkbox'
   | 'CheckboxGroup'
@@ -138,7 +139,7 @@ async function initComponentAdapter() {
         visibleEvent: 'onVisibleChange',
       },
     ),
-    Autocomplete: withDefaultPlaceholder(ElAutocomplete, 'input'),
+    AutoComplete: withDefaultPlaceholder(ElAutocomplete, 'input'),
     Checkbox: ElCheckbox,
     CheckboxGroup: ElCheckboxGroup,
     Cascader: ElCascader,

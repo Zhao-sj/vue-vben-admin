@@ -91,6 +91,10 @@ export function useGridActions<T = Recordable<any>>(
 export function useGridHelper<T extends Record<string, any> = any>(
   gridApi: ReturnType<typeof useVbenVxeGrid<T>>[1],
 ) {
+  const onTreeExpandAll = (expand = true) => {
+    gridApi.grid.setAllTreeExpand(expand);
+  };
+
   const reloadTable = async () => {
     const values = await gridApi.formApi.getValues();
     gridApi.reload(values);
@@ -130,6 +134,7 @@ export function useGridHelper<T extends Record<string, any> = any>(
   };
 
   return {
+    onTreeExpandAll,
     reloadTable,
     onSuccess,
     batchSelect,

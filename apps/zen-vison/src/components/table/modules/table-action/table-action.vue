@@ -66,7 +66,7 @@ function hasDisabled(config?: Record<string, any>) {
     <template v-for="(item, i) in authActions" :key="i">
       <ElPopconfirm
         :disabled="item.disabled || hasDisabled(item.popConfirm)"
-        :width="180"
+        :width="240"
         :hide-after="0"
         v-bind="item.popConfirm || {}"
         v-on="item.popConfirm?.on || {}"

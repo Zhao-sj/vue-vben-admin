@@ -32,6 +32,7 @@ export namespace MenuApi {
     meta: Nullable<RouteMeta>;
     status: number;
     createTime: number;
+    [key: string]: any;
   }
 
   export interface AddModel {
@@ -53,10 +54,21 @@ export namespace MenuApi {
 }
 
 /**
- * 获取菜单组件名称是否唯一
+ * 检查菜单名称是否存在
  */
-export function getMenuUniqueApi(name: string) {
-  return requestClient.get<boolean>(`${SYSTEM}/menu/unique/${name}`);
+export function checkMenuNameExistsApi(name: string, id?: number) {
+  return requestClient.get<boolean>(`${SYSTEM}/menu/check-name-exists`, {
+    params: { id, name },
+  });
+}
+
+/**
+ * 检查菜单路径是否存在
+ */
+export function checkMenuPathExistsApi(path: string, id?: number) {
+  return requestClient.get<boolean>(`${SYSTEM}/menu/check-path-exists`, {
+    params: { id, path },
+  });
 }
 
 /**

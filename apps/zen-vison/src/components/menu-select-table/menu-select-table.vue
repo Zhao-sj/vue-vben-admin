@@ -10,8 +10,9 @@ import { IconifyIcon } from '@vben/icons';
 import { uniq } from 'lodash-es';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { MENU_ROOT, MenuType } from '#/enums';
+import { DictTypeEnum, MENU_ROOT, MenuType } from '#/enums';
 import { $t } from '#/locales';
+import { useDictStore } from '#/store';
 
 interface Props {
   menus?: MenuApi.Simple[];
@@ -31,20 +32,12 @@ const props = withDefaults(defineProps<Props>(), {
   defaultCheckedKeys: () => [],
 });
 
-const menuTypes = {
-  [MenuType.DIR]: {
-    icon: 'flat-color-icons:folder',
-    label: $t('sys.menu.dir'),
-  },
-  [MenuType.MENU]: {
-    icon: 'lucide:menu',
-    label: $t('sys.menu.menu'),
-  },
-};
+const dictStore = useDictStore();
+dictStore.initDictData(DictTypeEnum.MENU_TYPE);
 
 const strictlyOptions = [
-  { label: $t('sys.menu.unStrictly'), value: false },
-  { label: $t('sys.menu.strictly'), value: true },
+  { label: $t('sys.menu.selectTable.unStrictly'), value: false },
+  { label: $t('sys.menu.selectTable.strictly'), value: true },
 ];
 
 const isStrictly = ref(false);
@@ -65,7 +58,12 @@ const columns: VxeTableGridOptions<TreeNode>['columns'] = [
     align: 'center',
     title: $t('sys.menu.type'),
     width: 100,
-    slots: { default: 'type' },
+    cellRender: {
+      name: 'CellDict',
+      props: {
+        type: DictTypeEnum.MENU_TYPE,
+      },
+    },
   },
   {
     field: 'permission',
@@ -329,11 +327,11 @@ defineExpose({
 
         <div>
           <ElAlert :closable="false">
-            <span>{{ $t('sys.menu.selected') }}</span>
+            <span>{{ $t('sys.menu.selectTable.selected') }}</span>
             <span class="text-primary mx-1 font-semibold">
               {{ checkedCount }}
             </span>
-            <span>{{ $t('sys.menu.node') }}</span>
+            <span>{{ $t('sys.menu.selectTable.node') }}</span>
           </ElAlert>
         </div>
       </div>
@@ -342,10 +340,10 @@ defineExpose({
     <template #toolbar-tools>
       <div class="flex items-center">
         <ElButton @click="handleTreeExpandAll(false)">
-          {{ $t('sys.menu.collapsed') }}
+          {{ $t('page.collapsed') }}
         </ElButton>
         <ElButton @click="handleTreeExpandAll(true)">
-          {{ $t('sys.menu.expand') }}
+          {{ $t('page.expand') }}
         </ElButton>
       </div>
     </template>
@@ -354,13 +352,6 @@ defineExpose({
       <div class="inline-flex items-center gap-1">
         <IconifyIcon v-if="icon" :icon />
         <span>{{ name }}</span>
-      </div>
-    </template>
-
-    <template #type="{ row: { type } }">
-      <div class="flex items-center justify-center gap-1">
-        <IconifyIcon :icon="menuTypes[type as keyof typeof menuTypes].icon" />
-        <span>{{ menuTypes[type as keyof typeof menuTypes].label }}</span>
       </div>
     </template>
 

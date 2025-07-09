@@ -48,6 +48,7 @@ export namespace AuthApi {
     name: string;
     parentId: number;
     path: string;
+    type: number;
   }
 
   export interface User {

@@ -11,6 +11,7 @@ import { preferences } from '@vben/preferences';
 
 import { cloneDeep } from 'lodash-es';
 
+import { MenuType } from '#/enums';
 import { BasicLayout, IFrameView } from '#/layouts';
 
 import { internalRoutes } from './routes';
@@ -21,6 +22,12 @@ async function generateAccess(
   options: GenerateMenuAndRoutesOptions,
   menus: AuthApi.Menu[] = [],
 ) {
+  menus.forEach((item) => {
+    if (item.type === MenuType.DIR) {
+      item.component = item.component || 'BasicLayout';
+    }
+  });
+
   const pageMap: ComponentRecordType = import.meta.glob('../views/**/*.vue');
 
   const layoutMap: ComponentRecordType = {
@@ -42,28 +49,27 @@ async function generateAccess(
   });
 }
 
-function menu2Route(
-  menus: AuthApi.Menu[],
-  path = '',
-): RouteRecordStringComponent[] {
+function menu2Route(menus: AuthApi.Menu[]): RouteRecordStringComponent[] {
   return menus.map((item) => {
-    const fullPath = `${path === '/' ? '' : path}${item.path}`;
-    const isAddDefaultActivePath =
-      (!item.children || item.children.length <= 0) && !item.meta?.activePath;
-
-    return {
-      ...(item.component ? { component: item.component } : {}),
-      ...(item.children
-        ? { children: menu2Route(item.children, path + item.path) }
-        : {}),
+    const record = {
+      name: item.name,
+      path: item.path,
+      component:
+        item.type === MenuType.EMBEDDED || item.type === MenuType.LINK
+          ? 'IFrameView'
+          : item.component,
       meta: {
         ...item.meta,
         ...(item.meta?.title ? {} : { title: item.name }),
-        ...(isAddDefaultActivePath ? { activePath: fullPath } : {}),
+        activePath: item.meta?.activePath || item.path,
       },
-      name: item.componentName,
-      path: fullPath,
     } as RouteRecordStringComponent;
+
+    if (item.children) {
+      record.children = menu2Route(item.children);
+    }
+
+    return record;
   });
 }
 

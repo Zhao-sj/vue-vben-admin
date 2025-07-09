@@ -213,7 +213,10 @@ setupVbenVxeTable({
 
         return h(
           ElTag,
-          { type: data?.color },
+          {
+            type: data?.color,
+            disableTransitions: true,
+          },
           {
             default: () => data?.label,
           },

@@ -5,6 +5,12 @@ export enum MenuType {
   /** 目录 */
   DIR = 1,
 
+  /** 内嵌 */
+  EMBEDDED = 4,
+
+  /** 外链 */
+  LINK = 5,
+
   /** 菜单 */
   MENU = 2,
 }

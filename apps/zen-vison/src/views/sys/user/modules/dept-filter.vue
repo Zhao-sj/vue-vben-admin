@@ -90,10 +90,10 @@ function filterNode(value: string, data: Tree) {
         <template #dropdown>
           <ElDropdownMenu>
             <ElDropdownItem @click="handleExpandAll">
-              {{ $t('page.expand', [$t('page.all')]) }}
+              {{ $t('page.expand') }}
             </ElDropdownItem>
             <ElDropdownItem @click="handleExpandAll(false)">
-              {{ $t('page.collapsed', [$t('page.all')]) }}
+              {{ $t('page.collapsed') }}
             </ElDropdownItem>
           </ElDropdownMenu>
         </template>

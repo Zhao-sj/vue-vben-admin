@@ -29,7 +29,7 @@ export function useFormSchema(): VbenFormSchema[] {
     {
       component: 'InputNumber',
       componentProps: {
-        class: '!w-full',
+        class: '!w-full [&_input]:!text-left',
         controlsPosition: 'right',
         min: 0,
       },

@@ -8,7 +8,6 @@ import type { ActionItem } from '#/components';
 
 import { Page, useVbenDrawer } from '@vben/common-ui';
 import { useIsMobile } from '@vben/hooks';
-import { IconifyIcon } from '@vben/icons';
 
 import { useGridHelper, useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
@@ -74,7 +73,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
   } as VxeTableGridOptions<CategoryApi.Category>,
 });
 
-const { onSuccess } = useGridHelper<CategoryApi.Category>(gridApi);
+const { onTreeExpandAll, onSuccess } =
+  useGridHelper<CategoryApi.Category>(gridApi);
 
 const toolbarActions: ActionItem[] = [
   {
@@ -136,11 +136,6 @@ async function onStatusChange(newStatus: number, row: CategoryApi.Category) {
     return false;
   }
 }
-
-function toggleExpandAll() {
-  const expandRecords = gridApi.grid.getTreeExpandRecords();
-  gridApi.grid.setAllTreeExpand(expandRecords?.length === 0);
-}
 </script>
 
 <template>
@@ -149,18 +144,15 @@ function toggleExpandAll() {
 
     <Grid :table-title="$t('cms.category.list')">
       <template #toolbar-tools>
-        <div class="flex items-center gap-2">
-          <TableAction :actions="toolbarActions" />
-
-          <ElButton
-            :title="`${$t('page.expand')} / ${$t('page.collapsed')}`"
-            circle
-            class="scale-95"
-            plain
-            @click="toggleExpandAll"
-          >
-            <IconifyIcon icon="ep:sort" />
+        <div class="flex items-center gap-3">
+          <ElButton @click="onTreeExpandAll(false)">
+            {{ $t('page.collapsed') }}
           </ElButton>
+          <ElButton class="!ml-0" @click="onTreeExpandAll(true)">
+            {{ $t('page.expand') }}
+          </ElButton>
+
+          <TableAction :actions="toolbarActions" />
         </div>
       </template>
     </Grid>
