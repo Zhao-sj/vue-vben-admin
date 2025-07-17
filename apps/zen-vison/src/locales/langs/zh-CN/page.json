@@ -38,7 +38,7 @@
     "success": "导出成功"
   },
   "upload": {
-    "action": "上传",
+    "action": "上传{0}",
     "title": "上传文件",
     "start": "开始上传",
     "loading": "上传中",

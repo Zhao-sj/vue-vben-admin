@@ -1,0 +1,30 @@
+{
+  "cropper": {
+    "defaultTitle": "Upload Avatar",
+    "imageTooBig": "Image Too Big",
+    "confirmText": "Confirm And Upload",
+    "selectImage": "Choose Image",
+    "preview": "Preview",
+    "tool": {
+      "reset": "Reset",
+      "move": {
+        "left": "Move Left",
+        "right": "Move Right",
+        "top": "Move Up",
+        "bottom": "Move Down"
+      },
+      "rotate": {
+        "left": "Rotate Left",
+        "right": "Rotate Right"
+      },
+      "scale": {
+        "x": "Flip Horizontal",
+        "y": "Flip Vertically"
+      },
+      "zoom": {
+        "in": "Zoom In",
+        "out": "Zoom Out"
+      }
+    }
+  }
+}

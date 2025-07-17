@@ -72,3 +72,44 @@ export function createFileHash(chunks: Blob[]) {
     _read(0);
   });
 }
+
+/**
+ * base64 to blob
+ */
+export function dataURLtoBlob(base64Buf: string): Blob {
+  const arr = base64Buf.split(',') as [string, string];
+  const typeItem = arr[0];
+  const mime = typeItem.match(/:(.*?);/)?.[1];
+  const bstr = window.atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    const cpa = bstr.codePointAt(n);
+    if (cpa) {
+      u8arr[n] = cpa;
+    }
+  }
+  return new Blob([u8arr], { type: mime });
+}
+
+/**
+ * img url to base64
+ */
+export function urlToBase64(url: string, mineType?: string): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = '';
+    img.addEventListener('load', () => {
+      let canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.height = img.height;
+      canvas.width = img.width;
+      ctx && ctx.drawImage(img, 0, 0);
+      const dataURL = canvas.toDataURL(mineType || 'image/png');
+      // @ts-ignore memory release, can be ignored
+      canvas = null;
+      resolve(dataURL);
+    });
+    img.src = url;
+  });
+}

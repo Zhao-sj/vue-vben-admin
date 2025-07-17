@@ -22,10 +22,17 @@ const scopes = ['user.read', 'user.write'].map((item) => ({
 export function useFormSchema(): VbenFormSchema[] {
   return [
     {
-      component: 'Input',
+      component: 'ImageUpload',
+      componentProps: {
+        width: 100,
+        circle: false,
+        aspectRatio: 1,
+        modalTitle: $t('page.upload.action', [$t('sys.oauth2.client.logo')]),
+      },
       fieldName: 'logo',
+      formItemClass: 'flex-row gap-4',
       label: $t('sys.oauth2.client.logo'),
-      rules: 'required',
+      rules: 'selectRequired',
     },
     {
       component: 'Input',

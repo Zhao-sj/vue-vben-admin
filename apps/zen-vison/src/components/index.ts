@@ -1,4 +1,5 @@
 export * from './captcha';
+export * from './cropper';
 export * from './date-picker';
 export * from './menu-select-table';
 export * from './table';

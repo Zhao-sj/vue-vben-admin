@@ -38,7 +38,7 @@
     "success": "Export Success"
   },
   "upload": {
-    "action": "Upload",
+    "action": "Upload {0}",
     "title": "Upload File",
     "start": "Start Uploading",
     "loading": "Uploading",

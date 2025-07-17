@@ -33,9 +33,7 @@ import {
   ElTreeSelect,
 } from 'element-plus';
 
-import { VueDatePicker } from '#/components';
-
-import AdapterImageUpload from './ImageUpload.vue';
+import { CropperUpload, VueDatePicker } from '#/components';
 
 const withDefaultPlaceholder = <T extends Component>(
   component: T,
@@ -191,7 +189,7 @@ async function initComponentAdapter() {
     Switch: ElSwitch,
     TimePicker: ElTimePicker,
     TreeSelect: withDefaultPlaceholder(ElTreeSelect, 'select'),
-    ImageUpload: AdapterImageUpload,
+    ImageUpload: CropperUpload,
   };
 
   // 将组件注册到全局共享状态中

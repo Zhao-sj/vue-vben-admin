@@ -21,6 +21,10 @@ export function useFormSchema(): VbenFormSchema[] {
   return [
     {
       component: 'ImageUpload',
+      componentProps: {
+        circle: false,
+        modalTitle: $t('page.upload.action', [$t('cms.article.banner')]),
+      },
       fieldName: 'banner',
       label: $t('cms.article.banner'),
       formItemClass: 'col-span-3 lg:col-span-1 lg:row-span-2',
