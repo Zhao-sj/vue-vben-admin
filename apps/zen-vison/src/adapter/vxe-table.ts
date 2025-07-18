@@ -34,13 +34,15 @@ setupVbenVxeTable({
           enabled: false,
         },
         toolbarConfig: {
-          custom: {
+          custom: true,
+          customOptions: {
             icon: 'vxe-icon-setting',
           },
-          zoom: true,
-          refresh: {
+          refresh: true,
+          refreshOptions: {
             code: 'query',
           },
+          zoom: true,
           search: true,
         },
         size: 'small',
