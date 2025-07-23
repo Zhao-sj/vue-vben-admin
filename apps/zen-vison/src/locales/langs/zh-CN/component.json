@@ -5,6 +5,7 @@
     "confirmText": "确认并上传",
     "selectImage": "选择图片",
     "preview": "预览",
+    "uploadSuccess": "上传成功",
     "tool": {
       "reset": "重置",
       "move": {

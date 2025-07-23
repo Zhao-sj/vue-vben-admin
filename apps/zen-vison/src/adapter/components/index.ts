@@ -33,7 +33,7 @@ import {
   ElTreeSelect,
 } from 'element-plus';
 
-import { CropperUpload, VueDatePicker } from '#/components';
+import { CropperUpload, StrengthMeter, VueDatePicker } from '#/components';
 
 const withDefaultPlaceholder = <T extends Component>(
   component: T,
@@ -87,6 +87,7 @@ export type ComponentType =
   | 'RadioGroup'
   | 'Select'
   | 'Space'
+  | 'StrengthMeter'
   | 'Switch'
   | 'TimePicker'
   | 'TreeSelect'
@@ -188,6 +189,7 @@ async function initComponentAdapter() {
     Switch: ElSwitch,
     TimePicker: ElTimePicker,
     TreeSelect: withDefaultPlaceholder(ElTreeSelect, 'select'),
+    StrengthMeter: withDefaultPlaceholder(StrengthMeter, 'input'),
     ImageUpload: CropperUpload,
   };
 

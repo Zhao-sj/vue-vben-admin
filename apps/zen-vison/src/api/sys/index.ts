@@ -6,6 +6,7 @@ export * from './menu';
 export * from './notice';
 export * from './oauth2';
 export * from './post';
+export * from './profile';
 export * from './role';
 export * from './tenant';
 export * from './user';

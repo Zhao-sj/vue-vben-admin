@@ -30,7 +30,7 @@ interface Emits {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modalTitle: $t('component.cropper.defaultTitle'),
+  modalTitle: () => $t('component.cropper.defaultTitle'),
   circle: true,
   proxy: true,
 });

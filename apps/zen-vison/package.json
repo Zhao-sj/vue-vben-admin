@@ -30,6 +30,7 @@
     "@vben/utils": "workspace:*",
     "@vuepic/vue-datepicker": "^10.0.0",
     "@vueuse/core": "catalog:",
+    "@zxcvbn-ts/core": "^3.0.4",
     "cropperjs": "^1.6.2",
     "crypto-js": "^4.2.0",
     "dayjs": "catalog:",

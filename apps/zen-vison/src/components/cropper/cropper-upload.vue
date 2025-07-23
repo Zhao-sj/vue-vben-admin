@@ -24,12 +24,18 @@ interface Props {
   uploadApi?: UploadApi;
 }
 
+interface Emits {
+  (e: 'change', value: { data: string; source: string }): void;
+}
+
 const props = withDefaults(defineProps<Props>(), {
   width: 200,
   circle: true,
   btnText: $t('component.cropper.selectImage'),
   uploadApi: uploadFileApi,
 });
+
+const emit = defineEmits<Emits>();
 
 const modelValue = defineModel<string>('modelValue');
 
@@ -54,8 +60,10 @@ function onAfterImageLoad() {
   loading.value = false;
 }
 
-function onUploadSuccess({ data }: { data: string }) {
+function onUploadSuccess({ data, source }: { data: string; source: string }) {
   modelValue.value = data;
+  emit('change', { data, source });
+  ElMessage.success($t('component.cropper.uploadSuccess'));
 }
 
 watch(

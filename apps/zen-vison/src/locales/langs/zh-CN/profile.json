@@ -1,0 +1,37 @@
+{
+  "basic": {
+    "title": "基本设置",
+    "todayPoetry": "今日诗词",
+    "account": "登录账号",
+    "nickname": "昵称",
+    "sex": "性别",
+    "phone": "手机号码",
+    "email": "电子邮箱",
+    "dept": "所属部门",
+    "position": "所属职位",
+    "role": "所属角色",
+    "lastLogin": "上次登录",
+    "submit": "更新基本信息",
+    "formRule": {
+      "phone": "请输入正确的手机号码",
+      "email": "请输入正确的邮箱地址"
+    }
+  },
+  "security": {
+    "title": "安全设置",
+    "password": {
+      "old": "原密码",
+      "new": "新密码",
+      "confirm": "确认密码"
+    },
+    "formRule": {
+      "minLength": "{0}至少{1}个字符",
+      "maxLength": "{0}最多{1}个字符",
+      "confirmMismatch": "两次输入的密码不一致"
+    },
+    "submit": "修改密码"
+  },
+  "accountBind": {
+    "title": "账号绑定"
+  }
+}

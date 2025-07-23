@@ -19,6 +19,7 @@ export default defineConfig(async () => {
               'crypto-js': ['crypto-js'],
               'element-plus': ['element-plus'],
               player: ['xgplayer'],
+              cropperjs: ['cropperjs'],
               'tinymce-core': ['tinymce'],
               'tinymce-icons': ['tinymce/icons/default'],
               'tinymce-plugin': [
@@ -74,6 +75,7 @@ export default defineConfig(async () => {
                 'dayjs',
                 'mitt',
                 'uuid',
+                '@zxcvbn-ts/core',
               ],
             },
           },

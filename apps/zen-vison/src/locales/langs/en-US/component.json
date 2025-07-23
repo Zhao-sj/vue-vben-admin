@@ -5,6 +5,7 @@
     "confirmText": "Confirm And Upload",
     "selectImage": "Choose Image",
     "preview": "Preview",
+    "uploadSuccess": "Upload Successful",
     "tool": {
       "reset": "Reset",
       "move": {

@@ -1,0 +1,37 @@
+{
+  "basic": {
+    "title": "Basic Settings",
+    "todayPoetry": "Today's Poetry",
+    "account": "Account",
+    "nickname": "Nickname",
+    "sex": "Sex",
+    "phone": "Phone",
+    "email": "Email",
+    "dept": "Department",
+    "position": "Position",
+    "role": "Role",
+    "lastLogin": "Last Login",
+    "submit": "Update Basic Information",
+    "formRule": {
+      "phone": "Please enter a valid phone number",
+      "email": "Please enter a valid email address"
+    }
+  },
+  "security": {
+    "title": "Security Settings",
+    "password": {
+      "old": "Old PW",
+      "new": "New PW",
+      "confirm": "Confirm PW"
+    },
+    "formRule": {
+      "minLength": "{0} must be at least {1} characters",
+      "maxLength": "{0} must be at most {1} characters",
+      "confirmMismatch": "The two passwords entered do not match"
+    },
+    "submit": "Change Password"
+  },
+  "accountBind": {
+    "title": "Account Binding"
+  }
+}
