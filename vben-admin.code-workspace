@@ -17,8 +17,8 @@
       "path": "apps/web-naive",
     },
     {
-      "name": "zen-vision",
-      "path": "apps/zen-vison",
+      "name": "zhi-simple",
+      "path": "apps/zhi-simple",
     },
     {
       "name": "@vben/docs",

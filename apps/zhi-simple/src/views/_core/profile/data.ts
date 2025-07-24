@@ -51,10 +51,10 @@ export function useSecurityFormSchema(
           ]),
         )
         .max(
-          15,
+          16,
           $t('profile.security.formRule.maxLength', [
             $t('profile.security.password.new'),
-            15,
+            16,
           ]),
         ),
     },

@@ -1,6 +1,6 @@
 {
-  "name": "zen-vision",
-  "version": "1.0.1",
+  "name": "zhi-simple",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "build": "pnpm vite build --mode production",
