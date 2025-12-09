@@ -36,6 +36,7 @@ function getDefaultState(): VbenFormProps {
     handleReset: undefined,
     handleSubmit: undefined,
     handleValuesChange: undefined,
+    handleCollapsedChange: undefined,
     layout: 'horizontal',
     resetButtonOptions: {},
     schema: [],
@@ -342,7 +343,7 @@ export class FormApi {
           isObject(obj[key]) &&
           !isDayjsObject(obj[key]) &&
           !isDate(obj[key])
-            ? fieldMergeFn(obj[key], value)
+            ? fieldMergeFn(value, obj[key])
             : value;
       }
       return true;
