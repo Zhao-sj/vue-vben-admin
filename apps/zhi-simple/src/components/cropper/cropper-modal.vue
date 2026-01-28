@@ -169,7 +169,10 @@ function onConfirm() {
   if (uploadApi) {
     const blob = dataURLtoBlob(previewSource.value!);
     modalApi.lock();
-    uploadApi({ path: filename, file: new File([blob], filename) })
+    uploadApi({
+      path: filename,
+      file: new File([blob], filename, { type: blob.type }),
+    })
       .then((url) => {
         emit('success', { source: previewSource.value!, data: url });
         modalApi.close();
